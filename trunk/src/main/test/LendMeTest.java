@@ -8,23 +8,29 @@ import main.LendMe;
 
 import org.junit.Test;
 
-import util.Address;
 import entities.User;
 
 public class LendMeTest {
 	
-	Set<User> usersx = new HashSet<User>();
+	Set<User> users = new HashSet<User>();
 	
 	@Test public void testRegisterAndSearchUsers(){
 		
 		LendMe.registerUser("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
 							"Campina Grande", "Paraiba", "Brasil", "58308293");
+		users.add(new User("tarciso", "Tarciso Braz", "Rua das Malvinas",
+				 "29", "Monte Santo", "Campina Grande", "Paraiba", "Brasil", "58308293"));
 		
-		usersx.add(new User("tarciso", "Tarciso Braz", new Address("Rua das Malvinas",
-				 "29", "Monte Santo", "Campina Grande", "Paraiba", "Brasil", "58308293")));
+		Set<User> result = LendMe.searchUsersByName("tarciso");
+		Assert.assertEquals(users, result);
 		
-		Set<User> other = LendMe.searchUsersByName("tarciso");
-		Assert.assertEquals(usersx, other);
+		LendMe.registerUser("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+				"PB", "BR", "58308293");
+		users.add(new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+				"PB", "BR", "58308293"));
+
+		result = LendMe.searchUsersByAddress("malvinas");
+		Assert.assertEquals(users, result);
 		
 	}
 

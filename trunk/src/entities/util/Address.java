@@ -1,4 +1,4 @@
-package util;
+package entities.util;
 
 public class Address {
 	
@@ -48,18 +48,27 @@ public class Address {
 	public String getZipCode() {
 		return this.zipCode;
 	}
+	
+	@Override
+	public String toString(){
+		StringBuilder addressToString = new StringBuilder();
+		addressToString.append(this.street);
+		addressToString.append(this.number);
+		addressToString.append(this.neighborhood);
+		addressToString.append(this.city);
+		addressToString.append(this.state);
+		addressToString.append(this.country);
+		addressToString.append(this.zipCode);
+		return addressToString.toString();
+	}
 
 	@Override
 	public int hashCode(){
-		StringBuilder addressHashCode = new StringBuilder();
-		addressHashCode.append(this.street);
-		addressHashCode.append(this.number);
-		addressHashCode.append(this.neighborhood);
-		addressHashCode.append(this.city);
-		addressHashCode.append(this.state);
-		addressHashCode.append(this.country);
-		addressHashCode.append(this.zipCode);
-		return addressHashCode.toString().hashCode();
+		return this.toString().hashCode();
+	}
+
+	public boolean addressMatches(String toBeMatched) {
+		return this.toString().toUpperCase().contains(toBeMatched.toUpperCase());
 	}
 	
 }

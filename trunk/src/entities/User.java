@@ -1,6 +1,7 @@
 package entities;
 
-import util.Address;
+import entities.util.Address;
+
 
 public class User {
 
@@ -10,10 +11,12 @@ public class User {
 
 	public User(){}
 	
-	public User(String login, String name, Address address) {
+	public User(String login, String name, String street, String number, String neighborhood,
+			String city, String state, String country, String zipCode) {
 		this.login = login;
 		this.name = name;
-		this.address = address;
+		this.address = new Address(street, number, neighborhood,
+						city, state, country, zipCode);
 	}
 
 	public String getLogin() {
@@ -41,17 +44,22 @@ public class User {
 		return address;
 	}
 
-	public boolean nameMatches(String string) {
-		return this.name.toUpperCase().contains(string.toUpperCase());
+	public boolean nameMatches(String toBeMatched) {
+		return this.name.toUpperCase().contains(toBeMatched.toUpperCase());
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder userToString = new StringBuilder();
+		userToString.append(this.name);
+		userToString.append(this.login);
+		userToString.append(this.address);
+		return userToString.toString();
 	}
 	
 	@Override
 	public int hashCode(){
-		StringBuilder userHashCode = new StringBuilder();
-		userHashCode.append(this.name);
-		userHashCode.append(this.login);
-		userHashCode.append(this.address);
-		return userHashCode.toString().hashCode();
+		return this.toString().hashCode();
 	}
 	
 	@Override

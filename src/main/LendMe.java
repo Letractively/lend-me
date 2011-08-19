@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import entities.User;
+import entities.util.Address;
 
 public class LendMe {
 

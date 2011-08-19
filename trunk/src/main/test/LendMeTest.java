@@ -9,6 +9,7 @@ import main.LendMe;
 import org.junit.Test;
 
 import entities.User;
+import entities.util.Address;
 
 public class LendMeTest {
 	

@@ -1,6 +1,10 @@
 package entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import entities.util.Address;
+import entities.util.Category;
 
 
 public class User {
@@ -8,6 +12,7 @@ public class User {
 	private String login;
 	private String name;
 	private Address address;
+	private Set<Item> myItems = new HashSet<Item>(); 
 
 	public User(){}
 	
@@ -70,6 +75,31 @@ public class User {
 		
 		User other = (User) obj;
 		return this.hashCode() == other.hashCode();
+	}
+	
+
+	public boolean hasItem(Item item) {
+		return myItems.contains(item);
+	}
+
+	public void addItem(String itemName, String description, Category category) {
+		Item myNewItem = new Item(itemName, description, category);
+		this.myItems.add(myNewItem);
+	}
+
+	public void requestFriendship(User otherUser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean hasFriend(User user1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void acceptFriendshipRequest(User user0) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

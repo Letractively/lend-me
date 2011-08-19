@@ -4,7 +4,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import entities.Item;
 import entities.User;
+import entities.util.Category;
 
 
 public class UserTest {
@@ -57,6 +59,33 @@ public class UserTest {
 		Assert.assertFalse(user.nameMatches("Guilherme Santos"));
 		Assert.assertEquals("Guilherme", user.getName());
 		
+	}
+	
+	@Test public void testAddItem() {
+		
+		user.addItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
+		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
+		
+		Assert.assertTrue(user.hasItem(item));
+		
+		user.addItem("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", Category.MOVIE);
+		Item item2 = new Item("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", Category.MOVIE);
+		
+		Assert.assertTrue(user.hasItem(item));
+		Assert.assertTrue(user.hasItem(item2));
+	}
+	
+	@Test public void testRequestFriendship(){
+		User user0 = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+				"PB", "BR", "58308293");
+		User user1 = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+				"Campina Grande", "Paraiba", "Brasil", "58308293");
+		
+		user0.requestFriendship(user1);
+		user1.acceptFriendshipRequest(user0);
+		//user1.answerFriendshipRequest(user0,true);
+		
+		//TODO Assert.assertTrue(user0.hasFriend(user1));
 	}
 	
 }

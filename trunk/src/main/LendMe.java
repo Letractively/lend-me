@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import entities.User;
-import entities.util.Address;
+import entities.util.Category;
 
 public class LendMe {
 
@@ -41,6 +41,11 @@ public class LendMe {
 		}
 		
 		return foundUsers;
+	}
+
+	public static void registerItem(String name, String description,
+			Category category, User owner) {
+		owner.addItem(name, description, category);
 	}
 	
 }

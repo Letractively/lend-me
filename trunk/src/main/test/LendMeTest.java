@@ -8,8 +8,9 @@ import main.LendMe;
 
 import org.junit.Test;
 
+import entities.Item;
 import entities.User;
-import entities.util.Address;
+import entities.util.Category;
 
 public class LendMeTest {
 	
@@ -32,6 +33,19 @@ public class LendMeTest {
 
 		result = LendMe.searchUsersByAddress("malvinas");
 		Assert.assertEquals(users, result);
+		
+	}
+	
+	@Test public void testRegisterItems() {
+		
+		User user = new User();
+		
+		LendMe.registerItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK, user);
+		
+		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
+		
+		Assert.assertTrue(user.hasItem(item));
+		
 		
 	}
 

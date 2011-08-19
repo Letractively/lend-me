@@ -5,7 +5,6 @@ import java.util.Set;
 
 import junit.framework.Assert;
 import main.LendMe;
-import main.util.Field;
 
 import org.junit.Test;
 
@@ -24,7 +23,7 @@ public class LendMeTest {
 		usersx.add(new User("tarciso", "Tarciso Braz", new Address("Rua das Malvinas",
 				 "29", "Monte Santo", "Campina Grande", "Paraiba", "Brasil", "58308293")));
 		
-		Set<User> other = LendMe.searchUsersBy(Field.NAME, "tarciso");
+		Set<User> other = LendMe.searchUsersByName("tarciso");
 		Assert.assertEquals(usersx, other);
 		
 	}

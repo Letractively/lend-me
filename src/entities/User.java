@@ -47,7 +47,11 @@ public class User {
 	
 	@Override
 	public int hashCode(){
-		return this.name.hashCode() + this.login.hashCode() + this.address.hashCode();
+		StringBuilder userHashCode = new StringBuilder();
+		userHashCode.append(this.name);
+		userHashCode.append(this.login);
+		userHashCode.append(this.address);
+		return userHashCode.toString().hashCode();
 	}
 	
 	@Override

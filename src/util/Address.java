@@ -51,8 +51,15 @@ public class Address {
 
 	@Override
 	public int hashCode(){
-		return this.street.hashCode() + this.number.hashCode() + this.neighborhood.hashCode() +
-			   this.city.hashCode() + this.state.hashCode() + this.country.hashCode() + this.zipCode.hashCode();
+		StringBuilder addressHashCode = new StringBuilder();
+		addressHashCode.append(this.street);
+		addressHashCode.append(this.number);
+		addressHashCode.append(this.neighborhood);
+		addressHashCode.append(this.city);
+		addressHashCode.append(this.state);
+		addressHashCode.append(this.country);
+		addressHashCode.append(this.zipCode);
+		return addressHashCode.toString().hashCode();
 	}
 	
 }

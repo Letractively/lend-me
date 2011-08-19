@@ -3,7 +3,6 @@ package main;
 import java.util.HashSet;
 import java.util.Set;
 
-import main.util.Field;
 import util.Address;
 import entities.User;
 
@@ -20,7 +19,7 @@ public class LendMe {
 		
 	}
 
-	public static Set<User> searchUsersBy(Field field, String value) {
+	public static Set<User> searchUsersByName(String value) {
 
 		Set<User> foundUsers = new HashSet<User>();
 		

@@ -169,7 +169,7 @@ public class UserTest {
 		
 		user0.returnItem(item);
 		
-		user1.finishItemTransaction(item);
+		user1.receiveLendedItem(item);
 		
 		Assert.assertFalse(user0.hasBorrowedItem(item));
 		

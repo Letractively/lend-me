@@ -148,7 +148,7 @@ public class User {
 		}
 	}
 
-	public void requestItem(Item item, User borrower,  int days) {
+	private void requestItem(Item item, User borrower,  int days) {
 		receivedItemRequests.add(new Lending(borrower, this, item, days));
 	}
 
@@ -168,7 +168,7 @@ public class User {
 			myBorrowedItems.add(new Lending(this, lender, item, days));
 	}
 	
-	public void rejectLendingItem(Item item, User otherUser, int days) {
+	public void declineLendingItem(Item item, User otherUser, int days) {
 		if (myItems.containsKey(item)) {
 			if (! this.isLent(item)) {
 				if (receivedItemRequests.contains(new Lending(otherUser, this, item, days))) {
@@ -190,14 +190,14 @@ public class User {
 	public void returnItem(Item item) {
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
-				actual.getLender().returnLending(item);
+				actual.getLender().setReturned(item);
 				actual.setReturned(true);
 			}
 		}
 		
 	}
 
-	private void returnLending(Item item) {
+	private void setReturned(Item item) {
 		for(Lending actual : receivedItemRequests){
 			if(actual.getItem().equals(item)){
 				actual.setReturned(true);
@@ -205,7 +205,7 @@ public class User {
 		}
 	}
 
-	public void finishItemTransaction(Item item) {
+	public void receiveLendedItem(Item item) {
 		for(Lending actual : receivedItemRequests){
 			if(actual.getItem().equals(item) && actual.isReturned()){
 				this.receivedItemRequests.remove(actual);

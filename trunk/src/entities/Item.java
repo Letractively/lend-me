@@ -66,5 +66,4 @@ public class Item {
 		
 		return this.hashCode() == anotherItem.hashCode();
 	}
-
 }

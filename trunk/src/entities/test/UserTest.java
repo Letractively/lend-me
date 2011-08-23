@@ -73,19 +73,107 @@ public class UserTest {
 		
 		Assert.assertTrue(user.hasItem(item));
 		Assert.assertTrue(user.hasItem(item2));
+		
 	}
 	
 	@Test public void testRequestFriendship(){
+		
 		User user0 = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
 				"PB", "BR", "58308293");
 		User user1 = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
 		
 		user0.requestFriendship(user1);
-		user1.acceptFriendshipRequest(user0);
-		//user1.answerFriendshipRequest(user0,true);
 		
-		//TODO Assert.assertTrue(user0.hasFriend(user1));
+		Assert.assertFalse(user0.hasFriend(user1));
+		Assert.assertFalse(user1.hasFriend(user0));
+		
+		user1.acceptFriendshipRequest(user0);
+		
+		Assert.assertTrue(user0.hasFriend(user1));
+		Assert.assertTrue(user1.hasFriend(user0));
+		
+		user1.declineFriendshipRequest(user0);
+
+		Assert.assertTrue(user0.hasFriend(user1));
+		Assert.assertTrue(user1.hasFriend(user0));
+		
+		User user2 = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
+				"Campina Grande", "Paraiba", "Brasil", "58408293");
+		
+		user2.requestFriendship(user0);
+		
+		Assert.assertFalse(user0.hasFriend(user2));
+		Assert.assertFalse(user2.hasFriend(user0));
+		
+		user0.declineFriendshipRequest(user2);
+		
+		Assert.assertFalse(user0.hasFriend(user2));
+		Assert.assertFalse(user2.hasFriend(user0));
+		
+		user0.acceptFriendshipRequest(user2);
+		
+		Assert.assertFalse(user0.hasFriend(user2));
+		Assert.assertFalse(user2.hasFriend(user0));		
+
 	}
+	
+	@Test
+	public void testLendItem() {
+		
+		User user0 = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+				"PB", "BR", "58308293");
+		User user1 = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+				"Campina Grande", "Paraiba", "Brasil", "58308293");
+		
+		Item item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		
+		user1.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		
+		user0.requestFriendship(user1);
+		
+		user1.acceptFriendshipRequest(user0);
+		
+		user0.borrowItem(item,user1,10);
+		
+		user1.lendItem(item,user0,10);
+		
+		Assert.assertTrue(user0.hasBorrowedItem(item));
+		
+		
+		
+		
+	}
+	
+	@Test
+    public void testReturnItem(){
+
+		User user0 = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+				"PB", "BR", "58308293");
+		User user1 = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+				"Campina Grande", "Paraiba", "Brasil", "58308293");
+		
+		Item item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		
+		user1.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		
+		user0.requestFriendship(user1);
+		
+		user1.acceptFriendshipRequest(user0);
+		
+		user0.borrowItem(item,user1,10);
+		
+		user1.lendItem(item,user0,10);
+		
+		Assert.assertTrue(user0.hasBorrowedItem(item));
+		
+		user0.returnItem(item);
+		
+		user1.finishItemTransaction(item);
+		
+		Assert.assertFalse(user0.hasBorrowedItem(item));
+		
+	}
+	
 	
 }

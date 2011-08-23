@@ -48,4 +48,16 @@ public class LendMe {
 		owner.addItem(name, description, category);
 	}
 	
+	public static void askForFriendship(User solicitor, User solicited){
+		solicitor.requestFriendship(solicited);
+	}
+	
+	public static void acceptFriendship(User solicitor, User solicited){
+		solicitor.acceptFriendshipRequest(solicited);
+	}
+	
+	public static void declineFriendship(User solicitor, User solicited){
+		solicitor.declineFriendshipRequest(solicited);
+	}
+	
 }

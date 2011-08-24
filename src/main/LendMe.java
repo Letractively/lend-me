@@ -19,11 +19,11 @@ public class LendMe {
 		
 	}
 
-	public static Set<User> searchUsersByName(String value) {
+	public static Set<User> searchUsersByName(String name) {
 		Set<User> foundUsers = new HashSet<User>();
 		
 		for ( User user : users ){
-			if ( user.nameMatches(value) ){
+			if ( user.nameMatches(name) ){
 				foundUsers.add(user);
 			}
 		}
@@ -31,11 +31,11 @@ public class LendMe {
 		return foundUsers;
 	}
 
-	public static Set<User> searchUsersByAddress(String value) {
+	public static Set<User> searchUsersByAddress(String address) {
 		Set<User> foundUsers = new HashSet<User>();
 		
 		for ( User user : users ){
-			if ( user.getAddress().addressMatches(value) ){
+			if ( user.getAddress().addressMatches(address) ){
 				foundUsers.add(user);
 			}
 		}

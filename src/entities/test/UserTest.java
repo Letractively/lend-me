@@ -78,67 +78,67 @@ public class UserTest {
 	
 	@Test public void testRequestFriendship(){
 		
-		User user0 = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
 				"PB", "BR", "58308293");
-		User user1 = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+		User tarciso = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
 		
-		user0.requestFriendship(user1);
+		manoel.requestFriendship(tarciso);
 		
-		Assert.assertFalse(user0.hasFriend(user1));
-		Assert.assertFalse(user1.hasFriend(user0));
+		Assert.assertFalse(manoel.hasFriend(tarciso));
+		Assert.assertFalse(tarciso.hasFriend(manoel));
 		
-		user1.acceptFriendshipRequest(user0);
+		tarciso.acceptFriendshipRequest(manoel);
 		
-		Assert.assertTrue(user0.hasFriend(user1));
-		Assert.assertTrue(user1.hasFriend(user0));
+		Assert.assertTrue(manoel.hasFriend(tarciso));
+		Assert.assertTrue(tarciso.hasFriend(manoel));
 		
-		user1.declineFriendshipRequest(user0);
+		tarciso.declineFriendshipRequest(manoel);
 
-		Assert.assertTrue(user0.hasFriend(user1));
-		Assert.assertTrue(user1.hasFriend(user0));
+		Assert.assertTrue(manoel.hasFriend(tarciso));
+		Assert.assertTrue(tarciso.hasFriend(manoel));
 		
-		User user2 = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
+		User pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58408293");
 		
-		user2.requestFriendship(user0);
+		pedro.requestFriendship(manoel);
 		
-		Assert.assertFalse(user0.hasFriend(user2));
-		Assert.assertFalse(user2.hasFriend(user0));
+		Assert.assertFalse(manoel.hasFriend(pedro));
+		Assert.assertFalse(pedro.hasFriend(manoel));
 		
-		user0.declineFriendshipRequest(user2);
+		manoel.declineFriendshipRequest(pedro);
 		
-		Assert.assertFalse(user0.hasFriend(user2));
-		Assert.assertFalse(user2.hasFriend(user0));
+		Assert.assertFalse(manoel.hasFriend(pedro));
+		Assert.assertFalse(pedro.hasFriend(manoel));
 		
-		user0.acceptFriendshipRequest(user2);
+		manoel.acceptFriendshipRequest(pedro);
 		
-		Assert.assertFalse(user0.hasFriend(user2));
-		Assert.assertFalse(user2.hasFriend(user0));		
+		Assert.assertFalse(manoel.hasFriend(pedro));
+		Assert.assertFalse(pedro.hasFriend(manoel));		
 
 	}
 	
 	@Test
 	public void testLendItem() {
 		
-		User user0 = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
 				"PB", "BR", "58308293");
-		User user1 = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+		User tarciso = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
 		
 		Item item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
 		
-		user1.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
 		
-		user0.requestFriendship(user1);
+		manoel.requestFriendship(tarciso);
 		
-		user1.acceptFriendshipRequest(user0);
+		tarciso.acceptFriendshipRequest(manoel);
 		
-		user0.borrowItem(item,user1,10);
+		manoel.borrowItem(item,tarciso,10);
 		
-		user1.lendItem(item,user0,10);
+		tarciso.lendItem(item,manoel,10);
 		
-		Assert.assertTrue(user0.hasBorrowedItem(item));
+		Assert.assertTrue(manoel.hasBorrowedItem(item));
 		
 		
 		
@@ -148,30 +148,30 @@ public class UserTest {
 	@Test
     public void testReturnItem(){
 
-		User user0 = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
 				"PB", "BR", "58308293");
-		User user1 = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+		User tarciso = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
 		
 		Item item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
 		
-		user1.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
 		
-		user0.requestFriendship(user1);
+		manoel.requestFriendship(tarciso);
 		
-		user1.acceptFriendshipRequest(user0);
+		tarciso.acceptFriendshipRequest(manoel);
 		
-		user0.borrowItem(item,user1,10);
+		manoel.borrowItem(item,tarciso,10);
 		
-		user1.lendItem(item,user0,10);
+		tarciso.lendItem(item,manoel,10);
 		
-		Assert.assertTrue(user0.hasBorrowedItem(item));
+		Assert.assertTrue(manoel.hasBorrowedItem(item));
 		
-		user0.returnItem(item);
+		manoel.returnItem(item);
 		
-		user1.receiveLendedItem(item);
+		tarciso.receiveLendedItem(item);
 		
-		Assert.assertFalse(user0.hasBorrowedItem(item));
+		Assert.assertFalse(manoel.hasBorrowedItem(item));
 		
 	}
 	

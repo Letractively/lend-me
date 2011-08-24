@@ -140,11 +140,11 @@ public class User {
 		return ! myItems.get(item).equals(this);
 	}
 
-	public void borrowItem(Item item, User lender, int days) {
-		if (lender.hasItem(item)) {
-			if (! lender.isLent(item)) {
-				lender.requestItem(item, this, days);
-			}
+	public void borrowItem(Item item, User lender, int days) {//pq nao juntar os metodos borrowItem
+		if (lender.hasItem(item)) {                       //com requestItem, jah q o primeiro eh soh uma verificacao
+			if (! lender.isLent(item)) {                  //pra ver se ta tudo legal pra o outro fazer a
+				lender.requestItem(item, this, days);     //coisa acontecer? Do jeito q tah eu poderia requisitar um item
+			}                                             //usando soh requestItem todas as vezes q ele nao tah emprestado.  
 		}
 	}
 
@@ -190,8 +190,8 @@ public class User {
 	public void returnItem(Item item) {
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
-				actual.getLender().setReturned(item);
-				actual.setReturned(true);
+				actual.getLender().setReturned(item);//metodos com nomes iguais pertencentes a classes
+				actual.setReturned(true);			 //diferentes sendo usados na mesma classe.
 			}
 		}
 		

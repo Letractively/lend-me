@@ -9,6 +9,7 @@ import main.LendMe;
 import org.junit.Test;
 
 import entities.Item;
+import entities.Session;
 import entities.User;
 import entities.util.Category;
 
@@ -16,7 +17,7 @@ public class LendMeTest {
 	
 	Set<User> users = new HashSet<User>();
 	
-	@Test public void testRegisterAndSearchUsers(){
+	@Test public void testRegisterAndSearchUsers() throws Exception{
 		
 		LendMe.registerUser("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
 							"Campina Grande", "Paraiba", "Brasil", "58308293");
@@ -45,6 +46,20 @@ public class LendMeTest {
 		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
 		
 		Assert.assertTrue(user.hasItem(item));
+		
+		
+	}
+	
+	@Test public void testOpenSession() throws Exception{
+		
+		LendMe.registerUser("pedrorml", "Pedro Limeira", "Rua das caixas", "29", "Monte Santo",
+				"Campina Grande", "Paraiba", "Brasil", "58308293");
+		
+		LendMe.openSession("pedrorml");
+		
+		
+		Assert.assertTrue((new Session("pedrorml")).hasSameUser(LendMe.getSessionByUser("pedrorml")));
+		
 		
 		
 	}

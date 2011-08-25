@@ -3,22 +3,22 @@ package main;
 import java.util.HashSet;
 import java.util.Set;
 
+import entities.Session;
 import entities.User;
 import entities.util.Category;
 
 public class LendMe {
 
 	public static Set<User> users = new HashSet<User>();
-
-	public static void registerUser(String login, String name,
-			String street, String number, String neighborhood, String city,
-			String state, String country, String zipCode) {
-		
-		users.add(new User(login, name, street, number, neighborhood,
-						   city, state, country, zipCode));
-		
+	public static Set<Session> sessions = new HashSet<Session>();
+	
+	public static void registerUser(String login, String name, String... address) throws Exception{
+		if(!users.add(new User(login, name, address))){
+			throw new Exception("User with this login already exists");
+		}
 	}
-
+	
+	
 	public static Set<User> searchUsersByName(String name) {
 		Set<User> foundUsers = new HashSet<User>();
 		
@@ -30,6 +30,8 @@ public class LendMe {
 		
 		return foundUsers;
 	}
+	
+	
 
 	public static Set<User> searchUsersByAddress(String address) {
 		Set<User> foundUsers = new HashSet<User>();
@@ -59,5 +61,35 @@ public class LendMe {
 	public static void declineFriendship(User solicitor, User solicited){
 		solicitor.declineFriendshipRequest(solicited);
 	}
+
+	
+	public static User getUserByLogin(String login) {
+		for(User actualUser : users){
+			if(actualUser.getLogin().equals(login)){
+				return actualUser;
+			}
+		}
+		return null;
+	}
+
+	public static void openSession(String login) throws Exception {
+		if(LendMe.getUserByLogin(login) == null){
+			throw new Exception("User does not exist");
+		}
+		sessions.add(new Session(login));
+	}
+
+
+	public static Session getSessionByUser(String login) {
+		for(Session actualSession : sessions){
+			if(actualSession.getLogin().equals(login)){
+				//TODO Se ligar q esta retornando apenas o primeiro
+				return actualSession;
+			}
+		}
+		return null;
+	}
+	
+
 	
 }

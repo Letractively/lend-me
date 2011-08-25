@@ -24,12 +24,29 @@ public class User {
 
 	public User(){}
 	
-	public User(String login, String name, String street, String number, String neighborhood,
-			String city, String state, String country, String zipCode) {
+	public User(String login, String name, String... address) throws Exception{
+		
+		if(login == null || login.trim().isEmpty()){
+			throw new Exception("Invalid login");
+		}
+		
+		if( name == null || name.trim().isEmpty()){
+			throw new Exception("Invalid name");
+		}
+		
+		if( address == null || address.length == 0 ){
+			throw new Exception("Invalid address");
+		}
+		
+		for ( String addressElement : address ){
+			if ( addressElement == null ){
+				throw new Exception("Invalid address");
+			}
+		}
+		
 		this.login = login;
 		this.name = name;
-		this.address = new Address(street, number, neighborhood,
-						city, state, country, zipCode);
+		this.address = new Address(address);
 	}
 
 	public String getLogin() {
@@ -82,7 +99,7 @@ public class User {
 		}
 		
 		User other = (User) obj;
-		return this.hashCode() == other.hashCode();
+		return this.login.hashCode() == other.getLogin().hashCode();
 	}
 	
 
@@ -140,11 +157,11 @@ public class User {
 		return ! myItems.get(item).equals(this);
 	}
 
-	public void borrowItem(Item item, User lender, int days) {
-		if (lender.hasItem(item)) {
-			if (! lender.isLent(item)) {
-				lender.requestItem(item, this, days);
-			}
+	public void borrowItem(Item item, User lender, int days) {//pq nao juntar os metodos borrowItem
+		if (lender.hasItem(item)) {                       //com requestItem, jah q o primeiro eh soh uma verificacao
+			if (! lender.isLent(item)) {                  //pra ver se ta tudo legal pra o outro fazer a
+				lender.requestItem(item, this, days);     //coisa acontecer? Do jeito q tah eu poderia requisitar um item
+			}                                             //usando soh requestItem todas as vezes q ele nao tah emprestado.  
 		}
 	}
 
@@ -190,8 +207,8 @@ public class User {
 	public void returnItem(Item item) {
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
-				actual.getLender().setReturned(item);
-				actual.setReturned(true);
+				actual.getLender().setReturned(item);//metodos com nomes iguais pertencentes a classes
+				actual.setReturned(true);			 //diferentes sendo usados na mesma classe.
 			}
 		}
 		

@@ -1,65 +1,74 @@
 package entities.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Address {
+
+		private enum AddressElements {
+			STREET, NUMBER, NEIGHBORHOOD, CITY, STATE, COUNTRY, ZIPCODE,FULL_ADDRESS;
+		}
         
-        private String street;
-        private String number;
-        private String neighborhood;
-        private String city;
-        private String state;
-        private String country;
-        private String zipCode;
-        
-        public Address(String street, String number, String neighborhood,
-                        String city, String state, String country, String zipCode) {
-                this.street = street;
-                this.number = number;
-                this.neighborhood = neighborhood;
-                this.city = city;
-                this.state = state;
-                this.country = country;
-                this.zipCode = zipCode;
+		private Map<AddressElements, String> address = new HashMap<AddressElements, String>();
+		
+        public Address(String... addressInfo) {
+        	if (addressInfo.length == 1) {
+        		for(int i = 0; i < addressInfo.length - 1; i++ ){
+            		this.address.put(AddressElements.values()[i], "");
+        		}
+        		this.address.put(AddressElements.FULL_ADDRESS, addressInfo[0]);
+        		
+        	}
+        	else {
+        		StringBuilder fullAddress = new StringBuilder();
+	        	for ( int i=0; i<addressInfo.length; i++ ){
+	        		this.address.put(AddressElements.values()[i], addressInfo[i]);
+	        		if ( i == addressInfo.length-1 ){
+	        			fullAddress.append(addressInfo[i]);
+	        		}
+	        		else {
+	        			fullAddress.append(addressInfo[i]+", ");
+	        		}
+	        	}
+	        	this.address.put(AddressElements.FULL_ADDRESS, fullAddress.toString());
+        	}
         }
 
-        public String getStreet() {
-                return this.street;
+		public String getStreet() {
+            return this.address.get(AddressElements.STREET);
         }
 
         public String getNumber() {
-                return this.number;
+        	return this.address.get(AddressElements.NUMBER);
         }
 
         public String getNeighborhood() {
-                return this.neighborhood;
+        	return this.address.get(AddressElements.NEIGHBORHOOD);
         }
 
         public String getCity() {
-                return this.city;
+        	return this.address.get(AddressElements.CITY);
         }
 
         public String getState() {
-                return this.state;
+        	return this.address.get(AddressElements.STATE);
         }
 
         public String getCountry() {
-                return this.country;
+        	return this.address.get(AddressElements.COUNTRY);
         }
 
         public String getZipCode() {
-                return this.zipCode;
+        	return this.address.get(AddressElements.ZIPCODE);
+        }
+        
+        public String getFullAddress() {
+        	return this.address.get(AddressElements.FULL_ADDRESS);
         }
         
         @Override
         public String toString(){
-                StringBuilder addressToString = new StringBuilder();
-                addressToString.append(this.street);
-                addressToString.append(this.number);
-                addressToString.append(this.neighborhood);
-                addressToString.append(this.city);
-                addressToString.append(this.state);
-                addressToString.append(this.country);
-                addressToString.append(this.zipCode);
-                return addressToString.toString();
+            return this.getFullAddress().toString();
         }
 
         @Override

@@ -76,7 +76,7 @@ public class UserTest {
 		
 	}
 	
-	@Test public void testRequestFriendship(){
+	@Test public void testRequestFriendship() throws Exception{
 		
 		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
 				"PB", "BR", "58308293");
@@ -119,7 +119,7 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testLendItem() {
+	public void testLendItem() throws Exception {
 		
 		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
 				"PB", "BR", "58308293");
@@ -146,7 +146,7 @@ public class UserTest {
 	}
 	
 	@Test
-    public void testReturnItem(){
+    public void testReturnItem() throws Exception{
 
 		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
 				"PB", "BR", "58308293");

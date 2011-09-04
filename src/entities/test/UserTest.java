@@ -2,16 +2,41 @@ package entities.test;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import entities.Item;
 import entities.User;
 import entities.util.Category;
+import entities.util.Message;
 
 
 public class UserTest {
 	
-	User user = new User();
+	User user;
+	User manoel;
+	User tarciso;
+	User pedro;
+	User sysAdmin;
+	Message heyDudeMsg;
+	Message itemRequestedMsg;
+	Item item;
+	
+	@Before
+	public void setUP() throws Exception {
+		user = new User();
+		manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+				"PB", "BR", "58308293");
+		tarciso = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+				"Campina Grande", "Paraiba", "Brasil", "58308293");
+		pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
+				"Campina Grande", "Paraiba", "Brasil", "58408293");
+		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		
+		heyDudeMsg = new Message("Comunication", "Hey dude, how are you?", tarciso, true);
+		itemRequestedMsg = new Message("Empréstimo do item O mochileiro das Galaxias a Tarciso",
+				"Tarciso solicitou o empréstimo do item O mochileiro das Galaxias.", sysAdmin, false);
+	}
 	
 	@Test public void testLogin() {
 		
@@ -78,11 +103,6 @@ public class UserTest {
 	
 	@Test public void testRequestFriendship() throws Exception{
 		
-		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
-				"PB", "BR", "58308293");
-		User tarciso = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
-				"Campina Grande", "Paraiba", "Brasil", "58308293");
-		
 		manoel.requestFriendship(tarciso);
 		
 		Assert.assertFalse(manoel.hasFriend(tarciso));
@@ -97,9 +117,6 @@ public class UserTest {
 
 		Assert.assertTrue(manoel.hasFriend(tarciso));
 		Assert.assertTrue(tarciso.hasFriend(manoel));
-		
-		User pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
-				"Campina Grande", "Paraiba", "Brasil", "58408293");
 		
 		pedro.requestFriendship(manoel);
 		
@@ -121,13 +138,6 @@ public class UserTest {
 	@Test
 	public void testLendItem() throws Exception {
 		
-		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
-				"PB", "BR", "58308293");
-		User tarciso = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
-				"Campina Grande", "Paraiba", "Brasil", "58308293");
-		
-		Item item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
-		
 		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
 		
 		manoel.requestFriendship(tarciso);
@@ -148,13 +158,6 @@ public class UserTest {
 	@Test
     public void testReturnItem() throws Exception{
 
-		User manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
-				"PB", "BR", "58308293");
-		User tarciso = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
-				"Campina Grande", "Paraiba", "Brasil", "58308293");
-		
-		Item item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
-		
 		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
 		
 		manoel.requestFriendship(tarciso);
@@ -172,6 +175,29 @@ public class UserTest {
 		tarciso.receiveLendedItem(item);
 		
 		Assert.assertFalse(manoel.hasBorrowedItem(item));
+		
+	}
+	
+	@Test
+	public void testMessages() throws Exception {
+		
+		// Testing default Lend-me message
+		
+//		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+//		
+//		manoel.requestFriendship(tarciso);
+//		
+//		tarciso.acceptFriendshipRequest(manoel);
+//		
+//		manoel.borrowItem(item,tarciso,10);
+//		
+//		Assert.assertTrue(manoel.getOffTopicMessages().contains(itemRequestedMsg));
+		
+		// Testing Off-Topic message
+		
+		tarciso.sendMessage("Comunication", "Hey dude, how are you?", manoel, true);
+		
+		Assert.assertTrue(manoel.getOffTopicMessages().contains(heyDudeMsg));
 		
 	}
 	

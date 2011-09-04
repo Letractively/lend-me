@@ -7,6 +7,8 @@ import java.util.Set;
 
 import entities.util.Address;
 import entities.util.Category;
+import entities.util.Message;
+import entities.util.Topic;
 
 
 public class User {
@@ -20,6 +22,8 @@ public class User {
 	private Map<Item,User> myItems = new HashMap<Item,User>();
 	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
 	private Set<Lending> myBorrowedItems = new HashSet<Lending>();
+	private Set<Topic> topics = new HashSet<Topic>();
+	private Topic offTopicMessages = new Topic("OffTopic");
 	
 
 	public User(){}
@@ -47,6 +51,7 @@ public class User {
 		this.login = login;
 		this.name = name;
 		this.address = new Address(address);
+		
 	}
 
 	public String getLogin() {
@@ -157,11 +162,11 @@ public class User {
 		return ! myItems.get(item).equals(this);
 	}
 
-	public void borrowItem(Item item, User lender, int days) {//pq nao juntar os metodos borrowItem
-		if (lender.hasItem(item)) {                       //com requestItem, jah q o primeiro eh soh uma verificacao
-			if (! lender.isLent(item)) {                  //pra ver se ta tudo legal pra o outro fazer a
-				lender.requestItem(item, this, days);     //coisa acontecer? Do jeito q tah eu poderia requisitar um item
-			}                                             //usando soh requestItem todas as vezes q ele nao tah emprestado.  
+	public void borrowItem(Item item, User lender, int days) {
+		if (lender.hasItem(item)) {                       
+			if (! lender.isLent(item)) {                  
+				lender.requestItem(item, this, days);     
+			}                                               
 		}
 	}
 
@@ -239,6 +244,34 @@ public class User {
 				this.myBorrowedItems.remove(actual);
 			}
 		}
+	}
+
+	public void sendMessage(String subject, String message, User receiver, boolean isOffTopic) {
+		receiver.receiveMessage(subject,message,this, isOffTopic);
+	}
+
+	public void receiveMessage(String subject, String message, User sender,
+			boolean isOffTopic) {
+		
+		if (isOffTopic) {
+			offTopicMessages.addMessage(subject, message, sender, isOffTopic);
+		}
+		
+		else {
+		
+			for (Topic topic : topics) {
+				if (topic.getSubject().equals(subject)) {
+					topic.addMessage(subject, message, sender, isOffTopic);
+					return;
+				}
+			}
+			topics.add(new Topic(subject));
+			receiveMessage(subject, message, sender, isOffTopic);
+		}
+	}
+
+	public Set<Message> getOffTopicMessages() {
+		return offTopicMessages.getMessages();
 	}
 	
 }

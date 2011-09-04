@@ -22,8 +22,8 @@ public class User {
 	private Map<Item,User> myItems = new HashMap<Item,User>();
 	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
 	private Set<Lending> myBorrowedItems = new HashSet<Lending>();
-	private Set<Topic> topics = new HashSet<Topic>();
-	private Topic offTopicMessages = new Topic("OffTopic");
+	private Set<Topic> negotiationTopics = new HashSet<Topic>();
+	private Set<Topic> offTopicTopics = new HashSet<Topic>();
 	
 
 	public User(){}
@@ -246,32 +246,69 @@ public class User {
 		}
 	}
 
-	public void sendMessage(String subject, String message, User receiver, boolean isOffTopic) {
-		receiver.receiveMessage(subject,message,this, isOffTopic);
+	public void sendMessage(String subject, String message, User receiver) {
+		receiver.receiveMessage(subject, message, this, true);
+	}
+	
+	public void sendMessage(String subject, String message, User receiver, String lendingId) {
+		//TODO Treat how is it going to deal with the Lending id
+		receiver.receiveMessage(subject, message, this, false);
 	}
 
 	public void receiveMessage(String subject, String message, User sender,
 			boolean isOffTopic) {
 		
 		if (isOffTopic) {
-			offTopicMessages.addMessage(subject, message, sender, isOffTopic);
+			addMessageToTopic(offTopicTopics, subject, message, sender, isOffTopic);
 		}
 		
 		else {
 		
-			for (Topic topic : topics) {
-				if (topic.getSubject().equals(subject)) {
-					topic.addMessage(subject, message, sender, isOffTopic);
-					return;
-				}
-			}
-			topics.add(new Topic(subject));
-			receiveMessage(subject, message, sender, isOffTopic);
+			addMessageToTopic(negotiationTopics, subject, message, sender, isOffTopic);
 		}
 	}
 
-	public Set<Message> getOffTopicMessages() {
-		return offTopicMessages.getMessages();
+	private void addMessageToTopic(Set<Topic> topicSet, String subject, String message, User sender,
+			boolean isOffTopic) {
+		
+		Topic foundTopic = getTopicBySubject(topicSet, subject); 
+		
+		if ( foundTopic != null) {
+			foundTopic.addMessage(subject, message, sender, isOffTopic);
+		}
+		else {
+			topicSet.add(new Topic(subject));
+			receiveMessage(subject, message, sender, isOffTopic);
+		}		
 	}
+
+	public Set<Message> getTopicMessages(String topicSubject) throws Exception {
+		Topic foundTopic = getTopicBySubject(negotiationTopics, topicSubject); 
+		
+		if ( foundTopic != null) {
+			return foundTopic.getMessages();
+		}
+		
+		else {
+			foundTopic = getTopicBySubject(offTopicTopics, topicSubject);
+			
+			if ( foundTopic != null) {
+				return foundTopic.getMessages();
+			}
+		}
+		
+		throw new Exception("Could not find any topic with the given subject.");
+	}
+	
+	private Topic getTopicBySubject(Set<Topic> topicSet, String subject) {
+		for (Topic topic : topicSet) {
+			if (topic.getSubject().equals(subject)) {
+				return topic;
+			}
+		}
+		return null;
+	}
+	
+	
 	
 }

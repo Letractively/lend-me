@@ -8,7 +8,6 @@ import org.junit.Test;
 import entities.Item;
 import entities.User;
 import entities.util.Category;
-import entities.util.Message;
 
 
 public class UserTest {
@@ -17,9 +16,6 @@ public class UserTest {
 	User manoel;
 	User tarciso;
 	User pedro;
-	User sysAdmin;
-	Message heyDudeMsg;
-	Message itemRequestedMsg;
 	Item item;
 	
 	@Before
@@ -32,10 +28,6 @@ public class UserTest {
 		pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58408293");
 		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
-		
-		heyDudeMsg = new Message("Comunication", "Hey dude, how are you?", tarciso, true);
-		itemRequestedMsg = new Message("Empréstimo do item O mochileiro das Galaxias a Tarciso",
-				"Tarciso solicitou o empréstimo do item O mochileiro das Galaxias.", sysAdmin, false);
 	}
 	
 	@Test public void testLogin() {
@@ -150,9 +142,6 @@ public class UserTest {
 		
 		Assert.assertTrue(manoel.hasBorrowedItem(item));
 		
-		
-		
-		
 	}
 	
 	@Test
@@ -177,29 +166,5 @@ public class UserTest {
 		Assert.assertFalse(manoel.hasBorrowedItem(item));
 		
 	}
-	
-	@Test
-	public void testMessages() throws Exception {
-		
-		// Testing default Lend-me message
-		
-//		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
-//		
-//		manoel.requestFriendship(tarciso);
-//		
-//		tarciso.acceptFriendshipRequest(manoel);
-//		
-//		manoel.borrowItem(item,tarciso,10);
-//		
-//		Assert.assertTrue(manoel.getOffTopicMessages().contains(itemRequestedMsg));
-		
-		// Testing Off-Topic message
-		
-		tarciso.sendMessage("Comunication", "Hey dude, how are you?", manoel, true);
-		
-		Assert.assertTrue(manoel.getOffTopicMessages().contains(heyDudeMsg));
-		
-	}
-	
 	
 }

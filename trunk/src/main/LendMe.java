@@ -90,6 +90,21 @@ public class LendMe {
 		return null;
 	}
 	
-
+	public static void sendMessage(String sessionId, String subject, String message, 
+			User sender, User receiver) throws Exception {
+		if (getSessionById(sessionId) == null) {
+			throw new Exception("Inexistent session");
+		}
+		receiver.receiveMessage(subject, message, sender, true);
+	}
+	
+	private static Session getSessionById(String id) {
+		for(Session actualSession : sessions){
+			if (actualSession.getId().equals(id)) {
+				return actualSession;
+			}
+		}
+		return null;
+	}
 	
 }

@@ -3,14 +3,14 @@ package entities;
 public class Session {
 
 	private String login;
-	private int id;
+	private String id;
 	
 	public Session(String login) throws Exception{
 		if(login == null || login.trim().isEmpty()){
 			throw new Exception("Invalid login");
 		}
 		this.login = login;
-		this.id = ((Object) this).hashCode();
+		this.id = Integer.toString(((Object) this).hashCode());
 		
 	}
 
@@ -18,7 +18,7 @@ public class Session {
 		return this.login;
 	}
 	
-	public int getId(){
+	public String getId(){
 		return this.id;
 	}
 	
@@ -29,7 +29,7 @@ public class Session {
 		}
 		
 		return ((Session) obj).getLogin().equals(login) &&
-			   ((Session) obj).getId() == this.id;	
+			   ((Session) obj).getId().equals(this.id);	
 	}
 	
 	public boolean hasSameUser(Session otherSession){

@@ -31,20 +31,20 @@ public class User {
 	public User(String login, String name, String... address) throws Exception{
 		
 		if(login == null || login.trim().isEmpty()){
-			throw new Exception("Invalid login");
+			throw new Exception("Login inválido");//"Invalid login");
 		}
 		
 		if( name == null || name.trim().isEmpty()){
-			throw new Exception("Invalid name");
+			throw new Exception("Nome inválido");//"Invalid name");
 		}
 		
 		if( address == null || address.length == 0 ){
-			throw new Exception("Invalid address");
+			throw new Exception("Endereço inválido");//"Invalid address");
 		}
 		
 		for ( String addressElement : address ){
 			if ( addressElement == null ){
-				throw new Exception("Invalid address");
+				throw new Exception("Endereço inválido");//"Invalid address");
 			}
 		}
 		
@@ -212,8 +212,8 @@ public class User {
 	public void returnItem(Item item) {
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
-				actual.getLender().setReturned(item);//metodos com nomes iguais pertencentes a classes
-				actual.setReturned(true);			 //diferentes sendo usados na mesma classe.
+				actual.getLender().setReturned(item);
+				actual.setReturned(true);
 			}
 		}
 		

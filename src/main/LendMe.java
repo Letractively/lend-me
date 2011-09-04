@@ -12,12 +12,16 @@ public class LendMe {
 	public static Set<User> users = new HashSet<User>();
 	public static Set<Session> sessions = new HashSet<Session>();
 	
-	public static void registerUser(String login, String name, String... address) throws Exception{
-		if(!users.add(new User(login, name, address))){
-			throw new Exception("User with this login already exists");
-		}
+	public static void resetSystem(){
+		users = new HashSet<User>();
+		sessions = new HashSet<Session>();
 	}
 	
+	public static void registerUser(String login, String name, String... address) throws Exception{
+		if(!users.add(new User(login, name, address))){
+			throw new Exception("Já existe um usuário com este login");//"User with this login already exists");
+		}
+	}
 	
 	public static Set<User> searchUsersByName(String name) {
 		Set<User> foundUsers = new HashSet<User>();
@@ -31,8 +35,6 @@ public class LendMe {
 		return foundUsers;
 	}
 	
-	
-
 	public static Set<User> searchUsersByAddress(String address) {
 		Set<User> foundUsers = new HashSet<User>();
 		
@@ -51,17 +53,22 @@ public class LendMe {
 	}
 	
 	public static void askForFriendship(User solicitor, User solicited){
+		//TODO maybe check if solicitor has an open session or receive the session as a parameter and
+		//get the solicitor user using getUserByLogin()
 		solicitor.requestFriendship(solicited);
 	}
 	
-	public static void acceptFriendship(User solicitor, User solicited){
-		solicitor.acceptFriendshipRequest(solicited);
+	public static void acceptFriendship(User solicited, User solicitor){
+		//TODO maybe check if solicited has an open session or receive the session as a parameter and
+		//get the solicited user using getUserByLogin()
+		solicited.acceptFriendshipRequest(solicitor);
 	}
 	
-	public static void declineFriendship(User solicitor, User solicited){
-		solicitor.declineFriendshipRequest(solicited);
+	public static void declineFriendship(User solicited, User solicitor){
+		//TODO maybe check if solicited has an open session or receive the session as a parameter and
+		//get the solicited user using getUserByLogin()
+		solicited.declineFriendshipRequest(solicitor);
 	}
-
 	
 	public static User getUserByLogin(String login) {
 		for(User actualUser : users){
@@ -72,28 +79,29 @@ public class LendMe {
 		return null;
 	}
 
-	public static void openSession(String login) throws Exception {
+	public static String openSession(String login) throws Exception {
 		if(LendMe.getUserByLogin(login) == null){
-			throw new Exception("User does not exist");
+			throw new Exception("Usuário inexistente");//"User does not exist");
 		}
-		sessions.add(new Session(login));
+		Session session = new Session(login);
+		sessions.add(session);
+		return session.getId();
 	}
 
-
-	public static Session getSessionByUser(String login) {
+	public static Set<Session> getSessionByUser(String login) {
+		Set<Session> results = new HashSet<Session>();
 		for(Session actualSession : sessions){
 			if(actualSession.getLogin().equals(login)){
-				//TODO Se ligar q esta retornando apenas o primeiro
-				return actualSession;
+				results.add(actualSession);
 			}
 		}
-		return null;
+		return results;
 	}
 	
 	public static void sendMessage(String sessionId, String subject, String message, 
 			User sender, User receiver) throws Exception {
 		if (getSessionById(sessionId) == null) {
-			throw new Exception("Inexistent session");
+			throw new Exception("Sessão inexistente");//"Inexistent session");
 		}
 		receiver.receiveMessage(subject, message, sender, true);
 	}

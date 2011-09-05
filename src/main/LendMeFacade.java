@@ -23,4 +23,9 @@ public class LendMeFacade {
 		return LendMe.getUserAttribute(login, atributo);
 	}
 
+	public String cadastrarItem(String idSessao, String nome, String descricao,
+			String categoria) throws Exception{
+		return LendMe.registerItem(idSessao, nome, descricao, categoria);
+	}
+	
 }

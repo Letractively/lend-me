@@ -115,9 +115,11 @@ public class User {
 		return myItems.containsKey(item);
 	}
 
-	public void addItem(String itemName, String description, Category category) {
+	public String addItem(String itemName, String description, Category category)
+			throws Exception{
 		Item myNewItem = new Item(itemName, description, category);
 		this.myItems.put(myNewItem, this);
+		return myNewItem.getID();
 	}
 
 	public void requestFriendship(User otherUser) {
@@ -173,7 +175,7 @@ public class User {
 				
 				sendMessage("Lending of item " + item.getName() + " to " +
 				this.getName(), this.getName() + " wants to borrow item " +
-				item.getName(), lender, requestLending.getId());
+				item.getName(), lender, requestLending.getID());
 			}                                               
 		}
 	}

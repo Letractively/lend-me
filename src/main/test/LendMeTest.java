@@ -39,7 +39,7 @@ public class LendMeTest {
 		
 	}
 	
-	@Test public void testRegisterItems() {
+	@Test public void testRegisterItems() throws Exception{
 		
 		User user = new User();
 		

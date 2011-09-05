@@ -11,7 +11,6 @@ import org.junit.Test;
 import entities.Item;
 import entities.User;
 import entities.util.Category;
-import entities.util.Date;
 
 
 public class UserTest {

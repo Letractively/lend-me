@@ -19,7 +19,7 @@ public class LendMe {
 	
 	public static void registerUser(String login, String name, String... address) throws Exception{
 		if(!users.add(new User(login, name, address))){
-			throw new Exception("J· existe um usu·rio com este login");//"User with this login already exists");
+			throw new Exception("J√° existe um usu√°rio com este login");//"User with this login already exists");
 		}
 	}
 	
@@ -70,19 +70,20 @@ public class LendMe {
 		solicited.declineFriendshipRequest(solicitor);
 	}
 	
-	public static User getUserByLogin(String login) {
+	public static User getUserByLogin(String login) throws Exception{
 		for(User actualUser : users){
 			if(actualUser.getLogin().equals(login)){
 				return actualUser;
 			}
 		}
-		return null;
+		throw new Exception("Usu√°rio inexistente");//"User does not exist");
 	}
 
 	public static String openSession(String login) throws Exception {
-		if(LendMe.getUserByLogin(login) == null){
-			throw new Exception("Usu·rio inexistente");//"User does not exist");
+		if (login == null || login.trim().isEmpty()){
+			throw new Exception("Login inv√°lido");//"Invalid login");
 		}
+		LendMe.getUserByLogin(login);
 		Session session = new Session(login);
 		sessions.add(session);
 		return session.getId();
@@ -101,7 +102,7 @@ public class LendMe {
 	public static void sendMessage(String sessionId, String subject, String message, 
 			User sender, User receiver) throws Exception {
 		if (getSessionById(sessionId) == null) {
-			throw new Exception("Sess„o inexistente");//"Inexistent session");
+			throw new Exception("Sess√£o inexistente");//"Inexistent session");
 		}
 		receiver.receiveMessage(subject, message, sender, true);
 	}

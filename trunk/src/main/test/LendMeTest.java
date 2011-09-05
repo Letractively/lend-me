@@ -98,7 +98,7 @@ public class LendMeTest {
 				tarciso.getName() + " wants to borrow item " + item.getName(), tarciso, false);
 		
 		Assert.assertTrue(pedro.getTopicMessages("Lending of item " + item.getName() +
-				" a " + tarciso.getName()).contains(itemBorrowingMsg));
+				" to " + tarciso.getName()).contains(itemBorrowingMsg));
 	}
 
 }

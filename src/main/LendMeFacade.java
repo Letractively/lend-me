@@ -1,6 +1,5 @@
 package main;
 
-import entities.User;
 
 public class LendMeFacade {
 	
@@ -21,28 +20,7 @@ public class LendMeFacade {
 	}
 	
 	public String getAtributoUsuario(String login, String atributo) throws Exception{
-		
-		if (atributo == null || atributo.trim().isEmpty()){
-			throw new Exception("Atributo inválido");//"Invalid attribute");
-		}
-		
-		if (!(atributo.equals("nome") || atributo.equals("endereco"))){
-			throw new Exception("Atributo inexistente");//"Inexistent attribute");
-		}
-		
-		if (login == null || login.trim().isEmpty()){
-			throw new Exception("Login inválido");//"Invalid login");
-		}
-		
-		User user = LendMe.getUserByLogin(login);
-		
-		if(atributo.equals("nome")){
-			return user.getName();
-		}else{
-			return user.getAddress().toString();
-		}
+		return LendMe.getUserAttribute(login, atributo);
 	}
-	
-	
 
 }

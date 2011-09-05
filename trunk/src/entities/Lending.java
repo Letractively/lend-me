@@ -116,7 +116,7 @@ public class Lending implements Identifiable {
 	}
 
 	@Override
-	public String getId() {
+	public String getID() {
 		return this.id;
 	}
 	

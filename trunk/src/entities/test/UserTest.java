@@ -81,7 +81,7 @@ public class UserTest {
 		
 	}
 	
-	@Test public void testAddItem() {
+	@Test public void testAddItem() throws Exception{
 		
 		user.addItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
 		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
@@ -171,7 +171,7 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testReturnRequest(){
+	public void testReturnRequest() throws Exception{
 		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
 		
 		manoel.requestFriendship(tarciso);
@@ -197,7 +197,7 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testGetRequestedBackItems(){
+	public void testGetRequestedBackItems() throws Exception{
 		Set<Item> requestedBackItems = new HashSet<Item>();
 		
 		requestedBackItems.add(item);

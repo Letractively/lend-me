@@ -48,9 +48,27 @@ public class LendMe {
 		return foundUsers;
 	}
 
-	public static void registerItem(String name, String description,
-			Category category, User owner) {
-		owner.addItem(name, description, category);
+	public static String registerItem(String sessionId, String name, 
+			String description, String category) throws Exception{
+		
+		if ( category == null || category.trim().isEmpty() ){
+			throw new Exception("Categoria inválida");//"Invalid category");
+		}
+		Category chosenCategory;
+		try {
+			chosenCategory = Category.valueOf(category);
+		}
+		catch (IllegalArgumentException e) {
+			throw new Exception("Categoria inexistente");//"Inexistent category");
+		}
+		
+		User owner = getUserByLogin(getSessionById(sessionId).getLogin());
+		return registerItem(name, description, chosenCategory, owner);
+	}
+	
+	public static String registerItem(String name, String description,
+			Category category, User owner) throws Exception{
+		return owner.addItem(name, description, category);
 	}
 	
 	public static void askForFriendship(User solicitor, User solicited){
@@ -72,6 +90,9 @@ public class LendMe {
 	}
 	
 	public static User getUserByLogin(String login) throws Exception{
+		if ( login == null || login.trim().isEmpty() ){
+			throw new Exception("Login inválido");//"Invalid login");
+		}
 		for(User actualUser : users){
 			if(actualUser.getLogin().equals(login)){
 				return actualUser;
@@ -108,13 +129,16 @@ public class LendMe {
 		receiver.receiveMessage(subject, message, sender, true, "");
 	}
 	
-	private static Session getSessionById(String id) {
+	private static Session getSessionById(String id) throws Exception{
+		if ( id == null || id.trim().isEmpty() ){
+			throw new Exception("Sessao inválida");//"Invalid session");
+		}
 		for(Session actualSession : sessions){
 			if (actualSession.getId().equals(id)) {
 				return actualSession;
 			}
 		}
-		return null;
+		throw new Exception("Sessao inexistente");//"Inexistent session");
 	}
 	
 	public static void sendMessage(String sessionId, String subject, String message, 

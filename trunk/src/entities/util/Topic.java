@@ -43,7 +43,7 @@ public class Topic implements Identifiable {
 	}
 
 	@Override
-	public String getId() {
+	public String getID() {
 		return id;
 	}
 	

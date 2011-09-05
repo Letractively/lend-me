@@ -2,7 +2,7 @@ package entities;
 
 import entities.util.Date;
 
-public class Lending {
+public class Lending implements Identifiable {
 	
 	private User borrower;
 	private User lender;
@@ -13,6 +13,7 @@ public class Lending {
 	private boolean canceled;
 	private int dayOfRequestion;
 	private int dayOfTheLending;
+	private String id;
 
 	public Lending(User borrower, User lender,Item item,int days) {
 		this.borrower = borrower;
@@ -22,6 +23,7 @@ public class Lending {
 		this.requestedBack = false;
 		this.canceled = false;
 		this.dayOfRequestion = new Date().getCurrentDayOfYear();
+		this.id = Integer.toString(((Object) this).hashCode());
 	}
 	
 	public int getDayOfTheLending() {
@@ -111,6 +113,11 @@ public class Lending {
 	}
 	public void setLender(User lender) {
 		this.lender = lender;
+	}
+
+	@Override
+	public String getId() {
+		return this.id;
 	}
 	
 }

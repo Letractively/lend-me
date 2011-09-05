@@ -2,11 +2,13 @@ package entities;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import entities.util.Address;
 import entities.util.Category;
+import entities.util.EntitiesConstants;
 import entities.util.Date;
 import entities.util.Message;
 import entities.util.Topic;
@@ -32,20 +34,20 @@ public class User {
 	public User(String login, String name, String... address) throws Exception{
 		
 		if(login == null || login.trim().isEmpty()){
-			throw new Exception("Login invÃ¡lido");//"Invalid login");
+			throw new Exception("Login inválido");//"Invalid login");
 		}
 		
 		if( name == null || name.trim().isEmpty()){
-			throw new Exception("Nome invÃ¡lido");//"Invalid name");
+			throw new Exception("Nome inválido");//"Invalid name");
 		}
 		
 		if( address == null || address.length == 0 ){
-			throw new Exception("EndereÃ§o invÃ¡lido");//"Invalid address");
+			throw new Exception("Endereço inválido");//"Invalid address");
 		}
 		
 		for ( String addressElement : address ){
 			if ( addressElement == null ){
-				throw new Exception("EndereÃ§o invÃ¡lido");//"Invalid address");
+				throw new Exception("Endereço inválido");//"Invalid address");
 			}
 		}
 		
@@ -95,7 +97,7 @@ public class User {
 	
 	@Override
 	public int hashCode(){
-		return this.login.hashCode();
+		return this.toString().hashCode();
 	}
 	
 	@Override
@@ -165,16 +167,20 @@ public class User {
 
 	public void borrowItem(Item item, User lender, int days) {
 		if (lender.hasItem(item)) {                       
-			if (! lender.isLent(item)) {                  
-				lender.requestItem(item, this, days);     
+			if (! lender.isLent(item)) {
+				Lending requestLending = new Lending(this, lender, item, days);
+				lender.requestItem(requestLending);
+				
+				sendMessage("Empréstimo do item " + item.getName() + " a " +
+				this.getName(), this.getName() + " solicitou o empréstimo" +
+				" do item " + item.getName(), lender, requestLending.getId());
 			}                                               
 		}
 	}
 
-	private void requestItem(Item item, User borrower,  int days) {
-		Lending lending = new Lending(borrower, this, item, days);
-		lending.setDayOfRequestion(new Date().getCurrentDayOfYear());
-		receivedItemRequests.add(lending);
+	private void requestItem(Lending requestLending) {
+		requestLending.setDayOfRequestion(new Date().getCurrentDayOfYear());
+		receivedItemRequests.add(requestLending);
 	}
 
 
@@ -256,38 +262,39 @@ public class User {
 	}
 
 	public void sendMessage(String subject, String message, User receiver) {
-		receiver.receiveMessage(subject, message, this, true);
+		receiver.receiveMessage(subject, message, this, true, "");
 	}
 	
 	public void sendMessage(String subject, String message, User receiver, String lendingId) {
 		//TODO Treat how is it going to deal with the Lending id
-		receiver.receiveMessage(subject, message, this, false);
+		receiver.receiveMessage(subject, message, this, false, lendingId);
 	}
 
 	public void receiveMessage(String subject, String message, User sender,
-			boolean isOffTopic) {
+			boolean isOffTopic, String lendingId) {
 		
 		if (isOffTopic) {
-			addMessageToTopic(offTopicTopics, subject, message, sender, isOffTopic);
+			addMessageToTopic(offTopicTopics, subject, message, sender,
+					isOffTopic, lendingId);
 		}
 		
 		else {
-		
-			addMessageToTopic(negotiationTopics, subject, message, sender, isOffTopic);
+			addMessageToTopic(negotiationTopics, subject, message, sender,
+					isOffTopic, lendingId);
 		}
 	}
 
 	private void addMessageToTopic(Set<Topic> topicSet, String subject, String message, User sender,
-			boolean isOffTopic) {
+			boolean isOffTopic, String lendingId) {
 		
 		Topic foundTopic = getTopicBySubject(topicSet, subject); 
 		
 		if ( foundTopic != null) {
-			foundTopic.addMessage(subject, message, sender, isOffTopic);
+			foundTopic.addMessage(subject, message, sender, isOffTopic, lendingId);
 		}
 		else {
 			topicSet.add(new Topic(subject));
-			receiveMessage(subject, message, sender, isOffTopic);
+			receiveMessage(subject, message, sender, isOffTopic, lendingId);
 		}		
 	}
 
@@ -384,8 +391,21 @@ public class User {
 		return canceledItems;
 		
 	}
-
-
 	
+	public List<Topic> getTopics(String topicType) {
+		if (topicType.equals(EntitiesConstants.OFF_TOPIC)) {
+			
+		}
+		
+		else if (topicType.equals(EntitiesConstants.NEGOTIATION_TOPIC)) {
+			
+		}
+		
+		else {
+			
+		}
+		
+		return null;
+	}
 	
 }

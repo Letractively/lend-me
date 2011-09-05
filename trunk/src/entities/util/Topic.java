@@ -32,8 +32,10 @@ public class Topic implements Identifiable {
 		this.subject = subject;
 	}
 	
-	public boolean addMessage(String subject, String message, User sender, boolean isOffTopic) {
-		return messages.add(new Message(subject, message, sender, isOffTopic));
+	public boolean addMessage(String subject, String message, User sender,
+			boolean isOffTopic, String lendingId) {
+		return messages.add(new Message(subject, message, sender, isOffTopic,
+				lendingId));
 	}
 
 	public Set<Message> getMessages() {

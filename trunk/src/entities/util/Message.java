@@ -8,6 +8,7 @@ public class Message {
 	private String message;
 	private User sender;
 	private boolean isOffTopic;
+	private String lendingId;
 	
 	
 	public Message(String subject, String message, User sender,
@@ -15,7 +16,18 @@ public class Message {
 		this.subject = subject;
 		this.message = message;
 		this.sender = sender;
-		this.isOffTopic = isOfftopic; 
+		this.isOffTopic = isOfftopic;
+		this.lendingId = "";
+	}
+
+
+	public Message(String subject, String message, User sender,
+			boolean isOffTopic, String lendingId) {
+		this.subject = subject;
+		this.message = message;
+		this.sender = sender;
+		this.isOffTopic = isOffTopic;
+		this.lendingId = lendingId;
 	}
 
 

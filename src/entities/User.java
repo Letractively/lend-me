@@ -7,6 +7,7 @@ import java.util.Set;
 
 import entities.util.Address;
 import entities.util.Category;
+import entities.util.Date;
 import entities.util.Message;
 import entities.util.Topic;
 
@@ -171,7 +172,9 @@ public class User {
 	}
 
 	private void requestItem(Item item, User borrower,  int days) {
-		receivedItemRequests.add(new Lending(borrower, this, item, days));
+		Lending lending = new Lending(borrower, this, item, days);
+		lending.setDayOfRequestion(new Date().getCurrentDayOfYear());
+		receivedItemRequests.add(lending);
 	}
 
 
@@ -179,7 +182,11 @@ public class User {
 		if (myItems.containsKey(item)) {
 			if (! this.isLent(item)) {
 				myItems.put(item, borrower);
-				if (receivedItemRequests.contains(new Lending(borrower, this, item, days))) {
+				
+				Lending lending = new Lending(borrower, this, item, days);
+				lending.setDayOfTheLending(new Date().getCurrentDayOfYear());
+				
+				if (receivedItemRequests.contains(lending)) {
 					borrower.addRequestedItem(item, this, days);
 				}
 			}
@@ -187,7 +194,9 @@ public class User {
 	}
 
 	private void addRequestedItem(Item item, User lender, int days) {
-			myBorrowedItems.add(new Lending(this, lender, item, days));
+		Lending lending = new Lending(this, lender, item, days);
+		lending.setDayOfTheLending(new Date().getCurrentDayOfYear());
+		myBorrowedItems.add(lending);
 	}
 	
 	public void declineLendingItem(Item item, User otherUser, int days) {
@@ -308,7 +317,75 @@ public class User {
 		}
 		return null;
 	}
+
+	public void returnRequest(Item item) {
+		for(Lending actual : receivedItemRequests){
+			if(actual.getItem().equals(item)){
+				actual.getBorrower().setRequestedBack(item);
+				
+				if(new Date().getCurrentDayOfYear() < actual.getDayOfTheLending() + actual.getRequiredDays()){
+					actual.setCanceled(true);
+				}
+				
+				actual.setRequestedBack(true);
+				
+			}
+		}
+	}
+
+	private void setRequestedBack(Item item) {
+		for(Lending actual : myBorrowedItems){
+			if(actual.getItem().equals(item)){
+				actual.setRequestedBack(true);
+
+				if(new Date().getCurrentDayOfYear() < actual.getDayOfTheLending() + actual.getRequiredDays()){
+					actual.setCanceled(true);
+				}
+			}
+		}
+	}
 	
+	public boolean hasRequestedBack(Item item){
+		for(Lending actual : myBorrowedItems){
+			if(actual.getItem().equals(item) && actual.isRequestedBack()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasCanceled(Item item){
+		for(Lending actual : myBorrowedItems){
+			if(actual.getItem().equals(item) && actual.isCanceled()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Set<Item> getRequestedBackItems(){
+		Set<Item> requestedBackItems = new HashSet<Item>();
+		for(Lending actual : myBorrowedItems){
+			if(actual.isRequestedBack()){
+				requestedBackItems.add(actual.getItem());
+			}
+		}
+		return requestedBackItems;
+		
+	}
+	
+	public Set<Item> getCanceledItems(){
+		Set<Item> canceledItems = new HashSet<Item>();
+		for(Lending actual : myBorrowedItems){
+			if(actual.isCanceled()){
+				canceledItems.add(actual.getItem());
+			}
+		}
+		return canceledItems;
+		
+	}
+
+
 	
 	
 }

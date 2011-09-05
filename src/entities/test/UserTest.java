@@ -1,5 +1,8 @@
 package entities.test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -8,6 +11,7 @@ import org.junit.Test;
 import entities.Item;
 import entities.User;
 import entities.util.Category;
+import entities.util.Date;
 
 
 public class UserTest {
@@ -165,6 +169,59 @@ public class UserTest {
 		
 		Assert.assertFalse(manoel.hasBorrowedItem(item));
 		
+	}
+	
+	@Test
+	public void testReturnRequest(){
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		
+		manoel.requestFriendship(tarciso);
+		
+		tarciso.acceptFriendshipRequest(manoel);
+		
+		manoel.borrowItem(item, tarciso,10);
+		
+		tarciso.lendItem(item, manoel,10);
+		
+		Assert.assertTrue(manoel.hasBorrowedItem(item));
+						
+		tarciso.returnRequest(item);
+		
+		Assert.assertTrue(manoel.hasRequestedBack(item));
+		
+		manoel.returnItem(item);
+		
+		tarciso.receiveLendedItem(item);
+		
+		Assert.assertFalse(manoel.hasBorrowedItem(item));
+		
+	}
+	
+	@Test
+	public void testGetRequestedBackItems(){
+		Set<Item> requestedBackItems = new HashSet<Item>();
+		
+		requestedBackItems.add(item);
+		
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		
+		manoel.requestFriendship(tarciso);
+		
+		tarciso.acceptFriendshipRequest(manoel);
+		
+		manoel.borrowItem(item, tarciso,10);
+		
+		tarciso.lendItem(item, manoel,10);
+		
+		Assert.assertTrue(manoel.hasBorrowedItem(item));
+						
+		tarciso.returnRequest(item);
+		
+		Assert.assertTrue(manoel.hasRequestedBack(item));
+
+		tarciso.returnRequest(item);
+						
+		Assert.assertTrue(manoel.getRequestedBackItems().equals(requestedBackItems));
 	}
 	
 }

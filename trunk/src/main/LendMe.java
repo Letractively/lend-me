@@ -134,4 +134,26 @@ public class LendMe {
 		borrower.borrowItem(item, lender, days);
 	}
 	
+	public static String getUserAttribute(String login, String attribute)
+			throws Exception{
+		
+		if ( attribute == null || attribute.trim().isEmpty() ){
+			throw new Exception("Atributo inválido");//"Invalid attribute");
+		}
+		if (!(attribute.equals("nome") || attribute.equals("endereco"))){
+			throw new Exception("Atributo inexistente");//"Inexistent attribute");
+		}
+		if ( login == null || login.trim().isEmpty() ){
+			throw new Exception("Login inválido");//"Invalid login");
+		}
+		
+		User user = getUserByLogin(login);
+
+		if(attribute.equals("nome")){
+			return user.getName();
+		}else{
+			return user.getAddress().toString();
+		}
+	}
+	
 }

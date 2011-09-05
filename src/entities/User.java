@@ -32,20 +32,20 @@ public class User {
 	public User(String login, String name, String... address) throws Exception{
 		
 		if(login == null || login.trim().isEmpty()){
-			throw new Exception("Login inválido");//"Invalid login");
+			throw new Exception("Login invÃ¡lido");//"Invalid login");
 		}
 		
 		if( name == null || name.trim().isEmpty()){
-			throw new Exception("Nome inválido");//"Invalid name");
+			throw new Exception("Nome invÃ¡lido");//"Invalid name");
 		}
 		
 		if( address == null || address.length == 0 ){
-			throw new Exception("Endereço inválido");//"Invalid address");
+			throw new Exception("EndereÃ§o invÃ¡lido");//"Invalid address");
 		}
 		
 		for ( String addressElement : address ){
 			if ( addressElement == null ){
-				throw new Exception("Endereço inválido");//"Invalid address");
+				throw new Exception("EndereÃ§o invÃ¡lido");//"Invalid address");
 			}
 		}
 		
@@ -95,7 +95,7 @@ public class User {
 	
 	@Override
 	public int hashCode(){
-		return this.toString().hashCode();
+		return this.login.hashCode();
 	}
 	
 	@Override

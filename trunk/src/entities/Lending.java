@@ -1,5 +1,7 @@
 package entities;
 
+import entities.util.Date;
+
 public class Lending {
 	
 	private User borrower;
@@ -7,12 +9,51 @@ public class Lending {
 	private Item item;
 	private int requiredDays;
 	private boolean returned;
+	private boolean requestedBack;
+	private boolean canceled;
+	private int dayOfRequestion;
+	private int dayOfTheLending;
 
 	public Lending(User borrower, User lender,Item item,int days) {
 		this.borrower = borrower;
 		this.lender = lender;
 		this.item = item;
 		this.requiredDays = days;
+		this.requestedBack = false;
+		this.canceled = false;
+		this.dayOfRequestion = new Date().getCurrentDayOfYear();
+	}
+	
+	public int getDayOfTheLending() {
+		return dayOfTheLending;
+	}
+
+	public void setDayOfTheLending(int dayOfTheLending) {
+		this.dayOfTheLending = dayOfTheLending;
+	}
+
+	public int getDayOfRequestion() {
+		return this.dayOfRequestion;
+	}
+
+	public void setDayOfRequestion(int dayOfRequestion) {
+		this.dayOfRequestion = dayOfRequestion;
+	}
+
+	public boolean isRequestedBack() {
+		return requestedBack;
+	}
+	
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
+	}
+
+	public void setRequestedBack(boolean requestedBack) {
+		this.requestedBack = requestedBack;
 	}
 	public User getBorrower() {
 		return borrower;

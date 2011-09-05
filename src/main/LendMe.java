@@ -3,6 +3,7 @@ package main;
 import java.util.HashSet;
 import java.util.Set;
 
+import entities.Item;
 import entities.Session;
 import entities.User;
 import entities.util.Category;
@@ -19,7 +20,7 @@ public class LendMe {
 	
 	public static void registerUser(String login, String name, String... address) throws Exception{
 		if(!users.add(new User(login, name, address))){
-			throw new Exception("J√° existe um usu√°rio com este login");//"User with this login already exists");
+			throw new Exception("J· existe um usu·rio com este login");//"User with this login already exists");
 		}
 	}
 	
@@ -102,9 +103,9 @@ public class LendMe {
 	public static void sendMessage(String sessionId, String subject, String message, 
 			User sender, User receiver) throws Exception {
 		if (getSessionById(sessionId) == null) {
-			throw new Exception("Sess√£o inexistente");//"Inexistent session");
+			throw new Exception("Sess„o inexistente");//"Inexistent session");
 		}
-		receiver.receiveMessage(subject, message, sender, true);
+		receiver.receiveMessage(subject, message, sender, true, "");
 	}
 	
 	private static Session getSessionById(String id) {
@@ -114,6 +115,23 @@ public class LendMe {
 			}
 		}
 		return null;
+	}
+	
+	public static void sendMessage(String sessionId, String subject, String message, 
+			User sender, User receiver, String lendingId) throws Exception {
+		if (getSessionById(sessionId) == null) {
+			throw new Exception("Sess„o inexistente");//"Inexistent session");
+		}
+		receiver.receiveMessage(subject, message, sender, true, lendingId);
+	}
+	
+	public static void borrowItem(String sessionId, Item item, User borrower, 
+			User lender, int days) throws Exception{
+		if (getSessionById(sessionId) == null) {
+			throw new Exception("Sess„o inexistente");//"Inexistent session");
+		}
+		
+		borrower.borrowItem(item, lender, days);
 	}
 	
 }

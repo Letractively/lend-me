@@ -17,6 +17,7 @@ import entities.util.Message;
 public class LendMeTest {
 	
 	Set<User> users = new HashSet<User>();
+	Item item;
 	
 	@Test public void testRegisterAndSearchUsers() throws Exception{
 		
@@ -76,14 +77,28 @@ public class LendMeTest {
 		
 		LendMe.openSession("tarciso");
 		User tarciso = LendMe.getUserByLogin("tarciso");
-		User manoel = LendMe.getUserByLogin("pedro");
+		User pedro = LendMe.getUserByLogin("pedro");
 		
 		Session actualSession = LendMe.getSessionByUser("tarciso").iterator().next();
 		Message heyDudeMsg = new Message("Communication", "Hey dude, how are you?", tarciso, true);
 		
-		LendMe.sendMessage(actualSession.getId(), "Communication", "Hey dude, how are you?", tarciso, manoel);
+		LendMe.sendMessage(actualSession.getId(), "Communication", "Hey dude, how are you?", tarciso, pedro);
 		
-		Assert.assertTrue(manoel.getTopicMessages("Communication").contains(heyDudeMsg));
+		Assert.assertTrue(pedro.getTopicMessages("Communication").contains(heyDudeMsg));
+		
+		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao",
+				Category.BOOK);
+		
+		LendMe.registerItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao",
+				Category.BOOK, pedro);
+		
+		LendMe.borrowItem(actualSession.getId(), item, tarciso, pedro, 5);
+		
+		Message itemBorrowingMsg = new Message("Empréstimo do item " + item.getName() + " a " + tarciso.getName(),
+				tarciso.getName() + " solicitou o empréstimo do item " + item.getName(), tarciso, false);
+		
+		Assert.assertTrue(pedro.getTopicMessages("Empréstimo do item " + item.getName() +
+				" a " + tarciso.getName()).contains(itemBorrowingMsg));
 	}
 
 }

@@ -97,7 +97,7 @@ public class User {
 	
 	@Override
 	public int hashCode(){
-		return this.toString().hashCode();
+		return this.getLogin().hashCode();
 	}
 	
 	@Override

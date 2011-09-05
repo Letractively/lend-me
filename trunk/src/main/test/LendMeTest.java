@@ -94,10 +94,10 @@ public class LendMeTest {
 		
 		LendMe.borrowItem(actualSession.getId(), item, tarciso, pedro, 5);
 		
-		Message itemBorrowingMsg = new Message("Empréstimo do item " + item.getName() + " a " + tarciso.getName(),
-				tarciso.getName() + " solicitou o empréstimo do item " + item.getName(), tarciso, false);
+		Message itemBorrowingMsg = new Message("Lending of item " + item.getName() + " to " + tarciso.getName(),
+				tarciso.getName() + " wants to borrow item " + item.getName(), tarciso, false);
 		
-		Assert.assertTrue(pedro.getTopicMessages("Empréstimo do item " + item.getName() +
+		Assert.assertTrue(pedro.getTopicMessages("Lending of item " + item.getName() +
 				" a " + tarciso.getName()).contains(itemBorrowingMsg));
 	}
 

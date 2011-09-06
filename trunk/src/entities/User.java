@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,8 +28,8 @@ public class User {
 	private Set<Lending> myBorrowedItems = new HashSet<Lending>();
 	private Set<Topic> negotiationTopics = new HashSet<Topic>();
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
+	private Map<Item, ArrayList<User>> itemsDesired = new HashMap<Item, ArrayList<User>>();
 	
-
 	public User(){}
 	
 	public User(String login, String name, String... address) throws Exception{
@@ -247,6 +248,14 @@ public class User {
 	public void receiveLendedItem(Item item) {
 		for(Lending actual : receivedItemRequests){
 			if(actual.getItem().equals(item) && actual.isReturned()){
+				if(itemsDesired.containsKey(item)){
+					for(User interested : itemsDesired.get(item)){
+						interested.sendMessage("Available Item!", "The " + item.getName() +
+												" of the " + this.getName() +
+												" is available now.", interested);
+					}
+				}
+				
 				this.receivedItemRequests.remove(actual);
 				this.myItems.put(item, this);
 				actual.getBorrower().removeBorrowedItem(item);
@@ -408,6 +417,25 @@ public class User {
 		}
 		
 		return null;
+	}
+
+	public void registerInterestForItem(Item item, User owner) {
+		if(myFriends.contains(owner)){
+			if(owner.hasItem(item)){
+				if(owner.isLent(item)){
+					owner.markAsInterested(item, this);
+				}
+			}
+		}
+	}
+
+	private void markAsInterested(Item item, User interested) {
+		if(itemsDesired.containsKey(item)){
+			itemsDesired.get(item).add(interested);
+		}else{
+			itemsDesired.put(item, new ArrayList<User>());
+			itemsDesired.get(item).add(interested);
+		}
 	}
 	
 }

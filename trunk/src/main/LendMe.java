@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import entities.Item;
+import entities.Profile;
 import entities.Session;
 import entities.User;
 import entities.util.Category;
@@ -115,7 +116,7 @@ public class LendMe {
 		return session.getId();
 	}
 
-	public static Set<Session> getSessionByUser(String login) {
+	public static Set<Session> searchSessionsByLogin(String login) {
 		Set<Session> results = new HashSet<Session>();
 		for(Session actualSession : sessions){
 			if(actualSession.getLogin().equals(login)){
@@ -196,6 +197,22 @@ public class LendMe {
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}
 		
+		Item referredItem = getItemByID(itemId);
+		
+		if(attribute.equals("nome")){
+			return referredItem.getName();
+		}else if (attribute.equals("descricao")){
+			return referredItem.getDescription();
+		}
+		else{
+			String formattedCategory = referredItem.getCategory().toString();
+			return formattedCategory.substring(0, 1).toUpperCase() 
+			+ formattedCategory.substring(1).toLowerCase();
+		}
+		
+	}
+
+	private static Item getItemByID(String itemId) throws Exception {
 		Item referredItem = null;
 		
 		for ( User user : users ){
@@ -213,18 +230,24 @@ public class LendMe {
 		if ( referredItem == null ){
 			throw new Exception("Item inexistente");//"Inexistent item");
 		}
-		
-		if(attribute.equals("nome")){
-			return referredItem.getName();
-		}else if (attribute.equals("descricao")){
-			return referredItem.getDescription();
+		return referredItem;
+	}
+	
+	public static Profile getUserProfile(String sessionId) throws Exception{
+		for ( Session session : sessions ){
+			if ( session.idMatches(sessionId) ){
+				User user = getUserByLogin(session.getLogin());
+				if ( user == null ){
+					throw new Exception("Sessão se refere a usuário desconhecido");//"Session belongs to unknown user");
+				}
+				return Profile.getUserProfile(session, user);
+			}
 		}
-		else{
-			String formattedCategory = referredItem.getCategory().toString();
-			return formattedCategory.substring(0, 1).toUpperCase() 
-			+ formattedCategory.substring(1).toLowerCase();
-		}
-		
+		throw new Exception("Sessão inexistente");//"Inexistent session");
+	}
+	
+	public static void closeSession(String id) throws Exception{
+		sessions.remove(getSessionById(id));
 	}
 
 	public static void requestFriendShip(String idSessao, String login) throws Exception{

@@ -6,6 +6,7 @@ import java.util.Set;
 import junit.framework.Assert;
 import main.LendMe;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import entities.Item;
@@ -18,6 +19,10 @@ public class LendMeTest {
 	
 	Set<User> users = new HashSet<User>();
 	Item item;
+	
+	@Before public void setUp() throws Exception{
+		LendMe.resetSystem();
+	}
 	
 	@Test public void testRegisterAndSearchUsers() throws Exception{
 		
@@ -60,10 +65,11 @@ public class LendMeTest {
 		LendMe.openSession("pedrorml");
 		LendMe.openSession("pedrorml");
 		
-		for ( Session session : LendMe.getSessionByUser("pedrorml") ){
+		for ( Session session : LendMe.searchSessionsByLogin("pedrorml") ){
 			Assert.assertTrue((new Session("pedrorml")).hasSameUser(session));
 			Assert.assertFalse((new Session("pedrorml")).getId() == session.getId());
 		}
 		
 	}
+
 }

@@ -223,4 +223,32 @@ public class UserTest {
 		Assert.assertTrue(manoel.getRequestedBackItems().equals(requestedBackItems));
 	}
 	
+	@Test
+	public void testRemoveFriend() throws Exception{
+		
+		manoel.requestFriendship(pedro);
+		pedro.acceptFriendshipRequest(manoel);
+		
+		manoel.addItem("Matrix Revolution", "Excelent Movie", Category.FILME);
+		
+		Assert.assertTrue(manoel.hasFriend(pedro));
+		
+		pedro.borrowItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME), manoel, 15);
+		
+		Assert.assertTrue(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
+		
+		manoel.removeFriend(pedro);
+		
+		Assert.assertFalse(manoel.hasFriend(pedro));
+		Assert.assertFalse(pedro.hasFriend(manoel));
+		Assert.assertFalse(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
+		
+		manoel.requestFriendship(pedro);
+		pedro.acceptFriendshipRequest(manoel);
+		
+		Assert.assertTrue(manoel.hasFriend(pedro));
+	}
+	
+	
+	
 }

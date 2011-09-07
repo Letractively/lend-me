@@ -1,13 +1,17 @@
 package entities;
 
 import entities.util.Category;
+import entities.util.EventDate;
 
-public class Item implements Identifiable{
+public class Item implements Identifiable, Comparable<Item>{
 	
 	private String name;
 	private String description;
 	private Category category;
 	private String id;
+	private EventDate dateOfCreation;
+	
+	
 	
 	public Item() {}
 	
@@ -28,6 +32,15 @@ public class Item implements Identifiable{
 		this.description = description;
 		this.category = category;
 		this.id = Integer.toString(((Object) this).hashCode());
+		this.dateOfCreation = new EventDate();
+	}
+	
+	public EventDate getDateOfCreation() {
+		return dateOfCreation;
+	}
+
+	public void setDateOfCreation(EventDate dateOfCreation) {
+		this.dateOfCreation = dateOfCreation;
 	}
 
 	public void setName(String name) {
@@ -85,5 +98,12 @@ public class Item implements Identifiable{
 	public String getID() {
 		return id;
 	}
-	
+
+	@Override
+	public int compareTo(Item o) {
+		if(this.dateOfCreation.getDate().after(o.getDateOfCreation().getDate())){
+			return 1;
+		}
+		return 0;
+	}
 }

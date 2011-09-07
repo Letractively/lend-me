@@ -20,6 +20,9 @@ public class UserTest {
 	User tarciso;
 	User pedro;
 	Item item;
+	Item item1;
+	Item item2;
+	Item item3;
 	
 	@Before
 	public void setUP() throws Exception {
@@ -31,6 +34,10 @@ public class UserTest {
 		pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58408293");
 		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		item1 = new Item("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", Category.JOGO);
+		item2 = new Item("Anotacoes de Linear com gefferson", "Maravilhoso plagio do livro de linear", Category.LIVRO);
+		item3 = new Item("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", Category.FILME);
+					
 	}
 	
 	@Test public void testLogin() {
@@ -224,31 +231,42 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testRemoveFriend() throws Exception{
+	public void testRegistInteresting() throws Exception{
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
 		
-		manoel.requestFriendship(pedro);
-		pedro.acceptFriendshipRequest(manoel);
+		manoel.requestFriendship(tarciso);
 		
-		manoel.addItem("Matrix Revolution", "Excelent Movie", Category.FILME);
+		tarciso.acceptFriendshipRequest(manoel);
 		
-		Assert.assertTrue(manoel.hasFriend(pedro));
+		manoel.borrowItem(item, tarciso,10);
 		
-		pedro.borrowItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME), manoel, 15);
+		tarciso.lendItem(item, manoel,10);
 		
-		Assert.assertTrue(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
+		Assert.assertTrue(manoel.hasBorrowedItem(item));
 		
-		manoel.removeFriend(pedro);
+		pedro.registerInterestForItem(item, tarciso);
 		
-		Assert.assertFalse(manoel.hasFriend(pedro));
-		Assert.assertFalse(pedro.hasFriend(manoel));
-		Assert.assertFalse(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
-		
-		manoel.requestFriendship(pedro);
-		pedro.acceptFriendshipRequest(manoel);
-		
-		Assert.assertTrue(manoel.hasFriend(pedro));
+		tarciso.isMarkedAsInterested(item);
 	}
 	
-	
+	@Test
+	public void testSearchItem() throws Exception{
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		pedro.addItem("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", Category.JOGO);
+		pedro.addItem("Anotacoes de Linear com gefferson", "Maravilhoso plagio do livro de linear", Category.LIVRO);
+		manoel.addItem("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", Category.FILME);
+		
+		tarciso.requestFriendship(manoel);
+		tarciso.requestFriendship(pedro);
+		pedro.requestFriendship(manoel);
+		
+		manoel.acceptFriendshipRequest(tarciso);
+		manoel.acceptFriendshipRequest(pedro);
+		pedro.acceptFriendshipRequest(tarciso);
+		
+		manoel.searchFromOldestToNewest("Maravilhoso");
+		//manoel.searchFromNewestToOldest("Maravilhoso");
+		
+	}
 	
 }

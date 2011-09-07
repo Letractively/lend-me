@@ -1,6 +1,7 @@
 package entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.Set;
 import entities.util.Address;
 import entities.util.Category;
 import entities.util.EntitiesConstants;
-import entities.util.Date;
 import entities.util.Message;
 import entities.util.Topic;
 
@@ -182,7 +182,7 @@ public class User {
 	}
 
 	private void requestItem(Lending requestLending) {
-		requestLending.setDayOfRequestion(new Date().getCurrentDayOfYear());
+		requestLending.setDayOfRequestion(new Date().getDay());
 		receivedItemRequests.add(requestLending);
 	}
 
@@ -193,7 +193,7 @@ public class User {
 				myItems.put(item, borrower);
 				
 				Lending lending = new Lending(borrower, this, item, days);
-				lending.setDayOfTheLending(new Date().getCurrentDayOfYear());
+				lending.setDayOfTheLending(new Date().getDay());
 				
 				if (receivedItemRequests.contains(lending)) {
 					borrower.addRequestedItem(item, this, days);
@@ -204,7 +204,7 @@ public class User {
 
 	private void addRequestedItem(Item item, User lender, int days) {
 		Lending lending = new Lending(this, lender, item, days);
-		lending.setDayOfTheLending(new Date().getCurrentDayOfYear());
+		lending.setDayOfTheLending(new Date().getDay());
 		myBorrowedItems.add(lending);
 	}
 	
@@ -341,7 +341,7 @@ public class User {
 			if(actual.getItem().equals(item)){
 				actual.getBorrower().setRequestedBack(item);
 				
-				if(new Date().getCurrentDayOfYear() < actual.getDayOfTheLending() + actual.getRequiredDays()){
+				if(new Date().getDay() < actual.getDayOfTheLending() + actual.getRequiredDays()){
 					actual.setCanceled(true);
 				}
 				
@@ -356,7 +356,7 @@ public class User {
 			if(actual.getItem().equals(item)){
 				actual.setRequestedBack(true);
 
-				if(new Date().getCurrentDayOfYear() < actual.getDayOfTheLending() + actual.getRequiredDays()){
+				if(new Date().getDay() < actual.getDayOfTheLending() + actual.getRequiredDays()){
 					actual.setCanceled(true);
 				}
 			}

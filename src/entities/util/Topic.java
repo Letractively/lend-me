@@ -1,5 +1,6 @@
 package entities.util;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,16 +12,19 @@ public class Topic implements Identifiable {
 	private String subject;
 	private Set<Message> messages = new HashSet<Message>();
 	private String id;
+	private EventDate creationDate;
 	
 	public Topic(String subject) {
 		this.subject = subject;
 		this.id = Integer.toString(((Object) this).hashCode());
+		this.creationDate = new EventDate();
 	}
 
 	public Topic(String subject, Set<Message> messages) {
 		this.subject = subject;
 		this.messages = messages;
 		this.id = Integer.toString(((Object) this).hashCode());
+		this.creationDate = new EventDate();
 		
 	}
 
@@ -45,6 +49,10 @@ public class Topic implements Identifiable {
 	@Override
 	public String getID() {
 		return id;
+	}
+	
+	public Date getDate() {
+		return this.creationDate.getDate();
 	}
 	
 }

@@ -7,7 +7,7 @@ import java.util.Set;
 import entities.Identifiable;
 import entities.User;
 
-public class Topic implements Identifiable {
+public class Topic implements Identifiable, Comparable<Topic> {
 	
 	private String subject;
 	private Set<Message> messages = new HashSet<Message>();
@@ -16,15 +16,15 @@ public class Topic implements Identifiable {
 	
 	public Topic(String subject) {
 		this.subject = subject;
-		this.id = Integer.toString(((Object) this).hashCode());
 		this.creationDate = new EventDate();
+		this.id = Integer.toString(((Object) this).hashCode());
 	}
 
 	public Topic(String subject, Set<Message> messages) {
 		this.subject = subject;
 		this.messages = messages;
-		this.id = Integer.toString(((Object) this).hashCode());
 		this.creationDate = new EventDate();
+		this.id = Integer.toString(((Object) this).hashCode());
 		
 	}
 
@@ -53,6 +53,33 @@ public class Topic implements Identifiable {
 	
 	public Date getDate() {
 		return this.creationDate.getDate();
+	}
+
+	@Override
+	public int compareTo(Topic otherTopic) {
+		return this.getDate().before(otherTopic.getDate())? -1 : 1;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder topicSb = new StringBuilder();
+		
+		topicSb.append(this.subject);
+		topicSb.append(this.messages);
+		return topicSb.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.toString().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (! (obj instanceof Topic)) {
+			return false;
+		}
+		return this.hashCode() == ((Topic)obj).hashCode();
 	}
 	
 }

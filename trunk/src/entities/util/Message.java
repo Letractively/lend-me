@@ -1,5 +1,7 @@
 package entities.util;
 
+import java.util.Date;
+
 import entities.User;
 
 public class Message {
@@ -9,6 +11,7 @@ public class Message {
 	private User sender;
 	private boolean isOffTopic;
 	private String lendingId;
+	private EventDate sending;
 	
 	
 	public Message(String subject, String message, User sender,
@@ -18,6 +21,7 @@ public class Message {
 		this.sender = sender;
 		this.isOffTopic = isOfftopic;
 		this.lendingId = "";
+		this.sending = new EventDate();
 	}
 
 
@@ -28,6 +32,7 @@ public class Message {
 		this.sender = sender;
 		this.isOffTopic = isOffTopic;
 		this.lendingId = lendingId;
+		this.sending = new EventDate();
 	}
 
 
@@ -96,6 +101,10 @@ public class Message {
 				&& this.getMessage().equals(otherMsg.getMessage()) 
 				&& this.getSender().equals(otherMsg.getSender())
 				&& this.isOffTopic() == otherMsg.isOffTopic();
+	}
+	
+	public Date getDate() {
+		return this.sending.getDate();
 	}
 	
 }

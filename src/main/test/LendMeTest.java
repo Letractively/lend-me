@@ -66,39 +66,4 @@ public class LendMeTest {
 		}
 		
 	}
-	
-	@Test public void testMessageTrafic() throws Exception {
-		
-		LendMe.registerUser("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
-				"Campina Grande", "Paraiba", "Brasil", "58308293");
-		
-		LendMe.registerUser("pedro", "Pedro Limeira", "Rua das caixas", "29", "Monte Santo",
-				"Campina Grande", "Paraiba", "Brasil", "58308293");
-		
-		LendMe.openSession("tarciso");
-		User tarciso = LendMe.getUserByLogin("tarciso");
-		User pedro = LendMe.getUserByLogin("pedro");
-		
-		Session actualSession = LendMe.getSessionByUser("tarciso").iterator().next();
-		Message heyDudeMsg = new Message("Communication", "Hey dude, how are you?", tarciso, true);
-		
-		LendMe.sendMessage(actualSession.getId(), "Communication", "Hey dude, how are you?", tarciso, pedro);
-		
-		Assert.assertTrue(pedro.getTopicMessages("Communication").contains(heyDudeMsg));
-		
-		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao",
-				Category.LIVRO);
-		
-		LendMe.registerItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao",
-				Category.LIVRO, pedro);
-		
-		LendMe.borrowItem(actualSession.getId(), item, tarciso, pedro, 5);
-		
-		Message itemBorrowingMsg = new Message("Lending of item " + item.getName() + " to " + tarciso.getName(),
-				tarciso.getName() + " wants to borrow item " + item.getName(), tarciso, false);
-		
-		Assert.assertTrue(pedro.getTopicMessages("Lending of item " + item.getName() +
-				" to " + tarciso.getName()).contains(itemBorrowingMsg));
-	}
-
 }

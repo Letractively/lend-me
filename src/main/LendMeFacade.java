@@ -28,4 +28,8 @@ public class LendMeFacade {
 		return LendMe.registerItem(idSessao, nome, descricao, categoria);
 	}
 	
+	public String getAtributoItem(String idItem, String atributo) throws Exception{
+		return LendMe.getItemAttribute(idItem, atributo);
+	}
+	
 }

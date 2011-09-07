@@ -1,6 +1,7 @@
 package entities;
 
-import entities.util.Date;
+import java.util.Date;
+
 
 public class Lending implements Identifiable {
 	
@@ -22,7 +23,7 @@ public class Lending implements Identifiable {
 		this.requiredDays = days;
 		this.requestedBack = false;
 		this.canceled = false;
-		this.dayOfRequestion = new Date().getCurrentDayOfYear();
+		this.dayOfRequestion = new Date().getDay();
 		this.id = Integer.toString(((Object) this).hashCode());
 	}
 	

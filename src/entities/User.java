@@ -160,6 +160,7 @@ public class User {
 		}
 	}
 	
+		
 	public boolean hasFriend(User otherUser) {
 		return this.myFriends.contains(otherUser);
 	}
@@ -181,12 +182,14 @@ public class User {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void requestItem(Lending requestLending) {
 		requestLending.setDayOfRequestion(new Date().getDay());
 		receivedItemRequests.add(requestLending);
 	}
 
 
+	@SuppressWarnings("deprecation")
 	public void lendItem(Item item, User borrower, int days) {
 		if (myItems.containsKey(item)) {
 			if (! this.isLent(item)) {
@@ -202,6 +205,7 @@ public class User {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void addRequestedItem(Item item, User lender, int days) {
 		Lending lending = new Lending(this, lender, item, days);
 		lending.setDayOfTheLending(new Date().getDay());
@@ -336,6 +340,7 @@ public class User {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void returnRequest(Item item) {
 		for(Lending actual : receivedItemRequests){
 			if(actual.getItem().equals(item)){
@@ -351,6 +356,7 @@ public class User {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setRequestedBack(Item item) {
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
@@ -444,4 +450,31 @@ public class User {
 		return toBeReturned.keySet();
 	}
 
+	public boolean isRequestItem(Item item){
+		
+		for(Lending actualLending: receivedItemRequests){
+			if(actualLending.getItem().equals(item))
+				return true;
+		}
+		return false;
+	}
+	
+	public void forceRemoveFriend(User user){
+		
+		this.myFriends.remove(user);
+		
+		for(Lending actualLending : this.receivedItemRequests){
+			if(actualLending.getBorrower().equals(user))
+				receivedItemRequests.remove(actualLending);			
+		}
+	}
+		
+	public void removeFriend(User user) {
+		
+		this.forceRemoveFriend(user);
+		user.forceRemoveFriend(this);		
+		
+	}
+	
+	
 }

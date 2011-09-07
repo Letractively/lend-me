@@ -38,13 +38,13 @@ public class ItemTest {
 	
 	@Test public void testCategory(){
 		
-		item.setCategory(Category.MOVIE);
+		item.setCategory(Category.FILME);
 		
-		Assert.assertEquals(Category.MOVIE, item.getCategory());
+		Assert.assertEquals(Category.FILME, item.getCategory());
 		
-		item.setCategory(Category.GAME);
+		item.setCategory(Category.JOGO);
 		
-		Assert.assertEquals(Category.GAME, item.getCategory());
+		Assert.assertEquals(Category.JOGO, item.getCategory());
 		
 	}
 	

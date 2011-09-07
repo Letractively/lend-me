@@ -2,6 +2,6 @@ package entities.util;
 
 public enum Category {
 	
-	MOVIE,BOOK,GAME;
+	FILME,LIVRO,JOGO;////MOVIE,BOOK,GAME;
 
 }

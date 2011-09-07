@@ -1,7 +1,5 @@
 package main;
 
-import java.util.Set;
-
 import entities.User;
 
 
@@ -52,8 +50,21 @@ public class LendMeFacade {
 		return LendMe.isFriend(idSessao, login);
 	}
 	
-	public Set<User> getAmigos(String idSessao) throws Exception{
-		return LendMe.getFriends(idSessao);
+	public String getAmigos(String idSessao){
+		
+		String saida = "";
+		
+		try {
+			
+			for(User actUser : LendMe.getFriends(idSessao)){
+				saida += actUser.getLogin()+"; ";
+			}
+			saida = saida.substring(0, saida.length() - 2);
+			return saida;
+			
+		} catch (Exception e) {
+			return "O usuário não possui amigos";
+		}
 	}
 	
 	public String getAmigos(String idSessao, String login){
@@ -67,6 +78,7 @@ public class LendMeFacade {
 				for(User actUser : LendMe.getFriends(idSessao, login)){
 					saida += actUser.getLogin()+"; ";
 				}
+				saida = saida.substring(0, saida.length() - 2);
 				return saida;
 				
 			} catch (Exception e) {

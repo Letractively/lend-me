@@ -437,5 +437,11 @@ public class User {
 			itemsDesired.get(item).add(interested);
 		}
 	}
-	
+
+	public Set<Item> getAllItems() {
+		Map<Item, User> toBeReturned = new HashMap<Item, User>();
+		toBeReturned.putAll(myItems);
+		return toBeReturned.keySet();
+	}
+
 }

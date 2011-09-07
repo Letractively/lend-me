@@ -131,14 +131,14 @@ public class LendMe {
 	
 	private static Session getSessionById(String id) throws Exception{
 		if ( id == null || id.trim().isEmpty() ){
-			throw new Exception("Sessao inválida");//"Invalid session");
+			throw new Exception("Sessão inválida");//"Invalid session");
 		}
 		for(Session actualSession : sessions){
 			if (actualSession.getId().equals(id)) {
 				return actualSession;
 			}
 		}
-		throw new Exception("Sessao inexistente");//"Inexistent session");
+		throw new Exception("Sessão inexistente");//"Inexistent session");
 	}
 	
 	public static void sendMessage(String sessionId, String subject, String message, 
@@ -178,6 +178,49 @@ public class LendMe {
 		}else{
 			return user.getAddress().toString();
 		}
+	}
+
+	public static String getItemAttribute(String itemId, String attribute) throws Exception{
+		
+		if ( attribute == null || attribute.trim().isEmpty() ){
+			throw new Exception("Atributo inválido");//"Invalid attribute");
+		}
+		if (!(attribute.equals("nome") || attribute.equals("descricao") || attribute.equals("categoria"))){
+			throw new Exception("Atributo inexistente");//"Inexistent attribute");
+		}
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
+		}
+		
+		Item referredItem = null;
+		
+		for ( User user : users ){
+			for ( Item item : user.getAllItems() ){
+				if ( item.getID().equals(itemId) ){
+					referredItem = item;
+					break;
+				}
+			}
+			if ( referredItem != null ){
+				break;
+			}
+		}
+		
+		if ( referredItem == null ){
+			throw new Exception("Item inexistente");//"Inexistent item");
+		}
+		
+		if(attribute.equals("nome")){
+			return referredItem.getName();
+		}else if (attribute.equals("descricao")){
+			return referredItem.getDescription();
+		}
+		else{
+			String formattedCategory = referredItem.getCategory().toString();
+			return formattedCategory.substring(0, 1).toUpperCase() 
+			+ formattedCategory.substring(1).toLowerCase();
+		}
+		
 	}
 	
 }

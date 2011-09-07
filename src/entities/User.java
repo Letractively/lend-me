@@ -160,7 +160,6 @@ public class User {
 			sentFriendshipRequests.remove(otherUser);
 		}
 	}
-	
 		
 	public boolean hasFriend(User otherUser) {
 		return this.myFriends.contains(otherUser);
@@ -176,9 +175,9 @@ public class User {
 				Lending requestLending = new Lending(this, lender, item, days);
 				lender.requestItem(requestLending);
 				
-				sendMessage("Lending of item " + item.getName() + " to " +
-				this.getName(), this.getName() + " wants to borrow item " +
-				item.getName(), lender, requestLending.getID());
+				sendMessage("Emprestimo do item " + item.getName() + " a " +
+				this.getName(), this.getName() + " solicitou o emprestimo do item " +
+				item.getName(), lender, requestLending.getID());//"Lending of item %s to %s, %s wants to borrow item");
 			}                                               
 		}
 	}
@@ -190,7 +189,6 @@ public class User {
 	}
 
 
-	@SuppressWarnings("deprecation")
 	public void lendItem(Item item, User borrower, int days) {
 		if (myItems.containsKey(item)) {
 			if (! this.isLent(item)) {
@@ -463,11 +461,10 @@ public class User {
 		return toBeReturned.keySet();
 	}
 	
-	public Set<User> getFriends() throws Exception{
-		if(this.myFriends.isEmpty()){
-			throw new Exception("O usuário não possui amigos");
-		}
-		return this.myFriends;
+	public Set<User> getFriends() {
+		Set<User> toBeReturned = new HashSet<User>();
+		toBeReturned.addAll(myFriends);
+		return toBeReturned;
 	}
 
 	public boolean isRequestItem(Item item){

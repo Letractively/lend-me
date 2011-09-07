@@ -1,13 +1,12 @@
 package entities;
 
+import entities.util.EntitiesConstants;
 import entities.util.EventDate;
 
 public class Session {
 
 	private String login;
 	private String id;
-	private final String SESSION_STARTED_MESSAGE = "User %s logged in with session %s at %s.";
-	private final String SESSION_FINISHED_MESSAGE = "User %s logged out with session %s at %s.";
 	private EventDate startedAt;
 	private EventDate finishedAt;
 	
@@ -17,7 +16,7 @@ public class Session {
 		}
 		this.login = login;
 		this.id = Integer.toString(((Object) this).hashCode());
-		this.startedAt = new EventDate(String.format(SESSION_STARTED_MESSAGE, login, id, startedAt));
+		this.startedAt = new EventDate(String.format(EntitiesConstants.SESSION_STARTED_MESSAGE, login, id, startedAt));
 		this.finishedAt = null;
 	}
 
@@ -39,12 +38,16 @@ public class Session {
 			   ((Session) obj).getId().equals(this.id);	
 	}
 	
+	public boolean idMatches(String id){
+		return this.getId().equals(id);
+	}
+	
 	public boolean hasSameUser(Session otherSession){
 		return this.login.equals(otherSession.getLogin());
 	}
 	
 	public void finishSession(){
-		this.finishedAt = new EventDate(String.format(SESSION_FINISHED_MESSAGE, login, id, finishedAt));
+		this.finishedAt = new EventDate(String.format(EntitiesConstants.SESSION_FINISHED_MESSAGE, login, id, finishedAt));
 	}
 	
 	public EventDate startedAt(){

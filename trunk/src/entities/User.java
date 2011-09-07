@@ -161,6 +161,7 @@ public class User {
 		}
 	}
 	
+		
 	public boolean hasFriend(User otherUser) {
 		return this.myFriends.contains(otherUser);
 	}
@@ -175,8 +176,8 @@ public class User {
 				Lending requestLending = new Lending(this, lender, item, days);
 				lender.requestItem(requestLending);
 				
-				sendMessage("Emprestimo do item " + item.getName() + " a " +
-				this.getName(), this.getName() + " solicitou o emprestimo do item " +
+				sendMessage("Lending of item " + item.getName() + " to " +
+				this.getName(), this.getName() + " wants to borrow item " +
 				item.getName(), lender, requestLending.getID());
 			}                                               
 		}
@@ -461,6 +462,14 @@ public class User {
 		toBeReturned.putAll(myItems);
 		return toBeReturned.keySet();
 	}
+	
+	public Set<User> getFriends() throws Exception{
+		if(this.myFriends.isEmpty()){
+			throw new Exception("O usuário não possui amigos");
+		}
+		return this.myFriends;
+	}
+
 	public boolean isRequestItem(Item item){
 		
 		for(Lending actualLending: receivedItemRequests){

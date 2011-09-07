@@ -39,4 +39,13 @@ public class EventDate {
 		this.eventDescription = eventDescription;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder eventDateSb = new StringBuilder();
+		eventDateSb.append(this.eventDescription);
+		eventDateSb.append(this.date);
+		
+		return eventDateSb.toString();
+	}
+	
 }

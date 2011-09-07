@@ -1,6 +1,8 @@
 package entities.test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -11,6 +13,9 @@ import org.junit.Test;
 import entities.Item;
 import entities.User;
 import entities.util.Category;
+import entities.util.EntitiesConstants;
+import entities.util.Message;
+import entities.util.Topic;
 
 
 public class UserTest {
@@ -20,9 +25,6 @@ public class UserTest {
 	User tarciso;
 	User pedro;
 	Item item;
-	Item item1;
-	Item item2;
-	Item item3;
 	
 	@Before
 	public void setUP() throws Exception {
@@ -34,10 +36,6 @@ public class UserTest {
 		pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58408293");
 		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
-		item1 = new Item("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", Category.JOGO);
-		item2 = new Item("Anotacoes de Linear com gefferson", "Maravilhoso plagio do livro de linear", Category.LIVRO);
-		item3 = new Item("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", Category.FILME);
-					
 	}
 	
 	@Test public void testLogin() {
@@ -231,42 +229,79 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testRegistInteresting() throws Exception{
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+	public void testGetMessagesAndTopics() throws Exception {
 		
-		manoel.requestFriendship(tarciso);
+		Message heyDudeMsg = new Message("Communication", "Hey dude, how are you?", tarciso, true);
+		Message itemBorrowingMsg = new Message("Emprestimo do item " + item.getName() + " a " + tarciso.getName(),
+				tarciso.getName() + " solicitou o emprestimo do item " + item.getName(), tarciso, false);
 		
-		tarciso.acceptFriendshipRequest(manoel);
 		
-		manoel.borrowItem(item, tarciso,10);
+		tarciso.sendMessage("Communication", "Hey dude, how are you?", pedro);
 		
-		tarciso.lendItem(item, manoel,10);
+		Assert.assertTrue(pedro.getTopicMessages("Communication").contains(heyDudeMsg));
 		
-		Assert.assertTrue(manoel.hasBorrowedItem(item));
+		pedro.addItem(item.getName(), item.getDescription(), item.getCategory());
 		
-		pedro.registerInterestForItem(item, tarciso);
+		tarciso.borrowItem(item, pedro, 5);
 		
-		tarciso.isMarkedAsInterested(item);
+		Assert.assertTrue(pedro.getTopicMessages("Emprestimo do item " + item.getName() +
+				" a " + tarciso.getName()).contains(itemBorrowingMsg));
+		
+		List<Topic> topicsList = new ArrayList<Topic>();
+		
+		Set<Message> msgSet = new HashSet<Message>();
+		msgSet.add(itemBorrowingMsg);
+		topicsList.add(new Topic(itemBorrowingMsg.getSubject(), msgSet));
+		
+		
+		Assert.assertTrue(pedro.getTopics(EntitiesConstants.NEGOTIATION_TOPIC).equals(topicsList));
+		
+		Set<Message> msgOffSet = new HashSet<Message>();
+		msgOffSet.add(heyDudeMsg);
+		topicsList.add(new Topic("Communication", msgOffSet));
+
+		Assert.assertTrue(pedro.getTopics(EntitiesConstants.ALL_TOPICS).equals(topicsList));
+		
+		topicsList.remove(new Topic(itemBorrowingMsg.getSubject(), msgSet));
+
+		Assert.assertTrue(pedro.getTopics(EntitiesConstants.OFF_TOPIC).equals(topicsList));
+		
+		try {
+			pedro.getTopics("");
+			Assert.fail("Deveria ter lancado excecao de tipo de topico invalido.");
+		} catch (Exception e){
+			Assert.assertEquals("Voce deve escolher um tipo de topico", e.getMessage());
+		}
 	}
 	
+	
+	
 	@Test
-	public void testSearchItem() throws Exception{
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
-		pedro.addItem("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", Category.JOGO);
-		pedro.addItem("Anotacoes de Linear com gefferson", "Maravilhoso plagio do livro de linear", Category.LIVRO);
-		manoel.addItem("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", Category.FILME);
+	public void testRemoveFriend() throws Exception{
 		
-		tarciso.requestFriendship(manoel);
-		tarciso.requestFriendship(pedro);
-		pedro.requestFriendship(manoel);
+		manoel.requestFriendship(pedro);
+		pedro.acceptFriendshipRequest(manoel);
 		
-		manoel.acceptFriendshipRequest(tarciso);
-		manoel.acceptFriendshipRequest(pedro);
-		pedro.acceptFriendshipRequest(tarciso);
+		manoel.addItem("Matrix Revolution", "Excelent Movie", Category.FILME);
 		
-		manoel.searchFromOldestToNewest("Maravilhoso");
-		//manoel.searchFromNewestToOldest("Maravilhoso");
+		Assert.assertTrue(manoel.hasFriend(pedro));
 		
+		pedro.borrowItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME), manoel, 15);
+		
+		Assert.assertTrue(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
+		
+		manoel.removeFriend(pedro);
+		
+		Assert.assertFalse(manoel.hasFriend(pedro));
+		Assert.assertFalse(pedro.hasFriend(manoel));
+		Assert.assertFalse(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
+		
+		manoel.requestFriendship(pedro);
+		pedro.acceptFriendshipRequest(manoel);
+		
+		Assert.assertTrue(manoel.hasFriend(pedro));
 	}
+	
+	
 	
 }

@@ -43,9 +43,9 @@ public class LendMeTest {
 		
 		User user = new User();
 		
-		LendMe.registerItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK, user);
+		LendMe.registerItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO, user);
 		
-		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
+		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO);
 		
 		Assert.assertTrue(user.hasItem(item));
 		
@@ -87,10 +87,10 @@ public class LendMeTest {
 		Assert.assertTrue(pedro.getTopicMessages("Communication").contains(heyDudeMsg));
 		
 		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao",
-				Category.BOOK);
+				Category.LIVRO);
 		
 		LendMe.registerItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao",
-				Category.BOOK, pedro);
+				Category.LIVRO, pedro);
 		
 		LendMe.borrowItem(actualSession.getId(), item, tarciso, pedro, 5);
 		

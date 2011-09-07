@@ -56,7 +56,7 @@ public class LendMe {
 		}
 		Category chosenCategory;
 		try {
-			chosenCategory = Category.valueOf(category);
+			chosenCategory = Category.valueOf(category.toUpperCase());
 		}
 		catch (IllegalArgumentException e) {
 			throw new Exception("Categoria inexistente");//"Inexistent category");

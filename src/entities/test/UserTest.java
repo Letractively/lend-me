@@ -30,7 +30,7 @@ public class UserTest {
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
 		pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58408293");
-		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
 	}
 	
 	@Test public void testLogin() {
@@ -83,13 +83,13 @@ public class UserTest {
 	
 	@Test public void testAddItem() throws Exception{
 		
-		user.addItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
-		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.BOOK);
+		user.addItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO);
+		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO);
 		
 		Assert.assertTrue(user.hasItem(item));
 		
-		user.addItem("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", Category.MOVIE);
-		Item item2 = new Item("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", Category.MOVIE);
+		user.addItem("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", Category.FILME);
+		Item item2 = new Item("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", Category.FILME);
 		
 		Assert.assertTrue(user.hasItem(item));
 		Assert.assertTrue(user.hasItem(item2));
@@ -133,7 +133,7 @@ public class UserTest {
 	@Test
 	public void testLendItem() throws Exception {
 		
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
 		
 		manoel.requestFriendship(tarciso);
 		
@@ -150,7 +150,7 @@ public class UserTest {
 	@Test
     public void testReturnItem() throws Exception{
 
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
 		
 		manoel.requestFriendship(tarciso);
 		
@@ -172,7 +172,7 @@ public class UserTest {
 	
 	@Test
 	public void testReturnRequest() throws Exception{
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
 		
 		manoel.requestFriendship(tarciso);
 		
@@ -202,7 +202,7 @@ public class UserTest {
 		
 		requestedBackItems.add(item);
 		
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.BOOK);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
 		
 		manoel.requestFriendship(tarciso);
 		

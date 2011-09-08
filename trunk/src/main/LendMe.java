@@ -134,7 +134,7 @@ public class LendMe {
 		receiver.receiveMessage(subject, message, sender, true, "");
 	}
 	
-	private static Session getSessionById(String id) throws Exception{
+	public static Session getSessionById(String id) throws Exception{
 		if ( id == null || id.trim().isEmpty() ){
 			throw new Exception("Sessão inválida");//"Invalid session");
 		}
@@ -233,24 +233,20 @@ public class LendMe {
 		return referredItem;
 	}
 	
-	public static Profile getUserProfile(String sessionId) throws Exception{
-		for ( Session session : sessions ){
-			if ( session.idMatches(sessionId) ){
-				User user = getUserByLogin(session.getLogin());
-				if ( user == null ){
-					throw new Exception("Sessão se refere a usuário desconhecido");//"Session belongs to unknown user");
-				}
-				return Profile.getUserProfile(session, user);
-			}
+	public static Profile getUserProfile(String sessionId) throws Exception {
+		Session session = getSessionById(sessionId);
+		User user = getUserByLogin(session.getLogin());
+		if (user == null) {
+			throw new Exception("Sessão se refere a usuário desconhecido");// "Session belongs to unknown user");
 		}
-		throw new Exception("Sessão inexistente");//"Inexistent session");
+		return Profile.getUserProfile(session, user);
 	}
 	
 	public static void closeSession(String id) throws Exception{
 		sessions.remove(getSessionById(id));
 	}
 
-	public static void requestFriendship(String idSessao, String login) throws Exception{
+	public static void requestFriendShip(String idSessao, String login) throws Exception{
 		
 		User userApplicant = null;
 		User userRequired  = null;
@@ -317,7 +313,7 @@ public class LendMe {
 			}
 		}
 		
-		LendMe.removeFriend(userApplicant, userRequired);
+		LendMe.removeFriend(userRequired, userApplicant);
 		
 	}
 
@@ -360,7 +356,21 @@ public class LendMe {
 
 	public static Set<User> getFriends(String idSessao, String login) throws Exception{
 		
-		return LendMe.getUserByLogin(login).getFriends();
+		for(Session actualSession : sessions){
+			if(actualSession.getId().equals(idSessao)){
+				for(User actualUser : users){
+					if(actualUser.getLogin().equals(actualSession.getLogin())){
+						for(User friend : actualUser.getFriends()){
+							if(friend.getLogin().equals(login)){
+								return friend.getFriends();
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 }

@@ -1,5 +1,10 @@
 package main;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
+import entities.Item;
+import entities.Profile;
 import entities.User;
 
 
@@ -35,7 +40,7 @@ public class LendMeFacade {
 	}
 	
 	public void requisitarAmizade(String idSessao, String login) throws Exception{
-		LendMe.requestFriendship(idSessao, login);
+		LendMe.requestFriendShip(idSessao, login);
 	}
 	
 	public void aprovarAmizade(String idSessao, String login) throws Exception{
@@ -68,7 +73,7 @@ public class LendMeFacade {
 	}
 	
 	public String getAmigos(String idSessao, String login){
-		
+				
 			String saida = "";
 			
 			try {
@@ -83,6 +88,55 @@ public class LendMeFacade {
 				return "O usuário não possui amigos";
 			}
 		
+	}
+	
+	public String getItens(String idSessao) throws Exception{
+		String saida = "";
+
+		Profile meuPerfil = LendMe.getUserProfile(idSessao);
+
+		if ( meuPerfil.getOwnerItems().isEmpty() ){
+			return "O usuário não possui itens cadastrados";
+		}
+		
+		Item[] itens = new Item[meuPerfil.getOwnerItems().size()];
+		
+		Iterator<Item> itemIterator = meuPerfil.getOwnerItems().iterator();
+		
+		for ( int i=0; i<itens.length; i++ ) {
+			itens[i] = itemIterator.next();
+		}
+		Arrays.sort(itens);
+		for ( int j=0; j<itens.length; j++ ) {
+			saida += itens[j].getName() + "; ";
+		}
+		saida = saida.substring(0, saida.length() - 2);
+		return saida;
+	}
+
+	public String getItens(String idSessao, String login) throws Exception{
+		String saida = "";
+
+		Profile meuPerfil = LendMe.getUserProfile(idSessao);
+		meuPerfil = meuPerfil.viewOtherProfile(LendMe.getUserByLogin(login));
+
+		if ( meuPerfil.getOwnerItems().isEmpty() ){
+			return "O usuário não possui itens cadastrados";
+		}
+		
+		Item[] itens = new Item[meuPerfil.getOwnerItems().size()];
+		
+		Iterator<Item> itemIterator = meuPerfil.getOwnerItems().iterator();
+		
+		for ( int i=0; i<itens.length; i++ ) {
+			itens[i] = itemIterator.next();
+		}
+		Arrays.sort(itens);
+		for ( int j=0; j<itens.length; j++ ) {
+			saida += itens[j].getName() + "; ";
+		}
+		saida = saida.substring(0, saida.length() - 2);
+		return saida;
 	}
 	
 	public String requisitarEmprestimo(String idSessao,  String idItem, int duracao){

@@ -1,6 +1,7 @@
 package entities;
 
 import entities.util.Category;
+import entities.util.EntitiesConstants;
 import entities.util.EventDate;
 
 public class Item implements Identifiable, Comparable<Item>{
@@ -10,8 +11,6 @@ public class Item implements Identifiable, Comparable<Item>{
 	private Category category;
 	private String id;
 	private EventDate dateOfCreation;
-	
-	
 	
 	public Item() {}
 	
@@ -32,7 +31,7 @@ public class Item implements Identifiable, Comparable<Item>{
 		this.description = description;
 		this.category = category;
 		this.id = Integer.toString(((Object) this).hashCode());
-		this.dateOfCreation = new EventDate();
+		this.dateOfCreation = new EventDate(String.format(EntitiesConstants.ITEM_REGISTERED_MESSAGE, this.name, this.id));
 	}
 	
 	public EventDate getDateOfCreation() {

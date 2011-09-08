@@ -2,6 +2,7 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -199,7 +200,7 @@ public class User {
 				myItems.put(item, borrower);
 				
 				Lending lending = new Lending(borrower, this, item, days);
-				lending.setDayOfTheLending(new java.util.Date().getDay());
+				lending.setDayOfTheLending(new Date().getDay());
 				
 				if (receivedItemRequests.contains(lending)) {
 					borrower.addRequestedItem(item, this, days);
@@ -518,19 +519,21 @@ public class User {
 	}
 	
 	public void forceRemoveFriend(User user){
-		
-		this.myFriends.remove(user);
-		
-		for(Lending actualLending : this.receivedItemRequests){
-			if(actualLending.getBorrower().equals(user))
-				receivedItemRequests.remove(actualLending);			
+
+		if (this.myFriends.contains(user)) {
+
+			this.myFriends.remove(user);
+			for (Lending actualLending : this.receivedItemRequests) {
+				if (actualLending.getBorrower().equals(user))
+					receivedItemRequests.remove(actualLending);
+			}
 		}
 	}
 		
 	public void removeFriend(User user) {
-		
 		this.forceRemoveFriend(user);
-		user.forceRemoveFriend(this);		
-		
+		user.forceRemoveFriend(this);
 	}
+	
+	
 }

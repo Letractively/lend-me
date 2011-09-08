@@ -347,6 +347,9 @@ public class UserTest {
 		
 		manoel.requestFriendship(pedro);
 		pedro.acceptFriendshipRequest(manoel);
+		tarciso.requestFriendship(pedro);
+		pedro.acceptFriendshipRequest(tarciso);
+		
 		
 		manoel.addItem("Matrix Revolution", "Excelent Movie", Category.FILME);
 		
@@ -361,11 +364,13 @@ public class UserTest {
 		Assert.assertFalse(manoel.hasFriend(pedro));
 		Assert.assertFalse(pedro.hasFriend(manoel));
 		Assert.assertFalse(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
+		Assert.assertTrue(pedro.hasFriend(tarciso));
 		
 		manoel.requestFriendship(pedro);
 		pedro.acceptFriendshipRequest(manoel);
 		
 		Assert.assertTrue(manoel.hasFriend(pedro));
 	}
+	
 	
 }

@@ -35,7 +35,7 @@ public class LendMeFacade {
 	}
 	
 	public void requisitarAmizade(String idSessao, String login) throws Exception{
-		LendMe.requestFriendShip(idSessao, login);
+		LendMe.requestFriendship(idSessao, login);
 	}
 	
 	public void aprovarAmizade(String idSessao, String login) throws Exception{
@@ -69,8 +69,6 @@ public class LendMeFacade {
 	
 	public String getAmigos(String idSessao, String login){
 		
-		
-				
 			String saida = "";
 			
 			try {
@@ -85,6 +83,10 @@ public class LendMeFacade {
 				return "O usuário não possui amigos";
 			}
 		
+	}
+	
+	public String requisitarEmprestimo(String idSessao,  String idItem, int duracao){
+		return null;
 	}
 	
 }

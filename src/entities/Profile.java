@@ -20,6 +20,22 @@ public class Profile {
 			for ( User friend : ownerFriends ){
 				if ( friend.getLogin().equals(viewer.getLogin())){
 					ownerItems = owner.getAllItems();
+					return;
+				}
+			}
+		}
+	}
+	
+	public void update(){
+		ownerFriends = owner.getFriends();
+		if ( viewer.getLogin().equals(owner.getLogin()) ){
+			ownerItems = owner.getAllItems();
+		}
+		else{
+			for ( User friend : ownerFriends ){
+				if ( friend.getLogin().equals(viewer.getLogin())){
+					ownerItems = owner.getAllItems();
+					return;
 				}
 			}
 		}
@@ -47,15 +63,15 @@ public class Profile {
 		return ownerItems;
 	}
 	
-	public String getName(){
+	public String getOwnerName(){
 		return owner.getName();
 	}
 
-	public String getLogin(){
+	public String getOwnerLogin(){
 		return owner.getLogin();
 	}
 	
-	public String getAddress(){
+	public String getOwnerAddress(){
 		return owner.getAddress().getFullAddress();
 	}
 

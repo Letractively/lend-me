@@ -25,6 +25,16 @@ public class UserTest {
 	User tarciso;
 	User pedro;
 	Item item;
+	Item item1;
+	Item item2;
+	Item item3;
+	
+	@SuppressWarnings({ "deprecation" })
+	private void mudarData(Item item, User user, int novoDiaDoMes){
+		if(user.getAllItems().contains(item)){
+			item.getDateOfCreation().getDate().setDate(novoDiaDoMes);
+		}
+	}
 	
 	@Before
 	public void setUP() throws Exception {
@@ -36,6 +46,10 @@ public class UserTest {
 		pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58408293");
 		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		item1 = new Item("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", Category.JOGO);
+		item2 = new Item("Livro X", "Maravilhoso livro", Category.LIVRO);
+		item3 = new Item("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", Category.FILME);
+		
 	}
 	
 	@Test public void testLogin() {
@@ -277,6 +291,58 @@ public class UserTest {
 	
 	
 	@Test
+	public void testRegistInteresting() throws Exception{
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		
+		manoel.requestFriendship(tarciso);
+		
+		tarciso.acceptFriendshipRequest(manoel);
+		
+		manoel.borrowItem(item, tarciso,10);
+		
+		tarciso.lendItem(item, manoel,10);
+		
+		Assert.assertTrue(manoel.hasBorrowedItem(item));
+		
+		pedro.registerInterestForItem(item, tarciso);
+		
+		tarciso.isMarkedAsInterested(item);
+	}
+	
+	@Test
+	public void testSearchItem() throws Exception{
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		pedro.addItem("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", Category.JOGO);
+		pedro.addItem("Livro X", "Maravilhoso livro", Category.LIVRO);
+		manoel.addItem("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", Category.FILME);
+		
+		tarciso.requestFriendship(manoel);
+		tarciso.requestFriendship(pedro);
+		pedro.requestFriendship(manoel);
+		
+		manoel.acceptFriendshipRequest(tarciso);
+		manoel.acceptFriendshipRequest(pedro);
+		pedro.acceptFriendshipRequest(tarciso);
+
+		mudarData(item, tarciso, 10);
+		mudarData(item1, pedro, 11);
+		mudarData(item2, pedro, 12);
+		mudarData(item3, manoel, 13);
+		
+		List<Item> a = new ArrayList<Item>();
+		a.add(item2);
+		a.add(item1);
+		a.add(item);
+		Assert.assertTrue(a.equals(manoel.searchFromNewestToOldest("Maravilhoso")));
+		
+		List<Item> b = new ArrayList<Item>();
+		b.add(item);
+		b.add(item1);
+		b.add(item2);
+		Assert.assertTrue(b.equals(manoel.searchFromOldestToNewest("Maravilhoso")));
+	}
+	
+	@Test
 	public void testRemoveFriend() throws Exception{
 		
 		manoel.requestFriendship(pedro);
@@ -301,7 +367,5 @@ public class UserTest {
 		
 		Assert.assertTrue(manoel.hasFriend(pedro));
 	}
-	
-	
 	
 }

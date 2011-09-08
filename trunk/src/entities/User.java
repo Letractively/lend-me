@@ -2,7 +2,6 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -73,6 +72,10 @@ public class User {
 
 	public String getName() {
 		return this.name;
+	}
+	
+	public Map<Item, User> getMyItems() {
+		return myItems;
 	}
 
 	public void setAddress(String street, String number, String neighborhood,
@@ -170,7 +173,7 @@ public class User {
 	}
 
 	public void borrowItem(Item item, User lender, int days) {
-		if (lender.hasItem(item)) {                       
+		if (myFriends.contains(lender) && lender.hasItem(item)) {                       
 			if (! lender.isLent(item)) {
 				Lending requestLending = new Lending(this, lender, item, days);
 				lender.requestItem(requestLending);
@@ -184,18 +187,19 @@ public class User {
 
 	@SuppressWarnings("deprecation")
 	private void requestItem(Lending requestLending) {
-		requestLending.setDayOfRequestion(new Date().getDay());
+		requestLending.setDayOfRequestion(new java.util.Date().getDay());
 		receivedItemRequests.add(requestLending);
 	}
 
 
+	@SuppressWarnings("deprecation")
 	public void lendItem(Item item, User borrower, int days) {
 		if (myItems.containsKey(item)) {
 			if (! this.isLent(item)) {
 				myItems.put(item, borrower);
 				
 				Lending lending = new Lending(borrower, this, item, days);
-				lending.setDayOfTheLending(new Date().getDay());
+				lending.setDayOfTheLending(new java.util.Date().getDay());
 				
 				if (receivedItemRequests.contains(lending)) {
 					borrower.addRequestedItem(item, this, days);
@@ -207,7 +211,7 @@ public class User {
 	@SuppressWarnings("deprecation")
 	private void addRequestedItem(Item item, User lender, int days) {
 		Lending lending = new Lending(this, lender, item, days);
-		lending.setDayOfTheLending(new Date().getDay());
+		lending.setDayOfTheLending(new java.util.Date().getDay());
 		myBorrowedItems.add(lending);
 	}
 	
@@ -345,7 +349,7 @@ public class User {
 			if(actual.getItem().equals(item)){
 				actual.getBorrower().setRequestedBack(item);
 				
-				if(new Date().getDay() < actual.getDayOfTheLending() + actual.getRequiredDays()){
+				if(new java.util.Date().getDay() < actual.getDayOfTheLending() + actual.getRequiredDays()){
 					actual.setCanceled(true);
 				}
 				
@@ -361,7 +365,7 @@ public class User {
 			if(actual.getItem().equals(item)){
 				actual.setRequestedBack(true);
 
-				if(new Date().getDay() < actual.getDayOfTheLending() + actual.getRequiredDays()){
+				if(new java.util.Date().getDay() < actual.getDayOfTheLending() + actual.getRequiredDays()){
 					actual.setCanceled(true);
 				}
 			}
@@ -455,6 +459,43 @@ public class User {
 		}
 	}
 
+	public boolean isMarkedAsInterested(Item item) {
+		if(myItems.containsKey(item)){
+			return this.itemsDesired.containsKey(item);
+		}
+		return false;
+	}
+
+	public List<Item> searchFromNewestToOldest(String keyWord) {
+		List<Item> foundItems = new ArrayList<Item>();
+		for(User actual : myFriends){
+			for(Item current : actual.getMyItems().keySet()){
+				if(current.getName().contains(keyWord) ||
+						current.getDescription().contains(keyWord)){
+					foundItems.add(current);
+				}
+			}
+		}
+		Item[] founItemsSorted = foundItems.toArray(new Item[foundItems.size()]);
+		Arrays.sort(founItemsSorted);
+		
+		return Arrays.asList(founItemsSorted);
+	}
+	
+	public List<Item> searchFromOldestToNewest(String keyWord){
+		List<Item> foundItems = searchFromNewestToOldest(keyWord);
+		int j = foundItems.size();
+		Item[] foundItemsSorted = new Item[j];
+		if(j > 0){
+			for(int i = 0; i < foundItems.size(); i++){
+				foundItemsSorted[--j] = foundItems.get(i);
+			}
+		}
+		
+		return Arrays.asList(foundItemsSorted);
+	}
+	
+	
 	public Set<Item> getAllItems() {
 		Map<Item, User> toBeReturned = new HashMap<Item, User>();
 		toBeReturned.putAll(myItems);
@@ -492,6 +533,4 @@ public class User {
 		user.forceRemoveFriend(this);		
 		
 	}
-	
-	
 }

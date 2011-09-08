@@ -90,7 +90,7 @@ public class LendMe {
 		solicited.declineFriendshipRequest(solicitor);
 	}
 	
-	public static void removeFriend(User solicited, User solicitor){
+	public static void removeFriend(User solicitor, User solicited){
 		solicitor.removeFriend(solicited);
 	}
 	
@@ -250,7 +250,7 @@ public class LendMe {
 		sessions.remove(getSessionById(id));
 	}
 
-	public static void requestFriendShip(String idSessao, String login) throws Exception{
+	public static void requestFriendship(String idSessao, String login) throws Exception{
 		
 		User userApplicant = null;
 		User userRequired  = null;
@@ -317,7 +317,7 @@ public class LendMe {
 			}
 		}
 		
-		LendMe.removeFriend(userRequired, userApplicant);
+		LendMe.removeFriend(userApplicant, userRequired);
 		
 	}
 
@@ -360,21 +360,7 @@ public class LendMe {
 
 	public static Set<User> getFriends(String idSessao, String login) throws Exception{
 		
-		for(Session actualSession : sessions){
-			if(actualSession.getId().equals(idSessao)){
-				for(User actualUser : users){
-					if(actualUser.getLogin().equals(actualSession.getLogin())){
-						for(User friend : actualUser.getFriends()){
-							if(friend.getLogin().equals(login)){
-								return friend.getFriends();
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		return null;
+		return LendMe.getUserByLogin(login).getFriends();
 	}
 	
 }

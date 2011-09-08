@@ -7,5 +7,6 @@ public class EntitiesConstants {
 	public static String ALL_TOPICS = "all-topics";
 	public static final String SESSION_STARTED_MESSAGE = "User %s logged in with session %s at %s.";
 	public static final String SESSION_FINISHED_MESSAGE = "User %s logged out with session %s at %s.";
+	public static final String ITEM_REGISTERED_MESSAGE = "Item %s of id: %s registered.";
 
 }

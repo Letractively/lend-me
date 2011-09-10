@@ -1,5 +1,6 @@
 package entities.util;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class EventDate {
@@ -16,16 +17,6 @@ public class EventDate {
 		this.date = new Date();
 		this.eventDescription = eventDescription;
 	}
-	
-	public EventDate(String date, String eventDescription){
-		try{
-			this.date = new Date(Date.parse(date));			
-		}
-		catch (Exception e) {
-			this.date = new Date();
-		}
-		this.eventDescription = eventDescription;
-	}
 
 	public Date getDate() {
 		return date;
@@ -37,6 +28,13 @@ public class EventDate {
 
 	public void setEventDescription(String eventDescription) {
 		this.eventDescription = eventDescription;
+	}
+	
+	public void addDays(int days){
+		Calendar today = Calendar.getInstance();
+		today.setTime(date);
+		today.add(Calendar.DAY_OF_MONTH, days);
+		this.date = today.getTime();
 	}
 	
 	@Override

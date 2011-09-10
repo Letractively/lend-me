@@ -1,9 +1,10 @@
 package entities;
 
-import java.util.Date;
+import entities.util.EntitiesConstants;
+import entities.util.EventDate;
 
 
-public class Lending implements Identifiable {
+public class Lending implements Identifiable, Comparable<Lending> {
 	
 	private User borrower;
 	private User lender;
@@ -12,8 +13,8 @@ public class Lending implements Identifiable {
 	private boolean returned;
 	private boolean requestedBack;
 	private boolean canceled;
-	private int dayOfRequestion;
-	private int dayOfTheLending;
+	private EventDate requestionDate;
+	private EventDate lendingDate;
 	private String id;
 
 	public Lending(User borrower, User lender,Item item,int days) {
@@ -23,24 +24,25 @@ public class Lending implements Identifiable {
 		this.requiredDays = days;
 		this.requestedBack = false;
 		this.canceled = false;
-		this.dayOfRequestion = new Date().getDay();
+		this.requestionDate = new EventDate(String.format(EntitiesConstants.ITEM_REQUESTED_MESSAGE,
+				item.getName(), lender.getLogin(), requiredDays, borrower.getLogin()));
 		this.id = Integer.toString(((Object) this).hashCode());
 	}
+
+	public EventDate getLendingDate() throws Exception{
+		if ( lendingDate == null ){
+			throw new Exception("Registro ainda não possui data de devolução.");//"Lending slot still does not have a lending date");
+		}
+		return lendingDate;
+	}
+
+	public void setLendingDate() {
+		this.lendingDate = new EventDate(String.format(EntitiesConstants.ITEM_REQUESTED_MESSAGE,
+				item.getName(), lender.getLogin(), requiredDays, borrower.getLogin()));
+	}
 	
-	public int getDayOfTheLending() {
-		return dayOfTheLending;
-	}
-
-	public void setDayOfTheLending(int dayOfTheLending) {
-		this.dayOfTheLending = dayOfTheLending;
-	}
-
-	public int getDayOfRequestion() {
-		return this.dayOfRequestion;
-	}
-
-	public void setDayOfRequestion(int dayOfRequestion) {
-		this.dayOfRequestion = dayOfRequestion;
+	public EventDate getRequestionDate() {
+		return requestionDate;
 	}
 
 	public boolean isRequestedBack() {
@@ -58,23 +60,17 @@ public class Lending implements Identifiable {
 	public void setRequestedBack(boolean requestedBack) {
 		this.requestedBack = requestedBack;
 	}
+
 	public User getBorrower() {
 		return borrower;
 	}
-	public void setBorrower(User borrower) {
-		this.borrower = borrower;
-	}
+
 	public int getRequiredDays() {
 		return requiredDays;
 	}
-	public void setRequiredDays(int requiredDays) {
-		this.requiredDays = requiredDays;
-	}
+
 	public Item getItem() {
 		return item;
-	}
-	public void setItem(Item item) {
-		this.item = item;
 	}
 	
 	@Override
@@ -119,6 +115,14 @@ public class Lending implements Identifiable {
 	@Override
 	public String getID() {
 		return this.id;
+	}
+
+	@Override
+	public int compareTo(Lending o) {
+		if(this.lendingDate.getDate().after(o.lendingDate.getDate())){
+			return 1;
+		}
+		return 0;
 	}
 	
 }

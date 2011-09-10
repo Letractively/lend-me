@@ -2,7 +2,6 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -201,21 +200,17 @@ public class User implements Comparable<User>{
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void requestItem(Lending requestLending) {
-		requestLending.setDayOfRequestion(new java.util.Date().getDay());
 		receivedItemRequests.add(requestLending);
 	}
 
-
-	@SuppressWarnings("deprecation")
 	public void lendItem(Item item, User borrower, int days) {
 		if (myItems.containsKey(item)) {
 			if (! this.isLent(item)) {
 				myItems.put(item, borrower);
 				
 				Lending lending = new Lending(borrower, this, item, days);
-				lending.setDayOfTheLending(new Date().getDay());
+				lending.setLendingDate();
 				
 				if (receivedItemRequests.contains(lending)) {
 					borrower.addRequestedItem(item, this, days);
@@ -224,10 +219,9 @@ public class User implements Comparable<User>{
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void addRequestedItem(Item item, User lender, int days) {
 		Lending lending = new Lending(this, lender, item, days);
-		lending.setDayOfTheLending(new java.util.Date().getDay());
+		lending.setLendingDate();
 		myBorrowedItems.add(lending);
 	}
 	
@@ -359,13 +353,12 @@ public class User implements Comparable<User>{
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
-	public void returnRequest(Item item) {
+	public void returnRequest(Item item) throws Exception{
 		for(Lending actual : receivedItemRequests){
 			if(actual.getItem().equals(item)){
 				actual.getBorrower().setRequestedBack(item);
-				
-				if(new java.util.Date().getDay() < actual.getDayOfTheLending() + actual.getRequiredDays()){
+				actual.getLendingDate().addDays(actual.getRequiredDays());
+				if(new EventDate().getDate().before(actual.getLendingDate().getDate())){
 					actual.setCanceled(true);
 				}
 				
@@ -375,13 +368,12 @@ public class User implements Comparable<User>{
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	private void setRequestedBack(Item item) {
+	private void setRequestedBack(Item item) throws Exception{
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
 				actual.setRequestedBack(true);
-
-				if(new java.util.Date().getDay() < actual.getDayOfTheLending() + actual.getRequiredDays()){
+				actual.getLendingDate().addDays(actual.getRequiredDays());
+				if(new EventDate().getDate().before(actual.getLendingDate().getDate())){
 					actual.setCanceled(true);
 				}
 			}
@@ -481,36 +473,6 @@ public class User implements Comparable<User>{
 		}
 		return false;
 	}
-
-	public List<Item> searchFromNewestToOldest(String keyWord) {
-		List<Item> foundItems = new ArrayList<Item>();
-		for(User actual : myFriends){
-			for(Item current : actual.getMyItems().keySet()){
-				if(current.getName().contains(keyWord) ||
-						current.getDescription().contains(keyWord)){
-					foundItems.add(current);
-				}
-			}
-		}
-		Item[] founItemsSorted = foundItems.toArray(new Item[foundItems.size()]);
-		Arrays.sort(founItemsSorted);
-		
-		return Arrays.asList(founItemsSorted);
-	}
-	
-	public List<Item> searchFromOldestToNewest(String keyWord){
-		List<Item> foundItems = searchFromNewestToOldest(keyWord);
-		int j = foundItems.size();
-		Item[] foundItemsSorted = new Item[j];
-		if(j > 0){
-			for(int i = 0; i < foundItems.size(); i++){
-				foundItemsSorted[--j] = foundItems.get(i);
-			}
-		}
-		
-		return Arrays.asList(foundItemsSorted);
-	}
-	
 	
 	public Set<Item> getAllItems() {
 		Map<Item, User> toBeReturned = new HashMap<Item, User>();

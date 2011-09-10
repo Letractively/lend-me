@@ -4,21 +4,21 @@ import java.util.Set;
 
 public class Profile {
 
-	private Session viewer;
+	private Session observer;
 	private User owner;
 	private Set<User> ownerFriends;
 	private Set<Item> ownerItems;
 	
-	private Profile(Session viewer, User user){
-		this.viewer = viewer;
+	private Profile(Session observer, User user){
+		this.observer = observer;
 		owner = user;
 		ownerFriends = owner.getFriends();
-		if ( viewer.getLogin().equals(user.getLogin()) ){
+		if ( observer.getLogin().equals(user.getLogin()) ){
 			ownerItems = owner.getAllItems();
 		}
 		else{
 			for ( User friend : ownerFriends ){
-				if ( friend.getLogin().equals(viewer.getLogin())){
+				if ( friend.getLogin().equals(observer.getLogin())){
 					ownerItems = owner.getAllItems();
 					return;
 				}
@@ -28,12 +28,12 @@ public class Profile {
 	
 	public void update(){
 		ownerFriends = owner.getFriends();
-		if ( viewer.getLogin().equals(owner.getLogin()) ){
+		if ( observer.getLogin().equals(owner.getLogin()) ){
 			ownerItems = owner.getAllItems();
 		}
 		else{
 			for ( User friend : ownerFriends ){
-				if ( friend.getLogin().equals(viewer.getLogin())){
+				if ( friend.getLogin().equals(observer.getLogin())){
 					ownerItems = owner.getAllItems();
 					return;
 				}
@@ -46,10 +46,10 @@ public class Profile {
 	}
 
 	public Profile viewOtherProfile(User other) throws Exception{
-		if ( viewer == null ){
+		if ( observer == null ){
 			throw new Exception("Nao eh possivel vizualizar este perfil");//"This profile is not accessible");
 		}
-		return new Profile(viewer, other);
+		return new Profile(observer, other);
 	}
 
 	public Set<User> getOwnerFriends() {
@@ -75,8 +75,8 @@ public class Profile {
 		return owner.getAddress().getFullAddress();
 	}
 
-	public Session getViewer() {
-		return viewer;
+	public Session getObserver() {
+		return observer;
 	}
 	
 }

@@ -38,10 +38,6 @@ public class Item implements Identifiable, Comparable<Item>{
 		return dateOfCreation;
 	}
 
-	public void setDateOfCreation(EventDate dateOfCreation) {
-		this.dateOfCreation = dateOfCreation;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}

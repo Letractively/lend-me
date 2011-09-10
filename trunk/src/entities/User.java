@@ -12,11 +12,12 @@ import java.util.Set;
 import entities.util.Address;
 import entities.util.Category;
 import entities.util.EntitiesConstants;
+import entities.util.EventDate;
 import entities.util.Message;
 import entities.util.Topic;
 
 
-public class User {
+public class User implements Comparable<User>{
 
 	private String login;
 	private String name;
@@ -30,6 +31,7 @@ public class User {
 	private Set<Topic> negotiationTopics = new HashSet<Topic>();
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
 	private Map<Item, ArrayList<User>> itemsDesired = new HashMap<Item, ArrayList<User>>();
+	private EventDate dateOfCreation;
 	
 	public User(){}
 	
@@ -56,6 +58,7 @@ public class User {
 		this.login = login;
 		this.name = name;
 		this.address = new Address(address);
+		this.dateOfCreation = new EventDate(String.format(EntitiesConstants.USER_REGISTERED_MESSAGE, this.login, this.name));
 		
 	}
 
@@ -534,6 +537,17 @@ public class User {
 		this.forceRemoveFriend(user);
 		user.forceRemoveFriend(this);
 	}
-	
+
+	@Override
+	public int compareTo(User o) {
+		if(this.dateOfCreation.getDate().after(o.getDateOfCreation().getDate())){
+			return 1;
+		}
+		return 0;
+	}
+
+	public EventDate getDateOfCreation() {
+		return dateOfCreation;
+	}
 	
 }

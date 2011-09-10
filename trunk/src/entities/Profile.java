@@ -110,6 +110,10 @@ public class Profile {
 	public String getOwnerAddress(){
 		return owner.getAddress().getFullAddress();
 	}
+	
+	public Set<User> getOwnerFriendshipRequests(){
+		return owner.getReceivedFriendshipRequests();
+	}
 
 	public Session getObserver() {
 		return observer;

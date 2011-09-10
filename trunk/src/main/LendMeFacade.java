@@ -161,14 +161,13 @@ public class LendMeFacade {
 		Set<User> resultados = LendMe.getFriendshipRequests(idSessao);
 
 		if ( resultados.isEmpty() ){
-			return "Nenhum usuário encontrado";
+			return "Não há requisições";
 		}
 		
 		User[] resultadosParaSeremOrdenados = resultados.toArray(new User[resultados.size()]);
 		Arrays.sort(resultadosParaSeremOrdenados);
 		for ( int j=0; j<resultadosParaSeremOrdenados.length; j++ ) {
-			saida += resultadosParaSeremOrdenados[j].getName()
-			+ " - " + resultadosParaSeremOrdenados[j].getAddress().getFullAddress() + "; ";
+			saida += resultadosParaSeremOrdenados[j].getLogin() + "; ";
 		}
 		saida = saida.substring(0, saida.length() - 2);
 		return saida;

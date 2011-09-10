@@ -533,7 +533,7 @@ public class User implements Comparable<User>{
 		}
 	}
 		
-	public void removeFriend(User user) {
+	public void breakFriendship(User user) {
 		this.forceRemoveFriend(user);
 		user.forceRemoveFriend(this);
 	}

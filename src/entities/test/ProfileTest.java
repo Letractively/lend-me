@@ -46,7 +46,7 @@ public class ProfileTest {
 		Assert.assertEquals("Rua Das Malvinas, 350, Universitario, " +
 				"Campina Grande, Paraiba, Brasil, 58308293", guilhermeProfile.getOwnerAddress());
 		Assert.assertEquals(LendMe.searchSessionsByLogin("guilherme").iterator().next(),
-				guilhermeProfile.getViewer());
+				guilhermeProfile.getObserver());
 		Assert.assertTrue(guilhermeProfile.getOwnerFriends().isEmpty());
 		Assert.assertTrue(guilhermeProfile.getOwnerItems().isEmpty());
 		
@@ -72,7 +72,7 @@ public class ProfileTest {
 		Assert.assertEquals(manoelProfile.getOwnerName(), guilhermePerspective.getOwnerName());
 		Assert.assertEquals(manoelProfile.getOwnerLogin(), guilhermePerspective.getOwnerLogin());
 		Assert.assertEquals(manoelProfile.getOwnerAddress(), guilhermePerspective.getOwnerAddress());
-		Assert.assertFalse(manoelProfile.getViewer().hasSameUser(guilhermePerspective.getViewer()));		
+		Assert.assertFalse(manoelProfile.getObserver().hasSameUser(guilhermePerspective.getObserver()));		
 		Assert.assertNotNull(manoelProfile.getOwnerFriends());
 		Assert.assertNotNull(guilhermePerspective.getOwnerFriends());
 		Assert.assertTrue(manoelProfile.getOwnerFriends().isEmpty());
@@ -103,7 +103,7 @@ public class ProfileTest {
 		Assert.assertEquals(pedroProfile.getOwnerName(), guilhermePerspective.getOwnerName());
 		Assert.assertEquals(pedroProfile.getOwnerLogin(), guilhermePerspective.getOwnerLogin());
 		Assert.assertEquals(pedroProfile.getOwnerAddress(), guilhermePerspective.getOwnerAddress());
-		Assert.assertFalse(pedroProfile.getViewer().hasSameUser(guilhermePerspective.getViewer()));
+		Assert.assertFalse(pedroProfile.getObserver().hasSameUser(guilhermePerspective.getObserver()));
 		Assert.assertTrue(guilhermePerspective.getOwnerFriends().contains(guilherme));
 		Assert.assertFalse(guilhermePerspective.getOwnerFriends().contains(tarciso));
 
@@ -150,6 +150,8 @@ public class ProfileTest {
 		Assert.assertTrue(guilhermePerspective.getOwnerFriends().contains(guilherme));
 
 		Assert.assertTrue(guilhermePerspective.getOwnerItems().isEmpty());
+		
+		LendMe.closeSession(id);
 		
 	}
 	

@@ -71,27 +71,57 @@ public class LendMe {
 			Category category, User owner) throws Exception{
 		return owner.addItem(name, description, category);
 	}
-	
-	public static void askForFriendship(User solicitor, User solicited){
-		//TODO maybe check if solicitor has an open session or receive the session as a parameter and
-		//get the solicitor user using getUserByLogin()
+
+	public static void askForFriendship(User solicitor, User solicited) throws Exception{
+		if ( solicitor == null || solicited == null ){
+			throw new Exception("Usuário inválido");//"Invalid user");
+		}
 		solicitor.requestFriendship(solicited);
 	}
 	
-	public static void acceptFriendship(User solicited, User solicitor){
-		//TODO maybe check if solicited has an open session or receive the session as a parameter and
-		//get the solicited user using getUserByLogin()
+	public static void askForFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
+		User solicitor = getUserByLogin(getSessionById(solicitorSessionId).getLogin());
+		User solicited = getUserByLogin(solicitedLogin);
+		askForFriendship(solicitor, solicited);
+	}
+	
+	public static void acceptFriendship(User solicited, User solicitor) throws Exception{
+		if ( solicitor == null || solicited == null ){
+			throw new Exception("Usuário inválido");//"Invalid user");
+		}
 		solicited.acceptFriendshipRequest(solicitor);
 	}
 	
-	public static void declineFriendship(User solicited, User solicitor){
-		//TODO maybe check if solicited has an open session or receive the session as a parameter and
-		//get the solicited user using getUserByLogin()
+	public static void acceptFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
+		User solicited = getUserByLogin(getSessionById(solicitedSessionId).getLogin());
+		User solicitor = getUserByLogin(solicitorLogin);
+		acceptFriendship(solicited, solicitor);
+	}
+	
+	public static void declineFriendship(User solicited, User solicitor) throws Exception{
+		if ( solicitor == null || solicited == null ){
+			throw new Exception("Usuário inválido");//"Invalid user");
+		}
 		solicited.declineFriendshipRequest(solicitor);
 	}
 	
-	public static void removeFriend(User solicitor, User solicited){
+	public static void declineFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
+		User solicited = getUserByLogin(getSessionById(solicitedSessionId).getLogin());
+		User solicitor = getUserByLogin(solicitorLogin);
+		declineFriendship(solicited, solicitor);
+	}
+	
+	public static void removeFriend(User solicitor, User solicited) throws Exception{
+		if ( solicitor == null || solicited == null ){
+			throw new Exception("Usuário inválido");//"Invalid user");
+		}
 		solicitor.removeFriend(solicited);
+	}
+	
+	public static void breakFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
+		User solicitor = getUserByLogin(getSessionById(solicitorSessionId).getLogin());
+		User solicited = getUserByLogin(solicitedLogin);
+		removeFriend(solicitor, solicited);
 	}
 	
 	public static User getUserByLogin(String login) throws Exception{
@@ -246,131 +276,36 @@ public class LendMe {
 		sessions.remove(getSessionById(id));
 	}
 
-	public static void requestFriendShip(String idSessao, String login) throws Exception{
-		
-		User userApplicant = null;
-		User userRequired  = null;
-		
-		for(Session actualSession : sessions){
-			if(actualSession.getId().equals(idSessao)){
-				for(User actualUser : users){
-					if(actualUser.getLogin().equals(actualSession.getLogin())){
-						userApplicant = actualUser;
-					}
-					else if(actualUser.getLogin().equals(login)){
-						userRequired = actualUser;
-					}
-				}
-				if(userRequired == null)
-					throw new Exception("User inexistent");
-			}
-		}
-		
-		userApplicant.requestFriendship(userRequired);
-		
+	public static Set<User> getFriends(String sessionId) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		Set<User> users = viewer.getOwnerFriends();
+		return users;
 	}
 
-	public static void acceptFriendshipRequeried(String idSessao, String login) throws Exception{
-		
-		User userApplicant = null;
-		User userRequired  = null;
-		
-		for(Session actualSession : sessions){
-			if(actualSession.getId().equals(idSessao)){
-				for(User actualUser : users){
-					if(actualUser.getLogin().equals(actualSession.getLogin())){
-						userApplicant = actualUser;
-					}
-					else if(actualUser.getLogin().equals(login)){
-						userRequired = actualUser;
-					}
-				}
-				if(userRequired == null)
-					throw new Exception("User inexistent");
-			}
-		}
-		
-		LendMe.acceptFriendship(userApplicant, userRequired);
+	public static Set<User> getFriends(String solicitorSessionId, String solicitedLogin) throws Exception{
+		Profile viewer = LendMe.getUserProfile(solicitorSessionId);
+		viewer = viewer.viewOtherProfile(LendMe.getUserByLogin(solicitedLogin));
+		Set<User> users = viewer.getOwnerFriends();
+		return users;
 	}
 
-	public static void declineFriendshipFacade(String idSessao, String login) throws Exception{
-		
-		User userApplicant = null;
-		User userRequired  = null;
-		
-		for(Session actualSession : sessions){
-			if(actualSession.getId().equals(idSessao)){
-				for(User actualUser : users){
-					if(actualUser.getLogin().equals(actualSession.getLogin())){
-						userApplicant = actualUser;
-					}
-					else if(actualUser.getLogin().equals(login)){
-						userRequired = actualUser;
-					}
-				}
-				if(userRequired == null)
-					throw new Exception("User inexistent");
-			}
-		}
-		
-		LendMe.removeFriend(userRequired, userApplicant);
-		
+	public static boolean hasFriend(String solicitorSessionId, String solicitedUserLogin) throws Exception{
+		User solicitor = LendMe.getUserByLogin(LendMe.getSessionById(solicitorSessionId).getLogin());
+		User solicited = LendMe.getUserByLogin(solicitedUserLogin);
+		return solicitor.hasFriend(solicited);
+	}
+	
+	public static Set<Item> getItems(String sessionId) throws Exception {
+		Profile viewer = LendMe.getUserProfile(sessionId);
+		Set<Item> items = viewer.getOwnerItems();
+		return items;
 	}
 
-	public static boolean isFriend(String idSessao, String login) throws Exception{
-		
-		User userApplicant = null;
-		User userRequired  = null;
-		
-		for(Session actualSession : sessions){
-			if(actualSession.getId().equals(idSessao)){
-				for(User actualUser : users){
-					if(actualUser.getLogin().equals(actualSession.getLogin())){
-						userApplicant = actualUser;
-					}
-					else if(actualUser.getLogin().equals(login)){
-						userRequired = actualUser;
-					}
-				}
-				if(userRequired == null)
-					throw new Exception("User inexistent");
-			}
-		}
-		
-		return userApplicant.hasFriend(userRequired);
-	}
-
-	public static Set<User> getFriends(String idSessao) throws Exception{
-		
-		for(Session actualSession : sessions){
-			if(actualSession.getId().equals(idSessao)){
-				for(User actualUser : users){
-					if(actualUser.getLogin().equals(actualSession.getLogin())){
-						return actualUser.getFriends();
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	public static Set<User> getFriends(String idSessao, String login) throws Exception{
-		
-		for(Session actualSession : sessions){
-			if(actualSession.getId().equals(idSessao)){
-				for(User actualUser : users){
-					if(actualUser.getLogin().equals(actualSession.getLogin())){
-						for(User friend : actualUser.getFriends()){
-							if(friend.getLogin().equals(login)){
-								return friend.getFriends();
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		return null;
+	public static Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
+		Profile viewer = LendMe.getUserProfile(observerSessionId);
+		viewer = viewer.viewOtherProfile(LendMe.getUserByLogin(ownerLogin));
+		Set<Item> items = viewer.getOwnerItems();
+		return items;
 	}
 	
 }

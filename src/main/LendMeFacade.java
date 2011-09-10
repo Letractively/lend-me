@@ -2,6 +2,7 @@ package main;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Set;
 
 import entities.Item;
 import entities.Profile;
@@ -40,100 +41,92 @@ public class LendMeFacade {
 	}
 	
 	public void requisitarAmizade(String idSessao, String login) throws Exception{
-		LendMe.requestFriendShip(idSessao, login);
+		LendMe.askForFriendship(idSessao, login);
 	}
 	
 	public void aprovarAmizade(String idSessao, String login) throws Exception{
-		LendMe.acceptFriendshipRequeried(idSessao, login);
+		LendMe.acceptFriendship(idSessao, login);
+	}
+	
+	public void negarAmizade(String idSessao, String login) throws Exception{
+		LendMe.declineFriendship(idSessao, login);
 	}
 	
 	public void desfazerAmizade(String idSessao, String login) throws Exception{
-		LendMe.declineFriendshipFacade(idSessao, login);
+		LendMe.breakFriendship(idSessao, login);
 	}
 	
 	public boolean ehAmigo(String idSessao, String login) throws Exception{
-		return LendMe.isFriend(idSessao, login);
+		return LendMe.hasFriend(idSessao, login);
 	}
 	
-	public String getAmigos(String idSessao){
-		
+	public String getAmigos(String idSessao) throws Exception{
 		String saida = "";
-		
-		try {
-			
-			for(User actUser : LendMe.getFriends(idSessao)){
-				saida += actUser.getLogin()+"; ";
-			}
-			saida = saida.substring(0, saida.length() - 2);
-			return saida;
-			
-		} catch (Exception e) {
+
+		Set<User> amigos = LendMe.getFriends(idSessao);
+
+		if ( amigos.isEmpty() ){
 			return "O usuário não possui amigos";
 		}
+		
+		User[] amigosParaSeremOrdenados = amigos.toArray(new User[amigos.size()]);
+		Arrays.sort(amigosParaSeremOrdenados);
+		for ( int j=0; j<amigosParaSeremOrdenados.length; j++ ) {
+			saida += amigosParaSeremOrdenados[j].getLogin() + "; ";
+		}
+		saida = saida.substring(0, saida.length() - 2);
+		return saida;
 	}
 	
-	public String getAmigos(String idSessao, String login){
-				
-			String saida = "";
-			
-			try {
-				
-				for(User actUser : LendMe.getFriends(idSessao, login)){
-					saida += actUser.getLogin()+"; ";
-				}
-				saida = saida.substring(0, saida.length() - 2);
-				return saida;
-				
-			} catch (Exception e) {
-				return "O usuário não possui amigos";
-			}
+	public String getAmigos(String idSessao, String login) throws Exception{
+		String saida = "";
+
+		Set<User> amigos = LendMe.getFriends(idSessao, login);
+
+		if ( amigos.isEmpty() ){
+			return "O usuário não possui amigos";
+		}
 		
+		User[] amigosParaSeremOrdenados = amigos.toArray(new User[amigos.size()]);
+		Arrays.sort(amigosParaSeremOrdenados);
+		for ( int j=0; j<amigosParaSeremOrdenados.length; j++ ) {
+			saida += amigosParaSeremOrdenados[j].getLogin() + "; ";
+		}
+		saida = saida.substring(0, saida.length() - 2);
+		return saida;
 	}
 	
 	public String getItens(String idSessao) throws Exception{
 		String saida = "";
 
-		Profile meuPerfil = LendMe.getUserProfile(idSessao);
+		Set<Item> itens = LendMe.getItems(idSessao);
 
-		if ( meuPerfil.getOwnerItems().isEmpty() ){
+		if ( itens.isEmpty() ){
 			return "O usuário não possui itens cadastrados";
 		}
 		
-		Item[] itens = new Item[meuPerfil.getOwnerItems().size()];
-		
-		Iterator<Item> itemIterator = meuPerfil.getOwnerItems().iterator();
-		
-		for ( int i=0; i<itens.length; i++ ) {
-			itens[i] = itemIterator.next();
-		}
-		Arrays.sort(itens);
-		for ( int j=0; j<itens.length; j++ ) {
-			saida += itens[j].getName() + "; ";
+		Item[] itensParaSeremSorteados = itens.toArray(new Item[itens.size()]);
+		Arrays.sort(itensParaSeremSorteados);
+		for ( int j=0; j<itensParaSeremSorteados.length; j++ ) {
+			saida += itensParaSeremSorteados[j].getName() + "; ";
 		}
 		saida = saida.substring(0, saida.length() - 2);
 		return saida;
 	}
-
+	
 	public String getItens(String idSessao, String login) throws Exception{
 		String saida = "";
 
-		Profile meuPerfil = LendMe.getUserProfile(idSessao);
-		meuPerfil = meuPerfil.viewOtherProfile(LendMe.getUserByLogin(login));
+		Set<Item> itens = LendMe.getItems(idSessao, login);
 
-		if ( meuPerfil.getOwnerItems().isEmpty() ){
+		if ( itens.isEmpty() ){
 			return "O usuário não possui itens cadastrados";
 		}
 		
-		Item[] itens = new Item[meuPerfil.getOwnerItems().size()];
-		
-		Iterator<Item> itemIterator = meuPerfil.getOwnerItems().iterator();
-		
-		for ( int i=0; i<itens.length; i++ ) {
-			itens[i] = itemIterator.next();
-		}
-		Arrays.sort(itens);
-		for ( int j=0; j<itens.length; j++ ) {
-			saida += itens[j].getName() + "; ";
+		Item[] itensToBeSorted = itens.toArray(new Item[itens.size()]);
+		Arrays.sort(itensToBeSorted);
+		for ( int j=0; j<itensToBeSorted.length; j++ ) {
+			saida += itensToBeSorted[j].getName() + "; ";
 		}
 		saida = saida.substring(0, saida.length() - 2);
 		return saida;

@@ -141,11 +141,6 @@ public class UserTest {
 		
 		Assert.assertFalse(manoel.hasFriend(pedro));
 		Assert.assertFalse(pedro.hasFriend(manoel));
-		
-		manoel.acceptFriendshipRequest(pedro);
-		
-		Assert.assertFalse(manoel.hasFriend(pedro));
-		Assert.assertFalse(pedro.hasFriend(manoel));		
 
 	}
 	

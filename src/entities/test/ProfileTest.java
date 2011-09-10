@@ -3,10 +3,9 @@ package entities.test;
 import java.util.Set;
 
 import junit.framework.Assert;
-import main.LendMe;
-
 import org.junit.Test;
 
+import main.LendMe;
 import entities.Profile;
 import entities.User;
 

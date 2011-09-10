@@ -286,8 +286,9 @@ public class LendMe {
 		return solicitorViewer.isFriendOfOwner();
 	}
 
-	public static Set<User> getFriendshipRequests(String idSessao) {
-		return null;
+	public static Set<User> getFriendshipRequests(String sessionId) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.getOwnerFriendshipRequests();
 	}
 	
 }

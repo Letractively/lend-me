@@ -131,7 +131,13 @@ public class User implements Comparable<User>{
 		return myNewItem.getID();
 	}
 
-	public void requestFriendship(User otherUser) {
+	public void requestFriendship(User otherUser) throws Exception{
+		if ( sentFriendshipRequests.contains(otherUser) ){
+			throw new Exception("Requisição já solicitada");//"The request has already been sent");
+		}
+		if ( myFriends.contains(otherUser) ){
+			throw new Exception("Os usuários já são amigos");//"The users are already friends");
+		}
 		this.sentFriendshipRequests.add(otherUser);
 		otherUser.addFriendshipRequest(this);
 	}
@@ -140,12 +146,18 @@ public class User implements Comparable<User>{
 		receivedFriendshipRequests.add(otherUser);
 	}
 
-	public void acceptFriendshipRequest(User otherUser) {
-		if ( receivedFriendshipRequests.contains(otherUser) ){
+	public void acceptFriendshipRequest(User otherUser) throws Exception{
+		if ( myFriends.contains(otherUser) ){
+			throw new Exception("Os usuários já são amigos");//"The users are already friends");
+		}
+		if ( !receivedFriendshipRequests.contains(otherUser) ){
+			throw new Exception("Requisição de amizade inexistente");//Inexistent friendship request");
+		}
+		else{
 			myFriends.add(otherUser);
 			receivedFriendshipRequests.remove(otherUser);
+			otherUser.addRequestedFriend(this);
 		}
-		otherUser.addRequestedFriend(this);
 	}
 	
 	private void addRequestedFriend(User otherUser) {
@@ -548,6 +560,10 @@ public class User implements Comparable<User>{
 
 	public EventDate getDateOfCreation() {
 		return dateOfCreation;
+	}
+
+	public Set<User> getReceivedFriendshipRequests() {
+		return receivedFriendshipRequests;
 	}
 	
 }

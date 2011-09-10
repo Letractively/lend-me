@@ -359,7 +359,7 @@ public class UserTest {
 		
 		Assert.assertTrue(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
 		
-		manoel.removeFriend(pedro);
+		manoel.breakFriendship(pedro);
 		
 		Assert.assertFalse(manoel.hasFriend(pedro));
 		Assert.assertFalse(pedro.hasFriend(manoel));

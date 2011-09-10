@@ -1,11 +1,9 @@
 package main;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 
 import entities.Item;
-import entities.Profile;
 import entities.User;
 
 
@@ -134,6 +132,46 @@ public class LendMeFacade {
 	
 	public String requisitarEmprestimo(String idSessao,  String idItem, int duracao){
 		return null;
+	}
+	
+	public String localizarUsuario(String idSessao, String chave, String atributo) throws Exception{
+
+		String saida = "";
+
+		Set<User> resultados = LendMe.searchUsersByAttributeKey(idSessao, chave, atributo);
+
+		if ( resultados.isEmpty() ){
+			return "Nenhum usuário encontrado";
+		}
+		
+		User[] resultadosParaSeremOrdenados = resultados.toArray(new User[resultados.size()]);
+		Arrays.sort(resultadosParaSeremOrdenados);
+		for ( int j=0; j<resultadosParaSeremOrdenados.length; j++ ) {
+			saida += resultadosParaSeremOrdenados[j].getName()
+			+ " - " + resultadosParaSeremOrdenados[j].getAddress().getFullAddress() + "; ";
+		}
+		saida = saida.substring(0, saida.length() - 2);
+		return saida;
+	}
+	
+	public String getRequisicoesDeAmizade(String idSessao) throws Exception{
+
+		String saida = "";
+
+		Set<User> resultados = LendMe.getFriendshipRequests(idSessao);
+
+		if ( resultados.isEmpty() ){
+			return "Nenhum usuário encontrado";
+		}
+		
+		User[] resultadosParaSeremOrdenados = resultados.toArray(new User[resultados.size()]);
+		Arrays.sort(resultadosParaSeremOrdenados);
+		for ( int j=0; j<resultadosParaSeremOrdenados.length; j++ ) {
+			saida += resultadosParaSeremOrdenados[j].getName()
+			+ " - " + resultadosParaSeremOrdenados[j].getAddress().getFullAddress() + "; ";
+		}
+		saida = saida.substring(0, saida.length() - 2);
+		return saida;
 	}
 	
 }

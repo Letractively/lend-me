@@ -89,11 +89,15 @@ public class ProfileTest {
 			}
 		}
 		
-		LendMe.askForFriendship(guilherme, pedro);
-		LendMe.acceptFriendship(pedro, guilherme);
+		guilhermeProfile = guilhermeProfile.viewOtherProfile(pedro);
+		guilhermeProfile.askForFriendship();
+		pedroProfile = pedroProfile.viewOtherProfile(guilherme);
+		pedroProfile.acceptFriendshipRequest();
 		
 		guilhermeProfile.update();
+		guilhermeProfile = guilhermeProfile.viewOwnProfile();
 		pedroProfile.update();
+		pedroProfile = pedroProfile.viewOwnProfile();
 		
 		Assert.assertTrue(guilhermeProfile.getOwnerFriends().contains(pedro));
 		Assert.assertTrue(pedroProfile.getOwnerFriends().contains(guilherme));
@@ -109,8 +113,10 @@ public class ProfileTest {
 
 		Assert.assertTrue(guilhermePerspective.getOwnerItems().isEmpty());
 		
-		LendMe.askForFriendship(pedro, tarciso);
-		LendMe.acceptFriendship(tarciso, pedro);
+		pedroProfile = pedroProfile.viewOtherProfile(tarciso);
+		pedroProfile.askForFriendship();
+		tarcisoProfile = tarcisoProfile.viewOtherProfile(pedro);
+		tarcisoProfile.acceptFriendshipRequest();
 		
 		guilhermePerspective.update();
 		
@@ -128,8 +134,10 @@ public class ProfileTest {
 			}
 		}
 		
-		LendMe.askForFriendship(tarciso, manoel);
-		LendMe.acceptFriendship(manoel, tarciso);
+		tarcisoProfile = tarcisoProfile.viewOtherProfile(manoel);
+		tarcisoProfile.askForFriendship();
+		manoelProfile = manoelProfile.viewOtherProfile(tarciso);
+		manoelProfile.acceptFriendshipRequest();
 
 		guilhermePerspective.update();
 		
@@ -141,8 +149,10 @@ public class ProfileTest {
 		Assert.assertTrue(guilhermePerspective.getOwnerFriends().contains(tarciso));
 		Assert.assertFalse(guilhermePerspective.getOwnerFriends().contains(guilherme));
 		
-		LendMe.askForFriendship(manoel, guilherme);
-		LendMe.acceptFriendship(guilherme, manoel);
+		manoelProfile = manoelProfile.viewOtherProfile(guilherme);
+		manoelProfile.askForFriendship();
+		guilhermeProfile = guilhermeProfile.viewOtherProfile(manoel);
+		guilhermeProfile.acceptFriendshipRequest();
 		
 		guilhermePerspective.update();
 		

@@ -13,7 +13,6 @@ import entities.Item;
 import entities.Session;
 import entities.User;
 import entities.util.Category;
-import entities.util.Message;
 
 public class LendMeTest {
 	
@@ -46,13 +45,14 @@ public class LendMeTest {
 	
 	@Test public void testRegisterItems() throws Exception{
 		
-		User user = new User();
+		LendMe.registerUser("guilherme", "Guilherme Santos", "Rua Das Malvinas", "350", "Universitario",
+				"Campina Grande", "Paraiba", "Brasil", "58308293");
 		
-		LendMe.registerItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO, user);
+		LendMe.registerItem(LendMe.openSession("guilherme"), "O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", "livro");
 		
 		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO);
 		
-		Assert.assertTrue(user.hasItem(item));
+		Assert.assertTrue(LendMe.getUserByLogin("guilherme").hasItem(item));
 		
 		
 	}

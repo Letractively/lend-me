@@ -151,6 +151,24 @@ public class Profile {
 			throw new Exception("Amizade inválida - rompimento de amizade com si próprio");//"Invalid friendship");
 		}
 		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( !me.hasFriend(owner) ){
+			throw new Exception("Amizade inválida - rompimento de amizade com alguem que não é seu amigo");
+		}
+
+		Set<Item> myLentItems = me.getLentItems();
+		myLentItems.retainAll(owner.getBorrowedItems());
+		for ( Item item : myLentItems ){
+			owner.returnItem(item);
+			me.receiveLendedItem(item);
+		}
+
+		Set<Item> myBorrowedItems = me.getBorrowedItems();
+		myBorrowedItems.retainAll(owner.getLentItems());
+		for ( Item item : myBorrowedItems ){
+			me.returnItem(item);
+			owner.receiveLendedItem(item);
+		}
+		
 		me.breakFriendship(owner);
 	}
 	
@@ -193,21 +211,21 @@ public class Profile {
 		if ( kind.equals("emprestador") ){
 			List<Lending> result = new ArrayList<Lending>();
 			result.addAll(owner.getLentRegistryHistory());
-			result.addAll(owner.getMyLentItems());
+			result.addAll(owner.getMyLentItemsRecord());
 			return result;
 		}
 		else if ( kind.equals("beneficiado") ){
 			List<Lending> result = new ArrayList<Lending>();
 			result.addAll(owner.getBorrowedRegistryHistory());
-			result.addAll(owner.getMyBorrowedItems());
+			result.addAll(owner.getMyBorrowedItemsRecord());
 			return result;
 		}
 		else if ( kind.equals("todos") ){
 			List<Lending> result = new ArrayList<Lending>();
 			result.addAll(owner.getLentRegistryHistory());
-			result.addAll(owner.getMyLentItems());
+			result.addAll(owner.getMyLentItemsRecord());
 			result.addAll(owner.getBorrowedRegistryHistory());
-			result.addAll(owner.getMyBorrowedItems());
+			result.addAll(owner.getMyBorrowedItemsRecord());
 			return result;
 		}
 		throw new Exception("Tipo inexistente");//"Inexistent kind of lending");

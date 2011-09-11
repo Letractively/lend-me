@@ -203,8 +203,8 @@ public class User implements Comparable<User>{
 				Lending lendingRequest = new Lending(this, lender, item, days);
 				lender.requestItem(lendingRequest);
 				sentItemRequests.add(lendingRequest);
-				sendMessage("Emprestimo do item " + item.getName() + " a " +
-				this.getName(), this.getName() + " solicitou o emprestimo do item " +
+				sendMessage("Empréstimo do item " + item.getName() + " a " +
+				this.getName(), this.getName() + " solicitou o empréstimo do item " +
 				item.getName(), lender, lendingRequest.getID());
 				return lendingRequest.getID();
 			}
@@ -402,7 +402,7 @@ public class User implements Comparable<User>{
 					for(User interested : myInterestingItems.get(item)){
 						interested.sendMessage("Available Item!", "The " + item.getName() +
 												" of the " + this.getName() +
-												" is available now.", interested);
+												" is available now.", interested, "");
 					}
 				}
 			}
@@ -435,45 +435,87 @@ public class User implements Comparable<User>{
 			throw new Exception("ERR: borrower wants to remove his borrowed item he gave back but he doesnt have it");
 		}
 	}
-
-	public void sendMessage(String subject, String message, User receiver) {
-		receiver.receiveMessage(subject, message, this, true, "");
-	}
 	
-	public void sendMessage(String subject, String message, User receiver, String lendingId) {
+	public String sendMessage(String subject, String message, User receiver,
+			String lendingId) {
+		
+		boolean isOffTopic = false;
+		
+		if (lendingId.trim().isEmpty()) {
+			isOffTopic = true;
+		}
+		
+		storeMessage(subject, message, this.getLogin(), receiver.getLogin(),
+				isOffTopic, lendingId);
+		
 		//TODO Treat how is it going to deal with the Lending id
-		receiver.receiveMessage(subject, message, this, false, lendingId);
+		return receiver.storeMessage(subject, message, this.getLogin(),
+				receiver.getLogin(), isOffTopic, lendingId);
 	}
 
-	public void receiveMessage(String subject, String message, User sender,
-			boolean isOffTopic, String lendingId) {
+	public String storeMessage(String subject, String message, String senderLogin,
+			String receiverLogin, boolean isOffTopic, String lendingId) {
 		
 		if (isOffTopic) {
-			addMessageToTopic(offTopicTopics, subject, message, sender,
-					isOffTopic, lendingId);
+			return addMessageToTopic(offTopicTopics, subject, message, senderLogin,
+					receiverLogin, isOffTopic, lendingId);
 		}
 		
 		else {
-			addMessageToTopic(negotiationTopics, subject, message, sender,
-					isOffTopic, lendingId);
+			return addMessageToTopic(negotiationTopics, subject, message, senderLogin,
+					receiverLogin, isOffTopic, lendingId);
 		}
 	}
 
-	private void addMessageToTopic(Set<Topic> topicSet, String subject, String message, User sender,
-			boolean isOffTopic, String lendingId) {
+	private String addMessageToTopic(Set<Topic> topicSet, String subject, 
+			String message, String senderLogin, String receiverLogin,
+			boolean isOffTopic,	String lendingId) {
 		
 		Topic foundTopic = getTopicBySubject(topicSet, subject); 
 		
 		if ( foundTopic != null) {
-			foundTopic.addMessage(subject, message, sender, isOffTopic, lendingId);
+			foundTopic.addMessage(subject, message, senderLogin, receiverLogin, 
+					isOffTopic, lendingId);
 		}
 		else {
-			topicSet.add(new Topic(subject));
-			receiveMessage(subject, message, sender, isOffTopic, lendingId);
+			Topic newTopic = new Topic(subject);
+			newTopic.addMessage(subject, message, senderLogin, receiverLogin, 
+					isOffTopic, lendingId);
+			topicSet.add(newTopic);
+			foundTopic = newTopic;
 		}		
+		return foundTopic.getID();
+	}
+	
+	public List<Message> getMessagesByTopicId(String topicId) throws Exception {
+		Topic foundTopic = getTopicById(negotiationTopics, topicId); 
+		
+		if ( foundTopic == null) {
+			foundTopic = getTopicById(offTopicTopics, topicId);
+			
+			if ( foundTopic == null) {
+				throw new Exception("Could not find any topic with the given subject.");
+			}
+		}
+		Message[] msgArray = foundTopic.getMessages().toArray(
+				new Message[foundTopic.getMessages().size()]);
+		
+		Arrays.sort(msgArray);
+		
+		return Arrays.asList(msgArray);
+		
+	}
+		
+	private Topic getTopicById(Set<Topic> topicSet, String topicId) {
+		for (Topic topic : topicSet) {
+			if (topic.getID().equals(topicId)) {
+				return topic;
+			}
+		}
+		return null;
 	}
 
-	public Set<Message> getTopicMessages(String topicSubject) throws Exception {
+	public Set<Message> getMessagesByTopicSubject(String topicSubject) throws Exception {
 		Topic foundTopic = getTopicBySubject(negotiationTopics, topicSubject); 
 		
 		if ( foundTopic != null) {
@@ -580,31 +622,39 @@ public class User implements Comparable<User>{
 	}
 	
 	public List<Topic> getTopics(String topicType) throws Exception {
+		
 		if (topicType.equals(EntitiesConstants.OFF_TOPIC)) {
+			
 			Topic[] offTopicArray = this.offTopicTopics.
 					toArray(new Topic[offTopicTopics.size()]);
+			
 			Arrays.sort(offTopicArray);
 			return Arrays.asList(offTopicArray);
 		}
 		
 		else if (topicType.equals(EntitiesConstants.NEGOTIATION_TOPIC)) {
+			
 			Topic[] negotiationTopicsArray = this.negotiationTopics.
 					toArray(new Topic[negotiationTopics.size()]);
+			
 			Arrays.sort(negotiationTopicsArray);
 			return Arrays.asList(negotiationTopicsArray);
 		}
 		
 		else if (topicType.equals(EntitiesConstants.ALL_TOPICS)) {
 			Set<Topic> allTopics = new HashSet<Topic>();
+			
 			allTopics.addAll(offTopicTopics);
 			allTopics.addAll(negotiationTopics);
 			Topic[] allTopicsArray = allTopics.
 					toArray(new Topic[allTopics.size()]);
+			
 			Arrays.sort(allTopicsArray);
 			return Arrays.asList(allTopicsArray);
 		}
 		
 		throw new Exception("Voce deve escolher um tipo de topico");
+		// "You must choose a topic type."
 	}
 
 	public void registerInterestForItem(Item item, User owner) {

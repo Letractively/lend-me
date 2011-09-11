@@ -2,6 +2,7 @@ package main;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import entities.Item;
@@ -9,6 +10,9 @@ import entities.Lending; //Needed because it is necessary to retrieve a record a
 import entities.Profile; //Needed because for every operation the perspective of observer and profile owner is needed
 import entities.Session; //Needed for obvious reasons: every operation requires a living session
 import entities.User;
+import entities.util.EntitiesConstants;
+import entities.util.Message;
+import entities.util.Topic;
 
 public class LendMe {
 
@@ -439,6 +443,53 @@ public class LendMe {
 		return viewer.getOwnerFriendshipRequests();
 	}
 
+	public static String sendMessage(String senderSessionId, String subject, String message, 
+			String receiverLogin, String lendingId) throws Exception {
+		
+		Session senderSession = getSessionByID(senderSessionId);
+		
+		if (getSessionByID(senderSessionId) == null) {
+			throw new Exception("SessÃ£o inexistente");//"Inexistent session");
+		}
+		return getUserByLogin(senderSession.getLogin()).sendMessage(subject, message, 
+				getUserByLogin(receiverLogin), lendingId);
+	}
+	
+	public static List<Topic> getTopics(String sessionId, String topicType)
+			throws Exception {
+		
+		String userLogin = getLoginBySessionId(sessionId);
+		
+		if (topicType.equals("negociacao")) {
+			topicType = EntitiesConstants.NEGOTIATION_TOPIC;
+		} else if (topicType.equals("offtopic")) {
+			topicType = EntitiesConstants.OFF_TOPIC;
+		} else {
+			topicType = EntitiesConstants.ALL_TOPICS;
+		}
+		
+		return getUserByLogin(userLogin).getTopics(topicType);
+	}
+
+	public static List<Message> getTopicMessages(String sessionId, String topicId)
+			throws Exception {
+		
+		String userLogin = getLoginBySessionId(sessionId);
+		
+		return getUserByLogin(userLogin).getMessagesByTopicId(topicId);
+	}
+	
+	private static String getLoginBySessionId(String sessionId) throws Exception {
+		
+		Session session = getSessionByID(sessionId);
+		
+		if (session == null) {
+			throw new Exception("SessÃ£o inexistente");//"Inexistent session");
+		}
+		return session.getLogin();
+	}
+	
+	
 	/**
 	 * This method belongs to the public system interface
 	 * @param sessionId
@@ -578,5 +629,7 @@ public class LendMe {
 		}
 		throw new Exception("Requisição de empréstimo inexistente");
 	}
+	
+	
 	
 }

@@ -3,12 +3,16 @@ package main;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
+import util.LendMeUtil;
 import entities.Item;
 import entities.Lending;
 import entities.User;
 import entities.util.LendingStatus;
+import entities.util.Message;
+import entities.util.Topic;
 
 
 public class LendMeFacade {
@@ -194,15 +198,15 @@ public class LendMeFacade {
 	}
 	
 	public String getEmprestimos(String idSessao, String tipo) throws Exception{
-
+	
 		String saida = "";
-
+	
 		Collection<Lending> resultados = LendMe.getLendingRecords(idSessao, tipo);
-
+	
 		if ( resultados.isEmpty() ){
 			return "Não há empréstimos deste tipo";
 		}
-
+	
 		String template = "%s-%s:%s:%s";
 		Iterator<Lending> iterador = resultados.iterator();
 		Lending tmp = iterador.next();
@@ -222,6 +226,38 @@ public class LendMeFacade {
 		}
 		return saida;
 		
+	}
+
+	
+	public String enviarMensagem(String idSessao, String destinatario, 
+			String assunto, String mensagem) throws Exception {
+			
+		return LendMe.sendMessage(idSessao, assunto, mensagem, destinatario, "");
+	}
+	
+	public String enviarMensagem(String idSessao, String destinatario, 
+			String assunto, String mensagem, String idRequisicaoEmprestimo) 
+					throws Exception {
+			
+		return LendMe.sendMessage(idSessao, assunto, mensagem, destinatario, 
+				idRequisicaoEmprestimo);
+	}
+	
+	public String lerTopicos(String idSessao, String tipo) throws Exception {
+		
+		List<Topic> topicsList = LendMe.getTopics(idSessao, tipo);
+		
+		if (topicsList.isEmpty()) {
+			return "Não há tópicos criados";
+		}
+		
+		return LendMeUtil.toOrganizedTopicsArray(topicsList);
+	}
+	
+	public String lerMensagens(String idSessao, String idTopico) throws Exception {
+		List<Message> messagesList = LendMe.getTopicMessages(idSessao, idTopico);
+		
+		return LendMeUtil.toOrganizedMessagesArray(messagesList);
 	}
 	
 }

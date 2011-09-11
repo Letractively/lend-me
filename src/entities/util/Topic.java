@@ -36,10 +36,10 @@ public class Topic implements Identifiable, Comparable<Topic> {
 		this.subject = subject;
 	}
 	
-	public boolean addMessage(String subject, String message, User sender,
-			boolean isOffTopic, String lendingId) {
-		return messages.add(new Message(subject, message, sender, isOffTopic,
-				lendingId));
+	public boolean addMessage(String subject, String message, String sender,
+			String receiver, boolean isOffTopic, String lendingId) {
+		return messages.add(new Message(subject, message, sender, receiver,
+				isOffTopic, lendingId));
 	}
 
 	public Set<Message> getMessages() {
@@ -79,7 +79,7 @@ public class Topic implements Identifiable, Comparable<Topic> {
 		if (! (obj instanceof Topic)) {
 			return false;
 		}
-		return this.hashCode() == ((Topic)obj).hashCode();
+		return this.subject.equals(((Topic)obj).getSubject());
 	}
 	
 }

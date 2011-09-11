@@ -234,14 +234,17 @@ public class UserTest {
 	@Test
 	public void testGetMessagesAndTopics() throws Exception {
 		
-		Message heyDudeMsg = new Message("Communication", "Hey dude, how are you?", tarciso, true);
-		Message itemBorrowingMsg = new Message("Emprestimo do item " + item.getName() + " a " + tarciso.getName(),
-				tarciso.getName() + " solicitou o emprestimo do item " + item.getName(), tarciso, false);
+		Message heyDudeMsg = new Message("Communication", "Hey dude, how are you?",
+				tarciso.getLogin(), pedro.getLogin(), true);
+		Message itemBorrowingMsg = new Message("Emprestimo do item " + item.getName() +
+				" a " + tarciso.getName(), tarciso.getName() +
+				" solicitou o emprestimo do item " + item.getName(),
+				tarciso.getLogin(), pedro.getLogin(), false);
 		
 		
-		tarciso.sendMessage("Communication", "Hey dude, how are you?", pedro);
+		tarciso.sendMessage("Communication", "Hey dude, how are you?", pedro, "");
 		
-		Assert.assertTrue(pedro.getTopicMessages("Communication").contains(heyDudeMsg));
+		Assert.assertTrue(pedro.getMessagesByTopicSubject("Communication").contains(heyDudeMsg));
 		
 		pedro.addItem(item.getName(), item.getDescription(), item.getCategory().toString());
 
@@ -250,7 +253,7 @@ public class UserTest {
 		
 		tarciso.borrowItem(item, pedro, 5);
 		
-		Assert.assertTrue(pedro.getTopicMessages("Emprestimo do item " + item.getName() +
+		Assert.assertTrue(pedro.getMessagesByTopicSubject("Emprestimo do item " + item.getName() +
 				" a " + tarciso.getName()).contains(itemBorrowingMsg));
 		
 		List<Topic> topicsList = new ArrayList<Topic>();

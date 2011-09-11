@@ -4,32 +4,35 @@ import java.util.Date;
 
 import entities.User;
 
-public class Message {
+public class Message implements Comparable<Message> {
 	
 	private String subject;
 	private String message;
-	private User sender;
+	private String sender;
+	private String receiver;
 	private boolean isOffTopic;
 	private String lendingId;
 	private EventDate sending;
 	
 	
-	public Message(String subject, String message, User sender,
-			boolean isOfftopic) {
+	public Message(String subject, String message, String sender, 
+			String receiver, boolean isOfftopic) {
 		this.subject = subject;
 		this.message = message;
 		this.sender = sender;
+		this.receiver = receiver;
 		this.isOffTopic = isOfftopic;
 		this.lendingId = "";
 		this.sending = new EventDate();
 	}
 
 
-	public Message(String subject, String message, User sender,
-			boolean isOffTopic, String lendingId) {
+	public Message(String subject, String message, String sender,
+			String receiver, boolean isOffTopic, String lendingId) {
 		this.subject = subject;
 		this.message = message;
 		this.sender = sender;
+		this.receiver = receiver;
 		this.isOffTopic = isOffTopic;
 		this.lendingId = lendingId;
 		this.sending = new EventDate();
@@ -56,13 +59,22 @@ public class Message {
 	}
 
 
-	public User getSender() {
+	public String getSender() {
 		return sender;
 	}
 
 
-	public void setSender(User sender) {
+	public void setSender(String sender) {
 		this.sender = sender;
+	}
+	
+	public String getReceiver() {
+		return receiver;
+	}
+
+
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
 	}
 
 
@@ -105,6 +117,12 @@ public class Message {
 	
 	public Date getDate() {
 		return this.sending.getDate();
+	}
+
+
+	@Override
+	public int compareTo(Message otherMsg) {
+		return this.getDate().before(otherMsg.getDate())? -1:1;
 	}
 	
 }

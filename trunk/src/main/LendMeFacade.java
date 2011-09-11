@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import util.LendMeUtil;
+import main.util.LendMeUtil;
 import entities.Item;
 import entities.Lending;
 import entities.User;

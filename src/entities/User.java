@@ -185,16 +185,16 @@ public class User implements Comparable<User>{
 		return ! myItems.get(item).equals(this);
 	}
 
-	public void borrowItem(Item item, User lender, int days) throws Exception{
-		if (myFriends.contains(lender) && lender.hasItem(item)) {
-			if (! lender.isLent(item) ) {
+	public String borrowItem(Item item, User lender, int days) throws Exception {
+		if (myFriends.contains(lender) && lender.hasItem(item)) {                       
+			if (! lender.isLent(item)) {
 				Lending requestLending = new Lending(this, lender, item, days);
 				lender.requestItem(requestLending);
 				sentItemRequests.add(requestLending);
 				sendMessage("Emprestimo do item " + item.getName() + " a " +
 				this.getName(), this.getName() + " solicitou o emprestimo do item " +
 				item.getName(), lender, requestLending.getID());//"Lending of item %s to %s, %s wants to borrow item");
-				return;
+				return requestLending.getID();
 			}                                               
 		}
 		throw new Exception("ERR: borrower wants to borrow item that lender doesn have");
@@ -295,7 +295,8 @@ public class User implements Comparable<User>{
 		}
 		throw new Exception("ERR: borrower wants to return item but he doesn't have it");
 	}
-
+	
+	
 	private void setReturned(Item item) throws Exception{
 		for(Lending actual : myLentItems){
 			if(actual.getItem().equals(item)){
@@ -566,9 +567,18 @@ public class User implements Comparable<User>{
 		}
 	}
 		
-	public void breakFriendship(User user) {
+	public void breakFriendship(User user){
+		
 		this.forceRemoveFriend(user);
 		user.forceRemoveFriend(this);
+	}
+	
+	public Lending getLendingByRequestId(String requestId) {
+		for(Lending actualLending : this.receivedItemRequests){
+			if(actualLending.getID().equals(requestId))
+				return actualLending;
+		}
+		return null;
 	}
 
 	@Override

@@ -52,7 +52,7 @@ public class LendMeFacade {
 	}
 	
 	public void desfazerAmizade(String idSessao, String login) throws Exception{
-		LendMe.breakFriendship(idSessao, login);
+			LendMe.breakFriendship(idSessao, login);
 	}
 	
 	public boolean ehAmigo(String idSessao, String login) throws Exception{
@@ -131,8 +131,8 @@ public class LendMeFacade {
 		return saida;
 	}
 	
-	public String requisitarEmprestimo(String idSessao,  String idItem, int duracao){
-		return null;
+	public String requisitarEmprestimo(String idSessao,  String idItem, int duracao) throws Exception{
+		return LendMe.requestItem(idSessao, idItem, duracao);
 	}
 	
 	public String localizarUsuario(String idSessao, String chave, String atributo) throws Exception{
@@ -174,6 +174,17 @@ public class LendMeFacade {
 		return saida;
 	}
 	
+	public String aprovarEmprestimo(String idSessao, String idRequisicaoEmprestimo) throws Exception{
+			return LendMe.toApproveLoan(idSessao, idRequisicaoEmprestimo);
+	}
+	
+	public String devolverItem(String idSessao, String idEmprestimo) throws Exception{
+		return LendMe.toReturnItem(idSessao, idEmprestimo);
+	}
+	
+	public void confirmarTerminoEmprestimo(String idSessao, String idEmprestimo){
+		//TODO
+	}
 	public String getEmprestimos(String idSessao, String tipo) throws Exception{
 
 		String saida = "";

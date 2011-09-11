@@ -2,6 +2,7 @@ package entities;
 
 import entities.util.EntitiesConstants;
 import entities.util.EventDate;
+import entities.util.LendingStatus;
 
 
 public class Lending implements Identifiable, Comparable<Lending> {
@@ -16,6 +17,7 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	private EventDate requestionDate;
 	private EventDate lendingDate;
 	private String id;
+	private LendingStatus status;
 
 	public Lending(User borrower, User lender,Item item,int days) {
 		this.borrower = borrower;
@@ -27,6 +29,7 @@ public class Lending implements Identifiable, Comparable<Lending> {
 		this.requestionDate = new EventDate(String.format(EntitiesConstants.ITEM_REQUESTED_MESSAGE,
 				item.getName(), lender.getLogin(), requiredDays, borrower.getLogin()));
 		this.id = Integer.toString(((Object) this).hashCode());
+		this.status = LendingStatus.ONGOING;
 	}
 
 	public EventDate getLendingDate() throws Exception{
@@ -125,5 +128,13 @@ public class Lending implements Identifiable, Comparable<Lending> {
 		}
 		return 0;
 	}
+
+	public LendingStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(LendingStatus status) {
+		this.status = status;
+	}	
 	
 }

@@ -1,6 +1,8 @@
 package entities;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import main.LendMe;
@@ -43,7 +45,7 @@ public class Profile {
 		this.observer = observer;
 		owner = user;
 		ownerFriends = owner.getFriends();
-		if ( observer.getLogin().equals(user.getLogin()) ){
+		if ( observer.getLogin().equals(owner.getLogin()) ){
 			ownerItems = owner.getAllItems();
 		}
 		else{
@@ -81,7 +83,7 @@ public class Profile {
 	
 	public Profile viewOtherProfile(User other) throws Exception{
 		if ( observer == null ){
-			throw new Exception("Nao eh possivel vizualizar este perfil");//"This profile is not accessible");
+			throw new Exception("Nao eh possivel visualizar este perfil");//"This profile is not accessible");
 		}
 		if ( observer.getLogin().equals(other.getLogin()) ){
 			return viewOwnProfile();
@@ -184,23 +186,78 @@ public class Profile {
 		return owner.getAddress().getFullAddress().contains(key);
 	}
 
-	public Set<Lending> getLendingRecords(String kind) throws Exception{
+	public Collection<Lending> getLendingRecords(String kind) throws Exception{
 		if ( kind == null || kind.trim().isEmpty() ){
 			throw new Exception("Tipo inválido");//"Invalid kind of lending");
 		}
 		if ( kind.equals("emprestador") ){
-			return owner.getMyLentItems();
-		}
-		else if ( kind.equals("beneficiado") ){
-			return owner.getMyBorrowedItems();
-		}
-		else if ( kind.equals("todos") ){
-			Set<Lending> result = new HashSet<Lending>();
-			result.addAll(owner.getMyBorrowedItems());
+			List<Lending> result = new ArrayList<Lending>();
+			result.addAll(owner.getLentRegistryHistory());
 			result.addAll(owner.getMyLentItems());
 			return result;
 		}
+		else if ( kind.equals("beneficiado") ){
+			List<Lending> result = new ArrayList<Lending>();
+			result.addAll(owner.getBorrowedRegistryHistory());
+			result.addAll(owner.getMyBorrowedItems());
+			return result;
+		}
+		else if ( kind.equals("todos") ){
+			List<Lending> result = new ArrayList<Lending>();
+			result.addAll(owner.getLentRegistryHistory());
+			result.addAll(owner.getMyLentItems());
+			result.addAll(owner.getBorrowedRegistryHistory());
+			result.addAll(owner.getMyBorrowedItems());
+			return result;
+		}
 		throw new Exception("Tipo inexistente");//"Inexistent kind of lending");
+	}
+
+	public String requestItem(String itemId, int requiredDays) throws Exception{
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é invalido");//"Invalid item identifier");
+		}
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		try{
+			for ( Item item : getOwnerItems() ){
+				if ( item.getID().equals(itemId) ){
+					return me.borrowItem(item, owner, requiredDays);
+				}
+			}
+		}
+		catch (Exception e){
+			if ( e.getMessage().equals("O usuário não tem permissão para visualizar estes itens") ){
+				throw new Exception("O usuário não tem permissão para requisitar o empréstimo deste item");
+			}
+			else{
+				throw e;
+			}
+		}
+		throw new Exception("O usuário não possue este item");//"Item does not belong to this user");
+	}
+
+	public String approveLoan(String requestId) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
+			throw new Exception("O empréstimo só pode ser aprovado pelo dono do item");//Only the owner of the item is allowed to lend it
+		}
+		return me.approveLoan(requestId);
+	}
+
+	public String returnItem(String lendingId) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( !LendMe.getLendingByLendingId(lendingId).getBorrower().equals(me) ) {
+			throw new Exception("O item só pode ser devolvido pelo usuário beneficiado");//Only the owner of the item is allowed to lend it
+		}
+		return me.approveItemReturning(lendingId);
+	}
+
+	public void confirmLendingTermination(String lendingId) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
+			throw new Exception("O término do empréstimo só pode ser confirmado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
+		}
+		me.confirmLendingFinish(lendingId);
 	}
 	
 }

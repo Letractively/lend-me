@@ -1,5 +1,6 @@
 package main;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -284,45 +285,65 @@ public class LendMe {
 		return viewer.getOwnerFriendshipRequests();
 	}
 
-	public static Set<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
+	public static Collection<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.getLendingRecords(kind);
 	}
 	
+	public static String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
+		Profile viewer = getUserProfile(sessionId);
+		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
+		return viewer.requestItem(itemId, requiredDays);
+	}
 	
-	public static String toApproveLoan(String sessionId, String requestId)  throws Exception{
-		User userOwerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
-		Lending lending = userOwerSession.getLendingByRequestId(requestId);
-		userOwerSession.lendItem(lending.getItem(), lending.getBorrower(), lending.getRequiredDays());
-		return lending.getID();
+	public static String approveLoan(String sessionId, String requestId)  throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.approveLoan(requestId);
 	}
 
-	public static String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
-		User userOwerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
-		User lender = null;
-		Item itemRequest = null;
-		for(User actualFriend : userOwerSession.getFriends()){
-			for(Item actualItem : actualFriend.getAllItems()){
-				if(actualItem.getID().equals(itemId)){
-					lender = actualFriend;
-					itemRequest = actualItem;
+	public static String returnItem(String sessionId, String requestId) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.returnItem(requestId);
+	}
+	
+	private static User getItemOwner(String itemId) throws Exception{
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
+		}
+		for ( User user : users ){
+			for ( Item item : user.getAllItems() ){
+				if ( item.getID().equals(itemId) ){
+					return user;
 				}
 			}
 		}
-		return userOwerSession.borrowItem(itemRequest, lender, requiredDays);
+		throw new Exception("Item inexistente");//"Inexistent item");
 	}
 
-	public static String toReturnItem(String sessionId, String requestId) throws Exception{
-		User userOwerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
-		Lending returnLending = null;
-		for(Lending actualLending : userOwerSession.getMyBorrowedItems()){
-			if(actualLending.getID().equals(requestId))
-				returnLending = actualLending;
-				break;
+	public static void confirmLendingTermination(String sessionId,
+			String lendingId) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		viewer.confirmLendingTermination(lendingId);
+	}
+
+	public static Lending getLendingByLendingId(String lendingId) throws Exception{
+		for ( User user : users ){
+			Lending record = user.getLendingByLendingId(lendingId);
+			if ( record != null ){
+				return record;
+			}
 		}
-		userOwerSession.returnItem(returnLending.getItem());
-		
-		return returnLending.getID();
+		throw new Exception("Empréstimo inexistente");		
+	}
+
+	public static Lending getLendingByRequestId(String requestId) throws Exception{
+		for ( User user : users ){
+			Lending record = user.getLendingByRequestId(requestId);
+			if ( record != null ){
+				return record;
+			}
+		}
+		throw new Exception("Requisição de empréstimo inexistente");
 	}
 	
 }

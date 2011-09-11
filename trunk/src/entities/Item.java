@@ -73,6 +73,7 @@ public class Item implements Identifiable, Comparable<Item>{
 		itemToString.append(this.name);
 		itemToString.append(this.description);
 		itemToString.append(this.category.toString());
+		itemToString.append(this.id);
 		return itemToString.toString();
 	}
 	

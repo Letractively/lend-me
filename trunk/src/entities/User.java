@@ -604,6 +604,22 @@ public class User implements Comparable<User>{
 		return toBeReturned.keySet();
 	}
 	
+	public Set<Item> getLentItems() {
+		Set<Item> result = new HashSet<Item>();
+		for ( Lending record : myLentItems ){
+			result.add(record.getItem());
+		}
+		return result;
+	}
+
+	public Set<Item> getBorrowedItems() {
+		Set<Item> result = new HashSet<Item>();
+		for ( Lending record : myBorrowedItems ){
+			result.add(record.getItem());
+		}
+		return result;
+	}
+	
 	public Set<User> getFriends() {
 		Set<User> toBeReturned = new HashSet<User>();
 		toBeReturned.addAll(myFriends);
@@ -630,14 +646,10 @@ public class User implements Comparable<User>{
 				if (record.getLender().equals(user))
 					sentItemRequests.remove(record);
 			}
-			//TODO maybe force returning back items to one another
-			//TODO above will happen IF breaking friendships is allowed even if they have
-			//active transactions between them, otherwise it is not necessary
 		}
 	}
 		
 	public void breakFriendship(User user){
-		
 		this.forceRemoveFriend(user);
 		user.forceRemoveFriend(this);
 	}
@@ -731,11 +743,11 @@ public class User implements Comparable<User>{
 		return receivedFriendshipRequests;
 	}
 	
-	public Set<Lending> getMyBorrowedItems() {
+	public Set<Lending> getMyBorrowedItemsRecord() {
 		return myBorrowedItems;
 	}
 
-	public Set<Lending> getMyLentItems() {
+	public Set<Lending> getMyLentItemsRecord() {
 		return myLentItems;
 	}
 	

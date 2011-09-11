@@ -58,6 +58,14 @@ public class Item implements Identifiable, Comparable<Item>{
 		return this.category;
 	}
 	
+	public boolean idMatches(String id){
+		if ( id == null || id.trim().isEmpty() ){
+			return false;
+		}
+		id = id.trim();
+		return this.id.equals(id);
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder itemToString = new StringBuilder();

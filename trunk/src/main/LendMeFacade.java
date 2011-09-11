@@ -1,11 +1,14 @@
 package main;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 import entities.Item;
 import entities.Lending;
 import entities.User;
+import entities.util.LendingStatus;
 
 
 public class LendMeFacade {
@@ -175,35 +178,41 @@ public class LendMeFacade {
 	}
 	
 	public String aprovarEmprestimo(String idSessao, String idRequisicaoEmprestimo) throws Exception{
-			return LendMe.toApproveLoan(idSessao, idRequisicaoEmprestimo);
+			return LendMe.approveLoan(idSessao, idRequisicaoEmprestimo);
 	}
 	
 	public String devolverItem(String idSessao, String idEmprestimo) throws Exception{
-		return LendMe.toReturnItem(idSessao, idEmprestimo);
+		return LendMe.returnItem(idSessao, idEmprestimo);
 	}
 	
-	public void confirmarTerminoEmprestimo(String idSessao, String idEmprestimo){
-		//TODO
+	public void confirmarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
+		LendMe.confirmLendingTermination(idSessao, idEmprestimo);
 	}
 	public String getEmprestimos(String idSessao, String tipo) throws Exception{
 
 		String saida = "";
 
-		Set<Lending> resultados = LendMe.getLendingRecords(idSessao, tipo);
+		Collection<Lending> resultados = LendMe.getLendingRecords(idSessao, tipo);
 
 		if ( resultados.isEmpty() ){
 			return "Não há empréstimos deste tipo";
 		}
-		
-		Lending[] resultadosParaSeremOrdenados = resultados.toArray(new Lending[resultados.size()]);
-		Arrays.sort(resultadosParaSeremOrdenados);
-		for ( int j=0; j<resultadosParaSeremOrdenados.length; j++ ) {
-			saida += resultadosParaSeremOrdenados[j].getLender().getLogin() 
-			+ "-" + resultadosParaSeremOrdenados[j].getBorrower().getLogin() + ":"
-			+ resultadosParaSeremOrdenados[j].getItem().getName() +":Andamento"
-			+ "; ";
+
+		String template = "%s-%s:%s:%s";
+		Iterator<Lending> iterador = resultados.iterator();
+		Lending tmp = iterador.next();
+		saida += String.format(template, tmp.getLender().getLogin(),
+				tmp.getBorrower().getLogin(), tmp.getItem().getName(),
+				tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : "Completado");
+		while ( iterador.hasNext() ){
+			saida += "; ";
+			if ( iterador.hasNext() ){
+				tmp = iterador.next();
+				saida += String.format(template, tmp.getLender().getLogin(),
+						tmp.getBorrower().getLogin(), tmp.getItem().getName(),
+						tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : "Completado");
+			}
 		}
-		saida = saida.substring(0, saida.length() - 2);
 		return saida;
 		
 	}

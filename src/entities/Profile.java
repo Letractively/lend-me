@@ -162,11 +162,25 @@ public class Profile {
 			me.receiveLendedItem(item);
 		}
 
+		Set<Item> hisLentItems = owner.getLentItems();
+		hisLentItems.retainAll(me.getBorrowedItems());
+		for ( Item item : hisLentItems ){
+			me.returnItem(item);
+			owner.receiveLendedItem(item);
+		}
+		
 		Set<Item> myBorrowedItems = me.getBorrowedItems();
 		myBorrowedItems.retainAll(owner.getLentItems());
 		for ( Item item : myBorrowedItems ){
 			me.returnItem(item);
 			owner.receiveLendedItem(item);
+		}
+
+		Set<Item> hisBorrowedItems = owner.getBorrowedItems();
+		hisBorrowedItems.retainAll(me.getLentItems());
+		for ( Item item : hisBorrowedItems ){
+			owner.returnItem(item);
+			me.receiveLendedItem(item);
 		}
 		
 		me.breakFriendship(owner);

@@ -12,7 +12,10 @@ public class LendMeAcceptanceTestClient {
         public static void main(String[] args) throws Exception {
 
               List<String> files = new ArrayList<String>();
-              files.add(".."+File.separator+"acceptance-test-scripts"+File.separator+"US12.txt");
+              for ( int i=1; i<15; i++ ){
+            	  files.add(String.format(".."+File.separator+
+            			  "acceptance-test-scripts"+File.separator+"US%02d.txt", i));
+              }
               LendMeFacade lendMeFacade = new LendMeFacade();
               EasyAcceptFacade eaFacade = new EasyAcceptFacade(lendMeFacade, files);
               eaFacade.executeTests();

@@ -12,7 +12,6 @@ import org.junit.Test;
 import entities.Item;
 import entities.Session;
 import entities.User;
-import entities.util.Category;
 
 public class LendMeTest {
 	
@@ -50,7 +49,7 @@ public class LendMeTest {
 		
 		LendMe.registerItem(LendMe.openSession("guilherme"), "O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", "livro");
 		
-		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO);
+		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", "LIVRO");
 		
 		Assert.assertTrue(LendMe.getUserByLogin("guilherme").hasItem(item));
 		

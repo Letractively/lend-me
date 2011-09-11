@@ -36,13 +36,13 @@ public class ItemTest {
 		
 	}
 	
-	@Test public void testCategory(){
+	@Test public void testCategory() throws Exception{
 		
-		item.setCategory(Category.FILME);
+		item.setCategory("Filme");
 		
 		Assert.assertEquals(Category.FILME, item.getCategory());
 		
-		item.setCategory(Category.JOGO);
+		item.setCategory("jogo");
 		
 		Assert.assertEquals(Category.JOGO, item.getCategory());
 		

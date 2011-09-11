@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import entities.Item;
+import entities.Lending;
 import entities.User;
 
 
@@ -171,6 +172,29 @@ public class LendMeFacade {
 		}
 		saida = saida.substring(0, saida.length() - 2);
 		return saida;
+	}
+	
+	public String getEmprestimos(String idSessao, String tipo) throws Exception{
+
+		String saida = "";
+
+		Set<Lending> resultados = LendMe.getLendingRecords(idSessao, tipo);
+
+		if ( resultados.isEmpty() ){
+			return "Não há empréstimos deste tipo";
+		}
+		
+		Lending[] resultadosParaSeremOrdenados = resultados.toArray(new Lending[resultados.size()]);
+		Arrays.sort(resultadosParaSeremOrdenados);
+		for ( int j=0; j<resultadosParaSeremOrdenados.length; j++ ) {
+			saida += resultadosParaSeremOrdenados[j].getLender().getLogin() 
+			+ "-" + resultadosParaSeremOrdenados[j].getBorrower().getLogin() + ":"
+			+ resultadosParaSeremOrdenados[j].getItem().getName() +":Andamento"
+			+ "; ";
+		}
+		saida = saida.substring(0, saida.length() - 2);
+		return saida;
+		
 	}
 	
 }

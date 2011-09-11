@@ -10,11 +10,11 @@ public class Item implements Identifiable, Comparable<Item>{
 	private String description;
 	private Category category;
 	private String id;
-	private EventDate dateOfCreation;
+	private EventDate creationDate;
 	
 	public Item() {}
 	
-	public Item(String name, String description, Category category) 
+	public Item(String name, String description, String category) 
 			throws Exception{
 
 		if ( name == null || name.trim().isEmpty() ){
@@ -23,39 +23,35 @@ public class Item implements Identifiable, Comparable<Item>{
 		if ( description == null || description.trim().isEmpty() ){
 			throw new Exception("Descrição inválida");//"Invalid description");
 		}
-		if ( category == null ){
+		if ( category == null || category.trim().isEmpty() ){
 			throw new Exception("Categoria inválida");//"Invalid category");
+		}
+		
+		Category chosenCategory;
+		try {
+			chosenCategory = Category.valueOf(category.toUpperCase());
+		}
+		catch (IllegalArgumentException e) {
+			throw new Exception("Categoria inexistente");//"Inexistent category");
 		}
 		
 		this.name = name;
 		this.description = description;
-		this.category = category;
+		this.category = chosenCategory;
 		this.id = Integer.toString(((Object) this).hashCode());
-		this.dateOfCreation = new EventDate(String.format(EntitiesConstants.ITEM_REGISTERED_MESSAGE, this.name, this.id));
+		this.creationDate = new EventDate(String.format(EntitiesConstants.ITEM_REGISTERED_MESSAGE, this.name, this.id));
 	}
 	
-	public EventDate getDateOfCreation() {
-		return dateOfCreation;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public EventDate getCreationDate() {
+		return creationDate;
 	}
 
 	public String getName() {
 		return this.name;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getDescription() {
 		return this.description;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
 	}
 
 	public Category getCategory() {
@@ -96,9 +92,29 @@ public class Item implements Identifiable, Comparable<Item>{
 
 	@Override
 	public int compareTo(Item o) {
-		if(this.dateOfCreation.getDate().after(o.getDateOfCreation().getDate())){
+		if(this.creationDate.getDate().after(o.getCreationDate().getDate())){
 			return 1;
 		}
 		return 0;
 	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setCategory(String category) throws Exception{
+		Category chosenCategory;
+		try {
+			chosenCategory = Category.valueOf(category.toUpperCase());
+		}
+		catch (IllegalArgumentException e) {
+			throw new Exception("Categoria inexistente");//"Inexistent category");
+		}
+		this.category = chosenCategory;
+	}
+	
 }

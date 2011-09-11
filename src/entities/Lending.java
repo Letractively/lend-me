@@ -77,9 +77,10 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	public String toString() {
 		StringBuilder lendingToString = new StringBuilder();
 		
-		lendingToString.append(this.item.toString());
-		lendingToString.append(this.borrower.toString());
-		lendingToString.append(Integer.toString(this.requiredDays));
+		lendingToString.append(lender).toString();
+		lendingToString.append(item.toString());
+		lendingToString.append(borrower.toString());
+		lendingToString.append(Integer.toString(requiredDays));
 		return lendingToString.toString();
 	}
 	

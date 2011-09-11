@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import main.LendMe;
@@ -181,6 +182,25 @@ public class Profile {
 			return false;
 		}
 		return owner.getAddress().getFullAddress().contains(key);
+	}
+
+	public Set<Lending> getLendingRecords(String kind) throws Exception{
+		if ( kind == null || kind.trim().isEmpty() ){
+			throw new Exception("Tipo inválido");//"Invalid kind of lending");
+		}
+		if ( kind.equals("emprestador") ){
+			return owner.getMyLentItems();
+		}
+		else if ( kind.equals("beneficiado") ){
+			return owner.getMyBorrowedItems();
+		}
+		else if ( kind.equals("todos") ){
+			Set<Lending> result = new HashSet<Lending>();
+			result.addAll(owner.getMyBorrowedItems());
+			result.addAll(owner.getMyLentItems());
+			return result;
+		}
+		throw new Exception("Tipo inexistente");//"Inexistent kind of lending");
 	}
 	
 }

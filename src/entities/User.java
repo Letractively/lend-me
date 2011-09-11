@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import entities.util.Address;
-import entities.util.Category;
 import entities.util.EntitiesConstants;
 import entities.util.EventDate;
 import entities.util.Message;
@@ -26,11 +25,13 @@ public class User implements Comparable<User>{
 	private Set<User> sentFriendshipRequests = new HashSet<User>();
 	private Map<Item,User> myItems = new HashMap<Item,User>();
 	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
+	private Set<Lending> sentItemRequests = new HashSet<Lending>();
 	private Set<Lending> myBorrowedItems = new HashSet<Lending>();
+	private Set<Lending> myLentItems = new HashSet<Lending>();
 	private Set<Topic> negotiationTopics = new HashSet<Topic>();
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
-	private Map<Item, ArrayList<User>> itemsDesired = new HashMap<Item, ArrayList<User>>();
-	private EventDate dateOfCreation;
+	private Map<Item, ArrayList<User>> myInterestingItems = new HashMap<Item, ArrayList<User>>();
+	private EventDate creationDate;
 	
 	public User(){}
 	
@@ -57,7 +58,7 @@ public class User implements Comparable<User>{
 		this.login = login;
 		this.name = name;
 		this.address = new Address(address);
-		this.dateOfCreation = new EventDate(String.format(EntitiesConstants.USER_REGISTERED_MESSAGE, this.login, this.name));
+		this.creationDate = new EventDate(String.format(EntitiesConstants.USER_REGISTERED_MESSAGE, this.login, this.name));
 		
 	}
 
@@ -75,10 +76,6 @@ public class User implements Comparable<User>{
 
 	public String getName() {
 		return this.name;
-	}
-	
-	public Map<Item, User> getMyItems() {
-		return myItems;
 	}
 
 	public void setAddress(String street, String number, String neighborhood,
@@ -123,8 +120,9 @@ public class User implements Comparable<User>{
 		return myItems.containsKey(item);
 	}
 
-	public String addItem(String itemName, String description, Category category)
+	public String addItem(String itemName, String description, String category)
 			throws Exception{
+		
 		Item myNewItem = new Item(itemName, description, category);
 		this.myItems.put(myNewItem, this);
 		return myNewItem.getID();
@@ -187,51 +185,94 @@ public class User implements Comparable<User>{
 		return ! myItems.get(item).equals(this);
 	}
 
-	public void borrowItem(Item item, User lender, int days) {
-		if (myFriends.contains(lender) && lender.hasItem(item)) {                       
-			if (! lender.isLent(item)) {
+	public void borrowItem(Item item, User lender, int days) throws Exception{
+		if (myFriends.contains(lender) && lender.hasItem(item)) {
+			if (! lender.isLent(item) ) {
 				Lending requestLending = new Lending(this, lender, item, days);
 				lender.requestItem(requestLending);
-				
+				sentItemRequests.add(requestLending);
 				sendMessage("Emprestimo do item " + item.getName() + " a " +
 				this.getName(), this.getName() + " solicitou o emprestimo do item " +
 				item.getName(), lender, requestLending.getID());//"Lending of item %s to %s, %s wants to borrow item");
+				return;
 			}                                               
 		}
+		throw new Exception("ERR: borrower wants to borrow item that lender doesn have");
 	}
 
 	private void requestItem(Lending requestLending) {
 		receivedItemRequests.add(requestLending);
 	}
 
-	public void lendItem(Item item, User borrower, int days) {
-		if (myItems.containsKey(item)) {
-			if (! this.isLent(item)) {
-				myItems.put(item, borrower);
-				
-				Lending lending = new Lending(borrower, this, item, days);
-				lending.setLendingDate();
-				
-				if (receivedItemRequests.contains(lending)) {
-					borrower.addRequestedItem(item, this, days);
-				}
+	public void lendItem(Item item, User borrower, int days) throws Exception{
+
+		Lending requestAccepted = null;
+		for ( Lending record : receivedItemRequests ){
+			if ( record.getItem().equals(item) ){
+				requestAccepted = record;
+				record.setLendingDate();
+				borrower.addRequestedItem(item, this, days);
 			}
+		}
+		if ( requestAccepted != null ){
+			receivedItemRequests.remove(requestAccepted);
+			myLentItems.add(requestAccepted);
+			myItems.put(item, borrower);
+		}
+		else{
+			throw new Exception("ERR: lender wants to lend item he wasnt asked for");
 		}
 	}
 
-	private void addRequestedItem(Item item, User lender, int days) {
-		Lending lending = new Lending(this, lender, item, days);
-		lending.setLendingDate();
-		myBorrowedItems.add(lending);
+	private void addRequestedItem(Item item, User lender, int days) throws Exception{
+		Lending requestAccepted = null;
+		for ( Lending record : sentItemRequests ){
+			if ( record.getItem().equals(item) && record.getLender().equals(lender)
+					&& record.getRequiredDays() == days ){
+				requestAccepted = record;
+				record.setLendingDate();
+			}
+		}
+		if ( requestAccepted != null ){
+			sentItemRequests.remove(requestAccepted);
+			myBorrowedItems.add(requestAccepted);
+		}
+		else{
+			throw new Exception("ERR: borrower wants to receive a item he didnt ask for");
+		}
 	}
 	
-	public void declineLendingItem(Item item, User otherUser, int days) {
-		if (myItems.containsKey(item)) {
-			if (! this.isLent(item)) {
-				if (receivedItemRequests.contains(new Lending(otherUser, this, item, days))) {
-					receivedItemRequests.remove(new Lending(otherUser, this, item, days));
-				}
+	public void declineLendingItem(Item item, User borrower, int days) throws Exception{
+		
+		Lending requestDenied = null;
+		for ( Lending record : receivedItemRequests){
+			if (record.getItem().equals(item) && record.getBorrower().equals(borrower) &&
+					record.getRequiredDays() == days ) {
+				requestDenied = record;
+				borrower.removeRequestedItem(item, this, days);
 			}
+		}
+		if ( requestDenied != null ){
+			receivedItemRequests.remove(requestDenied);
+		}
+		else{
+			throw new Exception("ERR: lender doesnt want to lend a item that he wasnt asked for");
+		}
+	}
+	
+	private void removeRequestedItem(Item item, User lender, int days) throws Exception{
+		Lending requestDenied = null;
+		for ( Lending record : sentItemRequests ){
+			if ( record.getItem().equals(item) && record.getLender().equals(lender)
+					&& record.getRequiredDays() == days ){
+				requestDenied = record;
+			}
+		}
+		if ( requestDenied != null ){
+			sentItemRequests.remove(requestDenied);
+		}
+		else{
+			throw new Exception("ERR: borrower was asked to remove his request for item because it was denied but he doesnt have it");
 		}
 	}
 	
@@ -244,48 +285,63 @@ public class User implements Comparable<User>{
 		return false;
 	}
 
-	public void returnItem(Item item) {
+	public void returnItem(Item item) throws Exception{
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
 				actual.getLender().setReturned(item);
 				actual.setReturned(true);
+				return;
 			}
 		}
-		
+		throw new Exception("ERR: borrower wants to return item but he doesn't have it");
 	}
 
-	private void setReturned(Item item) {
-		for(Lending actual : receivedItemRequests){
+	private void setReturned(Item item) throws Exception{
+		for(Lending actual : myLentItems){
 			if(actual.getItem().equals(item)){
 				actual.setReturned(true);
+				return;
 			}
 		}
+		throw new Exception("ERR: lender was required to set his item as toBeReturned but he doesn't have it");
 	}
 
-	public void receiveLendedItem(Item item) {
-		for(Lending actual : receivedItemRequests){
-			if(actual.getItem().equals(item) && actual.isReturned()){
-				if(itemsDesired.containsKey(item)){
-					for(User interested : itemsDesired.get(item)){
+	public void receiveLendedItem(Item item) throws Exception{
+		Lending requestAttended = null;
+		for(Lending record : myLentItems){
+			if(record.getItem().equals(item) && record.isReturned()){
+				if(myInterestingItems.containsKey(item)){
+					for(User interested : myInterestingItems.get(item)){
 						interested.sendMessage("Available Item!", "The " + item.getName() +
 												" of the " + this.getName() +
 												" is available now.", interested);
 					}
 				}
-				
-				this.receivedItemRequests.remove(actual);
-				this.myItems.put(item, this);
-				actual.getBorrower().removeBorrowedItem(item);
+				requestAttended = record;
 			}
 		}
-		
+		if ( requestAttended != null ){
+			myLentItems.remove(requestAttended);
+			myItems.put(item, this);
+			requestAttended.getBorrower().removeBorrowedItem(item);
+		}
+		else{
+			throw new Exception("ERR: lender wants to receive lended item but he doesnt have it");
+		}
 	}
 
-	private void removeBorrowedItem(Item item) {
-		for(Lending actual : myBorrowedItems){
-			if(actual.getItem().equals(item)){
-				this.myBorrowedItems.remove(actual);
+	private void removeBorrowedItem(Item item) throws Exception{
+		Lending requestAttended = null;
+		for(Lending record : myBorrowedItems){
+			if(record.getItem().equals(item)){
+				requestAttended = record;
 			}
+		}
+		if ( requestAttended != null ){
+			this.myBorrowedItems.remove(requestAttended);			
+		}
+		else{
+			throw new Exception("ERR: borrower wants to remove his borrowed item he gave back but he doesnt have it");
 		}
 	}
 
@@ -353,17 +409,15 @@ public class User implements Comparable<User>{
 		return null;
 	}
 
-	public void returnRequest(Item item) throws Exception{
-		for(Lending actual : receivedItemRequests){
-			if(actual.getItem().equals(item)){
-				actual.getBorrower().setRequestedBack(item);
-				actual.getLendingDate().addDays(actual.getRequiredDays());
-				if(new EventDate().getDate().before(actual.getLendingDate().getDate())){
-					actual.setCanceled(true);
+	public void requestBack(Item item) throws Exception{
+		for(Lending record : myLentItems){
+			if(record.getItem().equals(item)){
+				record.getBorrower().setRequestedBack(item);
+				record.getLendingDate().addDays(record.getRequiredDays());
+				if(new EventDate().getDate().before(record.getLendingDate().getDate())){
+					record.setCanceled(true);
 				}
-				
-				actual.setRequestedBack(true);
-				
+				record.setRequestedBack(true);
 			}
 		}
 	}
@@ -459,17 +513,17 @@ public class User implements Comparable<User>{
 	}
 
 	private void markAsInterested(Item item, User interested) {
-		if(itemsDesired.containsKey(item)){
-			itemsDesired.get(item).add(interested);
+		if(myInterestingItems.containsKey(item)){
+			myInterestingItems.get(item).add(interested);
 		}else{
-			itemsDesired.put(item, new ArrayList<User>());
-			itemsDesired.get(item).add(interested);
+			myInterestingItems.put(item, new ArrayList<User>());
+			myInterestingItems.get(item).add(interested);
 		}
 	}
 
 	public boolean isMarkedAsInterested(Item item) {
 		if(myItems.containsKey(item)){
-			return this.itemsDesired.containsKey(item);
+			return this.myInterestingItems.containsKey(item);
 		}
 		return false;
 	}
@@ -486,24 +540,29 @@ public class User implements Comparable<User>{
 		return toBeReturned;
 	}
 
-	public boolean isRequestItem(Item item){
+	public boolean isItemRequested(Item item){
 		
-		for(Lending actualLending: receivedItemRequests){
-			if(actualLending.getItem().equals(item))
+		for(Lending record: receivedItemRequests){
+			if(record.getItem().equals(item))
 				return true;
 		}
 		return false;
 	}
 	
 	public void forceRemoveFriend(User user){
-
 		if (this.myFriends.contains(user)) {
-
 			this.myFriends.remove(user);
-			for (Lending actualLending : this.receivedItemRequests) {
-				if (actualLending.getBorrower().equals(user))
-					receivedItemRequests.remove(actualLending);
+			for (Lending record : this.receivedItemRequests) {
+				if (record.getBorrower().equals(user))
+					receivedItemRequests.remove(record);
 			}
+			for (Lending record : this.sentItemRequests) {
+				if (record.getLender().equals(user))
+					sentItemRequests.remove(record);
+			}
+			//TODO maybe force returning back items to one another
+			//TODO above will happen IF breaking friendships is allowed even if they have
+			//active transactions between them, otherwise it is not necessary
 		}
 	}
 		
@@ -514,18 +573,26 @@ public class User implements Comparable<User>{
 
 	@Override
 	public int compareTo(User o) {
-		if(this.dateOfCreation.getDate().after(o.getDateOfCreation().getDate())){
+		if(this.creationDate.getDate().after(o.getCreationDate().getDate())){
 			return 1;
 		}
 		return 0;
 	}
 
-	public EventDate getDateOfCreation() {
-		return dateOfCreation;
+	public EventDate getCreationDate() {
+		return creationDate;
 	}
 
 	public Set<User> getReceivedFriendshipRequests() {
 		return receivedFriendshipRequests;
+	}
+
+	public Set<Lending> getMyBorrowedItems() {
+		return myBorrowedItems;
+	}
+
+	public Set<Lending> getMyLentItems() {
+		return myLentItems;
 	}
 	
 }

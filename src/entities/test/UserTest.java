@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import entities.Item;
 import entities.User;
-import entities.util.Category;
 import entities.util.EntitiesConstants;
 import entities.util.Message;
 import entities.util.Topic;
@@ -38,10 +37,10 @@ public class UserTest {
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
 		pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58408293");
-		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
-		item1 = new Item("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", Category.JOGO);
-		item2 = new Item("Livro X", "Maravilhoso livro", Category.LIVRO);
-		item3 = new Item("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", Category.FILME);
+		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", "livro");
+		item1 = new Item("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", "JOGO");
+		item2 = new Item("Livro X", "Maravilhoso livro", "Livro");
+		item3 = new Item("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", "Filme");
 		
 	}
 	
@@ -95,13 +94,13 @@ public class UserTest {
 	
 	@Test public void testAddItem() throws Exception{
 		
-		user.addItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO);
-		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", Category.LIVRO);
+		user.addItem("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", "Livro");
+		Item item = new Item("O mochileiro das Galaxias", "Livro maravilhoso de ficcao.", "livro");
 		
 		Assert.assertTrue(user.hasItem(item));
 		
-		user.addItem("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", Category.FILME);
-		Item item2 = new Item("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", Category.FILME);
+		user.addItem("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", "Filme");
+		Item item2 = new Item("11 Homens e um Segredo", "Filme sobre o roubo de um cassino", "FILME");
 		
 		Assert.assertTrue(user.hasItem(item));
 		Assert.assertTrue(user.hasItem(item2));
@@ -140,7 +139,7 @@ public class UserTest {
 	@Test
 	public void testLendItem() throws Exception {
 		
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", "Livro");
 		
 		manoel.requestFriendship(tarciso);
 		
@@ -157,13 +156,15 @@ public class UserTest {
 	@Test
     public void testReturnItem() throws Exception{
 
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", "LIVRO");
 		
 		manoel.requestFriendship(tarciso);
 		
 		tarciso.acceptFriendshipRequest(manoel);
 		
 		manoel.borrowItem(item,tarciso,10);
+		
+		Assert.assertFalse(manoel.hasBorrowedItem(item));
 		
 		tarciso.lendItem(item,manoel,10);
 		
@@ -179,7 +180,7 @@ public class UserTest {
 	
 	@Test
 	public void testReturnRequest() throws Exception{
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", "livrO");
 		
 		manoel.requestFriendship(tarciso);
 		
@@ -191,7 +192,7 @@ public class UserTest {
 		
 		Assert.assertTrue(manoel.hasBorrowedItem(item));
 						
-		tarciso.returnRequest(item);
+		tarciso.requestBack(item);
 		
 		Assert.assertTrue(manoel.hasRequestedBack(item));
 		
@@ -209,7 +210,7 @@ public class UserTest {
 		
 		requestedBackItems.add(item);
 		
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", "Livro");
 		
 		manoel.requestFriendship(tarciso);
 		
@@ -221,11 +222,11 @@ public class UserTest {
 		
 		Assert.assertTrue(manoel.hasBorrowedItem(item));
 						
-		tarciso.returnRequest(item);
+		tarciso.requestBack(item);
 		
 		Assert.assertTrue(manoel.hasRequestedBack(item));
 
-		tarciso.returnRequest(item);
+		tarciso.requestBack(item);
 						
 		Assert.assertTrue(manoel.getRequestedBackItems().equals(requestedBackItems));
 	}
@@ -242,7 +243,10 @@ public class UserTest {
 		
 		Assert.assertTrue(pedro.getTopicMessages("Communication").contains(heyDudeMsg));
 		
-		pedro.addItem(item.getName(), item.getDescription(), item.getCategory());
+		pedro.addItem(item.getName(), item.getDescription(), item.getCategory().toString());
+
+		tarciso.requestFriendship(pedro);
+		pedro.acceptFriendshipRequest(tarciso);
 		
 		tarciso.borrowItem(item, pedro, 5);
 		
@@ -280,7 +284,7 @@ public class UserTest {
 	
 	@Test
 	public void testRegistInteresting() throws Exception{
-		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", Category.LIVRO);
+		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", "LIVRO");
 		
 		manoel.requestFriendship(tarciso);
 		
@@ -306,19 +310,19 @@ public class UserTest {
 		pedro.acceptFriendshipRequest(tarciso);
 		
 		
-		manoel.addItem("Matrix Revolution", "Excelent Movie", Category.FILME);
+		manoel.addItem("Matrix Revolution", "Excellent Movie", "FILME");
 		
 		Assert.assertTrue(manoel.hasFriend(pedro));
 		
-		pedro.borrowItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME), manoel, 15);
+		pedro.borrowItem(new Item("Matrix Revolution", "Excellent Movie", "FILME"), manoel, 15);
 		
-		Assert.assertTrue(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
+		Assert.assertTrue(manoel.isItemRequested(new Item("Matrix Revolution", "Excellent Movie", "Filme")));
 		
 		manoel.breakFriendship(pedro);
 		
 		Assert.assertFalse(manoel.hasFriend(pedro));
 		Assert.assertFalse(pedro.hasFriend(manoel));
-		Assert.assertFalse(manoel.isRequestItem(new Item("Matrix Revolution", "Excelent Movie", Category.FILME)));
+		Assert.assertFalse(manoel.isItemRequested(new Item("Matrix Revolution", "Excellent Movie", "filme")));
 		Assert.assertTrue(pedro.hasFriend(tarciso));
 		
 		manoel.requestFriendship(pedro);

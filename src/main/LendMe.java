@@ -4,10 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import entities.Item;
+import entities.Lending;
 import entities.Profile;
 import entities.Session;
 import entities.User;
-import entities.util.Category;
 
 public class LendMe {
 
@@ -45,16 +45,9 @@ public class LendMe {
 		if ( category == null || category.trim().isEmpty() ){
 			throw new Exception("Categoria inválida");//"Invalid category");
 		}
-		Category chosenCategory;
-		try {
-			chosenCategory = Category.valueOf(category.toUpperCase());
-		}
-		catch (IllegalArgumentException e) {
-			throw new Exception("Categoria inexistente");//"Inexistent category");
-		}
 		
 		User owner = getUserByLogin(getSessionByID(sessionId).getLogin());
-		return owner.addItem(name, description, chosenCategory);
+		return owner.addItem(name, description, category);
 	}
 	
 	public static Set<User> searchUsersByName(String name) {
@@ -289,6 +282,11 @@ public class LendMe {
 	public static Set<User> getFriendshipRequests(String sessionId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.getOwnerFriendshipRequests();
+	}
+
+	public static Set<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.getLendingRecords(kind);
 	}
 	
 }

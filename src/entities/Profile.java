@@ -124,7 +124,7 @@ public class Profile {
 
 	public void askForFriendship() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
-			throw new Exception("Amizade inválida - pedido de amizade para si próprio");//"Invalid friendship");
+			throw new Exception("Amizade inexistente");//inválida - pedido de amizade para si próprio");//"Invalid friendship");
 		}
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		me.requestFriendship(owner);
@@ -132,7 +132,7 @@ public class Profile {
 
 	public void acceptFriendshipRequest() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
-			throw new Exception("Amizade inválida - aceitação de amizade para si próprio");//"Invalid friendship");
+			throw new Exception("Amizade inexistente");//inválida - aceitação de amizade para si próprio");//"Invalid friendship");
 		}
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		me.acceptFriendshipRequest(owner);
@@ -140,7 +140,7 @@ public class Profile {
 
 	public void declineFriendshipRequest() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
-			throw new Exception("Amizade inválida - negação de amizade para si próprio");//"Invalid friendship");
+			throw new Exception("Amizade inexistente");//inválida - negação de amizade para si próprio");//"Invalid friendship");
 		}
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		me.declineFriendshipRequest(owner);
@@ -148,40 +148,42 @@ public class Profile {
 
 	public void breakFriendship() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
-			throw new Exception("Amizade inválida - rompimento de amizade com si próprio");//"Invalid friendship");
+			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com si próprio");//"Invalid friendship");
 		}
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !me.hasFriend(owner) ){
-			throw new Exception("Amizade inválida - rompimento de amizade com alguem que não é seu amigo");
+			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com alguem que não é seu amigo");
 		}
 
-		Set<Item> myLentItems = me.getLentItems();
-		myLentItems.retainAll(owner.getBorrowedItems());
-		for ( Item item : myLentItems ){
-			owner.returnItem(item);
-			me.receiveLendedItem(item);
-		}
-
-		Set<Item> hisLentItems = owner.getLentItems();
-		hisLentItems.retainAll(me.getBorrowedItems());
-		for ( Item item : hisLentItems ){
-			me.returnItem(item);
-			owner.receiveLendedItem(item);
-		}
-		
-		Set<Item> myBorrowedItems = me.getBorrowedItems();
-		myBorrowedItems.retainAll(owner.getLentItems());
-		for ( Item item : myBorrowedItems ){
-			me.returnItem(item);
-			owner.receiveLendedItem(item);
-		}
-
-		Set<Item> hisBorrowedItems = owner.getBorrowedItems();
-		hisBorrowedItems.retainAll(me.getLentItems());
-		for ( Item item : hisBorrowedItems ){
-			owner.returnItem(item);
-			me.receiveLendedItem(item);
-		}
+//		TODO Check with Brian whether or not this is the desired behavior
+//		TODO Mail sent to him, waiting for answer. The US12 passes with this code commented
+//		Set<Item> myLentItems = me.getLentItems();
+//		myLentItems.retainAll(owner.getBorrowedItems());
+//		for ( Item item : myLentItems ){
+//			owner.returnItem(item);
+//			me.receiveLendedItem(item);
+//		}
+//
+//		Set<Item> hisLentItems = owner.getLentItems();
+//		hisLentItems.retainAll(me.getBorrowedItems());
+//		for ( Item item : hisLentItems ){
+//			me.returnItem(item);
+//			owner.receiveLendedItem(item);
+//		}
+//		
+//		Set<Item> myBorrowedItems = me.getBorrowedItems();
+//		myBorrowedItems.retainAll(owner.getLentItems());
+//		for ( Item item : myBorrowedItems ){
+//			me.returnItem(item);
+//			owner.receiveLendedItem(item);
+//		}
+//
+//		Set<Item> hisBorrowedItems = owner.getBorrowedItems();
+//		hisBorrowedItems.retainAll(me.getLentItems());
+//		for ( Item item : hisBorrowedItems ){
+//			owner.returnItem(item);
+//			me.receiveLendedItem(item);
+//		}
 		
 		me.breakFriendship(owner);
 	}
@@ -276,6 +278,14 @@ public class Profile {
 		return me.approveLoan(requestId);
 	}
 
+	public String denyLoan(String requestId) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
+			throw new Exception("O empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to lend it
+		}
+		return me.denyLoan(requestId);
+	}
+	
 	public String returnItem(String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByLendingId(lendingId).getBorrower().equals(me) ) {
@@ -284,12 +294,20 @@ public class Profile {
 		return me.approveItemReturning(lendingId);
 	}
 
-	public void confirmLendingTermination(String lendingId) throws Exception{
+	public String confirmLendingTermination(String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O término do empréstimo só pode ser confirmado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
 		}
-		me.confirmLendingFinish(lendingId);
+		return me.confirmLendingTermination(lendingId);
+	}
+
+	public String askForReturnOfItem(String lendingId) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
+			throw new Exception("Somente o dono do item pode pedir pela devolução");//Only the owner of the item is allowed to ask for return of item
+		}
+		return me.askForReturnOfItem(lendingId);
 	}
 	
 }

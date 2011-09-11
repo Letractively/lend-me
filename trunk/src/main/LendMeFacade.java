@@ -185,9 +185,14 @@ public class LendMeFacade {
 		return LendMe.returnItem(idSessao, idEmprestimo);
 	}
 	
-	public void confirmarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
-		LendMe.confirmLendingTermination(idSessao, idEmprestimo);
+	public String confirmarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
+		return LendMe.confirmLendingTermination(idSessao, idEmprestimo);
 	}
+
+	public String pedirItemDeVolta(String idSessao, String idEmprestimo) throws Exception{
+		return LendMe.askForReturnOfItem(idSessao, idEmprestimo);
+	}
+	
 	public String getEmprestimos(String idSessao, String tipo) throws Exception{
 
 		String saida = "";
@@ -203,14 +208,16 @@ public class LendMeFacade {
 		Lending tmp = iterador.next();
 		saida += String.format(template, tmp.getLender().getLogin(),
 				tmp.getBorrower().getLogin(), tmp.getItem().getName(),
-				tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : "Completado");
+				tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
+					( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : "Negado" ) );
 		while ( iterador.hasNext() ){
 			saida += "; ";
 			if ( iterador.hasNext() ){
 				tmp = iterador.next();
 				saida += String.format(template, tmp.getLender().getLogin(),
 						tmp.getBorrower().getLogin(), tmp.getItem().getName(),
-						tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : "Completado");
+						tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
+							( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : "Negado" ) );
 			}
 		}
 		return saida;

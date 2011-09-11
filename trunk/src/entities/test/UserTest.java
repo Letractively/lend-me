@@ -172,7 +172,7 @@ public class UserTest {
 		
 		manoel.returnItem(item);
 		
-		tarciso.receiveLendedItem(item);
+		tarciso.receiveLentItem(item);
 		
 		Assert.assertFalse(manoel.hasBorrowedItem(item));
 		
@@ -198,7 +198,7 @@ public class UserTest {
 		
 		manoel.returnItem(item);
 		
-		tarciso.receiveLendedItem(item);
+		tarciso.receiveLentItem(item);
 		
 		Assert.assertFalse(manoel.hasBorrowedItem(item));
 		

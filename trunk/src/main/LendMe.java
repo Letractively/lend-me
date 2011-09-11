@@ -289,4 +289,40 @@ public class LendMe {
 		return viewer.getLendingRecords(kind);
 	}
 	
+	
+	public static String toApproveLoan(String sessionId, String requestId)  throws Exception{
+		User userOwerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
+		Lending lending = userOwerSession.getLendingByRequestId(requestId);
+		userOwerSession.lendItem(lending.getItem(), lending.getBorrower(), lending.getRequiredDays());
+		return lending.getID();
+	}
+
+	public static String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
+		User userOwerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
+		User lender = null;
+		Item itemRequest = null;
+		for(User actualFriend : userOwerSession.getFriends()){
+			for(Item actualItem : actualFriend.getAllItems()){
+				if(actualItem.getID().equals(itemId)){
+					lender = actualFriend;
+					itemRequest = actualItem;
+				}
+			}
+		}
+		return userOwerSession.borrowItem(itemRequest, lender, requiredDays);
+	}
+
+	public static String toReturnItem(String sessionId, String requestId) throws Exception{
+		User userOwerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
+		Lending returnLending = null;
+		for(Lending actualLending : userOwerSession.getMyBorrowedItems()){
+			if(actualLending.getID().equals(requestId))
+				returnLending = actualLending;
+				break;
+		}
+		userOwerSession.returnItem(returnLending.getItem());
+		
+		return returnLending.getID();
+	}
+	
 }

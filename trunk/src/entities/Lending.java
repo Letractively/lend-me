@@ -123,6 +123,8 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	public int compareTo(Lending o) {
 		if(this.lendingDate.getDate().after(o.lendingDate.getDate())){
 			return 1;
+		}else if(this.lendingDate.getDate().before(o.lendingDate.getDate())){
+			return -1;
 		}
 		return 0;
 	}

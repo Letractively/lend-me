@@ -36,7 +36,7 @@ public class Topic implements Identifiable, Comparable<Topic> {
 	}
 	
 	public boolean addMessage(String subject, String message, String sender,
-			String receiver, boolean isOffTopic, String lendingId) throws Exception{
+			String receiver, boolean isOffTopic, String lendingId) {
 		return messages.add(new Message(subject, message, sender, receiver,
 				isOffTopic, lendingId));
 	}
@@ -56,7 +56,7 @@ public class Topic implements Identifiable, Comparable<Topic> {
 
 	@Override
 	public int compareTo(Topic otherTopic) {
-		return this.getDate().before(otherTopic.getDate())? -1 : 1;
+		return this.getDate().after(otherTopic.getDate())? -1 : 1;
 	}
 	
 	@Override

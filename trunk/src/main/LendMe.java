@@ -12,6 +12,7 @@ import entities.Profile;
 import entities.Session;
 import entities.User;
 import entities.util.EventDate;
+import entities.util.EntitiesConstants;
 import entities.util.Message;
 import entities.util.Topic;
 
@@ -456,49 +457,82 @@ public class LendMe {
 		return viewer.getOwnerFriendshipRequests();
 	}
 
-	public static String sendMessage(String senderSessionId, String receiverLogin, String subject, 
-			String message, String lendingId) throws Exception {
-
-		if ( message == null || message.trim().isEmpty() ){
-			throw new Exception("Mensagem inválida");
-		}
-		if ( subject == null || subject.trim().isEmpty() ){
-			throw new Exception("Assunto inválido");
-		}
-		if ( receiverLogin == null || receiverLogin.trim().isEmpty() ){
-			throw new Exception("Destinário inválido");
-		}
-		Profile viewer = getUserProfile(senderSessionId);
-		User receiver = null;
-		try{
-			receiver = LendMe.getUserByLogin(receiverLogin);
-		}
-		catch (Exception e){
-			if ( e.getMessage().equals("Usuário inexistente") ){
-				throw new Exception("Destinário inexistente");
+	public static String sendMessage(String senderSessionId, String subject, String message, 
+			String receiverLogin, String lendingId) throws Exception {
+		
+		Profile solicitorViewer = null;
+		
+		try {
+			solicitorViewer = getUserProfile(senderSessionId);
+		
+			solicitorViewer = solicitorViewer.viewOtherProfile(
+				LendMe.getUserByLogin(receiverLogin));
+		
+			return solicitorViewer.sendMessage(subject, message, lendingId);
+			
+		} catch (Exception e) {
+			
+			if (e.getMessage().equals("Login inválido")) {
+				throw new Exception("Destinatário inválido");//"Invalid receiver");
 			}
-			else if ( e.getMessage().equals("Login inválido") ){
-				throw new Exception("Destinário inválido");
+			
+			else if (e.getMessage().equals("Usuário inexistente")) {
+				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
 			}
-			else{
-				throw e;
+			
+			else if (e.getMessage().equals("Empréstimo inexistente")) {
+				throw new Exception("Requisição de empréstimo inexistente" );
+				//"Inexistent lending");
 			}
+			
+			throw e;
 		}
-		viewer = viewer.viewOtherProfile(receiver);
-		return viewer.sendMessage(subject, message, lendingId);
+		
+		
+	}
+	
+	public static String sendMessage(String senderSessionId, String subject, String message, 
+			String receiverLogin) throws Exception {
+		
+		Profile solicitorViewer = null;
+		
+		try {
+			solicitorViewer = getUserProfile(senderSessionId);
+		
+			solicitorViewer = solicitorViewer.viewOtherProfile(
+				LendMe.getUserByLogin(receiverLogin));
+		
+		} catch (Exception e) {
+			
+			if (e.getMessage().equals("Login inválido")) {
+				throw new Exception("Destinatário inválido");//"Invalid receiver");
+			}
+			
+			else if (e.getMessage().equals("Usuário inexistente")) {
+				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
+			}
+			
+			throw e;
+		}
+		
+		return solicitorViewer.sendMessage(subject, message);
+		
 	}
 	
 	public static List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.getTopics(topicType);
+		
+		Profile solicitorViewer = getUserProfile(sessionId);
+		return solicitorViewer.getTopics(topicType);
+		
 	}
-
+	
 	public static List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.getTopicMessages(topicId);
-	}	
+		
+		Profile solicitorViewer = getUserProfile(sessionId);
+		return solicitorViewer.getTopicMessages(topicId);
+	}
 	
 	/**
 	 * This method belongs to the public system interface

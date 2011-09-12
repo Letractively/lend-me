@@ -1,5 +1,6 @@
 package entities.test;
 
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -237,13 +238,9 @@ public class UserTest {
 		
 		Message heyDudeMsg = new Message("Communication", "Hey dude, how are you?",
 				tarciso.getLogin(), pedro.getLogin(), true);
-		Message itemBorrowingMsg = new Message("Emprestimo do item " + item.getName() +
-				" a " + tarciso.getName(), tarciso.getName() +
-				" solicitou o emprestimo do item " + item.getName(),
-				tarciso.getLogin(), pedro.getLogin(), false);
 		
 		
-		tarciso.sendMessage("Communication", "Hey dude, how are you?", pedro, "");
+		tarciso.sendMessage("Communication", "Hey dude, how are you?", pedro);
 		
 		Assert.assertTrue(pedro.getMessagesByTopicSubject("Communication").contains(heyDudeMsg));
 		
@@ -252,9 +249,14 @@ public class UserTest {
 		tarciso.requestFriendship(pedro);
 		pedro.acceptFriendshipRequest(tarciso);
 		
-		tarciso.borrowItem(item, pedro, 5);
+		String lendingId = tarciso.borrowItem(item, pedro, 5);
 		
-		Assert.assertTrue(pedro.getMessagesByTopicSubject("Emprestimo do item " + item.getName() +
+		Message itemBorrowingMsg = new Message("Empréstimo do item " + item.getName() +
+				" a " + tarciso.getName(), tarciso.getName() +
+				" solicitou o empréstimo do item " + item.getName(),
+				tarciso.getLogin(), pedro.getLogin(), false, lendingId);
+
+		Assert.assertTrue(pedro.getMessagesByTopicSubject("Empréstimo do item " + item.getName() +
 				" a " + tarciso.getName()).contains(itemBorrowingMsg));
 		
 		List<Topic> topicsList = new ArrayList<Topic>();
@@ -264,23 +266,23 @@ public class UserTest {
 		topicsList.add(new Topic(itemBorrowingMsg.getSubject(), msgSet));
 		
 		
-		Assert.assertTrue(pedro.getTopics(EntitiesConstants.NEGOTIATION_TOPIC).equals(topicsList));
+		Assert.assertTrue(pedro.getTopics("negociacao").equals(topicsList));
 		
 		Set<Message> msgOffSet = new HashSet<Message>();
 		msgOffSet.add(heyDudeMsg);
 		topicsList.add(new Topic("Communication", msgOffSet));
 
-		Assert.assertTrue(pedro.getTopics(EntitiesConstants.ALL_TOPICS).equals(topicsList));
+		Assert.assertTrue(pedro.getTopics("todos").equals(topicsList));
 		
 		topicsList.remove(new Topic(itemBorrowingMsg.getSubject(), msgSet));
 
-		Assert.assertTrue(pedro.getTopics(EntitiesConstants.OFF_TOPIC).equals(topicsList));
+		Assert.assertTrue(pedro.getTopics("offtopic").equals(topicsList));
 		
 		try {
 			pedro.getTopics("");
 			Assert.fail("Deveria ter lancado excecao de tipo de topico invalido.");
 		} catch (Exception e){
-			Assert.assertEquals("Voce deve escolher um tipo de topico", e.getMessage());
+			Assert.assertEquals("Tipo inválido", e.getMessage());
 		}
 	}
 	

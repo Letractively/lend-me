@@ -317,7 +317,46 @@ public class Profile {
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
 		}
+		
+		if (subject == null || subject.trim().isEmpty()) {
+			throw new Exception("Assunto inválido");//"Invalid subject");
+		}
+		
+		if (message == null || message.trim().isEmpty()) {
+			throw new Exception("Mensagem inválida");//"Invalid message");
+		}
+		
+		if (lendingId == null || lendingId.trim().isEmpty()) {
+			throw new Exception("Identificador da requisição de empréstimo é" +
+					" inválido");//"Invalid lending identifier");
+		}
+		
+		Lending actualLending = LendMe.getLendingByLendingId(lendingId);
+		
+		if (! actualLending.getLender().equals(me) && ! actualLending.getBorrower().equals(me)) {
+			throw new Exception("O usuário não participa deste empréstimo");
+			//"Invalid lending identifier");
+		}
+		
+		
 		return me.sendMessage(subject, message, owner, lendingId);
+	}
+	
+	public String sendMessage(String subject, String message) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( observer.getLogin().equals(owner.getLogin()) ){
+			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
+		}
+		
+		if (subject == null || subject.trim().isEmpty()) {
+			throw new Exception("Assunto inválido");//"Invalid subject");
+		}
+		
+		if (message == null || message.trim().isEmpty()) {
+			throw new Exception("Mensagem inválida");//"Invalid message");
+		}
+		
+		return me.sendMessage(subject, message, owner);
 	}
 
 	public List<Topic> getTopics(String topicType) throws Exception{
@@ -327,6 +366,12 @@ public class Profile {
 
 	public List<Message> getTopicMessages(String topicId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
+		
+		if (topicId == null || topicId.trim().isEmpty()) {
+			throw new Exception("Identificador do tópico é inválido");
+			// "Invalid topic identifier");
+		}
+		
 		return me.getMessagesByTopicId(topicId);
 	}
 	

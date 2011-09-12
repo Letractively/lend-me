@@ -1,6 +1,8 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -21,8 +23,9 @@ public class LendMe {
 	private static Set<User> users = new HashSet<User>();
 	private static Set<Session> sessions = new HashSet<Session>();
 	private static EventDate time = new EventDate("System time");
-	public static enum atributeForSearch {DESCRIPTION, NAME, ID, CATEGORY};
-	public static enum criterionForSearch {INCRESCENT, DECREASING};
+	public static enum AtributeForSearch {DESCRIPTION, NAME, ID, CATEGORY};
+	public static enum DispositionForSearch {INCRESCENT, DECREASING};
+	public static enum CriterionForSearch {DATE};
 	
 	/**
 	 * This method belongs to the public system interface
@@ -679,9 +682,9 @@ public class LendMe {
 		userOwnerSession.deleteMyItem(itemId);
 	}
 
-	public static Set<Item> searchItem(String idSessao, String chave, atributeForSearch atribute, criterionForSearch criterion) throws Exception{
+	public static List<Item> searchItem(String idSessao, String chave, AtributeForSearch atribute, DispositionForSearch disposition ,CriterionForSearch criterion) throws Exception{
 		
-		Set<Item> results = new HashSet<Item>();
+		List<Item> results = new ArrayList<Item>();
 		User userOwnerSession = getUserByLogin(getSessionByID(idSessao).getLogin());
 		
 		switch(atribute){
@@ -716,13 +719,23 @@ public class LendMe {
 		case CATEGORY: {
 			for(User actualFriend : userOwnerSession.getFriends()){
 				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getCategory().equals(chave))
+					if(itemOfMyFriend.getCategory().toString().toUpperCase().contains(chave.toUpperCase()))
 						results.add(itemOfMyFriend);
 				}
 			}
 		}
 	}
-		return results;
+	//In case of changes in the criterions's numbers this is method will more large 	
+		if(disposition == DispositionForSearch.INCRESCENT){
+			Collections.sort(results);
+			return results;
+	
+		}else {
+			Collections.sort(results);
+			Collections.reverse(results);
+			return results;
+
+		}
 	
 	}
 }

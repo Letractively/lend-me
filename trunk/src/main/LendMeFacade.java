@@ -6,8 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
-
+import main.LendMe.DispositionForSearch;
 import main.util.LendMeUtil;
 import entities.Item;
 import entities.Lending;
@@ -270,15 +269,24 @@ public class LendMeFacade {
 	public String pesquisarItem(String idSessao, String chave, String atributo, String tipoDeOrdenacao, String criterioDeOrdenacao) throws Exception{
 		
 		String retorno = "";
-		Set<Item> resultado = null;
+		List<Item> resultado = null;
+		DispositionForSearch dispo;
+		
+		if(tipoDeOrdenacao.equals("decrescente")){
+			dispo = LendMe.DispositionForSearch.DECREASING;
+		}else{
+			dispo = LendMe.DispositionForSearch.INCRESCENT;
+		}
 		
 		if(atributo.equals("descricao")){
-			resultado = LendMe.searchItem(idSessao, chave, LendMe.atributeForSearch.DESCRIPTION, LendMe.criterionForSearch.INCRESCENT);
+			resultado = LendMe.searchItem(idSessao, chave, LendMe.AtributeForSearch.DESCRIPTION, 
+															   dispo, LendMe.CriterionForSearch.DATE);
 		}else if(atributo.equals("nome")){
-			resultado = LendMe.searchItem(idSessao, chave, LendMe.atributeForSearch.NAME, LendMe.criterionForSearch.INCRESCENT);
+			resultado = LendMe.searchItem(idSessao, chave, LendMe.AtributeForSearch.NAME, 
+					   dispo, LendMe.CriterionForSearch.DATE);
 		}else if(atributo.equals("categoria")){
-			resultado = LendMe.searchItem(idSessao, chave, LendMe.atributeForSearch.CATEGORY, LendMe.criterionForSearch.INCRESCENT);
-		}
+			resultado = LendMe.searchItem(idSessao, chave, LendMe.AtributeForSearch.CATEGORY, 
+					   dispo, LendMe.CriterionForSearch.DATE);		}
 		for(Item actualItem : resultado){
 			retorno += actualItem.getName()+"; ";
 		}

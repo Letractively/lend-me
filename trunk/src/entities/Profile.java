@@ -318,12 +318,12 @@ public class Profile {
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
 		}
 		
-		if (subject == null || subject.trim().isEmpty()) {
-			throw new Exception("Assunto inválido");//"Invalid subject");
-		}
-		
 		if (message == null || message.trim().isEmpty()) {
 			throw new Exception("Mensagem inválida");//"Invalid message");
+		}
+		
+		if (subject == null || subject.trim().isEmpty()) {
+			throw new Exception("Assunto inválido");//"Invalid subject");
 		}
 		
 		if (lendingId == null || lendingId.trim().isEmpty()) {

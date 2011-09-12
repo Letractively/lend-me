@@ -11,7 +11,6 @@ import main.util.LendMeUtil;
 import entities.Item;
 import entities.Lending;
 import entities.User;
-import entities.util.EntitiesConstants;
 import entities.util.LendingStatus;
 import entities.util.Message;
 import entities.util.Topic;

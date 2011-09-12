@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import entities.Item;
-import entities.Lending; //Needed because it is necessary to retrieve a record among all lending records of the system
-import entities.Profile; //Needed because for every operation the perspective of observer and profile owner is needed
-import entities.Session; //Needed for obvious reasons: every operation requires a living session
+import entities.Lending;
+import entities.Profile;
+import entities.Session;
 import entities.User;
-import entities.util.EntitiesConstants;
 import entities.util.Message;
 import entities.util.Topic;
 
@@ -443,52 +442,49 @@ public class LendMe {
 		return viewer.getOwnerFriendshipRequests();
 	}
 
-	public static String sendMessage(String senderSessionId, String subject, String message, 
-			String receiverLogin, String lendingId) throws Exception {
-		
-		Session senderSession = getSessionByID(senderSessionId);
-		
-		if (getSessionByID(senderSessionId) == null) {
-			throw new Exception("SessÃ£o inexistente");//"Inexistent session");
+	public static String sendMessage(String senderSessionId, String receiverLogin, String subject, 
+			String message, String lendingId) throws Exception {
+
+		if ( message == null || message.trim().isEmpty() ){
+			throw new Exception("Mensagem inválida");
 		}
-		return getUserByLogin(senderSession.getLogin()).sendMessage(subject, message, 
-				getUserByLogin(receiverLogin), lendingId);
+		if ( subject == null || subject.trim().isEmpty() ){
+			throw new Exception("Assunto inválido");
+		}
+		if ( receiverLogin == null || receiverLogin.trim().isEmpty() ){
+			throw new Exception("Destinário inválido");
+		}
+		Profile viewer = getUserProfile(senderSessionId);
+		User receiver = null;
+		try{
+			receiver = LendMe.getUserByLogin(receiverLogin);
+		}
+		catch (Exception e){
+			if ( e.getMessage().equals("Usuário inexistente") ){
+				throw new Exception("Destinário inexistente");
+			}
+			else if ( e.getMessage().equals("Login inválido") ){
+				throw new Exception("Destinário inválido");
+			}
+			else{
+				throw e;
+			}
+		}
+		viewer = viewer.viewOtherProfile(receiver);
+		return viewer.sendMessage(subject, message, lendingId);
 	}
 	
 	public static List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
-		
-		String userLogin = getLoginBySessionId(sessionId);
-		
-		if (topicType.equals("negociacao")) {
-			topicType = EntitiesConstants.NEGOTIATION_TOPIC;
-		} else if (topicType.equals("offtopic")) {
-			topicType = EntitiesConstants.OFF_TOPIC;
-		} else {
-			topicType = EntitiesConstants.ALL_TOPICS;
-		}
-		
-		return getUserByLogin(userLogin).getTopics(topicType);
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.getTopics(topicType);
 	}
 
 	public static List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
-		
-		String userLogin = getLoginBySessionId(sessionId);
-		
-		return getUserByLogin(userLogin).getMessagesByTopicId(topicId);
-	}
-	
-	private static String getLoginBySessionId(String sessionId) throws Exception {
-		
-		Session session = getSessionByID(sessionId);
-		
-		if (session == null) {
-			throw new Exception("SessÃ£o inexistente");//"Inexistent session");
-		}
-		return session.getLogin();
-	}
-	
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.getTopicMessages(topicId);
+	}	
 	
 	/**
 	 * This method belongs to the public system interface

@@ -437,30 +437,30 @@ public class User implements Comparable<User>{
 	}
 	
 	public String sendMessage(String subject, String message, User receiver,
-			String lendingId) {
+			String lendingId) throws Exception{
 		
 		boolean isOffTopic = false;
-		
-		if (lendingId.trim().isEmpty()) {
+		if ( lendingId == null ){
+			throw new Exception("Identificador da requisição de empréstimo é inválido");
+		}
+		else if ( lendingId.trim().isEmpty() ) {
 			isOffTopic = true;
 		}
-		
+		else if ( getLendingByLendingId(lendingId) == null ){
+			throw new Exception("Requisição de empréstimo inexistente");
+		}
 		storeMessage(subject, message, this.getLogin(), receiver.getLogin(),
 				isOffTopic, lendingId);
-		
-		//TODO Treat how is it going to deal with the Lending id
 		return receiver.storeMessage(subject, message, this.getLogin(),
 				receiver.getLogin(), isOffTopic, lendingId);
 	}
 
 	public String storeMessage(String subject, String message, String senderLogin,
-			String receiverLogin, boolean isOffTopic, String lendingId) {
-		
+			String receiverLogin, boolean isOffTopic, String lendingId) throws Exception{
 		if (isOffTopic) {
 			return addMessageToTopic(offTopicTopics, subject, message, senderLogin,
 					receiverLogin, isOffTopic, lendingId);
 		}
-		
 		else {
 			return addMessageToTopic(negotiationTopics, subject, message, senderLogin,
 					receiverLogin, isOffTopic, lendingId);
@@ -469,77 +469,78 @@ public class User implements Comparable<User>{
 
 	private String addMessageToTopic(Set<Topic> topicSet, String subject, 
 			String message, String senderLogin, String receiverLogin,
-			boolean isOffTopic,	String lendingId) {
+			boolean isOffTopic,	String lendingId) throws Exception{
 		
-		Topic foundTopic = getTopicBySubject(topicSet, subject); 
-		
-		if ( foundTopic != null) {
+		if ( topicSet == null ){
+			throw new Exception("Conjunto de tópicos inválido");
+		}
+		try{
+			Topic foundTopic = getTopicBySubject(subject);			
 			foundTopic.addMessage(subject, message, senderLogin, receiverLogin, 
 					isOffTopic, lendingId);
+			return foundTopic.getID();
 		}
-		else {
-			Topic newTopic = new Topic(subject);
-			newTopic.addMessage(subject, message, senderLogin, receiverLogin, 
-					isOffTopic, lendingId);
-			topicSet.add(newTopic);
-			foundTopic = newTopic;
-		}		
-		return foundTopic.getID();
+		catch (Exception e){
+			if ( e.getMessage().equals("Tópico inexistente") ){
+				Topic newTopic = new Topic(subject);
+				newTopic.addMessage(subject, message, senderLogin, receiverLogin, 
+						isOffTopic, lendingId);
+				topicSet.add(newTopic);
+				return newTopic.getID();
+			}
+			else{
+				throw e;
+			}
+		}
 	}
 	
 	public List<Message> getMessagesByTopicId(String topicId) throws Exception {
-		Topic foundTopic = getTopicById(negotiationTopics, topicId); 
-		
-		if ( foundTopic == null) {
-			foundTopic = getTopicById(offTopicTopics, topicId);
-			
-			if ( foundTopic == null) {
-				throw new Exception("Could not find any topic with the given subject.");
-			}
-		}
+
+		Topic foundTopic = getTopicById(topicId); 
 		Message[] msgArray = foundTopic.getMessages().toArray(
 				new Message[foundTopic.getMessages().size()]);
-		
 		Arrays.sort(msgArray);
-		
 		return Arrays.asList(msgArray);
 		
 	}
 		
-	private Topic getTopicById(Set<Topic> topicSet, String topicId) {
-		for (Topic topic : topicSet) {
+	private Topic getTopicById(String topicId) throws Exception{
+		if ( topicId == null || topicId.trim().isEmpty() ){
+			throw new Exception("Identificador do tópico é inválido");
+		}
+		for (Topic topic : negotiationTopics) {
 			if (topic.getID().equals(topicId)) {
 				return topic;
 			}
 		}
-		return null;
+		for (Topic topic : offTopicTopics) {
+			if (topic.getID().equals(topicId)) {
+				return topic;
+			}
+		}
+		throw new Exception("Tópico inexistente");
 	}
 
 	public Set<Message> getMessagesByTopicSubject(String topicSubject) throws Exception {
-		Topic foundTopic = getTopicBySubject(negotiationTopics, topicSubject); 
-		
-		if ( foundTopic != null) {
-			return foundTopic.getMessages();
-		}
-		
-		else {
-			foundTopic = getTopicBySubject(offTopicTopics, topicSubject);
-			
-			if ( foundTopic != null) {
-				return foundTopic.getMessages();
-			}
-		}
-		
-		throw new Exception("Could not find any topic with the given subject.");
+		Topic foundTopic = getTopicBySubject(topicSubject); 
+		return foundTopic.getMessages();
 	}
 	
-	private Topic getTopicBySubject(Set<Topic> topicSet, String subject) {
-		for (Topic topic : topicSet) {
+	private Topic getTopicBySubject(String subject) throws Exception{
+		if ( subject == null || subject.trim().isEmpty() ){
+			throw new Exception("Assunto inválido");
+		}
+		for (Topic topic : negotiationTopics) {
 			if (topic.getSubject().equals(subject)) {
 				return topic;
 			}
 		}
-		return null;
+		for (Topic topic : offTopicTopics) {
+			if (topic.getSubject().equals(subject)) {
+				return topic;
+			}
+		}
+		throw new Exception("Tópico inexistente");
 	}
 
 	public String askForReturnOfItem(String lendingId) throws Exception{
@@ -622,7 +623,17 @@ public class User implements Comparable<User>{
 	}
 	
 	public List<Topic> getTopics(String topicType) throws Exception {
-		
+		if ( topicType == null || topicType.trim().isEmpty() ){
+			throw new Exception("Tipo inválido");
+		}
+		if (topicType.equals("negociacao")) {
+			topicType = EntitiesConstants.NEGOTIATION_TOPIC;
+		} else if (topicType.equals("offtopic")) {
+			topicType = EntitiesConstants.OFF_TOPIC;
+		} else if (topicType.equals("todos")) {
+			topicType = EntitiesConstants.ALL_TOPICS;
+		}
+
 		if (topicType.equals(EntitiesConstants.OFF_TOPIC)) {
 			
 			Topic[] offTopicArray = this.offTopicTopics.
@@ -631,7 +642,6 @@ public class User implements Comparable<User>{
 			Arrays.sort(offTopicArray);
 			return Arrays.asList(offTopicArray);
 		}
-		
 		else if (topicType.equals(EntitiesConstants.NEGOTIATION_TOPIC)) {
 			
 			Topic[] negotiationTopicsArray = this.negotiationTopics.
@@ -640,7 +650,6 @@ public class User implements Comparable<User>{
 			Arrays.sort(negotiationTopicsArray);
 			return Arrays.asList(negotiationTopicsArray);
 		}
-		
 		else if (topicType.equals(EntitiesConstants.ALL_TOPICS)) {
 			Set<Topic> allTopics = new HashSet<Topic>();
 			
@@ -652,9 +661,9 @@ public class User implements Comparable<User>{
 			Arrays.sort(allTopicsArray);
 			return Arrays.asList(allTopicsArray);
 		}
-		
-		throw new Exception("Voce deve escolher um tipo de topico");
-		// "You must choose a topic type."
+		else{
+			throw new Exception("Tipo inexistente");
+		}
 	}
 
 	public void registerInterestForItem(Item item, User owner) {

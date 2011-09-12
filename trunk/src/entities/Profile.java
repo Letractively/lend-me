@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import main.LendMe;
+import entities.util.Message;
+import entities.util.Topic;
 
 public class Profile {
 
@@ -308,6 +310,24 @@ public class Profile {
 			throw new Exception("Somente o dono do item pode pedir pela devolução");//Only the owner of the item is allowed to ask for return of item
 		}
 		return me.askForReturnOfItem(lendingId);
+	}
+
+	public String sendMessage(String subject, String message, String lendingId) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( observer.getLogin().equals(owner.getLogin()) ){
+			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
+		}
+		return me.sendMessage(subject, message, owner, lendingId);
+	}
+
+	public List<Topic> getTopics(String topicType) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		return me.getTopics(topicType);
+	}
+
+	public List<Message> getTopicMessages(String topicId) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		return me.getMessagesByTopicId(topicId);
 	}
 	
 }

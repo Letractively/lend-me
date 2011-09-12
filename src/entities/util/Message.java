@@ -119,7 +119,7 @@ public class Message implements Comparable<Message> {
 
 	@Override
 	public int compareTo(Message otherMsg) {
-		return this.getDate().before(otherMsg.getDate())? -1:1;
+		return this.getDate().after(otherMsg.getDate())? -1:1;
 	}
 
 	public String getLendingId() {

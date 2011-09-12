@@ -12,6 +12,7 @@ import main.util.LendMeUtil;
 import entities.Item;
 import entities.Lending;
 import entities.User;
+import entities.util.EntitiesConstants;
 import entities.util.LendingStatus;
 import entities.util.Message;
 import entities.util.Topic;
@@ -234,21 +235,26 @@ public class LendMeFacade {
 	
 	public String enviarMensagem(String idSessao, String destinatario, 
 			String assunto, String mensagem) throws Exception {
-		return enviarMensagem(idSessao, destinatario, assunto, mensagem, "");
+			
+		return LendMe.sendMessage(idSessao, assunto, mensagem, destinatario);
 	}
 	
 	public String enviarMensagem(String idSessao, String destinatario, 
 			String assunto, String mensagem, String idRequisicaoEmprestimo) 
 					throws Exception {
-		return LendMe.sendMessage(idSessao, destinatario, assunto, mensagem, 
+			
+		return LendMe.sendMessage(idSessao, assunto, mensagem, destinatario, 
 				idRequisicaoEmprestimo);
 	}
 	
 	public String lerTopicos(String idSessao, String tipo) throws Exception {
+		
 		List<Topic> topicsList = LendMe.getTopics(idSessao, tipo);
+		
 		if (topicsList.isEmpty()) {
 			return "Não há tópicos criados";
 		}
+		
 		return LendMeUtil.toOrganizedTopicsArray(topicsList);
 	}
 	

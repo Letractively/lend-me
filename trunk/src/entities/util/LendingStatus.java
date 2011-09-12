@@ -2,6 +2,6 @@ package entities.util;
 
 public enum LendingStatus {
 
-		ONGOING, FINISHED, DENIED;
+		ONGOING, FINISHED, DENIED, CANCELLED;
 
 }

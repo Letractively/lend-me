@@ -193,7 +193,7 @@ public class LendMeFacade {
 		return LendMe.confirmLendingTermination(idSessao, idEmprestimo);
 	}
 
-	public String pedirItemDeVolta(String idSessao, String idEmprestimo) throws Exception{
+	public String requisitarDevolucao(String idSessao, String idEmprestimo) throws Exception{
 		return LendMe.askForReturnOfItem(idSessao, idEmprestimo);
 	}
 	
@@ -213,7 +213,8 @@ public class LendMeFacade {
 		saida += String.format(template, tmp.getLender().getLogin(),
 				tmp.getBorrower().getLogin(), tmp.getItem().getName(),
 				tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
-					( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : "Negado" ) );
+					( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : 
+						tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ) );
 		while ( iterador.hasNext() ){
 			saida += "; ";
 			if ( iterador.hasNext() ){
@@ -221,7 +222,8 @@ public class LendMeFacade {
 				saida += String.format(template, tmp.getLender().getLogin(),
 						tmp.getBorrower().getLogin(), tmp.getItem().getName(),
 						tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
-							( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : "Negado" ) );
+							( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : 
+								tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ) );
 			}
 		}
 		return saida;
@@ -251,6 +253,10 @@ public class LendMeFacade {
 	public String lerMensagens(String idSessao, String idTopico) throws Exception {
 		List<Message> messagesList = LendMe.getTopicMessages(idSessao, idTopico);
 		return LendMeUtil.toOrganizedMessagesArray(messagesList);
+	}
+	
+	public String adicionarDias(int dias){
+		return LendMe.someDaysPassed(dias);
 	}
 	
 }

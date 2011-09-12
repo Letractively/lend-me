@@ -2,6 +2,7 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -240,6 +241,7 @@ public class User implements Comparable<User>{
 			if ( record.getItem().equals(item) ){
 				requestAccepted = record;
 				record.setLendingDate();
+				record.getLendingDate().addDays(record.getRequiredDays());
 				borrower.addRequestedItem(item, this, days);
 			}
 		}
@@ -261,6 +263,7 @@ public class User implements Comparable<User>{
 					&& record.getRequiredDays() == days ){
 				requestAccepted = record;
 				record.setLendingDate();
+				record.getLendingDate().addDays(record.getRequiredDays());
 			}
 		}
 		if ( requestAccepted != null ){
@@ -543,25 +546,24 @@ public class User implements Comparable<User>{
 		throw new Exception("Tópico inexistente");
 	}
 
-	public String askForReturnOfItem(String lendingId) throws Exception{
+	public String askForReturnOfItem(String lendingId, Date systemDate) throws Exception{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
 		}
 		for ( Lending record : myLentItems ){
 			if ( record.getID().equals(lendingId) ){
-				return requestBack(record.getItem());
+				return requestBack(record.getItem(), systemDate);
 			}
 		}
 		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
 	}
 	
-	public String requestBack(Item item) throws Exception{
+	public String requestBack(Item item, Date systemDate) throws Exception{
 		for(Lending record : myLentItems){
 			if(record.getItem().equals(item)){
-				record.getBorrower().setRequestedBack(item);
-				record.getLendingDate().addDays(record.getRequiredDays());
-				if(new EventDate().getDate().before(record.getLendingDate().getDate())){
-					record.setCanceled(true);
+				record.getBorrower().setRequestedBack(item, systemDate);
+				if(systemDate.before(record.getLendingDate().getDate())){
+					record.setCancelled();
 				}
 				record.setRequestedBack(true);
 				return record.getID();
@@ -570,13 +572,12 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
 	}
 
-	private void setRequestedBack(Item item) throws Exception{
-		for(Lending actual : myBorrowedItems){
-			if(actual.getItem().equals(item)){
-				actual.setRequestedBack(true);
-				actual.getLendingDate().addDays(actual.getRequiredDays());
-				if(new EventDate().getDate().before(actual.getLendingDate().getDate())){
-					actual.setCanceled(true);
+	private void setRequestedBack(Item item, Date systemDate) throws Exception{
+		for(Lending record : myBorrowedItems){
+			if(record.getItem().equals(item)){
+				record.setRequestedBack(true);
+				if(systemDate.before(record.getLendingDate().getDate())){
+					record.setCancelled();
 				}
 			}
 		}

@@ -227,36 +227,29 @@ public class LendMeFacade {
 		return saida;
 		
 	}
-
 	
 	public String enviarMensagem(String idSessao, String destinatario, 
 			String assunto, String mensagem) throws Exception {
-			
-		return LendMe.sendMessage(idSessao, assunto, mensagem, destinatario, "");
+		return enviarMensagem(idSessao, destinatario, assunto, mensagem, "");
 	}
 	
 	public String enviarMensagem(String idSessao, String destinatario, 
 			String assunto, String mensagem, String idRequisicaoEmprestimo) 
 					throws Exception {
-			
-		return LendMe.sendMessage(idSessao, assunto, mensagem, destinatario, 
+		return LendMe.sendMessage(idSessao, destinatario, assunto, mensagem, 
 				idRequisicaoEmprestimo);
 	}
 	
 	public String lerTopicos(String idSessao, String tipo) throws Exception {
-		
 		List<Topic> topicsList = LendMe.getTopics(idSessao, tipo);
-		
 		if (topicsList.isEmpty()) {
 			return "Não há tópicos criados";
 		}
-		
 		return LendMeUtil.toOrganizedTopicsArray(topicsList);
 	}
 	
 	public String lerMensagens(String idSessao, String idTopico) throws Exception {
 		List<Message> messagesList = LendMe.getTopicMessages(idSessao, idTopico);
-		
 		return LendMeUtil.toOrganizedMessagesArray(messagesList);
 	}
 	

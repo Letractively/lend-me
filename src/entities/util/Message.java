@@ -2,8 +2,6 @@ package entities.util;
 
 import java.util.Date;
 
-import entities.User;
-
 public class Message implements Comparable<Message> {
 	
 	private String subject;
@@ -114,15 +112,18 @@ public class Message implements Comparable<Message> {
 				&& this.getSender().equals(otherMsg.getSender())
 				&& this.isOffTopic() == otherMsg.isOffTopic();
 	}
-	
+
 	public Date getDate() {
 		return this.sending.getDate();
 	}
-
 
 	@Override
 	public int compareTo(Message otherMsg) {
 		return this.getDate().before(otherMsg.getDate())? -1:1;
 	}
-	
+
+	public String getLendingId() {
+		return lendingId;
+	}
+
 }

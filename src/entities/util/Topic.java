@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import entities.Identifiable;
-import entities.User;
 
 public class Topic implements Identifiable, Comparable<Topic> {
 	
@@ -37,7 +36,7 @@ public class Topic implements Identifiable, Comparable<Topic> {
 	}
 	
 	public boolean addMessage(String subject, String message, String sender,
-			String receiver, boolean isOffTopic, String lendingId) {
+			String receiver, boolean isOffTopic, String lendingId) throws Exception{
 		return messages.add(new Message(subject, message, sender, receiver,
 				isOffTopic, lendingId));
 	}

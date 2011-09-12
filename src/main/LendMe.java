@@ -20,6 +20,8 @@ public class LendMe {
 	private static Set<User> users = new HashSet<User>();
 	private static Set<Session> sessions = new HashSet<Session>();
 	private static EventDate time = new EventDate("System time");
+	public static enum atributeForSearch {DESCRIPTION, NAME, ID, CATEGORY};
+	public static enum criterionForSearch {INCRESCENT, DECREASING};
 	
 	/**
 	 * This method belongs to the public system interface
@@ -637,5 +639,56 @@ public class LendMe {
 		}
 		throw new Exception("Requisição de empréstimo inexistente");
 	}
+
+	public static void deleteItem(String sessionId, String itemId) throws Exception {
+		User userOwnerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
+		userOwnerSession.deleteMyItem(itemId);
+	}
+
+	public static Set<Item> searchItem(String idSessao, String chave, atributeForSearch atribute, criterionForSearch criterion) throws Exception{
+		
+		Set<Item> results = new HashSet<Item>();
+		User userOwnerSession = getUserByLogin(getSessionByID(idSessao).getLogin());
+		
+		switch(atribute){
 	
+		case DESCRIPTION:{
+			for(User actualFriend : userOwnerSession.getFriends()){
+				for(Item itemOfMyFriend : actualFriend.getAllItems()){
+					if(itemOfMyFriend.getDescription().toUpperCase().contains(chave.toUpperCase()))
+						results.add(itemOfMyFriend);
+				}
+			}
+		}
+		
+		case NAME:{
+			for(User actualFriend : userOwnerSession.getFriends()){
+				for(Item itemOfMyFriend : actualFriend.getAllItems()){
+					if(itemOfMyFriend.getName().toUpperCase().contains(chave.toUpperCase()))
+						results.add(itemOfMyFriend);
+				}
+			}
+		}
+		
+		case ID: {
+			for(User actualFriend : userOwnerSession.getFriends()){
+				for(Item itemOfMyFriend : actualFriend.getAllItems()){
+					if(itemOfMyFriend.getID().toUpperCase().contains(chave.toUpperCase()))
+						results.add(itemOfMyFriend);
+				}
+			}
+		}
+		
+		case CATEGORY: {
+			for(User actualFriend : userOwnerSession.getFriends()){
+				for(Item itemOfMyFriend : actualFriend.getAllItems()){
+					if(itemOfMyFriend.getCategory().equals(chave))
+						results.add(itemOfMyFriend);
+				}
+			}
+		}
+	}
+		return results;
+	
+	}
 }

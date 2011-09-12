@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
+
 import main.util.LendMeUtil;
 import entities.Item;
 import entities.Lending;
@@ -253,6 +255,31 @@ public class LendMeFacade {
 	public String lerMensagens(String idSessao, String idTopico) throws Exception {
 		List<Message> messagesList = LendMe.getTopicMessages(idSessao, idTopico);
 		return LendMeUtil.toOrganizedMessagesArray(messagesList);
+	}
+	
+	public void apagarItem(String idSessao, String idItem) throws Exception{
+		LendMe.deleteItem(idSessao, idItem);
+	}
+	
+	public String pesquisarItem(String idSessao, String chave, String atributo, String tipoDeOrdenacao, String criterioDeOrdenacao) throws Exception{
+		
+		String retorno = "";
+		Set<Item> resultado = null;
+		
+		if(atributo.equals("descricao")){
+			resultado = LendMe.searchItem(idSessao, chave, LendMe.atributeForSearch.DESCRIPTION, LendMe.criterionForSearch.INCRESCENT);
+		}else if(atributo.equals("nome")){
+			resultado = LendMe.searchItem(idSessao, chave, LendMe.atributeForSearch.NAME, LendMe.criterionForSearch.INCRESCENT);
+		}else if(atributo.equals("categoria")){
+			resultado = LendMe.searchItem(idSessao, chave, LendMe.atributeForSearch.CATEGORY, LendMe.criterionForSearch.INCRESCENT);
+		}
+		for(Item actualItem : resultado){
+			retorno += actualItem.getName()+"; ";
+		}
+		if(retorno.length() == 0){
+			return "Nenhum item encontrado";
+		}
+		return retorno.substring(0, retorno.length() - 2);
 	}
 	
 	public String adicionarDias(int dias){

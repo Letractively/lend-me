@@ -263,7 +263,6 @@ public class User implements Comparable<User>{
 					&& record.getRequiredDays() == days ){
 				requestAccepted = record;
 				record.setLendingDate();
-				record.getLendingDate().addDays(record.getRequiredDays());
 			}
 		}
 		if ( requestAccepted != null ){
@@ -464,6 +463,7 @@ public class User implements Comparable<User>{
 			return addMessageToTopic(offTopicTopics, subject, message, senderLogin,
 					receiverLogin, isOffTopic, lendingId);
 		}
+		
 		else {
 			return addMessageToTopic(negotiationTopics, subject, message, senderLogin,
 					receiverLogin, isOffTopic, lendingId);
@@ -862,6 +862,12 @@ public class User implements Comparable<User>{
 	
 	public Set<Lending> getBorrowedRegistryHistory() {
 		return borrowedRegistryHistory;
+	}
+
+	public void deleteMyItem(String itemId) {
+		for(Item actualItem : myItems.keySet())
+			if(actualItem.getID().equals(itemId))
+				myItems.remove(actualItem);
 	}
 	
 }

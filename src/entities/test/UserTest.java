@@ -1,6 +1,7 @@
 package entities.test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -192,7 +193,7 @@ public class UserTest {
 		
 		Assert.assertTrue(manoel.hasBorrowedItem(item));
 						
-		tarciso.requestBack(item);
+		tarciso.requestBack(item, new Date());
 		
 		Assert.assertTrue(manoel.hasRequestedBack(item));
 		
@@ -222,11 +223,11 @@ public class UserTest {
 		
 		Assert.assertTrue(manoel.hasBorrowedItem(item));
 						
-		tarciso.requestBack(item);
+		tarciso.requestBack(item, new Date());
 		
 		Assert.assertTrue(manoel.hasRequestedBack(item));
 
-		tarciso.requestBack(item);
+		tarciso.requestBack(item, new Date());
 						
 		Assert.assertTrue(manoel.getRequestedBackItems().equals(requestedBackItems));
 	}

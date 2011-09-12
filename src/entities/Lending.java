@@ -13,7 +13,6 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	private int requiredDays;
 	private boolean returned;
 	private boolean requestedBack;
-	private boolean canceled;
 	private EventDate requestionDate;
 	private EventDate lendingDate;
 	private String id;
@@ -25,7 +24,6 @@ public class Lending implements Identifiable, Comparable<Lending> {
 		this.item = item;
 		this.requiredDays = days;
 		this.requestedBack = false;
-		this.canceled = false;
 		this.requestionDate = new EventDate(String.format(EntitiesConstants.ITEM_REQUESTED_MESSAGE,
 				item.getName(), lender.getLogin(), requiredDays, borrower.getLogin()));
 		this.id = Integer.toString(((Object) this).hashCode());
@@ -53,11 +51,11 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	}
 	
 	public boolean isCanceled() {
-		return canceled;
+		return status == LendingStatus.CANCELLED;
 	}
 
-	public void setCanceled(boolean canceled) {
-		this.canceled = canceled;
+	public void setCancelled() {
+		this.status = LendingStatus.CANCELLED;
 	}
 
 	public void setRequestedBack(boolean requestedBack) {

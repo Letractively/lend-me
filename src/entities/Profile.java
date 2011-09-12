@@ -307,9 +307,9 @@ public class Profile {
 	public String askForReturnOfItem(String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
-			throw new Exception("Somente o dono do item pode pedir pela devolução");//Only the owner of the item is allowed to ask for return of item
+			throw new Exception("O usuário não tem permissão para requisitar a devolução deste item");//Only the owner of the item is allowed to ask for return of item
 		}
-		return me.askForReturnOfItem(lendingId);
+		return me.askForReturnOfItem(lendingId, LendMe.getSystemDate());
 	}
 
 	public String sendMessage(String subject, String message, String lendingId) throws Exception{

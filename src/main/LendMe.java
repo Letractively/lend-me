@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,13 +11,15 @@ import entities.Lending;
 import entities.Profile;
 import entities.Session;
 import entities.User;
+import entities.util.EventDate;
 import entities.util.Message;
 import entities.util.Topic;
 
 public class LendMe {
 
-	public static Set<User> users = new HashSet<User>();
-	public static Set<Session> sessions = new HashSet<Session>();
+	private static Set<User> users = new HashSet<User>();
+	private static Set<Session> sessions = new HashSet<Session>();
+	private static EventDate time = new EventDate("System time");
 	
 	/**
 	 * This method belongs to the public system interface
@@ -42,6 +45,15 @@ public class LendMe {
 		return session.getId();
 	}
 
+	public static Date getSystemDate() {
+		return time.getDate();
+	}
+	
+	public static String someDaysPassed(int amount){
+		time.addDays(amount+1);
+		return time.getDate().toString();
+	}
+	
 	/**
 	 * This method belongs to the public system interface
 	 * @param id
@@ -625,7 +637,5 @@ public class LendMe {
 		}
 		throw new Exception("Requisição de empréstimo inexistente");
 	}
-	
-	
 	
 }

@@ -2,6 +2,7 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -570,8 +571,7 @@ public class User implements Comparable<User>{
 			foundTopic = getTopicById(offTopicTopics, topicId);
 			
 			if ( foundTopic == null) {
-				throw new Exception("Tópico inexistente");
-				//"Could not find any topic with the given subject.");
+				return null;
 			}
 		}
 		Message[] msgArray = foundTopic.getMessages().toArray(
@@ -663,6 +663,9 @@ public class User implements Comparable<User>{
 				}
 				record.setRequestedBack(true);
 				sentItemDevolutionRequests.add(record);
+				sendMessage("Empréstimo do item " + item.getName() + " a " +
+						record.getBorrower().getName(), this.getName() + " solicitou a devolução do item " +
+						item.getName(), record.getBorrower(), record.getID());
 				return record.getID();
 			}
 		}
@@ -738,32 +741,23 @@ public class User implements Comparable<User>{
 		
 		if (topicType.equals(EntitiesConstants.OFF_TOPIC)) {
 			
-			Topic[] offTopicArray = this.offTopicTopics.
-					toArray(new Topic[offTopicTopics.size()]);
-			
-			Arrays.sort(offTopicArray);
-			return Arrays.asList(offTopicArray);
+			List<Topic> offTopicsList = new ArrayList<Topic>(offTopicTopics);
+			Collections.sort(offTopicsList);
+			return offTopicsList;
 		}
 		
 		else if (topicType.equals(EntitiesConstants.NEGOTIATION_TOPIC)) {
 			
-			Topic[] negotiationTopicsArray = this.negotiationTopics.
-					toArray(new Topic[negotiationTopics.size()]);
-			
-			Arrays.sort(negotiationTopicsArray);
-			return Arrays.asList(negotiationTopicsArray);
+			List<Topic> negotiationTopicsList = new ArrayList<Topic>(negotiationTopics);
+			Collections.sort(negotiationTopicsList);
+			return negotiationTopicsList;
 		}
-		
 		else {
-			Set<Topic> allTopics = new HashSet<Topic>();
-			
-			allTopics.addAll(offTopicTopics);
-			allTopics.addAll(negotiationTopics);
-			Topic[] allTopicsArray = allTopics.
-					toArray(new Topic[allTopics.size()]);
-			
-			Arrays.sort(allTopicsArray);
-			return Arrays.asList(allTopicsArray);
+
+			List<Topic> allTopicsList = new ArrayList<Topic>(offTopicTopics);
+			allTopicsList.addAll(negotiationTopics);
+			Collections.sort(allTopicsList);
+			return allTopicsList;
 		}
 		
 	}

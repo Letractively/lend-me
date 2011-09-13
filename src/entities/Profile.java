@@ -372,15 +372,21 @@ public class Profile {
 		return me.getTopics(topicType);
 	}
 
-	public List<Message> getTopicMessages(String topicId) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		
+	public List<Message> getTopicMessages(String topicId) throws Exception{		
 		if (topicId == null || topicId.trim().isEmpty()) {
 			throw new Exception("Identificador do tópico é inválido");
 			// "Invalid topic identifier");
 		}
+		List<Message> messages = LendMe.getMessagesByTopicId(topicId);
+		Message sampleMessage = messages.iterator().next();
+
+		User me = LendMe.getUserByLogin(observer.getLogin());
 		
-		return me.getMessagesByTopicId(topicId);
+		if ( !( sampleMessage.getSender().equals(me.getLogin()) 
+				|| sampleMessage.getReceiver().equals(me.getLogin())) ) {
+			throw new Exception("O usuário não tem permissão para ler as mensagens deste tópico");
+		}
+		return messages;
 	}
 
 	public void registerInterestForItem(String itemId) throws Exception{

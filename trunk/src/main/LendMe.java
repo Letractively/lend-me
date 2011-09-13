@@ -710,7 +710,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	private static User getItemOwner(String itemId) throws Exception{
+	public static User getItemOwner(String itemId) throws Exception{
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}
@@ -848,7 +848,7 @@ public class LendMe {
 		
 		default:	throw new Exception("Atributo  inválido");
 	}
-	//In case of changes in the criterions's numbers this is method will more large 	
+	//In case of changes in the numbers of criterions  this is method will more large 	
 		if(dispositionAux == DispositionForSearch.CRESCENTE){
 			Collections.sort(results);
 			return results;

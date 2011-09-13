@@ -193,6 +193,10 @@ public class LendMeFacade {
 	public String confirmarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
 		return LendMe.confirmLendingTermination(idSessao, idEmprestimo);
 	}
+	
+	public String negarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
+		return LendMe.denyLendingTermination(idSessao, idEmprestimo);
+	}
 
 	public String requisitarDevolucao(String idSessao, String idEmprestimo) throws Exception{
 		return LendMe.askForReturnOfItem(idSessao, idEmprestimo);
@@ -297,6 +301,10 @@ public class LendMeFacade {
 	
 	public String adicionarDias(int dias){
 		return LendMe.someDaysPassed(dias);
+	}
+	
+	public void registrarInteresse( String idSessao, String idItem ) throws Exception{
+		LendMe.registerInterestForItem(idSessao, idItem);
 	}
 	
 }

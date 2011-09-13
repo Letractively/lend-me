@@ -304,6 +304,14 @@ public class Profile {
 		return me.confirmLendingTermination(lendingId);
 	}
 
+	public String denyLendingTermination(String lendingId) throws Exception{
+		User me = LendMe.getUserByLogin(observer.getLogin());
+		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
+			throw new Exception("O término do empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
+		}
+		return me.denyLendingTermination(lendingId);
+	}
+	
 	public String askForReturnOfItem(String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
@@ -373,6 +381,36 @@ public class Profile {
 		}
 		
 		return me.getMessagesByTopicId(topicId);
+	}
+
+	public void registerInterestForItem(String itemId) throws Exception{
+
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
+		}
+		if ( observer.getLogin().equals(getOwnerLogin()) ){
+			throw new Exception("O usuário não pode registrar interesse no próprio item");
+		}
+		
+		User me = LendMe.getUserByLogin(observer.getLogin());
+
+		try{
+			for ( Item item : getOwnerItems() ){
+				if ( item.getID().equals(itemId) ){
+					me.registerInterestForItem(item, owner);
+					return;
+				}
+			}
+		}
+		catch (Exception e){
+			if ( e.getMessage().equals("O usuário não tem permissão para visualizar estes itens") ){
+				throw new Exception("O usuário não tem permissão para registrar interesse neste item");
+			}
+			else{
+				throw e;
+			}
+		}
+		throw new Exception("Item inexistente");
 	}
 	
 }

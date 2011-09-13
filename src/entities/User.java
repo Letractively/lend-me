@@ -33,6 +33,7 @@ public class User implements Comparable<User>{
 	private Set<Lending> lentRegistryHistory = new HashSet<Lending>();
 	private Set<Lending> borrowedRegistryHistory = new HashSet<Lending>();
 	private Set<Lending> loanDenialRegistryHistory = new HashSet<Lending>();
+	private Set<Lending> sentItemDevolutionRequests = new HashSet<Lending>();
 	private Set<Topic> negotiationTopics = new HashSet<Topic>();
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
 	private Map<Item, ArrayList<User>> myInterestingItems = new HashMap<Item, ArrayList<User>>();
@@ -363,7 +364,6 @@ public class User implements Comparable<User>{
 		throw new Exception("ERR: borrower wants to return item but he doesn't have it");
 	}
 	
-	
 	private void setReturned(Item item) throws Exception{
 		for(Lending record : myLentItems){
 			if(record.getItem().equals(item)){
@@ -376,7 +376,7 @@ public class User implements Comparable<User>{
 		}
 		throw new Exception("ERR: lender was required to set his item as toBeReturned but he doesn't have it");
 	}
-
+	
 	public String confirmLendingTermination(String lendingId) throws Exception{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending identifier is invalid");
@@ -396,22 +396,31 @@ public class User implements Comparable<User>{
 	}
 	
 	public void receiveLentItem(Item item) throws Exception{
+
 		Lending requestAttended = null;
-		for(Lending record : myLentItems){
-			if(record.getItem().equals(item) && record.isReturned()){
+		for ( Lending record : myLentItems ){
+			if ( record.getItem().equals(item) && record.isReturned() ) {
 				requestAttended = record;
-				if(myInterestingItems.containsKey(item)){
-					for(User interested : myInterestingItems.get(item)){
-						interested.sendMessage("Available Item!", "The " + item.getName() +
-												" of the " + this.getName() +
-												" is available now.", interested, "");
+				if ( myInterestingItems.containsKey(item) ) {
+					Set<User> toBeWarned = new HashSet<User>();
+					for ( User interested : myInterestingItems.get(item) ) {
+						interested.sendMessage(
+								"O item " + item.getName() + " do usuário "
+								+ this.getName() + " está disponível",
+								"Corra pra pedir emprestado, pois "
+								+ (myInterestingItems.get(item).size()-1)
+								+ " pessoas além de você pediram por ele!", interested);
+						toBeWarned.add(interested);
 					}
+					myInterestingItems.get(item).removeAll(toBeWarned);
 				}
 			}
 		}
 		if ( requestAttended != null ){
 			myLentItems.remove(requestAttended);
-			requestAttended.setStatus(LendingStatus.FINISHED);
+			if ( !(requestAttended.getStatus() == LendingStatus.CANCELLED) ){
+				requestAttended.setStatus(LendingStatus.FINISHED);
+			}
 			lentRegistryHistory.add(requestAttended);
 			myItems.put(item, this);
 			requestAttended.getBorrower().removeBorrowedItem(item);
@@ -421,6 +430,51 @@ public class User implements Comparable<User>{
 		}
 	}
 
+	public String denyLendingTermination(String lendingId) throws Exception{
+		if ( lendingId == null || lendingId.trim().isEmpty() ){
+			throw new Exception("Identificador do empréstimo é inválido");//"Lending identifier is invalid");
+		}
+		for ( Lending record : lentRegistryHistory ){
+			if ( record.getID().equals(lendingId) ){
+				throw new Exception("O empréstimo já foi finalizado");
+			}
+		}
+		for ( Lending record : myLentItems ){
+			if ( record.getID().equals(lendingId) ){
+				denyReceivingLentItem(record.getItem());
+				return record.getID();
+			}
+		}
+		throw new Exception("Empréstimo inexistente");
+	}
+
+	private void denyReceivingLentItem(Item item) throws Exception{
+		for(Lending record : myLentItems){
+			if(record.getItem().equals(item)){
+				if ( !record.isReturned() ){
+					throw new Exception("Devolução do item já foi negada");//"Item returning already denied);
+				}
+				record.getBorrower().setNotReturned(item);
+				record.setReturned(false);
+				return;
+			}
+		}
+		throw new Exception("ERR: borrower wants to return item but he doesn't have it");
+	}
+
+	private void setNotReturned(Item item) throws Exception{
+		for(Lending record : myBorrowedItems){
+			if(record.getItem().equals(item)){
+				if ( !record.isReturned() ){
+					throw new Exception("Devolução do item já foi negada");//"Item returning already denied);
+				}
+				record.setReturned(false);
+				return;
+			}
+		}
+		throw new Exception("ERR: lender was required to set his item as toBeReturned but he doesn't have it");
+	}
+	
 	private void removeBorrowedItem(Item item) throws Exception{
 		Lending requestAttended = null;
 		for(Lending record : myBorrowedItems){
@@ -430,7 +484,9 @@ public class User implements Comparable<User>{
 		}
 		if ( requestAttended != null ){
 			myBorrowedItems.remove(requestAttended);
-			requestAttended.setStatus(LendingStatus.FINISHED);
+			if ( !(requestAttended.getStatus() == LendingStatus.CANCELLED) ){
+				requestAttended.setStatus(LendingStatus.FINISHED);
+			}
 			borrowedRegistryHistory.add(requestAttended);
 		}
 		else{
@@ -463,9 +519,8 @@ public class User implements Comparable<User>{
 	
 	private void validateLendingId(String lendingId) throws Exception {
 		
-		if (lendingId.trim().isEmpty()) {
-			throw new Exception("Identificador da requisição de empréstimo é" +
-					" inválido");// "Invalid lending identifier"); 
+		if ( lendingId == null || lendingId.trim().isEmpty()) {
+			throw new Exception("Identificador da requisição de empréstimo é inválido");// "Invalid lending identifier"); 
 		}
 		
 		if (getLendingByLendingId(lendingId) == null) {
@@ -571,22 +626,43 @@ public class User implements Comparable<User>{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
 		}
+		for ( Lending record : lentRegistryHistory ){
+			if ( record.getID().equals(lendingId) ){
+				throw new Exception("Item já devolvido");//"Item already returned");				
+			}
+		}
+		for ( Lending record : sentItemDevolutionRequests  ){
+			if ( record.getID().equals(lendingId) ){
+				if ( !record.isReturned() ){
+					throw new Exception("Devolução já requisitada");//"Devolution of item already requested");
+				}
+				else{
+					throw new Exception("Item já devolvido");//"Item already returned");					
+				}
+			}
+		}
 		for ( Lending record : myLentItems ){
 			if ( record.getID().equals(lendingId) ){
-				return requestBack(record.getItem(), systemDate);
+				if ( !record.isReturned() ){
+					return requestBack(record.getItem(), systemDate);
+				}
+				else{
+					throw new Exception("Item já devolvido");//"Item already returned");
+				}
 			}
 		}
 		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
 	}
 	
 	public String requestBack(Item item, Date systemDate) throws Exception{
-		for(Lending record : myLentItems){
+		for ( Lending record : myLentItems ){
 			if(record.getItem().equals(item)){
 				record.getBorrower().setRequestedBack(item, systemDate);
 				if(systemDate.before(record.getLendingDate().getDate())){
 					record.setCancelled();
 				}
 				record.setRequestedBack(true);
+				sentItemDevolutionRequests.add(record);
 				return record.getID();
 			}
 		}
@@ -692,14 +768,22 @@ public class User implements Comparable<User>{
 		
 	}
 
-	public void registerInterestForItem(Item item, User owner) {
-		if(myFriends.contains(owner)){
-			if(owner.hasItem(item)){
-				if(owner.isLent(item)){
-					owner.markAsInterested(item, this);
+	public void registerInterestForItem(Item item, User owner) throws Exception{
+
+		if ( myFriends.contains(owner) ){
+			if ( owner.hasItem(item) ) {
+				if ( owner.isLent(item) ) {
+					if ( !(owner.isMarkedAsInterested(item, this)) ){
+						owner.markAsInterested(item, this);
+						return;
+					}
+					else{
+						throw new Exception("O usuário já registrou interesse neste item");
+					}
 				}
 			}
 		}
+		throw new Exception("Item inexistente");
 	}
 
 	private void markAsInterested(Item item, User interested) {
@@ -711,9 +795,20 @@ public class User implements Comparable<User>{
 		}
 	}
 
-	public boolean isMarkedAsInterested(Item item) {
-		if(myItems.containsKey(item)){
-			return this.myInterestingItems.containsKey(item);
+	public boolean isMarkedAsInterested(Item item, User interested) throws Exception{
+		if ( item == null ){
+			throw new Exception("Item inválido");
+		}
+		if ( interested == null ){
+			throw new Exception("Usuário inválido");
+		}
+		if ( myInterestingItems.containsKey(item) ){
+			if ( myInterestingItems.get(item) != null ){
+				return this.myInterestingItems.get(item).contains(interested);
+			}
+			else{
+				return false;
+			}
 		}
 		return false;
 	}

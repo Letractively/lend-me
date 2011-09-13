@@ -1014,5 +1014,10 @@ public class User implements Comparable<User>{
 		}
 		myItems.remove(toBeRemove);
 	}
-	
+
+	public int getReputation() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

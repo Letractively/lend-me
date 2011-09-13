@@ -11,14 +11,17 @@ public class ComparatorOfItems implements Comparator<Item>{
 	@Override
 	public int compare(Item o1, Item o2) {
 		try {
+			
 			User user1 = LendMe.getItemOwner(o1.getID());
 			User user2 = LendMe.getItemOwner(o2.getID());
 			
-			//Subtraction between user's reputation 
+			//Subtraction between user's reputation
+			return user1.getReputation() - user2.getReputation();
+			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			return 0;
 		}
-		return 0;
+		
 	}
 
 }

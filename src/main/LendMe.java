@@ -18,6 +18,51 @@ import entities.util.EventDate;
 import entities.util.Message;
 import entities.util.Topic;
 
+/**
+ * The System.
+ * Here is where the created Users and open Sessions are located. It also keeps track of the system time.
+ * In fact, it contains all Business Logic, but the problem is this is also the System Facade.
+ * So we can make no difference between both things.
+
+ * Some methods that are public shouldn't be.
+
+ * In my opinion (Guilherme) the only public methods should be:
+ * 
+ * resetSystem()
+ * getSystemDate()
+ * openSession()
+ * closeSession()
+ * registerUser()
+ * searchUsersByName()
+ * searchUsersByAddress()
+ * searchSessionsByLogin()
+ * askForFriendship()
+ * acceptFriendship()
+ * declineFriendship()
+ * breakFriendship()
+ * getFriends() //the friends of this user
+ * getFriends() //the friends of another user
+ * hasFriend()
+ * sendMessage() //off topic
+ * sendMessage() //negotiation topic
+ * getTopics()
+ * getTopicMessages()
+ * registerItem()
+ * getItems() //the items of this user
+ * getItems() //the items of another user
+ * deleteItem()
+ * registerInterestForItem()
+ * requestItem()
+ * approveLoan()
+ * askForReturnOfItem()
+ * returnItem()
+ * confirmLendingTermination()
+ * denyLendingTermination()
+ * getLendingRecords()
+ * 
+ * Everything else should remain private or protected (if used by other System objects)
+ */
+
 public class LendMe {
 
 	private static Set<User> users = new HashSet<User>();
@@ -28,18 +73,24 @@ public class LendMe {
 	public static enum CriterionForSearch {DATACRIACAO};
 	
 	/**
-	 * This method belongs to the public system interface
+	 * Resets the whole system: all living sessions are shutdown as well as all users are deleted.
+	 * Also, the system clock is set to same as the OS time.
+	 * 
+	 * <i>This method belongs to the public system interface</i>
 	 */
 	public static void resetSystem(){
 		users = new HashSet<User>();
 		sessions = new HashSet<Session>();
+		time = new EventDate("System reset at "+time.getDate());
 	}
 	
 	/**
-	 * This method belongs to the public system interface
-	 * @param login
-	 * @return
-	 * @throws Exception
+	 * Opens a new session for the user specified by login.
+	 * 
+	 * <i>This method belongs to the public system interface </i>
+	 * @param login the user login
+	 * @return the session id
+	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
 	public static String openSession(String login) throws Exception {
 		if (login == null || login.trim().isEmpty()){
@@ -51,30 +102,47 @@ public class LendMe {
 		return session.getId();
 	}
 
+	/**
+	 * Returns the system date.
+	 * 
+	 * <i>This method belongs to the public system interface </i>
+	 * @return the system time
+	 */
 	public static Date getSystemDate() {
 		return time.getDate();
 	}
 	
+	/**
+	 * Simulates that a specified amount of days have passed.
+	 * 
+	 * <i>This method belongs to the public system interface </i>
+	 * @param amount the amount of days
+	 * @return the string representing the new system time
+	 */
 	public static String someDaysPassed(int amount){
 		time.addDays(amount+1);
 		return time.getDate().toString();
 	}
 	
 	/**
-	 * This method belongs to the public system interface
-	 * @param id
-	 * @throws Exception
+	 * Closes the specified session.
+	 * 
+	 * <i>This method belongs to the public system interface </i>
+	 * @param id the session id
+	 * @throws Exception for inexistent sessions
 	 */
 	public static void closeSession(String id) throws Exception{
 		sessions.remove(getSessionByID(id));
 	}
 	
 	/**
-	 * This method belongs to the public system interface
-	 * @param login
-	 * @param name
-	 * @param address
-	 * @throws Exception
+	 * Registers a new user in the system.
+	 * 
+	 * <i>This method belongs to the public system interface </i>
+	 * @param login the user login
+	 * @param name the user name
+	 * @param address the user address
+	 * @throws Exception for invalid parameters or if a user with login already exists
 	 */
 	public static void registerUser(String login, String name, String... address) throws Exception{
 		if(!users.add(new User(login, name, address))){
@@ -83,13 +151,15 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
-	 * @param sessionId
-	 * @param name
-	 * @param description
-	 * @param category
+	 * Registers a new item in the system.
+	 * 
+	 * <i>This method belongs to the public system interface </i>
+	 * @param sessionId the owner of the item session id
+	 * @param name the item name
+	 * @param description the item description
+	 * @param category the item category
 	 * @return
-	 * @throws Exception
+	 * @throws Exception for invalid parameters
 	 */
 	public static String registerItem(String sessionId, String name, 
 			String description, String category) throws Exception{

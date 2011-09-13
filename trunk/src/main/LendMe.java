@@ -282,6 +282,9 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	private static Item getItemByID(String itemId) throws Exception {
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é inválido");
+		}
 		Item referredItem = null;
 		
 		for ( User user : users ){
@@ -611,6 +614,12 @@ public class LendMe {
 		return viewer.confirmLendingTermination(lendingId);
 	}
 
+	public static String denyLendingTermination(String sessionId,
+			String lendingId) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.denyLendingTermination(lendingId);
+	}
+	
 	/**
 	 * This method belongs to the public system interface
 	 * @param sessionId
@@ -737,4 +746,11 @@ public class LendMe {
 		}
 	
 	}
+
+	public static void registerInterestForItem(String sessionId, String itemId) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
+		viewer.registerInterestForItem(itemId);
+	}
+
 }

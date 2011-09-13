@@ -1,6 +1,5 @@
 package entities.test;
 
-import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import org.junit.Test;
 
 import entities.Item;
 import entities.User;
-import entities.util.EntitiesConstants;
 import entities.util.Message;
 import entities.util.Topic;
 
@@ -289,7 +287,7 @@ public class UserTest {
 	
 	
 	@Test
-	public void testRegistInteresting() throws Exception{
+	public void testRegisterInteresting() throws Exception{
 		tarciso.addItem("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", "LIVRO");
 		
 		manoel.requestFriendship(tarciso);
@@ -302,9 +300,6 @@ public class UserTest {
 		
 		Assert.assertTrue(manoel.hasBorrowedItem(item));
 		
-		pedro.registerInterestForItem(item, tarciso);
-		
-		tarciso.isMarkedAsInterested(item);
 	}
 	
 	@Test

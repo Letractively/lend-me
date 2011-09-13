@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -22,9 +23,9 @@ public class LendMe {
 	private static Set<User> users = new HashSet<User>();
 	private static Set<Session> sessions = new HashSet<Session>();
 	private static EventDate time = new EventDate("System time");
-	public static enum AtributeForSearch {DESCRIPTION, NAME, ID, CATEGORY};
-	public static enum DispositionForSearch {INCRESCENT, DECREASING};
-	public static enum CriterionForSearch {DATE};
+	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
+	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
+	public static enum CriterionForSearch {DATACRIACAO};
 	
 	/**
 	 * This method belongs to the public system interface
@@ -690,51 +691,95 @@ public class LendMe {
 		userOwnerSession.deleteMyItem(itemId);
 	}
 
-	public static List<Item> searchItem(String idSessao, String chave, AtributeForSearch atribute, DispositionForSearch disposition ,CriterionForSearch criterion) throws Exception{
+	public static ArrayList<Item> searchItem(String idSessao, String key, String atribute, String disposition ,String criterion) throws Exception{
 		
-		List<Item> results = new ArrayList<Item>();
-		User userOwnerSession = getUserByLogin(getSessionByID(idSessao).getLogin());
+		ArrayList<Item> results = new ArrayList<Item>();
+		Session session = getSessionByID(idSessao);
+		User userOwnerSession = getUserByLogin(session.getLogin());
+		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
+		DispositionForSearch dispositionAux = DispositionForSearch.CRESCENTE;
 		
-		switch(atribute){
+		//Verification of inputs
+		if(key == null || key.trim().isEmpty()){
+			throw new Exception("Chave inválida");//"invalid key"
+		}
+		if(atribute == null || atribute.trim().isEmpty()){
+			throw new Exception("Atributo inválido");
+		}
+		if(!Arrays.toString(AtributeForSearch.values()).toLowerCase().contains(atribute.toLowerCase())){
+			throw new Exception("Atributo inexistente");
+		}
+		if(disposition == null || disposition.trim().isEmpty()){
+			throw new Exception("Tipo inválido de ordenação");
+		}
+		if(!Arrays.toString(DispositionForSearch.values()).toLowerCase().contains(disposition.toLowerCase())){
+			throw new Exception("Tipo de ordenação inexistente");
+		}
+		if(criterion == null || criterion.trim().isEmpty()){
+			throw new Exception("Critério inválido de ordenação");
+		}
+		if(!Arrays.toString(CriterionForSearch.values()).toLowerCase().contains(criterion.toLowerCase())){
+			throw new Exception("Critério de ordenação inexistente");
+		}
 	
-		case DESCRIPTION:{
-			for(User actualFriend : userOwnerSession.getFriends()){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getDescription().toUpperCase().contains(chave.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
+		//End of verification
+		
+		for(AtributeForSearch actual : AtributeForSearch.values()){
+			if(actual.toString().toLowerCase().contains(atribute))
+				atributeAux = actual;
 		}
 		
-		case NAME:{
+		for(DispositionForSearch actual : DispositionForSearch.values()){
+			if(actual.toString().toLowerCase().contains(criterion))
+				dispositionAux = actual;
+		}
+		
+		switch(atributeAux){
+	
+		case DESCRICAO:{
 			for(User actualFriend : userOwnerSession.getFriends()){
 				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getName().toUpperCase().contains(chave.toUpperCase()))
+					if(itemOfMyFriend.getDescription().toUpperCase().contains(key.toUpperCase()))
 						results.add(itemOfMyFriend);
 				}
 			}
+			 break;
+		}
+		
+		case NOME:{
+			for(User actualFriend : userOwnerSession.getFriends()){
+				for(Item itemOfMyFriend : actualFriend.getAllItems()){
+					if(itemOfMyFriend.getName().toUpperCase().contains(key.toUpperCase()))
+						results.add(itemOfMyFriend);
+				}
+			}
+			 break;
 		}
 		
 		case ID: {
 			for(User actualFriend : userOwnerSession.getFriends()){
 				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getID().toUpperCase().contains(chave.toUpperCase()))
+					if(itemOfMyFriend.getID().toUpperCase().contains(key.toUpperCase()))
 						results.add(itemOfMyFriend);
 				}
 			}
+			 break;
 		}
 		
-		case CATEGORY: {
+		case CATEGORIA: {
 			for(User actualFriend : userOwnerSession.getFriends()){
 				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getCategory().toString().toUpperCase().contains(chave.toUpperCase()))
+					if(itemOfMyFriend.getCategory().toString().toUpperCase().contains(key.toUpperCase()))
 						results.add(itemOfMyFriend);
 				}
 			}
+			 break;
 		}
+		
+		default:	throw new Exception("Atributo  inválido");
 	}
 	//In case of changes in the criterions's numbers this is method will more large 	
-		if(disposition == DispositionForSearch.INCRESCENT){
+		if(dispositionAux == DispositionForSearch.CRESCENTE){
 			Collections.sort(results);
 			return results;
 	

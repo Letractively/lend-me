@@ -1,12 +1,12 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import main.LendMe.DispositionForSearch;
 import main.util.LendMeUtil;
 import entities.Item;
 import entities.Lending;
@@ -271,32 +271,17 @@ public class LendMeFacade {
 	
 	public String pesquisarItem(String idSessao, String chave, String atributo, String tipoDeOrdenacao, String criterioDeOrdenacao) throws Exception{
 		
-		String retorno = "";
-		List<Item> resultado = null;
-		DispositionForSearch dispo;
+		String saida = "";
+		ArrayList<Item> lista = LendMe.searchItem(idSessao, chave, atributo, tipoDeOrdenacao, criterioDeOrdenacao);
+
+		for(Item actualString : lista)
+			saida += actualString.getName()+"; ";			
 		
-		if(tipoDeOrdenacao.equals("decrescente")){
-			dispo = LendMe.DispositionForSearch.DECREASING;
-		}else{
-			dispo = LendMe.DispositionForSearch.INCRESCENT;
-		}
-		
-		if(atributo.equals("descricao")){
-			resultado = LendMe.searchItem(idSessao, chave, LendMe.AtributeForSearch.DESCRIPTION, 
-															   dispo, LendMe.CriterionForSearch.DATE);
-		}else if(atributo.equals("nome")){
-			resultado = LendMe.searchItem(idSessao, chave, LendMe.AtributeForSearch.NAME, 
-					   dispo, LendMe.CriterionForSearch.DATE);
-		}else if(atributo.equals("categoria")){
-			resultado = LendMe.searchItem(idSessao, chave, LendMe.AtributeForSearch.CATEGORY, 
-					   dispo, LendMe.CriterionForSearch.DATE);		}
-		for(Item actualItem : resultado){
-			retorno += actualItem.getName()+"; ";
-		}
-		if(retorno.length() == 0){
+		if(saida.isEmpty()){
 			return "Nenhum item encontrado";
-		}
-		return retorno.substring(0, retorno.length() - 2);
+		}		
+		return saida.substring(0, saida.length() - 2);
+		
 	}
 	
 	public String adicionarDias(int dias){

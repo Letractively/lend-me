@@ -549,11 +549,11 @@ public class LendMe {
 		} catch (Exception e) {
 			
 			if (e.getMessage().equals("Login inválido")) {
-				throw new Exception("Destinário inválido");//"Invalid receiver");
+				throw new Exception("Destinatário inválido");//"Invalid receiver");
 			}
 			
 			else if (e.getMessage().equals("Usuário inexistente")) {
-				throw new Exception("Destinário inexistente");//"Inexistent receiver");
+				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
 			}
 			
 			else if (e.getMessage().equals("Empréstimo inexistente")) {
@@ -581,11 +581,11 @@ public class LendMe {
 		} catch (Exception e) {
 			
 			if (e.getMessage().equals("Login inválido")) {
-				throw new Exception("Destinário inválido");//"Invalid receiver");
+				throw new Exception("Destinatário inválido");//"Invalid receiver");
 			}
 			
 			else if (e.getMessage().equals("Usuário inexistente")) {
-				throw new Exception("Destinário inexistente");//"Inexistent receiver");
+				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
 			}
 			
 			throw e;
@@ -866,6 +866,17 @@ public class LendMe {
 		Profile viewer = getUserProfile(sessionId);
 		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
 		viewer.registerInterestForItem(itemId);
+	}
+
+	public static List<Message> getMessagesByTopicId(String topicId) throws Exception{
+
+		for ( User user : users ){
+			List<Message> messages = user.getMessagesByTopicId(topicId);
+			if ( messages != null ){
+				return messages;
+			}
+		}
+		throw new Exception("Tópico inexistente");//"Inexistent topic");
 	}
 
 }

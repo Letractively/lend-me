@@ -984,10 +984,41 @@ public class User implements Comparable<User>{
 		return borrowedRegistryHistory;
 	}
 
-	public void deleteMyItem(String itemId) {
+	public void deleteMyItem(String itemId) throws Exception{
+		
+		Item toBeRemove = null;
+		
+		if(itemId == null || itemId.trim().isEmpty()){
+			throw new Exception("Identificador do item é inválido");
+		}
+		
+		for(User actualFriend : this.myFriends){
+			for(Item itemMyFriend : actualFriend.getAllItems()){
+				if(itemMyFriend.getID().equals(itemId))
+					throw new Exception("O usuário não tem permissão para apagar este item");
+			}
+		}
+		
 		for(Item actualItem : myItems.keySet())
 			if(actualItem.getID().equals(itemId))
-				myItems.remove(actualItem);
+				toBeRemove = actualItem;
+		
+		if(toBeRemove == null){
+			throw new Exception("Item inexistente");
+		}
+		
+		for(Lending actualLending : this.myLentItems){
+			if(actualLending.getItem().equals(toBeRemove)){
+				throw new Exception("O usuário não pode apagar este item enquanto estiver emprestado");
+			}
+		}
+		
+		for(Lending actualLending : receivedItemRequests){
+			if(actualLending.getItem().equals(toBeRemove)){
+				receivedItemRequests.remove(actualLending);
+			}
+		}
+		myItems.remove(toBeRemove);
 	}
 	
 }

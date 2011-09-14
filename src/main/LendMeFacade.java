@@ -1,13 +1,10 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import main.util.LendMeUtil;
 import entities.Item;
 import entities.Lending;
 import entities.User;
@@ -15,285 +12,228 @@ import entities.util.LendingStatus;
 import entities.util.Message;
 import entities.util.Topic;
 
-
 public class LendMeFacade {
-	
-	public void zerarSistema(){
+
+	public void resetSystem(){
 		LendMe.resetSystem();
 	}
 	
-	public void encerrarSistema(){
+	public void openSession(String login) throws Exception{
 		
+		LendMe.openSession(login);
 	}
 	
-	public String abrirSessao(String login) throws Exception{
-		return LendMe.openSession(login);
-	}
-	
-	public void criarUsuario(String login, String nome, String endereco) throws Exception {
-		LendMe.registerUser(login, nome, endereco);
-	}
-	
-	public String getAtributoUsuario(String login, String atributo) throws Exception{
-		return LendMe.getUserAttribute(login, atributo);
-	}
-
-	public String cadastrarItem(String idSessao, String nome, String descricao,
-			String categoria) throws Exception{
-		return LendMe.registerItem(idSessao, nome, descricao, categoria);
-	}
-	
-	public String getAtributoItem(String idItem, String atributo) throws Exception{
-		return LendMe.getItemAttribute(idItem, atributo);
-	}
-	
-	public void requisitarAmizade(String idSessao, String login) throws Exception{
-		LendMe.askForFriendship(idSessao, login);
-	}
-	
-	public void aprovarAmizade(String idSessao, String login) throws Exception{
-		LendMe.acceptFriendship(idSessao, login);
-	}
-	
-	public void negarAmizade(String idSessao, String login) throws Exception{
-		LendMe.declineFriendship(idSessao, login);
-	}
-	
-	public void desfazerAmizade(String idSessao, String login) throws Exception{
-			LendMe.breakFriendship(idSessao, login);
-	}
-	
-	public boolean ehAmigo(String idSessao, String login) throws Exception{
-		return LendMe.hasFriend(idSessao, login);
-	}
-	
-	public String getAmigos(String idSessao) throws Exception{
-		String saida = "";
-
-		Set<User> amigos = LendMe.getFriends(idSessao);
-
-		if ( amigos.isEmpty() ){
-			return "O usuário não possui amigos";
-		}
+	public String getSystemDate(){
 		
-		User[] amigosParaSeremOrdenados = amigos.toArray(new User[amigos.size()]);
-		Arrays.sort(amigosParaSeremOrdenados);
-		for ( int j=0; j<amigosParaSeremOrdenados.length; j++ ) {
-			saida += amigosParaSeremOrdenados[j].getLogin() + "; ";
-		}
-		saida = saida.substring(0, saida.length() - 2);
-		return saida;
+		return LendMe.getSystemDate().toString();
 	}
 	
-	public String getAmigos(String idSessao, String login) throws Exception{
-		String saida = "";
-
-		Set<User> amigos = LendMe.getFriends(idSessao, login);
-
-		if ( amigos.isEmpty() ){
-			return "O usuário não possui amigos";
-		}
+	public void closeSession(String sessionId) throws Exception{
 		
-		User[] amigosParaSeremOrdenados = amigos.toArray(new User[amigos.size()]);
-		Arrays.sort(amigosParaSeremOrdenados);
-		for ( int j=0; j<amigosParaSeremOrdenados.length; j++ ) {
-			saida += amigosParaSeremOrdenados[j].getLogin() + "; ";
-		}
-		saida = saida.substring(0, saida.length() - 2);
-		return saida;
+		LendMe.closeSession(sessionId);
 	}
 	
-	public String getItens(String idSessao) throws Exception{
-		String saida = "";
-
-		Set<Item> itens = LendMe.getItems(idSessao);
-
-		if ( itens.isEmpty() ){
-			return "O usuário não possui itens cadastrados";
-		}
+	public void registerUser(String login, String name, String... address)
+		throws Exception{
 		
-		Item[] itensParaSeremSorteados = itens.toArray(new Item[itens.size()]);
-		Arrays.sort(itensParaSeremSorteados);
-		for ( int j=0; j<itensParaSeremSorteados.length; j++ ) {
-			saida += itensParaSeremSorteados[j].getName() + "; ";
-		}
-		saida = saida.substring(0, saida.length() - 2);
-		return saida;
+		LendMe.registerUser(login, name, address);
 	}
 	
-	public String getItens(String idSessao, String login) throws Exception{
-		String saida = "";
-
-		Set<Item> itens = LendMe.getItems(idSessao, login);
-
-		if ( itens.isEmpty() ){
-			return "O usuário não possui itens cadastrados";
-		}
+	public String[] searchUsersByName(String name){
 		
-		Item[] itensToBeSorted = itens.toArray(new Item[itens.size()]);
-		Arrays.sort(itensToBeSorted);
-		for ( int j=0; j<itensToBeSorted.length; j++ ) {
-			saida += itensToBeSorted[j].getName() + "; ";
+		Set<User> results = LendMe.searchUsersByName(name);
+		String[] handled = new String[results.size()];
+		Iterator<User> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getLogin();
 		}
-		saida = saida.substring(0, saida.length() - 2);
-		return saida;
+		return handled;
+	}
+
+	public String[] searchUsersByAddress(String address){
+
+		Set<User> results = LendMe.searchUsersByAddress(address);
+		String[] handled = new String[results.size()];
+		Iterator<User> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getLogin();
+		}
+		return handled;
 	}
 	
-	public String requisitarEmprestimo(String idSessao,  String idItem, int duracao) throws Exception{
-		return LendMe.requestItem(idSessao, idItem, duracao);
-	}
-	
-	public String localizarUsuario(String idSessao, String chave, String atributo) throws Exception{
-
-		String saida = "";
-
-		Set<User> resultados = LendMe.searchUsersByAttributeKey(idSessao, chave, atributo);
-
-		if ( resultados.isEmpty() ){
-			return "Nenhum usuário encontrado";
-		}
+	public void askForFriendship(String solicitorSession, String solicitedLogin)
+		throws Exception{
 		
-		User[] resultadosParaSeremOrdenados = resultados.toArray(new User[resultados.size()]);
-		Arrays.sort(resultadosParaSeremOrdenados);
-		for ( int j=0; j<resultadosParaSeremOrdenados.length; j++ ) {
-			saida += resultadosParaSeremOrdenados[j].getName()
-			+ " - " + resultadosParaSeremOrdenados[j].getAddress().getFullAddress() + "; ";
-		}
-		saida = saida.substring(0, saida.length() - 2);
-		return saida;
-	}
-	
-	public String getRequisicoesDeAmizade(String idSessao) throws Exception{
-
-		String saida = "";
-
-		Set<User> resultados = LendMe.getFriendshipRequests(idSessao);
-
-		if ( resultados.isEmpty() ){
-			return "Não há requisições";
-		}
-		
-		User[] resultadosParaSeremOrdenados = resultados.toArray(new User[resultados.size()]);
-		Arrays.sort(resultadosParaSeremOrdenados);
-		for ( int j=0; j<resultadosParaSeremOrdenados.length; j++ ) {
-			saida += resultadosParaSeremOrdenados[j].getLogin() + "; ";
-		}
-		saida = saida.substring(0, saida.length() - 2);
-		return saida;
-	}
-	
-	public String aprovarEmprestimo(String idSessao, String idRequisicaoEmprestimo) throws Exception{
-			return LendMe.approveLoan(idSessao, idRequisicaoEmprestimo);
-	}
-	
-	public String devolverItem(String idSessao, String idEmprestimo) throws Exception{
-		return LendMe.returnItem(idSessao, idEmprestimo);
-	}
-	
-	public String confirmarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
-		return LendMe.confirmLendingTermination(idSessao, idEmprestimo);
-	}
-	
-	public String negarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
-		return LendMe.denyLendingTermination(idSessao, idEmprestimo);
+		LendMe.askForFriendship(solicitorSession, solicitedLogin);
 	}
 
-	public String requisitarDevolucao(String idSessao, String idEmprestimo) throws Exception{
-		return LendMe.askForReturnOfItem(idSessao, idEmprestimo);
-	}
-	
-	public String getEmprestimos(String idSessao, String tipo) throws Exception{
-	
-		String saida = "";
-	
-		Collection<Lending> resultados = LendMe.getLendingRecords(idSessao, tipo);
-	
-		if ( resultados.isEmpty() ){
-			return "Não há empréstimos deste tipo";
-		}
-	
-		String template = "%s-%s:%s:%s";
-		Iterator<Lending> iterador = resultados.iterator();
-		Lending tmp = iterador.next();
-		saida += String.format(template, tmp.getLender().getLogin(),
-				tmp.getBorrower().getLogin(), tmp.getItem().getName(),
-				tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
-					( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : 
-						tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ) );
-		while ( iterador.hasNext() ){
-			saida += "; ";
-			if ( iterador.hasNext() ){
-				tmp = iterador.next();
-				saida += String.format(template, tmp.getLender().getLogin(),
-						tmp.getBorrower().getLogin(), tmp.getItem().getName(),
-						tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
-							( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : 
-								tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ) );
-			}
-		}
-		return saida;
-		
-	}
-	
-	public String enviarMensagem(String idSessao, String destinatario, 
-			String assunto, String mensagem) throws Exception {
+	public void acceptFriendship(String solicitedSession, String solicitorLogin)
+		throws Exception{
 			
-		return LendMe.sendMessage(idSessao, assunto, mensagem, destinatario);
+			LendMe.acceptFriendship(solicitedSession, solicitorLogin);
 	}
 	
-	public String enviarMensagem(String idSessao, String destinatario, 
-			String assunto, String mensagem, String idRequisicaoEmprestimo) 
-					throws Exception {
+	public void declineFriendship(String solicitedSession, String solicitorLogin)
+		throws Exception{
+		
+		LendMe.declineFriendship(solicitedSession, solicitorLogin);
+	}
+
+	public void breakFriendship(String solicitorSession, String solicitedLogin)
+		throws Exception{
 			
-		return LendMe.sendMessage(idSessao, assunto, mensagem, destinatario, 
-				idRequisicaoEmprestimo);
+		LendMe.breakFriendship(solicitorSession, solicitedLogin);
 	}
-	
-	public String lerTopicos(String idSessao, String tipo) throws Exception {
-		
-		List<Topic> topicsList = LendMe.getTopics(idSessao, tipo);
-		
-		if (topicsList.isEmpty()) {
-			return "Não há tópicos criados";
+
+	public String[] getFriends(String solicitorSession)
+		throws Exception{
+
+		Set<User> results = LendMe.getFriends(solicitorSession);
+		String[] handled = new String[results.size()];
+		Iterator<User> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getLogin();
 		}
+		return handled;
+	}
+	
+	public String[] getFriends(String solicitorSession, String solicitedLogin)
+		throws Exception{
+
+		Set<User> results = LendMe.getFriends(solicitorSession, solicitedLogin);
+		String[] handled = new String[results.size()];
+		Iterator<User> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getLogin();
+		}
+		return handled;
+	}
+	
+	public boolean hasFriend(String solicitorSession, String solicitedLogin)
+		throws Exception{
+
+		return LendMe.hasFriend(solicitorSession, solicitedLogin);
+	}
+	
+	public String sendMessage(String senderSession, String subject,
+			String message, String receiverLogin)
+		throws Exception{
 		
-		return LendMeUtil.toOrganizedTopicsArray(topicsList);
+		return LendMe.sendMessage(senderSession, subject, message, receiverLogin);
 	}
 	
-	public String lerMensagens(String idSessao, String idTopico) throws Exception {
-		List<Message> messagesList = LendMe.getTopicMessages(idSessao, idTopico);
-		return LendMeUtil.toOrganizedMessagesArray(messagesList);
-	}
-	
-	public void apagarItem(String idSessao, String idItem) throws Exception{
-		LendMe.deleteItem(idSessao, idItem);
-	}
-	
-	public String pesquisarItem(String idSessao, String chave, String atributo, String tipoDeOrdenacao, String criterioDeOrdenacao) throws Exception{
+	public String sendMessage(String senderSession, String subject,
+			String message, String receiverLogin, String lendingId)
+		throws Exception{
 		
-		String saida = "";
-		ArrayList<Item> lista = LendMe.searchItem(idSessao, chave, atributo, tipoDeOrdenacao, criterioDeOrdenacao);
-		
-		for(Item actualString : lista)
-			saida += actualString.getName()+"; ";			
-		
-		if(saida.isEmpty()){
-			return "Nenhum item encontrado";
-		}		
-		return saida.substring(0, saida.length() - 2);
-		
+		return LendMe.sendMessage(senderSession, subject, message, receiverLogin, lendingId);
 	}
 	
-	public String adicionarDias(int dias){
-		return LendMe.someDaysPassed(dias);
+	public String[] getTopics(String solicitorSession, String topicType) throws Exception{
+		
+		List<Topic> results = LendMe.getTopics(solicitorSession, topicType);;
+		String[] handled = new String[results.size()];
+		Iterator<Topic> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getSubject();
+		}
+		return handled;
 	}
 	
-	public void registrarInteresse( String idSessao, String idItem ) throws Exception{
-		LendMe.registerInterestForItem(idSessao, idItem);
+	public String[] getTopicMessages(String solicitorSession, String topicId) throws Exception{
+		
+		List<Message> results = LendMe.getTopicMessages(solicitorSession, topicId);;
+		String[] handled = new String[results.size()];
+		Iterator<Message> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getMessage();
+		}
+		return handled;		
+	}
+
+	public void registerItem(String creatorSession, String name, String description, String category)
+		throws Exception{
+		
+		LendMe.registerItem(creatorSession, name, description, category);
 	}
 	
-	public String getRanking(String idSession, String categoria) throws Exception{
-		return LendMe.getRanking(idSession, categoria);
+	public String[] getItems(String solicitorSession) throws Exception{
+		
+		Set<Item> results = LendMe.getItems(solicitorSession);
+		String[] handled = new String[results.size()];
+		Iterator<Item> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getName();
+		}
+		return handled;
+	}
+
+	public String[] getItems(String solicitorSession, String solicitedLogin) throws Exception{
+		
+		Set<Item> results = LendMe.getItems(solicitorSession, solicitedLogin);
+		String[] handled = new String[results.size()];
+		Iterator<Item> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getName();
+		}
+		return handled;
+	}
+	
+	public void deleteItem(String solicitorSession, String itemId) throws Exception{
+		
+		LendMe.deleteItem(solicitorSession, itemId);
+	}
+	
+	public void registerInterestForItem(String solicitorSession, String itemId) throws Exception{
+		
+		LendMe.registerInterestForItem(solicitorSession, itemId);
+	}
+
+	public String requestItem(String solicitorSession, String itemId, int requiredDays) throws Exception{
+		
+		return LendMe.requestItem(solicitorSession, itemId, requiredDays);
+	}
+	
+	public String approveLoan(String solicitorSession, String requestId) throws Exception{
+		
+		return LendMe.approveLoan(solicitorSession, requestId);
+	}
+	
+	public String askForReturnOfItem(String solicitorSession, String lendingId) throws Exception{
+		
+		return LendMe.askForReturnOfItem(solicitorSession, lendingId);
+	}
+	
+	public String returnItem(String solicitedSession, String lendingId) throws Exception{
+		
+		return LendMe.returnItem(solicitedSession, lendingId);
+	}
+	
+	public String confirmLendingTermination(String solicitorSession, String lendingId) throws Exception{
+		
+		return LendMe.confirmLendingTermination(solicitorSession, lendingId);
+	}
+	
+	public String denyLendingTermination(String solicitorSession, String lendingId) throws Exception{
+		
+		return LendMe.denyLendingTermination(solicitorSession, lendingId);
+	}
+
+	public String[] getLendingRecords(String solicitorSession, String kind) throws Exception{
+		
+		Collection<Lending> results = LendMe.getLendingRecords(solicitorSession, kind);
+		String[] handled = new String[results.size()];
+		Iterator<Lending> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			String template = "%s-%s:%s:%s";
+			Lending tmp = iterator.next();
+			handled[i] = String.format(template, tmp.getLender().getLogin(),
+					tmp.getBorrower().getLogin(), tmp.getItem().getName(),
+					tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
+				  ( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : 
+					tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ) );
+		}
+		return handled;
 	}
 	
 }

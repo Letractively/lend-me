@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.LendMeFacade;
+import main.LendMeAcceptanceTestInterface;
 import easyaccept.EasyAcceptFacade;
 
 public class LendMeAcceptanceTestClient {
@@ -16,7 +16,7 @@ public class LendMeAcceptanceTestClient {
       	  files.add(String.format(".."+File.separator+
       			  "acceptance-tests-scripts"+File.separator+"US%02d.txt", i));
         }
-        LendMeFacade lendMeFacade = new LendMeFacade();
+        LendMeAcceptanceTestInterface lendMeFacade = new LendMeAcceptanceTestInterface();
         EasyAcceptFacade eaFacade = new EasyAcceptFacade(lendMeFacade, files);
         eaFacade.executeTests();
         System.out.println(eaFacade.getCompleteResults());

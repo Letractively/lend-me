@@ -15,6 +15,7 @@ import entities.Lending;
 import entities.Profile;
 import entities.Session;
 import entities.User;
+import entities.util.ComparatorOfItems;
 import entities.util.EventDate;
 import entities.util.Message;
 import entities.util.Topic;
@@ -71,7 +72,7 @@ public class LendMe {
 	private static EventDate time = new EventDate("System time");
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
-	public static enum CriterionForSearch {DATACRIACAO};
+	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
 	
 	/**
 	 * Resets the whole system: all living sessions are shutdown as well as all users are deleted.
@@ -762,15 +763,8 @@ public class LendMe {
 		userOwnerSession.deleteMyItem(itemId);
 	}
 
-	public static ArrayList<Item> searchItem(String idSessao, String key, String atribute, String disposition ,String criterion) throws Exception{
+	private static void validator(String key, String atribute, String disposition, String criterion) throws Exception{
 		
-		ArrayList<Item> results = new ArrayList<Item>();
-		Session session = getSessionByID(idSessao);
-		User userOwnerSession = getUserByLogin(session.getLogin());
-		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
-		DispositionForSearch dispositionAux = DispositionForSearch.CRESCENTE;
-		
-		//Verification of inputs
 		if(key == null || key.trim().isEmpty()){
 			throw new Exception("Chave inválida");//"invalid key"
 		}
@@ -792,17 +786,27 @@ public class LendMe {
 		if(!Arrays.toString(CriterionForSearch.values()).toLowerCase().contains(criterion.toLowerCase())){
 			throw new Exception("Critério de ordenação inexistente");
 		}
+		
+	}
 	
-		//End of verification
+	public static ArrayList<Item> searchItem(String idSessao, String key, String atribute, String disposition ,String criterion) throws Exception{
+		
+		ArrayList<Item> results = new ArrayList<Item>();
+		Session session = getSessionByID(idSessao);
+		User userOwnerSession = getUserByLogin(session.getLogin());
+		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
+		CriterionForSearch criterionAux = CriterionForSearch.DATACRIACAO;
+		
+		validator(key, atribute, disposition, criterion);
 		
 		for(AtributeForSearch actual : AtributeForSearch.values()){
-			if(actual.toString().toLowerCase().contains(atribute))
+			if(actual.toString().toLowerCase().contains(atribute.toLowerCase()))
 				atributeAux = actual;
 		}
 		
-		for(DispositionForSearch actual : DispositionForSearch.values()){
-			if(actual.toString().toLowerCase().contains(criterion))
-				dispositionAux = actual;
+		for(CriterionForSearch actual : CriterionForSearch.values()){
+			if(actual.toString().toLowerCase().contains(criterion.toLowerCase()))
+				criterionAux = actual;
 		}
 		
 		switch(atributeAux){
@@ -849,18 +853,34 @@ public class LendMe {
 		
 		default:	throw new Exception("Atributo  inválido");
 	}
-	//In case of changes in the numbers of criterions  this is method will more large 	
-		if(dispositionAux == DispositionForSearch.CRESCENTE){
-			Collections.sort(results);
-			return results;
-	
-		}else {
-			Collections.sort(results);
-			Collections.reverse(results);
-			return results;
 
+		switch (criterionAux) {
+
+		case DATACRIACAO: {
+			Collections.sort(results);
+			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposition.toLowerCase())) {
+				return results;
+
+			} else {
+				Collections.reverse(results);
+				return results;
+
+			}
 		}
-	
+
+		case REPUTACAO: {
+			Collections.sort(results, new ComparatorOfItems());
+			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposition.toLowerCase())) {
+				return results;
+			} else {
+				Collections.reverse(results);
+				return results;
+			}
+		}
+
+		default:
+			return results;
+		}
 	}
 	
 	public static void registerInterestForItem(String sessionId, String itemId) throws Exception{

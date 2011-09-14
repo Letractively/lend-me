@@ -37,7 +37,6 @@ import entities.util.Topic;
  * registerUser()
  * searchUsersByName()
  * searchUsersByAddress()
- * searchSessionsByLogin()
  * askForFriendship()
  * acceptFriendship()
  * declineFriendship()

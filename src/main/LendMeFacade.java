@@ -292,4 +292,8 @@ public class LendMeFacade {
 		LendMe.registerInterestForItem(idSessao, idItem);
 	}
 	
+	public String getRanking(String idSession, String categoria) throws Exception{
+		return LendMe.getRanking(idSession, categoria);
+	}
+	
 }

@@ -273,7 +273,7 @@ public class LendMeFacade {
 		
 		String saida = "";
 		ArrayList<Item> lista = LendMe.searchItem(idSessao, chave, atributo, tipoDeOrdenacao, criterioDeOrdenacao);
-
+		
 		for(Item actualString : lista)
 			saida += actualString.getName()+"; ";			
 		

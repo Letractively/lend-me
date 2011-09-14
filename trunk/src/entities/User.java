@@ -1018,8 +1018,7 @@ public class User implements Comparable<User>{
 	}
 
 	public int getReputation() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.getScore();
 	}
 
 	public int getScore() {

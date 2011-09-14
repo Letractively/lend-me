@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -861,7 +862,7 @@ public class LendMe {
 		}
 	
 	}
-
+	
 	public static void registerInterestForItem(String sessionId, String itemId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
@@ -879,4 +880,39 @@ public class LendMe {
 		throw new Exception("Tópico inexistente");//"Inexistent topic");
 	}
 
+	
+	public static String getRanking(String idSession, String categoria) throws Exception{
+		String ranking = "";
+		
+		if(idSession == null || idSession.trim().equals("") ||
+				! sessions.contains(getSessionByID(idSession))){
+			throw new Exception("Sessão inválida");
+		}
+		
+		if(!categoria.equals("global") && !categoria.equals("amigos")){
+			throw new Exception("Categoria inválida");
+		}
+		
+		if(categoria.equals("amigos")){
+			User user = getUserByLogin(getSessionByID(idSession).getLogin());
+			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size()]);
+			
+			
+			Comparator<? super User> c = null;
+			//			Arrays.sort(friendList, >>tem q ter um comparator aki dentro<<);
+			Arrays.sort(friendList, c);
+			for(User current : friendList){
+				ranking = current.getLogin() + ";" + ranking; // vai dar um erro na forma da string, mas isso eh de menos agora.
+			}
+
+		if(categoria.equals("global")){
+		
+			
+			}
+
+		}
+		return ranking;
+	}
+	
+	
 }

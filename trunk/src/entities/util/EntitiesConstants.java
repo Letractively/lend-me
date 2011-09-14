@@ -10,5 +10,7 @@ public class EntitiesConstants {
 	public static final String USER_REGISTERED_MESSAGE = "User %s named %s registered.";
 	public static final String ITEM_REGISTERED_MESSAGE = "Item %s of id: %s registered.";
 	public static final String ITEM_REQUESTED_MESSAGE = "Item %s of %s was requested for %d days by %s";
+	public static final String GLOBAL = "global";
+	public static final String AMIGOS = "amigos";
 
 }

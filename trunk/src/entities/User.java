@@ -39,6 +39,7 @@ public class User implements Comparable<User>{
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
 	private Map<Item, ArrayList<User>> myInterestingItems = new HashMap<Item, ArrayList<User>>();
 	private EventDate creationDate;
+	private int lendingScore = 0;
 	
 	public User(){}
 	
@@ -385,6 +386,7 @@ public class User implements Comparable<User>{
 		for ( Lending record : myLentItems ){
 			if ( record.getID().equals(lendingId) ){
 				receiveLentItem(record.getItem());
+				this.point();
 				return record.getID();
 			}
 		}
@@ -1020,4 +1022,17 @@ public class User implements Comparable<User>{
 		return 0;
 	}
 
+	public int getScore() {
+		return lendingScore;
+	}
+
+	public void setScore(int score) {
+		this.lendingScore = score;
+	}
+	
+	public void point(){
+		this.lendingScore++;
+	}
+
+	
 }

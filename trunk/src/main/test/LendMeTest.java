@@ -17,9 +17,28 @@ public class LendMeTest {
 	
 	Set<User> users = new HashSet<User>();
 	Item item;
+	User user;
+	User manoel;
+	User tarciso;
+	User pedro;
+	
+	Item item1;
+	Item item2;
+	Item item3;
 	
 	@Before public void setUp() throws Exception{
 		LendMe.resetSystem();
+		manoel = new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
+				"PB", "BR", "58308293");
+		tarciso = new User("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+				"Campina Grande", "Paraiba", "Brasil", "58308293");
+		pedro = new User("pedro", "Pedro Rawan", "Rua da Gota Serena", "25", "Universitario",
+				"Campina Grande", "Paraiba", "Brasil", "58408293");
+		item = new Item("O mochileiro das Galaxias", "Maravilhoso livro de ficcao", "LIVRO");
+		item1 = new Item("Alex kid", "Maravilhoso jogo antigo produzido pela SEGA", "JOGO");
+		item2 = new Item("Livro X", "Maravilhoso livro", "Livro");
+		item3 = new Item("Left behind", "Filme maravilhoso sobre arrebatamento e fim dos tempos", "Filme");
+		
 	}
 	
 	@Test public void testRegisterAndSearchUsers() throws Exception{
@@ -70,5 +89,5 @@ public class LendMeTest {
 		}
 		
 	}
-
+	
 }

@@ -206,7 +206,7 @@ public class LendMe {
 		if ( attribute == null || attribute.trim().isEmpty() ){
 			throw new Exception("Atributo inválido");//"Invalid attribute");
 		}
-		if (!(attribute.equals("nome") || attribute.equals("login") || attribute.equals("endereco"))){
+		if (!(attribute.equals("nome") || attribute.trim().equals("login") || attribute.trim().equals("endereco"))){
 			throw new Exception("Atributo inexistente");//"Inexistent attribute");
 		}
 		if ( key == null || key.trim().isEmpty() ){
@@ -242,7 +242,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	private static Session getSessionByID(String id) throws Exception{
+	public static Session getSessionByID(String id) throws Exception{
 		if ( id == null || id.trim().isEmpty() ){
 			throw new Exception("Sessão inválida");//"Invalid session");
 		}

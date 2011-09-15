@@ -11,16 +11,16 @@ public class LendMeTextInterface {
 	
 	//System Constants
 	private static final int LOG_IN = 1;
-	private static final int LEAVE_UNLOGGED = 2;
-	private static final int REGISTER_USER = 1;
-	private static final int LEAVE_LOGGED = 2;
+	private static final int REGISTER_USER = 2;
+	private static final int LEAVE_UNLOGGED = 3;
 	private static final int REGISTER_ITEM = 1;
-	private static final int FIND_USER = 2;
+	private static final int SEARCH_USER = 2;
 	private static final int ADD_FRIEND = 3;
-	private static final int LEAVE_LOGGED1 = 4;
+	private static final int LOG_OUT = 4;
 	
 	public static void main(String[] args) {
 		try {
+			//TODO Take this admin register out. It is here just for testing the text interface.
 			LendMe.registerUser("admin","Administrador do Sistema", "Rua Montevideo", "33", "Monte Santo", "CG",
 				"PB", "BR", "58102000");
 			
@@ -32,10 +32,19 @@ public class LendMeTextInterface {
 			
 			if ( currentUserSessionId == null ){
 				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator()+
-						"\n \t Escolha uma opcao a seguir:\n \t [1]Logar\t[2]Sair\n",2)){
+						"\n \t Escolha uma opcao a seguir:\n \t [1]Logar\t[2]Cadastrar Usuário \t[3]Sair\n",3)){
 					case LOG_IN:{
 						try{
 							currentUserSessionId = logIn(); //Logs into the system and returns the logged user
+						}
+						catch ( Exception e ){
+							System.out.println(e.getMessage());
+						}
+						break;
+					}
+					case REGISTER_USER:{
+						try{
+							registerUser();
 						}
 						catch ( Exception e ){
 							System.out.println(e.getMessage());
@@ -50,32 +59,11 @@ public class LendMeTextInterface {
 					}
 				}
 			}
-			else if (lendMeFacade .equals("admin")) {
-				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator()+
-						"\n \t Escolha uma opcao a seguir:\n \t [1]Cadastrar Usuario \t[2]Sair\n",2)){
-					case REGISTER_USER:{
-						try{
-							registerUser();
-						}
-						catch ( Exception e ){
-							System.out.println(e.getMessage());
-						}
-						break;
-					}
-					case LEAVE_LOGGED:{
-						System.out.println(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator());
-						sair = true;
-						System.out.println("\n \t Saindo do sistema...\n");
-						break;
-					}
-				}
-			}
 			else {
 				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator()+
-						"\n \t Escolha uma opcao a seguir:\n \t [1]Cadastrar Item \t[2]Localizar Usuario \t[3]Adicionar Amigo \t[4]Sair\n",4)){
+						"\n \t Escolha uma opcao a seguir:\n \t [1]Cadastrar Item \t[2]Localizar Usuario \t[3]Adicionar Amigo \t[4]Deslogar\n",4)){
 				case REGISTER_ITEM:{
 						try{
-							registerUser();
 						}
 						catch ( Exception e ){
 							System.out.println(e.getMessage());
@@ -83,9 +71,9 @@ public class LendMeTextInterface {
 						break;
 					}
 					
-				case FIND_USER:{
+				case SEARCH_USER:{
 						try{
-							findUserByAttribute();	
+							searchUsersByAttribute();	
 						}
 						catch ( Exception e ){
 							System.out.println(e.getMessage());
@@ -94,16 +82,21 @@ public class LendMeTextInterface {
 						}
 				case ADD_FRIEND:{
 						try{
+							//addFriend();
 						}
 						catch ( Exception e ){
 							System.out.println(e.getMessage());
 						}
 						break;
 						}
-				case LEAVE_LOGGED1:{
-						System.out.println(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator());
-						sair = true;
-						System.out.println("\n \t Saindo do sistema...\n");
+				case LOG_OUT:{
+						try {
+							lendMeFacade.closeSession(currentUserSessionId);
+							currentUserSessionId = null;
+							System.out.println("\n\tUsuário deslogado!");
+						} catch (Exception e) {
+							System.out.println(e.getMessage());
+						}
 						break;
 					}
 				// Create cases for register item and etc here!
@@ -126,12 +119,13 @@ public class LendMeTextInterface {
 		System.out.println(String.format("O usuário com login %s foi cadastrado com sucesso!", newUserLogin));
 	}
 	
-	private static void findUserByAttribute() throws Exception {
+	private static void searchUsersByAttribute() throws Exception {
 		
-		
+		System.out.println(listObjectsInArray(lendMeFacade.searchUsersByAttributeKey(currentUserSessionId,
+			returnCorrectString("\n \t Informe o atributo: "),
+			 returnCorrectString("\n \t Informe o tipo do atributo: "))));
 	}
 	
-		
 	private static String logIn() throws Exception{
 		
 		String login = returnCorrectString("\n \t Informe o login : ");
@@ -139,6 +133,25 @@ public class LendMeTextInterface {
 		System.out.println("\n \t Login realizado com sucesso!");
 		return currentUserSessionId;
 	}
+	
+	public static String listObjectsInArray(Object[] array){
+		
+		String arrayObjectsStr = "\n \t Selecione uma das opcoes abaixo: \n";
+		
+		int lineBreak = 3;
+		
+		for(int i = 0; i < array.length; i++) {
+			if ((i + 1) % lineBreak == 0) {
+				arrayObjectsStr += "\t [" + (i + 1) + "]" + array[i] + "\n\n";
+				
+			} else {			
+				arrayObjectsStr += "\t [" + (i + 1) + "]" + array[i];
+			}
+		}
+		
+		return arrayObjectsStr;
+	}
+	
 	
 	private static String returnCorrectString(String message) throws Exception{
 			

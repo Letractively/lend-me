@@ -1,9 +1,6 @@
 package main;
 
-import java.io.Console;
 import java.util.Scanner;
-
-import entities.User;
 
 public class LendMeTextInterface {
 	
@@ -20,7 +17,7 @@ public class LendMeTextInterface {
 	private static final int REGISTER_ITEM = 1;
 	private static final int FIND_USER = 2;
 	private static final int ADD_FRIEND = 3;
-	private static final int LEAVE_LOGGED_IN = 4;
+	private static final int LEAVE_LOGGED1 = 4;
 	
 	public static void main(String[] args) {
 		try {
@@ -38,7 +35,7 @@ public class LendMeTextInterface {
 						"\n \t Escolha uma opcao a seguir:\n \t [1]Logar\t[2]Sair\n",2)){
 					case LOG_IN:{
 						try{
-							currentUserSessionId = fazLogin(); //Logs into the system and returns the logged user
+							currentUserSessionId = logIn(); //Logs into the system and returns the logged user
 						}
 						catch ( Exception e ){
 							System.out.println(e.getMessage());
@@ -88,23 +85,22 @@ public class LendMeTextInterface {
 					
 				case FIND_USER:{
 						try{
-								registerUser();
-							}
-							catch ( Exception e ){
-								System.out.println(e.getMessage());
-							}
-							break;
+							findUserByAttribute();	
+						}
+						catch ( Exception e ){
+							System.out.println(e.getMessage());
+						}
+						break;
 						}
 				case ADD_FRIEND:{
 						try{
-								registerUser();
-							}
-							catch ( Exception e ){
-								System.out.println(e.getMessage());
-							}
-							break;
 						}
-				case LEAVE_LOGGED_IN:{
+						catch ( Exception e ){
+							System.out.println(e.getMessage());
+						}
+						break;
+						}
+				case LEAVE_LOGGED1:{
 						System.out.println(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator());
 						sair = true;
 						System.out.println("\n \t Saindo do sistema...\n");
@@ -117,18 +113,26 @@ public class LendMeTextInterface {
 		
 	}	
 	
+	
 	private static void registerUser() throws Exception {
 		
 		System.out.println("\t\t========================");
 		System.out.println("\t\t Cadastrando Locador");
 		System.out.println("\t\t========================");
 		
-		lendMeFacade.registerUser(returnCorrectString("\n \t Informe o login : "),
+		String newUserLogin = lendMeFacade.registerUser(returnCorrectString("\n \t Informe o login : "),
 		returnCorrectString("\n \t Informe o nome : "), returnCorrectString("\n \t Informe o endereço : "));
+		
+		System.out.println(String.format("O usuário com login %s foi cadastrado com sucesso!", newUserLogin));
+	}
+	
+	private static void findUserByAttribute() throws Exception {
+		
+		
 	}
 	
 		
-	private static String fazLogin() throws Exception{
+	private static String logIn() throws Exception{
 		
 		String login = returnCorrectString("\n \t Informe o login : ");
 		currentUserSessionId = lendMeFacade.openSession(login);

@@ -1,16 +1,9 @@
-package main;
+package com.lendme;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import entities.Item;
-import entities.Lending;
-import entities.User;
-import entities.util.LendingStatus;
-import entities.util.Message;
-import entities.util.Topic;
 
 public class LendMeFacade {
 
@@ -259,7 +252,7 @@ public class LendMeFacade {
 	
 	public String approveLoan(String solicitorSession, String requestId) throws Exception{
 		
-		return LendMe.approveLoan(solicitorSession, requestId);
+		return LendMe.approveLending(solicitorSession, requestId);
 	}
 	
 	public String askForReturnOfItem(String solicitorSession, String lendingId) throws Exception{

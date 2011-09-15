@@ -1,7 +1,6 @@
-package entities;
+package com.lendme;
 
-import entities.util.EntitiesConstants;
-import entities.util.EventDate;
+
 
 public class Session {
 

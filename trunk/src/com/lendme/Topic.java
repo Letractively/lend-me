@@ -1,10 +1,8 @@
-package entities.util;
+package com.lendme;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import entities.Identifiable;
 
 public class Topic implements Identifiable, Comparable<Topic> {
 	

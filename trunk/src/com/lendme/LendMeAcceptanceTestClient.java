@@ -1,10 +1,9 @@
-package main.test;
+package com.lendme;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.LendMeAcceptanceTestInterface;
 import easyaccept.EasyAcceptFacade;
 
 public class LendMeAcceptanceTestClient {

@@ -1,8 +1,6 @@
-package entities;
+package com.lendme;
 
-import entities.util.Category;
-import entities.util.EntitiesConstants;
-import entities.util.EventDate;
+
 
 public class Item implements Identifiable, Comparable<Item>{
 	

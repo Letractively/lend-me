@@ -1,4 +1,4 @@
-package entities;
+package com.lendme;
 
 public interface Identifiable {
 	

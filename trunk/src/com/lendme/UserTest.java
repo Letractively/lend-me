@@ -1,4 +1,4 @@
-package entities.test;
+package com.lendme;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,11 +10,6 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import entities.Item;
-import entities.User;
-import entities.util.Message;
-import entities.util.Topic;
 
 
 public class UserTest {
@@ -149,7 +144,7 @@ public class UserTest {
 		
 		tarciso.lendItem(item,manoel,10);
 		
-		Assert.assertTrue(manoel.hasBorrowedItem(item));
+		Assert.assertTrue(manoel.hasBorrowedThis(item));
 		
 	}
 	
@@ -164,17 +159,17 @@ public class UserTest {
 		
 		manoel.borrowItem(item,tarciso,10);
 		
-		Assert.assertFalse(manoel.hasBorrowedItem(item));
+		Assert.assertFalse(manoel.hasBorrowedThis(item));
 		
 		tarciso.lendItem(item,manoel,10);
 		
-		Assert.assertTrue(manoel.hasBorrowedItem(item));
+		Assert.assertTrue(manoel.hasBorrowedThis(item));
 		
 		manoel.returnItem(item);
 		
 		tarciso.receiveLentItem(item);
 		
-		Assert.assertFalse(manoel.hasBorrowedItem(item));
+		Assert.assertFalse(manoel.hasBorrowedThis(item));
 		
 	}
 	
@@ -190,7 +185,7 @@ public class UserTest {
 		
 		tarciso.lendItem(item, manoel,10);
 		
-		Assert.assertTrue(manoel.hasBorrowedItem(item));
+		Assert.assertTrue(manoel.hasBorrowedThis(item));
 						
 		tarciso.requestBack(item, new Date());
 		
@@ -200,7 +195,7 @@ public class UserTest {
 		
 		tarciso.receiveLentItem(item);
 		
-		Assert.assertFalse(manoel.hasBorrowedItem(item));
+		Assert.assertFalse(manoel.hasBorrowedThis(item));
 		
 	}
 	
@@ -220,7 +215,7 @@ public class UserTest {
 		
 		tarciso.lendItem(item, manoel,10);
 		
-		Assert.assertTrue(manoel.hasBorrowedItem(item));
+		Assert.assertTrue(manoel.hasBorrowedThis(item));
 						
 		tarciso.requestBack(item, new Date());
 		
@@ -298,7 +293,7 @@ public class UserTest {
 		
 		tarciso.lendItem(item, manoel,10);
 		
-		Assert.assertTrue(manoel.hasBorrowedItem(item));
+		Assert.assertTrue(manoel.hasBorrowedThis(item));
 		
 	}
 	
@@ -317,13 +312,13 @@ public class UserTest {
 		
 		pedro.borrowItem(new Item("Matrix Revolution", "Excellent Movie", "FILME"), manoel, 15);
 		
-		Assert.assertTrue(manoel.isItemRequested(new Item("Matrix Revolution", "Excellent Movie", "Filme")));
+		Assert.assertTrue(manoel.isMyItemRequested(new Item("Matrix Revolution", "Excellent Movie", "Filme")));
 		
 		manoel.breakFriendship(pedro);
 		
 		Assert.assertFalse(manoel.hasFriend(pedro));
 		Assert.assertFalse(pedro.hasFriend(manoel));
-		Assert.assertFalse(manoel.isItemRequested(new Item("Matrix Revolution", "Excellent Movie", "filme")));
+		Assert.assertFalse(manoel.isMyItemRequested(new Item("Matrix Revolution", "Excellent Movie", "filme")));
 		Assert.assertTrue(pedro.hasFriend(tarciso));
 		
 		manoel.requestFriendship(pedro);

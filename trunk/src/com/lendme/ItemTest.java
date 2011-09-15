@@ -1,11 +1,8 @@
-package entities.test;
+package com.lendme;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
-
-import entities.Item;
-import entities.util.Category;
 
 
 public class ItemTest {

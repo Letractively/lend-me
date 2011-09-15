@@ -1,4 +1,4 @@
-package main;
+package com.lendme;
 
 import java.util.Scanner;
 

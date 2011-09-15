@@ -1,4 +1,4 @@
-package entities.util;
+package com.lendme;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package entities.util;
+package com.lendme;
 
 public enum LendingStatus {
 

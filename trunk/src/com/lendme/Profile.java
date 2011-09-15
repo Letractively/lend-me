@@ -1,13 +1,9 @@
-package entities;
+package com.lendme;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import main.LendMe;
-import entities.util.Message;
-import entities.util.Topic;
 
 public class Profile {
 
@@ -60,7 +56,7 @@ public class Profile {
 		}
 	}
 	
-	public void update() throws Exception{
+	protected void update() throws Exception{
 		ownerFriends = owner.getFriends();
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			ownerItems = owner.getAllItems();
@@ -75,15 +71,15 @@ public class Profile {
 		}
 	}
 	
-	public static Profile getUserProfile(Session userSession, User user) throws Exception{
+	protected static Profile getUserProfile(Session userSession, User user) throws Exception{
 		return new Profile(userSession, user);
 	}
 
-	public Profile viewOwnProfile() throws Exception{
+	protected Profile viewOwnProfile() throws Exception{
 		return new Profile(observer, LendMe.getUserByLogin(observer.getLogin()));
 	}
 	
-	public Profile viewOtherProfile(User other) throws Exception{
+	protected Profile viewOtherProfile(User other) throws Exception{
 		if ( observer == null ){
 			throw new Exception("Nao eh possivel visualizar este perfil");//"This profile is not accessible");
 		}
@@ -93,38 +89,38 @@ public class Profile {
 		return new Profile(observer, other);
 	}
 
-	public Set<User> getOwnerFriends() {
+	protected Set<User> getOwnerFriends() {
 		return ownerFriends;
 	}
 
-	public Set<Item> getOwnerItems() throws Exception{
+	protected Set<Item> getOwnerItems() throws Exception{
 		if ( ownerItems == null ){
 			throw new Exception("O usuário não tem permissão para visualizar estes itens");//"User has no permission to view these items");
 		}
 		return ownerItems;
 	}
 	
-	public String getOwnerName(){
+	protected String getOwnerName(){
 		return owner.getName();
 	}
 
-	public String getOwnerLogin(){
+	protected String getOwnerLogin(){
 		return owner.getLogin();
 	}
 	
-	public String getOwnerAddress(){
+	protected String getOwnerAddress(){
 		return owner.getAddress().getFullAddress();
 	}
 	
-	public Set<User> getOwnerFriendshipRequests(){
+	protected Set<User> getOwnerFriendshipRequests(){
 		return owner.getReceivedFriendshipRequests();
 	}
 
-	public Session getObserver() {
+	protected Session getObserver() {
 		return observer;
 	}
 
-	public void askForFriendship() throws Exception{
+	protected void askForFriendship() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			throw new Exception("Amizade inexistente");//inválida - pedido de amizade para si próprio");//"Invalid friendship");
 		}
@@ -132,7 +128,7 @@ public class Profile {
 		me.requestFriendship(owner);
 	}
 
-	public void acceptFriendshipRequest() throws Exception{
+	protected void acceptFriendshipRequest() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			throw new Exception("Amizade inexistente");//inválida - aceitação de amizade para si próprio");//"Invalid friendship");
 		}
@@ -140,7 +136,7 @@ public class Profile {
 		me.acceptFriendshipRequest(owner);
 	}
 
-	public void declineFriendshipRequest() throws Exception{
+	protected void declineFriendshipRequest() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			throw new Exception("Amizade inexistente");//inválida - negação de amizade para si próprio");//"Invalid friendship");
 		}
@@ -148,7 +144,7 @@ public class Profile {
 		me.declineFriendshipRequest(owner);
 	}
 
-	public void breakFriendship() throws Exception{
+	protected void breakFriendship() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com si próprio");//"Invalid friendship");
 		}
@@ -156,41 +152,11 @@ public class Profile {
 		if ( !me.hasFriend(owner) ){
 			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com alguem que não é seu amigo");
 		}
-
-//		TODO Check with Brian whether or not this is the desired behavior
-//		TODO Mail sent to him, waiting for answer. The US12 passes with this code commented
-//		Set<Item> myLentItems = me.getLentItems();
-//		myLentItems.retainAll(owner.getBorrowedItems());
-//		for ( Item item : myLentItems ){
-//			owner.returnItem(item);
-//			me.receiveLendedItem(item);
-//		}
-//
-//		Set<Item> hisLentItems = owner.getLentItems();
-//		hisLentItems.retainAll(me.getBorrowedItems());
-//		for ( Item item : hisLentItems ){
-//			me.returnItem(item);
-//			owner.receiveLendedItem(item);
-//		}
-//		
-//		Set<Item> myBorrowedItems = me.getBorrowedItems();
-//		myBorrowedItems.retainAll(owner.getLentItems());
-//		for ( Item item : myBorrowedItems ){
-//			me.returnItem(item);
-//			owner.receiveLendedItem(item);
-//		}
-//
-//		Set<Item> hisBorrowedItems = owner.getBorrowedItems();
-//		hisBorrowedItems.retainAll(me.getLentItems());
-//		for ( Item item : hisBorrowedItems ){
-//			owner.returnItem(item);
-//			me.receiveLendedItem(item);
-//		}
 		
 		me.breakFriendship(owner);
 	}
 	
-	public boolean isFriendOfOwner() throws Exception{
+	protected boolean isFriendOfOwner() throws Exception{
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			throw new Exception("Amizade inválida - consulta para amizade com si próprio");//"Invalid friendship");
 		}
@@ -198,7 +164,7 @@ public class Profile {
 		return me.hasFriend(owner);
 	}
 
-	public boolean searchByName(String key) throws Exception{
+	protected boolean searchByName(String key) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( owner.getLogin().equals(me.getLogin()) ){
 			return false;
@@ -206,7 +172,7 @@ public class Profile {
 		return owner.getName().contains(key);
 	}
 
-	public boolean searchByLogin(String key) throws Exception{
+	protected boolean searchByLogin(String key) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( owner.getLogin().equals(me.getLogin()) ){
 			return false;
@@ -214,7 +180,7 @@ public class Profile {
 		return owner.getLogin().contains(key);
 	}
 	
-	public boolean searchByAddress(String key) throws Exception{
+	protected boolean searchByAddress(String key) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( owner.getLogin().equals(me.getLogin()) ){
 			return false;
@@ -222,7 +188,7 @@ public class Profile {
 		return owner.getAddress().getFullAddress().contains(key);
 	}
 
-	public Collection<Lending> getLendingRecords(String kind) throws Exception{
+	protected Collection<Lending> getLendingRecords(String kind) throws Exception{
 		if ( kind == null || kind.trim().isEmpty() ){
 			throw new Exception("Tipo inválido");//"Invalid kind of lending");
 		}
@@ -249,7 +215,7 @@ public class Profile {
 		throw new Exception("Tipo inexistente");//"Inexistent kind of lending");
 	}
 
-	public String requestItem(String itemId, int requiredDays) throws Exception{
+	protected String requestItem(String itemId, int requiredDays) throws Exception{
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é invalido");//"Invalid item identifier");
 		}
@@ -272,23 +238,23 @@ public class Profile {
 		throw new Exception("O usuário não possue este item");//"Item does not belong to this user");
 	}
 
-	public String approveLoan(String requestId) throws Exception{
+	protected String approveLoan(String requestId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
 			throw new Exception("O empréstimo só pode ser aprovado pelo dono do item");//Only the owner of the item is allowed to lend it
 		}
-		return me.approveLoan(requestId);
+		return me.approveLending(requestId);
 	}
 
-	public String denyLoan(String requestId) throws Exception{
+	protected String denyLoan(String requestId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
 			throw new Exception("O empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to lend it
 		}
-		return me.denyLoan(requestId);
+		return me.denyLending(requestId);
 	}
 	
-	public String returnItem(String lendingId) throws Exception{
+	protected String returnItem(String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByLendingId(lendingId).getBorrower().equals(me) ) {
 			throw new Exception("O item só pode ser devolvido pelo usuário beneficiado");//Only the owner of the item is allowed to lend it
@@ -296,7 +262,7 @@ public class Profile {
 		return me.approveItemReturning(lendingId);
 	}
 
-	public String confirmLendingTermination(String lendingId) throws Exception{
+	protected String confirmLendingTermination(String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O término do empréstimo só pode ser confirmado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
@@ -304,7 +270,7 @@ public class Profile {
 		return me.confirmLendingTermination(lendingId);
 	}
 
-	public String denyLendingTermination(String lendingId) throws Exception{
+	protected String denyLendingTermination(String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O término do empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
@@ -312,7 +278,7 @@ public class Profile {
 		return me.denyLendingTermination(lendingId);
 	}
 	
-	public String askForReturnOfItem(String lendingId) throws Exception{
+	protected String askForReturnOfItem(String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O usuário não tem permissão para requisitar a devolução deste item");//Only the owner of the item is allowed to ask for return of item
@@ -320,7 +286,7 @@ public class Profile {
 		return me.askForReturnOfItem(lendingId, LendMe.getSystemDate());
 	}
 
-	public String sendMessage(String subject, String message, String lendingId) throws Exception{
+	protected String sendMessage(String subject, String message, String lendingId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
@@ -350,7 +316,7 @@ public class Profile {
 		return me.sendMessage(subject, message, owner, lendingId);
 	}
 	
-	public String sendMessage(String subject, String message) throws Exception{
+	protected String sendMessage(String subject, String message) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( observer.getLogin().equals(owner.getLogin()) ){
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
@@ -367,12 +333,12 @@ public class Profile {
 		return me.sendMessage(subject, message, owner);
 	}
 
-	public List<Topic> getTopics(String topicType) throws Exception{
+	protected List<Topic> getTopics(String topicType) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		return me.getTopics(topicType);
 	}
 
-	public List<Message> getTopicMessages(String topicId) throws Exception{		
+	protected List<Message> getTopicMessages(String topicId) throws Exception{		
 		if (topicId == null || topicId.trim().isEmpty()) {
 			throw new Exception("Identificador do tópico é inválido");
 			// "Invalid topic identifier");
@@ -389,7 +355,7 @@ public class Profile {
 		return messages;
 	}
 
-	public void registerInterestForItem(String itemId) throws Exception{
+	protected void registerInterestForItem(String itemId) throws Exception{
 
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
@@ -419,7 +385,7 @@ public class Profile {
 		throw new Exception("Item inexistente");
 	}
 
-	public String getItemAttribute(String itemId, String attribute) throws Exception{
+	protected String getItemAttribute(String itemId, String attribute) throws Exception{
 		if ( attribute == null || attribute.trim().isEmpty() ){
 			throw new Exception("Atributo inválido");//"Invalid attribute");
 		}

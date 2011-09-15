@@ -1,17 +1,15 @@
-package entities.test;
+package com.lendme;
 
 import java.util.Set;
 
 import junit.framework.Assert;
-import org.junit.Test;
 
-import main.LendMe;
-import entities.Profile;
-import entities.User;
+import org.junit.Test;
 
 
 public class ProfileTest {
 
+	private LendMeFacade system = new LendMeFacade();
 	private static User guilherme = null;
 	private static User manoel = null;
 	private static User tarciso = null;
@@ -19,14 +17,14 @@ public class ProfileTest {
 	
 	@Test
 	public void initialOperations() throws Exception {
-		LendMe.resetSystem();
-		LendMe.registerUser("guilherme", "Guilherme Santos", "Rua Das Malvinas", "350", "Universitario",
+		system.resetSystem();
+		system.registerUser("guilherme", "Guilherme Santos", "Rua Das Malvinas", "350", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
-		LendMe.registerUser("manoel", "Manoel Neto", "Rua dos Pilares", "360", "Catole", "Campina Grande",
+		system.registerUser("manoel", "Manoel Neto", "Rua dos Pilares", "360", "Catole", "Campina Grande",
 				"Paraiba", "Brasil", "58310000");
-		LendMe.registerUser("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
+		system.registerUser("tarciso", "Tarciso Braz", "Rua das Malvinas", "29", "Monte Santo",
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
-		LendMe.registerUser("pedro", "Pedro Limeira", "Rua das caixas", "29", "Monte Santo",
+		system.registerUser("pedro", "Pedro Limeira", "Rua das caixas", "29", "Monte Santo",
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
 
 		Set<User> users = LendMe.searchUsersByAddress("Rua");
@@ -37,7 +35,7 @@ public class ProfileTest {
 	}
 	
 	@Test public void testViewOwnProfile() throws Exception{
-		String id = LendMe.openSession(guilherme.getLogin());
+		String id = system.openSession(guilherme.getLogin());
 		Profile guilhermeProfile = LendMe.getUserProfile(id);
 		
 		Assert.assertEquals("guilherme", guilhermeProfile.getOwnerLogin());
@@ -49,21 +47,21 @@ public class ProfileTest {
 		Assert.assertTrue(guilhermeProfile.getOwnerFriends().isEmpty());
 		Assert.assertTrue(guilhermeProfile.getOwnerItems().isEmpty());
 		
-		LendMe.closeSession(id);
+		system.closeSession(id);
 	}
 	
 	@Test public void testViewOtherProfiles() throws Exception{
 	
-		String id = LendMe.openSession(guilherme.getLogin());
+		String id = system.openSession(guilherme.getLogin());
 		Profile guilhermeProfile = LendMe.getUserProfile(id);
 		
-		String id2 = LendMe.openSession(pedro.getLogin());
+		String id2 = system.openSession(pedro.getLogin());
 		Profile pedroProfile = LendMe.getUserProfile(id2);
 		
-		String id3 = LendMe.openSession(tarciso.getLogin());
+		String id3 = system.openSession(tarciso.getLogin());
 		Profile tarcisoProfile = LendMe.getUserProfile(id3);
 		
-		String id4 = LendMe.openSession(manoel.getLogin());
+		String id4 = system.openSession(manoel.getLogin());
 		Profile manoelProfile = LendMe.getUserProfile(id4);
 		
 		Profile guilhermePerspective = guilhermeProfile.viewOtherProfile(manoel);
@@ -160,7 +158,7 @@ public class ProfileTest {
 
 		Assert.assertTrue(guilhermePerspective.getOwnerItems().isEmpty());
 		
-		LendMe.closeSession(id);
+		system.closeSession(id);
 		
 	}
 	

@@ -1,8 +1,6 @@
-package entities;
+package com.lendme;
 
-import entities.util.EntitiesConstants;
-import entities.util.EventDate;
-import entities.util.LendingStatus;
+
 
 
 public class Lending implements Identifiable, Comparable<Lending> {

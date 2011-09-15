@@ -1,4 +1,4 @@
-package entities;
+package com.lendme;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,13 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import entities.util.Address;
-import entities.util.EntitiesConstants;
-import entities.util.EventDate;
-import entities.util.LendingStatus;
-import entities.util.Message;
-import entities.util.Topic;
 
 
 public class User implements Comparable<User>{
@@ -39,7 +32,6 @@ public class User implements Comparable<User>{
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
 	private Map<Item, ArrayList<User>> myInterestingItems = new HashMap<Item, ArrayList<User>>();
 	private EventDate creationDate;
-	private int lendingScore = 0;
 	
 	public User(){}
 	
@@ -189,8 +181,13 @@ public class User implements Comparable<User>{
 		return this.myFriends.contains(otherUser);
 	}
 
-	private boolean isLent(Item item) {
-		return ! myItems.get(item).equals(this);
+	public boolean hasLentThis(Item item) {
+		for ( Lending lentItem : myLentItems ){
+			if ( lentItem.getItem().equals(item) ){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String borrowItem(Item item, User lender, int days) throws Exception {
@@ -203,7 +200,7 @@ public class User implements Comparable<User>{
 			}
 		}
 		if (myFriends.contains(lender) && lender.hasItem(item)) {                       
-			if (! lender.isLent(item)) {
+			if (! lender.hasLentThis(item)) {
 				Lending lendingRequest = new Lending(this, lender, item, days);
 				lender.requestItem(lendingRequest);
 				sentItemRequests.add(lendingRequest);
@@ -213,14 +210,14 @@ public class User implements Comparable<User>{
 				return lendingRequest.getID();
 			}
 		}
-		throw new Exception("ERR: borrower wants to borrow item that lender doesn have");
+		throw new Exception("Solicitado não possue o item ou item não está disponível");
 	}
 
 	private void requestItem(Lending requestLending) {
 		receivedItemRequests.add(requestLending);
 	}
 
-	public String approveLoan(String requestId) throws Exception{
+	public String approveLending(String requestId) throws Exception{
 		if ( requestId == null || requestId.trim().isEmpty() ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
 		}
@@ -237,7 +234,7 @@ public class User implements Comparable<User>{
 		throw new Exception("Requisição de empréstimo inexistente");//"Inexistent item request");
 	}
 	
-	public String lendItem(Item item, User borrower, int days) throws Exception{
+	protected String lendItem(Item item, User borrower, int days) throws Exception{
 
 		Lending requestAccepted = null;
 		for ( Lending record : receivedItemRequests ){
@@ -255,7 +252,7 @@ public class User implements Comparable<User>{
 			return requestAccepted.getID();
 		}
 		else{
-			throw new Exception("ERR: lender wants to lend item he wasnt asked for");
+			throw new Exception("Solicitante não pediu esse item emprestado");
 		}
 	}
 
@@ -273,11 +270,11 @@ public class User implements Comparable<User>{
 			myBorrowedItems.add(requestAccepted);
 		}
 		else{
-			throw new Exception("ERR: borrower wants to receive a item he didnt ask for");
+			throw new Exception("Solicitante não pediu esse item emprestado");
 		}
 	}
 	
-	public String denyLoan(String requestId) throws Exception{
+	public String denyLending(String requestId) throws Exception{
 		if ( requestId == null || requestId.trim().isEmpty() ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
 		}
@@ -294,7 +291,7 @@ public class User implements Comparable<User>{
 		throw new Exception("Requisição de empréstimo inexistente");//"Inexistent item request");
 	}
 	
-	public String declineLendingItem(Item item, User borrower, int days) throws Exception{
+	protected String declineLendingItem(Item item, User borrower, int days) throws Exception{
 		
 		Lending requestDenied = null;
 		for ( Lending record : receivedItemRequests){
@@ -311,7 +308,7 @@ public class User implements Comparable<User>{
 			return requestDenied.getID();
 		}
 		else{
-			throw new Exception("ERR: lender doesnt want to lend a item that he wasnt asked for");
+			throw new Exception("Solicitante não pediu esse item emprestado");
 		}
 	}
 	
@@ -327,11 +324,11 @@ public class User implements Comparable<User>{
 			sentItemRequests.remove(requestDenied);
 		}
 		else{
-			throw new Exception("ERR: borrower was asked to remove his request for item because it was denied but he doesnt have it");
+			throw new Exception("Solicitante não pediu esse item emprestado");
 		}
 	}
 	
-	public boolean hasBorrowedItem(Item item) {
+	public boolean hasBorrowedThis(Item item) {
 		for (Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
 				return true;
@@ -352,7 +349,7 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
 	}
 	
-	public String returnItem(Item item) throws Exception{
+	protected String returnItem(Item item) throws Exception{
 		for(Lending record : myBorrowedItems){
 			if(record.getItem().equals(item)){
 				if ( record.isReturned() ){
@@ -363,7 +360,7 @@ public class User implements Comparable<User>{
 				return record.getID();
 			}
 		}
-		throw new Exception("ERR: borrower wants to return item but he doesn't have it");
+		throw new Exception("Solicitante não possue o item que quer devolver");
 	}
 	
 	private void setReturned(Item item) throws Exception{
@@ -386,7 +383,6 @@ public class User implements Comparable<User>{
 		for ( Lending record : myLentItems ){
 			if ( record.getID().equals(lendingId) ){
 				receiveLentItem(record.getItem());
-				this.point();
 				return record.getID();
 			}
 		}
@@ -398,7 +394,7 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");
 	}
 	
-	public void receiveLentItem(Item item) throws Exception{
+	protected void receiveLentItem(Item item) throws Exception{
 
 		Lending requestAttended = null;
 		for ( Lending record : myLentItems ){
@@ -429,7 +425,7 @@ public class User implements Comparable<User>{
 			requestAttended.getBorrower().removeBorrowedItem(item);
 		}
 		else{
-			throw new Exception("ERR: lender wants to receive lended item but he doesnt have it");
+			throw new Exception("Solicitado quer receber de volta item que não é dele");
 		}
 	}
 
@@ -451,7 +447,7 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");
 	}
 
-	private void denyReceivingLentItem(Item item) throws Exception{
+	protected void denyReceivingLentItem(Item item) throws Exception{
 		for(Lending record : myLentItems){
 			if(record.getItem().equals(item)){
 				if ( !record.isReturned() ){
@@ -462,7 +458,7 @@ public class User implements Comparable<User>{
 				return;
 			}
 		}
-		throw new Exception("ERR: borrower wants to return item but he doesn't have it");
+		throw new Exception("Solicitante quer devolver item que ele não pegou emprestado");
 	}
 
 	private void setNotReturned(Item item) throws Exception{
@@ -475,7 +471,7 @@ public class User implements Comparable<User>{
 				return;
 			}
 		}
-		throw new Exception("ERR: lender was required to set his item as toBeReturned but he doesn't have it");
+		throw new Exception("Solicitante quer devolver item que ele não pegou emprestado");
 	}
 	
 	private void removeBorrowedItem(Item item) throws Exception{
@@ -493,7 +489,7 @@ public class User implements Comparable<User>{
 			borrowedRegistryHistory.add(requestAttended);
 		}
 		else{
-			throw new Exception("ERR: borrower wants to remove his borrowed item he gave back but he doesnt have it");
+			throw new Exception("Solicitante quer devolver item que ele não pegou emprestado");
 		}
 	}
 	
@@ -510,18 +506,6 @@ public class User implements Comparable<User>{
 	public String sendMessage(String subject, String message, User receiver,
 			String lendingId) throws Exception {
 		
-		validateLendingId(lendingId);
-		
-		storeMessage(subject, message, this.getLogin(), receiver.getLogin(),
-				false, lendingId);
-		
-		//TODO Treat how is it going to deal with the Lending id
-		return receiver.storeMessage(subject, message, this.getLogin(),
-				receiver.getLogin(), false, lendingId);
-	}
-	
-	private void validateLendingId(String lendingId) throws Exception {
-		
 		if ( lendingId == null || lendingId.trim().isEmpty()) {
 			throw new Exception("Identificador da requisição de empréstimo é inválido");// "Invalid lending identifier"); 
 		}
@@ -530,9 +514,16 @@ public class User implements Comparable<User>{
 			throw new Exception("Requisição de empréstimo inexistente");
 				// "Inexistent lending");
 		}
+		
+		storeMessage(subject, message, this.getLogin(), receiver.getLogin(),
+				false, lendingId);
+		
+		//TODO Treat how is it going to deal with the Lending id
+		return receiver.storeMessage(subject, message, this.getLogin(),
+				receiver.getLogin(), false, lendingId);
 	}
 
-	public String storeMessage(String subject, String message, String senderLogin,
+	private String storeMessage(String subject, String message, String senderLogin,
 			String receiverLogin, boolean isOffTopic, String lendingId) {
 		
 		if (isOffTopic) {
@@ -656,7 +647,7 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
 	}
 	
-	public String requestBack(Item item, Date systemDate) throws Exception{
+	protected String requestBack(Item item, Date systemDate) throws Exception{
 		for ( Lending record : myLentItems ){
 			if(record.getItem().equals(item)){
 				record.getBorrower().setRequestedBack(item, systemDate);
@@ -768,8 +759,8 @@ public class User implements Comparable<User>{
 
 		if ( myFriends.contains(owner) ){
 			if ( owner.hasItem(item) ) {
-				if ( owner.isLent(item) ) {
-					if ( !(owner.isMarkedAsInterested(item, this)) ){
+				if ( owner.hasLentThis(item) ) {
+					if ( !(owner.isInterestedOnMyItem(item, this)) ){
 						owner.markAsInterested(item, this);
 						return;
 					}
@@ -791,7 +782,7 @@ public class User implements Comparable<User>{
 		}
 	}
 
-	public boolean isMarkedAsInterested(Item item, User interested) throws Exception{
+	public boolean isInterestedOnMyItem(Item item, User interested) throws Exception{
 		if ( item == null ){
 			throw new Exception("Item inválido");
 		}
@@ -837,7 +828,7 @@ public class User implements Comparable<User>{
 		return toBeReturned;
 	}
 
-	public boolean isItemRequested(Item item){
+	public boolean isMyItemRequested(Item item){
 		
 		for(Lending record: receivedItemRequests){
 			if(record.getItem().equals(item))
@@ -845,8 +836,13 @@ public class User implements Comparable<User>{
 		}
 		return false;
 	}
-	
-	public void forceRemoveFriend(User user){
+		
+	public void breakFriendship(User user){
+		this.forceRemoveFriend(user);
+		user.forceRemoveFriend(this);
+	}
+
+	private void forceRemoveFriend(User user){
 		if (this.myFriends.contains(user)) {
 			this.myFriends.remove(user);
 			for (Lending record : this.receivedItemRequests) {
@@ -858,11 +854,6 @@ public class User implements Comparable<User>{
 					sentItemRequests.remove(record);
 			}
 		}
-	}
-		
-	public void breakFriendship(User user){
-		this.forceRemoveFriend(user);
-		user.forceRemoveFriend(this);
 	}
 	
 	public Lending getLendingByRequestId(String requestId) throws Exception{
@@ -944,7 +935,7 @@ public class User implements Comparable<User>{
 		for (Lending record : this.loanDenialRegistryHistory ){
 			if(record.getID().equals(lendingId)){
 				return record;
-			}			
+			}
 		}
 		return null;
 	}	
@@ -982,7 +973,7 @@ public class User implements Comparable<User>{
 
 	public void deleteMyItem(String itemId) throws Exception{
 		
-		Item toBeRemove = null;
+		Item toBeRemoved = null;
 		
 		if(itemId == null || itemId.trim().isEmpty()){
 			throw new Exception("Identificador do item é inválido");
@@ -997,41 +988,28 @@ public class User implements Comparable<User>{
 		
 		for(Item actualItem : myItems.keySet())
 			if(actualItem.getID().equals(itemId))
-				toBeRemove = actualItem;
+				toBeRemoved = actualItem;
 		
-		if(toBeRemove == null){
+		if(toBeRemoved == null){
 			throw new Exception("Item inexistente");
 		}
 		
 		for(Lending actualLending : this.myLentItems){
-			if(actualLending.getItem().equals(toBeRemove)){
+			if(actualLending.getItem().equals(toBeRemoved)){
 				throw new Exception("O usuário não pode apagar este item enquanto estiver emprestado");
 			}
 		}
 		
 		for(Lending actualLending : receivedItemRequests){
-			if(actualLending.getItem().equals(toBeRemove)){
+			if(actualLending.getItem().equals(toBeRemoved)){
 				receivedItemRequests.remove(actualLending);
 			}
 		}
-		myItems.remove(toBeRemove);
+		myItems.remove(toBeRemoved);
 	}
 
 	public int getReputation() {
-		return this.getScore();
+		return myLentItems.size() + lentRegistryHistory.size();
 	}
-
-	public int getScore() {
-		return lendingScore;
-	}
-
-	public void setScore(int score) {
-		this.lendingScore = score;
-	}
-	
-	public void point(){
-		this.lendingScore++;
-	}
-
 	
 }

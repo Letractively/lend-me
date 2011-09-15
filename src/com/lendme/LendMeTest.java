@@ -1,17 +1,12 @@
-package main.test;
+package com.lendme;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Assert;
-import main.LendMe;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import entities.Item;
-import entities.Session;
-import entities.User;
 
 public class LendMeTest {
 	

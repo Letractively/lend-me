@@ -1,4 +1,5 @@
-package main;
+package com.lendme;
+
 
 public class LendMeAcceptanceTestInterface {
 	

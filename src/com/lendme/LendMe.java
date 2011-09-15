@@ -1,4 +1,4 @@
-package main;
+package com.lendme;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,16 +9,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import entities.Item;
-import entities.Lending;
-import entities.Profile;
-import entities.Session;
-import entities.User;
-import entities.util.ComparatorOfItems;
-import entities.util.EventDate;
-import entities.util.Message;
-import entities.util.Topic;
 
 /**
  * The System.
@@ -44,7 +34,7 @@ public class LendMe {
 	 * 
 	 * <i>This method belongs to the public system interface</i>
 	 */
-	public static void resetSystem(){
+	protected static void resetSystem(){
 		users = new HashSet<User>();
 		sessions = new HashSet<Session>();
 		time = new EventDate("System reset at "+time.getDate());
@@ -58,7 +48,7 @@ public class LendMe {
 	 * @return the session id
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
-	public static String openSession(String login) throws Exception {
+	protected static String openSession(String login) throws Exception {
 		if (login == null || login.trim().isEmpty()){
 			throw new Exception("Login inválido");//"Invalid login");
 		}
@@ -74,7 +64,7 @@ public class LendMe {
 	 * <i>This method belongs to the public system interface </i>
 	 * @return the system time
 	 */
-	public static Date getSystemDate() {
+	protected static Date getSystemDate() {
 		return time.getDate();
 	}
 	
@@ -85,7 +75,7 @@ public class LendMe {
 	 * @param amount the amount of days
 	 * @return the string representing the new system time
 	 */
-	public static String someDaysPassed(int amount){
+	protected static String someDaysPassed(int amount){
 		time.addDays(amount+1);
 		return time.getDate().toString();
 	}
@@ -97,7 +87,7 @@ public class LendMe {
 	 * @param id the session id
 	 * @throws Exception for inexistent sessions
 	 */
-	public static void closeSession(String id) throws Exception{
+	protected static void closeSession(String id) throws Exception{
 		sessions.remove(getSessionByID(id));
 	}
 	
@@ -110,7 +100,7 @@ public class LendMe {
 	 * @param address the user address
 	 * @throws Exception for invalid parameters or if a user with login already exists
 	 */
-	public static String registerUser(String login, String name, String... address) throws Exception{
+	protected static String registerUser(String login, String name, String... address) throws Exception{
 		User newUser = new User(login, name, address);
 		if(!users.add(newUser)){
 			throw new Exception("Já existe um usuário com este login");//"User with this login already exists");
@@ -129,7 +119,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception for invalid parameters
 	 */
-	public static String registerItem(String sessionId, String name, 
+	protected static String registerItem(String sessionId, String name, 
 			String description, String category) throws Exception{
 		
 		if ( category == null || category.trim().isEmpty() ){
@@ -145,7 +135,7 @@ public class LendMe {
 	 * @param name
 	 * @return
 	 */
-	public static Set<User> searchUsersByName(String name) {
+	protected static Set<User> searchUsersByName(String name) {
 		Set<User> foundUsers = new HashSet<User>();
 		
 		for ( User user : users ){
@@ -162,7 +152,7 @@ public class LendMe {
 	 * @param address
 	 * @return
 	 */
-	public static Set<User> searchUsersByAddress(String address) {
+	protected static Set<User> searchUsersByAddress(String address) {
 		Set<User> foundUsers = new HashSet<User>();
 		
 		for ( User user : users ){
@@ -179,7 +169,7 @@ public class LendMe {
 	 * @param login
 	 * @return
 	 */
-	public static Set<Session> searchSessionsByLogin(String login) {
+	protected static Set<Session> searchSessionsByLogin(String login) {
 		Set<Session> results = new HashSet<Session>();
 		for(Session actualSession : sessions){
 			if(actualSession.getLogin().equals(login)){
@@ -287,7 +277,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String getItemAttribute(String itemId, String attribute) throws Exception{
+	protected static String getItemAttribute(String itemId, String attribute) throws Exception{
 		
 		String ownerSessionId = searchSessionsByLogin(getItemOwner(itemId).getLogin())
 				.iterator().next().getId();
@@ -302,7 +292,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Profile getUserProfile(String sessionId) throws Exception {
+	protected static Profile getUserProfile(String sessionId) throws Exception {
 		Session session = getSessionByID(sessionId);
 		User user = getUserByLogin(session.getLogin());
 		if (user == null) {
@@ -317,7 +307,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Set<User> getFriends(String sessionId) throws Exception{
+	protected static Set<User> getFriends(String sessionId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		Set<User> users = viewer.getOwnerFriends();
 		return users;
@@ -330,7 +320,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Set<User> getFriends(String solicitorSessionId, String solicitedLogin) throws Exception{
+	protected static Set<User> getFriends(String solicitorSessionId, String solicitedLogin) throws Exception{
 		Profile solicitorViewer = LendMe.getUserProfile(solicitorSessionId);
 		solicitorViewer = solicitorViewer.viewOtherProfile(LendMe.getUserByLogin(solicitedLogin));
 		Set<User> users = solicitorViewer.getOwnerFriends();
@@ -343,7 +333,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static User getUserByLogin(String login) throws Exception{
+	protected static User getUserByLogin(String login) throws Exception{
 		if ( login == null || login.trim().isEmpty() ){
 			throw new Exception("Login inválido");//"Invalid login");
 		}
@@ -361,7 +351,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Set<Item> getItems(String sessionId) throws Exception {
+	protected static Set<Item> getItems(String sessionId) throws Exception {
 		Profile viewer = LendMe.getUserProfile(sessionId);
 		Set<Item> items = viewer.getOwnerItems();
 		return items;
@@ -374,7 +364,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
+	protected static Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
 		Profile viewer = LendMe.getUserProfile(observerSessionId);
 		viewer = viewer.viewOtherProfile(LendMe.getUserByLogin(ownerLogin));
 		Set<Item> items = viewer.getOwnerItems();
@@ -387,7 +377,7 @@ public class LendMe {
 	 * @param solicitedLogin
 	 * @throws Exception
 	 */
-	public static void askForFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
+	protected static void askForFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
 		Profile solicitorProfile = getUserProfile(solicitorSessionId);
 		solicitorProfile = solicitorProfile.viewOtherProfile(LendMe.getUserByLogin(solicitedLogin));
 		solicitorProfile.askForFriendship();
@@ -399,7 +389,7 @@ public class LendMe {
 	 * @param solicitorLogin
 	 * @throws Exception
 	 */
-	public static void acceptFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
+	protected static void acceptFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
 		Profile solicitedProfile = getUserProfile(solicitedSessionId);
 		solicitedProfile = solicitedProfile.viewOtherProfile(LendMe.getUserByLogin(solicitorLogin));
 		solicitedProfile.acceptFriendshipRequest();
@@ -411,7 +401,7 @@ public class LendMe {
 	 * @param solicitorLogin
 	 * @throws Exception
 	 */
-	public static void declineFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
+	protected static void declineFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
 		Profile solicitedProfile = getUserProfile(solicitedSessionId);
 		solicitedProfile = solicitedProfile.viewOtherProfile(LendMe.getUserByLogin(solicitorLogin));
 		solicitedProfile.declineFriendshipRequest();
@@ -423,7 +413,7 @@ public class LendMe {
 	 * @param solicitedLogin
 	 * @throws Exception
 	 */
-	public static void breakFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
+	protected static void breakFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
 		Profile solicitorProfile = getUserProfile(solicitorSessionId);
 		solicitorProfile = solicitorProfile.viewOtherProfile(LendMe.getUserByLogin(solicitedLogin));
 		solicitorProfile.breakFriendship();
@@ -436,7 +426,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean hasFriend(String solicitorSessionId, String solicitedUserLogin) throws Exception{
+	protected static boolean hasFriend(String solicitorSessionId, String solicitedUserLogin) throws Exception{
 		Profile solicitorViewer = getUserProfile(solicitorSessionId);
 		solicitorViewer = solicitorViewer.viewOtherProfile(LendMe.getUserByLogin(solicitedUserLogin));
 		return solicitorViewer.isFriendOfOwner();
@@ -453,7 +443,7 @@ public class LendMe {
 		return viewer.getOwnerFriendshipRequests();
 	}
 
-	public static String sendMessage(String senderSessionId, String subject, String message, 
+	protected static String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
 		
 		Profile solicitorViewer = null;
@@ -487,7 +477,7 @@ public class LendMe {
 		
 	}
 	
-	public static String sendMessage(String senderSessionId, String subject, String message, 
+	protected static String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
 		
 		Profile solicitorViewer = null;
@@ -515,7 +505,7 @@ public class LendMe {
 		
 	}
 	
-	public static List<Topic> getTopics(String sessionId, String topicType)
+	protected static List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
 		
 		Profile solicitorViewer = getUserProfile(sessionId);
@@ -523,7 +513,7 @@ public class LendMe {
 		
 	}
 	
-	public static List<Message> getTopicMessages(String sessionId, String topicId)
+	protected static List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
 		
 		Profile solicitorViewer = getUserProfile(sessionId);
@@ -537,7 +527,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Collection<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
+	protected static Collection<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.getLendingRecords(kind);
 	}
@@ -550,7 +540,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
+	protected static String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
 		Profile viewer = getUserProfile(sessionId);
 		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
 		return viewer.requestItem(itemId, requiredDays);
@@ -563,7 +553,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String approveLoan(String sessionId, String requestId)  throws Exception{
+	protected static String approveLending(String sessionId, String requestId)  throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.approveLoan(requestId);
 	}
@@ -575,7 +565,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String denyLoan(String sessionId, String requestId)  throws Exception{
+	protected static String denyLending(String sessionId, String requestId)  throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.denyLoan(requestId);
 	}
@@ -587,7 +577,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String returnItem(String sessionId, String requestId) throws Exception{
+	protected static String returnItem(String sessionId, String requestId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.returnItem(requestId);
 	}
@@ -599,13 +589,13 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String confirmLendingTermination(String sessionId,
+	protected static String confirmLendingTermination(String sessionId,
 			String lendingId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.confirmLendingTermination(lendingId);
 	}
 
-	public static String denyLendingTermination(String sessionId,
+	protected static String denyLendingTermination(String sessionId,
 			String lendingId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.denyLendingTermination(lendingId);
@@ -618,7 +608,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String askForReturnOfItem(String sessionId,
+	protected static String askForReturnOfItem(String sessionId,
 			String lendingId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.askForReturnOfItem(lendingId);
@@ -630,7 +620,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static User getItemOwner(String itemId) throws Exception{
+	protected static User getItemOwner(String itemId) throws Exception{
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}
@@ -650,7 +640,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Lending getLendingByLendingId(String lendingId) throws Exception{
+	protected static Lending getLendingByLendingId(String lendingId) throws Exception{
 		for ( User user : users ){
 			Lending record = user.getLendingByLendingId(lendingId);
 			if ( record != null ){
@@ -666,7 +656,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Lending getLendingByRequestId(String requestId) throws Exception{
+	protected static Lending getLendingByRequestId(String requestId) throws Exception{
 		for ( User user : users ){
 			Lending record = user.getLendingByRequestId(requestId);
 			if ( record != null ){
@@ -676,7 +666,7 @@ public class LendMe {
 		throw new Exception("Requisição de empréstimo inexistente");
 	}
 
-	public static void deleteItem(String sessionId, String itemId) throws Exception {
+	protected static void deleteItem(String sessionId, String itemId) throws Exception {
 		User userOwnerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
 		userOwnerSession.deleteMyItem(itemId);
 	}
@@ -707,23 +697,24 @@ public class LendMe {
 		
 	}
 	
-	public static ArrayList<Item> searchForItem(String idSessao, String key, String atribute, String disposition ,String criterion) throws Exception{
+	protected static List<Item> searchForItem(String sessionId, String key, String attribute,
+			String disposition ,String criteria) throws Exception{
 		
-		ArrayList<Item> results = new ArrayList<Item>();
-		Session session = getSessionByID(idSessao);
+		List<Item> results = new ArrayList<Item>();
+		Session session = getSessionByID(sessionId);
 		User userOwnerSession = getUserByLogin(session.getLogin());
 		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
 		CriterionForSearch criterionAux = CriterionForSearch.DATACRIACAO;
 		
-		validator(key, atribute, disposition, criterion);
+		validator(key, attribute, disposition, criteria);
 		
 		for(AtributeForSearch actual : AtributeForSearch.values()){
-			if(actual.toString().toLowerCase().contains(atribute.toLowerCase()))
+			if(actual.toString().toLowerCase().contains(attribute.toLowerCase()))
 				atributeAux = actual;
 		}
 		
 		for(CriterionForSearch actual : CriterionForSearch.values()){
-			if(actual.toString().toLowerCase().contains(criterion.toLowerCase()))
+			if(actual.toString().toLowerCase().contains(criteria.toLowerCase()))
 				criterionAux = actual;
 		}
 		
@@ -801,13 +792,13 @@ public class LendMe {
 		}
 	}
 	
-	public static void registerInterestForItem(String sessionId, String itemId) throws Exception{
+	protected static void registerInterestForItem(String sessionId, String itemId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
 		viewer.registerInterestForItem(itemId);
 	}
 
-	public static List<Message> getMessagesByTopicId(String topicId) throws Exception{
+	protected static List<Message> getMessagesByTopicId(String topicId) throws Exception{
 
 		for ( User user : users ){
 			List<Message> messages = user.getMessagesByTopicId(topicId);
@@ -817,35 +808,33 @@ public class LendMe {
 		}
 		throw new Exception("Tópico inexistente");//"Inexistent topic");
 	}
-
 	
-	public static String getRanking(String idSession, String categoria) throws Exception{
+	protected static String getRanking(String idSession, String categoria) throws Exception{
 		String ranking = "";
-		
+
 		if(idSession == null || idSession.trim().equals("") ||
 				! sessions.contains(getSessionByID(idSession))){
 			throw new Exception("Sessão inválida");
 		}
-		
+
 		if(!categoria.equals("global") && !categoria.equals("amigos")){
 			throw new Exception("Categoria inválida");
 		}
-		
+
 		if(categoria.equals("amigos")){
 			User user = getUserByLogin(getSessionByID(idSession).getLogin());
 			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size()]);
-			
-			
+
+
 			Comparator<? super User> c = null;
-			//			Arrays.sort(friendList, >>tem q ter um comparator aki dentro<<);
 			Arrays.sort(friendList, c);
 			for(User current : friendList){
-				ranking = current.getLogin() + ";" + ranking; // vai dar um erro na forma da string, mas isso eh de menos agora.
+				ranking = current.getLogin() + ";" + ranking;
 			}
 
-		if(categoria.equals("global")){
-		
-			
+			if(categoria.equals("global")){
+
+
 			}
 
 		}

@@ -1,4 +1,4 @@
-package entities.util;
+package com.lendme;
 
 import java.util.Date;
 

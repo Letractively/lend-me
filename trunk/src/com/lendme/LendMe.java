@@ -28,6 +28,19 @@ public class LendMe {
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
 	
+	private static Comparator<? super User> comparator = new Comparator<User>() {
+
+		@Override
+		public int compare(User o1, User o2) {
+			int result = 0;
+			if(o1.getScore() > o2.getScore()){
+				result = 1;
+			}else if(o1.getScore() < o2.getScore()){
+				result = -1;
+			}
+			return result;				}
+	};
+	
 	/**
 	 * Resets the whole system: all living sessions are shutdown as well as all users are deleted.
 	 * Also, the system clock is set to same as the OS time.
@@ -811,35 +824,45 @@ public class LendMe {
 	
 	protected static String getRanking(String idSession, String categoria) throws Exception{
 		String ranking = "";
-
-		if(idSession == null || idSession.trim().equals("") ||
-				! sessions.contains(getSessionByID(idSession))){
+		
+		if(idSession == null || idSession.trim().equals("")){
 			throw new Exception("Sessão inválida");
 		}
-
-		if(!categoria.equals("global") && !categoria.equals("amigos")){
+				
+		if(getSessionByID(idSession) == null){
+			throw new Exception("Sessão inexistente");
+		}
+		
+		if(categoria == null || categoria.trim().equals("")){
 			throw new Exception("Categoria inválida");
 		}
-
+		
+		if(!categoria.equals("global") && !categoria.equals("amigos")){
+			throw new Exception("Categoria inexistente");
+		}
+		
 		if(categoria.equals("amigos")){
 			User user = getUserByLogin(getSessionByID(idSession).getLogin());
-			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size()]);
-
-
-			Comparator<? super User> c = null;
-			Arrays.sort(friendList, c);
+			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size() + 1]);
+			friendList[user.getFriends().size()] = user;
+			
+			Arrays.sort(friendList, comparator);
 			for(User current : friendList){
-				ranking = current.getLogin() + ";" + ranking;
+				ranking = current.getLogin() + "; " + ranking;
 			}
-
-			if(categoria.equals("global")){
-
-
-			}
-
 		}
-		return ranking;
-	}
+		if(categoria.equals("global")){
+			User[] usersList = users.toArray(new User[users.size()]);
+			
+			Arrays.sort(usersList, comparator);
+			for(User current : usersList){
+				ranking = current.getLogin() + "; " + ranking;
+			}
+		}
+		ranking = ranking + "-";
+	
+	return ranking.replace("; -", "");
+}
 	
 	
 }

@@ -32,6 +32,7 @@ public class User implements Comparable<User>{
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
 	private Map<Item, ArrayList<User>> myInterestingItems = new HashMap<Item, ArrayList<User>>();
 	private EventDate creationDate;
+	private int score;
 	
 	public User(){}
 	
@@ -59,7 +60,22 @@ public class User implements Comparable<User>{
 		this.name = name;
 		this.address = new Address(address);
 		this.creationDate = new EventDate(String.format(EntitiesConstants.USER_REGISTERED_MESSAGE, this.login, this.name));
+		this.score = 0;
 		
+	}
+	
+	
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
+	private void point(){
+		this.score++;
 	}
 
 	public String getLogin() {
@@ -383,6 +399,7 @@ public class User implements Comparable<User>{
 		for ( Lending record : myLentItems ){
 			if ( record.getID().equals(lendingId) ){
 				receiveLentItem(record.getItem());
+				point();
 				return record.getID();
 			}
 		}

@@ -16,8 +16,8 @@ public class LendMeAcceptanceTestClient {
       	  files.add(String.format(".."+File.separator+
       			  "acceptance-tests-scripts"+File.separator+"US%02d.txt", i));
         }
-        LendMeAcceptanceTestInterface lendMeFacade = new LendMeAcceptanceTestInterface();
-        EasyAcceptFacade eaFacade = new EasyAcceptFacade(lendMeFacade, files);
+        LendMeAcceptanceTestInterface lendMeInterface = new LendMeAcceptanceTestInterface();
+        EasyAcceptFacade eaFacade = new EasyAcceptFacade(lendMeInterface, files);
         eaFacade.executeTests();
         System.out.println(eaFacade.getCompleteResults());
 

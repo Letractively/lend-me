@@ -27,41 +27,6 @@ import entities.util.Topic;
  * So we can make no difference between both things.
 
  * Some methods that are public shouldn't be.
-
- * In my opinion (Guilherme) the only public methods should be:
- * 
- * resetSystem()
- * getSystemDate()
- * openSession()
- * closeSession()
- * registerUser()
- * searchUsersByName()
- * searchUsersByAddress()
- * askForFriendship()
- * acceptFriendship()
- * declineFriendship()
- * breakFriendship()
- * getFriends() //the friends of this user
- * getFriends() //the friends of another user
- * hasFriend()
- * sendMessage() //off topic
- * sendMessage() //negotiation topic
- * getTopics()
- * getTopicMessages()
- * registerItem()
- * getItems() //the items of this user
- * getItems() //the items of another user
- * deleteItem()
- * registerInterestForItem()
- * requestItem()
- * approveLoan()
- * askForReturnOfItem()
- * returnItem()
- * confirmLendingTermination()
- * denyLendingTermination()
- * getLendingRecords()
- * 
- * Everything else should remain private or protected (if used by other System objects)
  */
 
 public class LendMe {
@@ -145,10 +110,12 @@ public class LendMe {
 	 * @param address the user address
 	 * @throws Exception for invalid parameters or if a user with login already exists
 	 */
-	public static void registerUser(String login, String name, String... address) throws Exception{
-		if(!users.add(new User(login, name, address))){
+	public static String registerUser(String login, String name, String... address) throws Exception{
+		User newUser = new User(login, name, address);
+		if(!users.add(newUser)){
 			throw new Exception("Já existe um usuário com este login");//"User with this login already exists");
 		}
+		return newUser.getLogin();
 	}
 	
 	/**
@@ -322,59 +289,11 @@ public class LendMe {
 	 */
 	public static String getItemAttribute(String itemId, String attribute) throws Exception{
 		
-		if ( attribute == null || attribute.trim().isEmpty() ){
-			throw new Exception("Atributo inválido");//"Invalid attribute");
-		}
-		if (!(attribute.equals("nome") || attribute.equals("descricao") || attribute.equals("categoria"))){
-			throw new Exception("Atributo inexistente");//"Inexistent attribute");
-		}
-		if ( itemId == null || itemId.trim().isEmpty() ){
-			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
-		}
+		String ownerSessionId = searchSessionsByLogin(getItemOwner(itemId).getLogin())
+				.iterator().next().getId();
 		
-		Item referredItem = getItemByID(itemId);
-		
-		if(attribute.equals("nome")){
-			return referredItem.getName();
-		}else if (attribute.equals("descricao")){
-			return referredItem.getDescription();
-		}
-		else{
-			String formattedCategory = referredItem.getCategory().toString();
-			return formattedCategory.substring(0, 1).toUpperCase() 
-			+ formattedCategory.substring(1).toLowerCase();
-		}
-		
-	}
-
-	/**
-	 * This method is only used by local methods
-	 * @param itemId
-	 * @return
-	 * @throws Exception
-	 */
-	private static Item getItemByID(String itemId) throws Exception {
-		if ( itemId == null || itemId.trim().isEmpty() ){
-			throw new Exception("Identificador do item é inválido");
-		}
-		Item referredItem = null;
-		
-		for ( User user : users ){
-			for ( Item item : user.getAllItems() ){
-				if ( item.getID().equals(itemId) ){
-					referredItem = item;
-					break;
-				}
-			}
-			if ( referredItem != null ){
-				break;
-			}
-		}
-		
-		if ( referredItem == null ){
-			throw new Exception("Item inexistente");//"Inexistent item");
-		}
-		return referredItem;
+		Profile viewer = getUserProfile(ownerSessionId);
+		return viewer.getItemAttribute(itemId, attribute);
 	}
 
 	/**
@@ -788,7 +707,7 @@ public class LendMe {
 		
 	}
 	
-	public static ArrayList<Item> searchItem(String idSessao, String key, String atribute, String disposition ,String criterion) throws Exception{
+	public static ArrayList<Item> searchForItem(String idSessao, String key, String atribute, String disposition ,String criterion) throws Exception{
 		
 		ArrayList<Item> results = new ArrayList<Item>();
 		Session session = getSessionByID(idSessao);

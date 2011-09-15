@@ -418,5 +418,31 @@ public class Profile {
 		}
 		throw new Exception("Item inexistente");
 	}
+
+	public String getItemAttribute(String itemId, String attribute) throws Exception{
+		if ( attribute == null || attribute.trim().isEmpty() ){
+			throw new Exception("Atributo inválido");//"Invalid attribute");
+		}
+		if (!(attribute.equals("nome") || attribute.equals("descricao") || attribute.equals("categoria"))){
+			throw new Exception("Atributo inexistente");//"Inexistent attribute");
+		}
+		
+		for ( Item item : getOwnerItems() ){
+			if ( item.getID().equals(itemId) ){
+				if ( attribute.equals("nome") ) {
+					return item.getName();
+				}
+				else if ( attribute.equals("descricao") ) {
+					return item.getDescription();
+				}
+				else {
+					String formattedCategory = item.getCategory().toString();
+					return formattedCategory.substring(0, 1).toUpperCase() 
+							+ formattedCategory.substring(1).toLowerCase();
+				}
+			}
+		}
+		throw new Exception("Item inexistente");
+	}
 	
 }

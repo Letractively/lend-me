@@ -1,9 +1,9 @@
 package main;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import entities.Item;
 import entities.Lending;
@@ -18,14 +18,19 @@ public class LendMeFacade {
 		LendMe.resetSystem();
 	}
 	
-	public void openSession(String login) throws Exception{
-		
-		LendMe.openSession(login);
-	}
-	
 	public String getSystemDate(){
 		
 		return LendMe.getSystemDate().toString();
+	}
+
+	public String someDaysPassed(int amount){
+		
+		return LendMe.someDaysPassed(amount);
+	}
+	
+	public String openSession(String login) throws Exception{
+		
+		return LendMe.openSession(login);
 	}
 	
 	public void closeSession(String sessionId) throws Exception{
@@ -33,15 +38,16 @@ public class LendMeFacade {
 		LendMe.closeSession(sessionId);
 	}
 	
-	public void registerUser(String login, String name, String... address)
+	public String registerUser(String login, String name, String... address)
 		throws Exception{
 		
-		LendMe.registerUser(login, name, address);
+		return LendMe.registerUser(login, name, address);
 	}
 	
 	public String[] searchUsersByName(String name){
 		
-		Set<User> results = LendMe.searchUsersByName(name);
+		List<User> results = new ArrayList<User>(LendMe.searchUsersByName(name));
+		Collections.sort(results);
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -52,13 +58,35 @@ public class LendMeFacade {
 
 	public String[] searchUsersByAddress(String address){
 
-		Set<User> results = LendMe.searchUsersByAddress(address);
+		List<User> results = new ArrayList<User>(LendMe.searchUsersByAddress(address));
+		Collections.sort(results);
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
 			handled[i] = iterator.next().getLogin();
 		}
 		return handled;
+	}
+	
+	public String[] searchUsersByAttributeKey(String solicitorSession, String key, String attribute)
+		throws Exception{
+		
+		List<User> results = 
+				new ArrayList<User>(LendMe.searchUsersByAttributeKey(solicitorSession, key, attribute));
+		Collections.sort(results);
+		String[] handled = new String[results.size()];
+		Iterator<User> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			User tmp = iterator.next();
+			handled[i] = tmp.getName() + " - " + tmp.getAddress();
+		}
+		return handled;
+	}
+	
+	public String getUserAttribute(String solicitorSession, String attribute)
+		throws Exception{
+			
+		return LendMe.getUserAttribute(solicitorSession, attribute);
 	}
 	
 	public void askForFriendship(String solicitorSession, String solicitedLogin)
@@ -79,16 +107,28 @@ public class LendMeFacade {
 		LendMe.declineFriendship(solicitedSession, solicitorLogin);
 	}
 
-	public void breakFriendship(String solicitorSession, String solicitedLogin)
-		throws Exception{
+	public void breakFriendship(String solicitorSession, String solicitedLogin) throws Exception{
 			
 		LendMe.breakFriendship(solicitorSession, solicitedLogin);
 	}
 
+	public String[] getFriendshipRequests(String solicitorSession) throws Exception {
+
+		List<User> results = new ArrayList<User>(LendMe.getFriendshipRequests(solicitorSession));
+		Collections.sort(results);
+		String[] handled = new String[results.size()];
+		Iterator<User> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getLogin();
+		}
+		return handled;
+	}
+	
 	public String[] getFriends(String solicitorSession)
 		throws Exception{
 
-		Set<User> results = LendMe.getFriends(solicitorSession);
+		List<User> results = new ArrayList<User>(LendMe.getFriends(solicitorSession));
+		Collections.sort(results);
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -100,7 +140,8 @@ public class LendMeFacade {
 	public String[] getFriends(String solicitorSession, String solicitedLogin)
 		throws Exception{
 
-		Set<User> results = LendMe.getFriends(solicitorSession, solicitedLogin);
+		List<User> results = new ArrayList<User>(LendMe.getFriends(solicitorSession, solicitedLogin));
+		Collections.sort(results);
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -131,7 +172,8 @@ public class LendMeFacade {
 	
 	public String[] getTopics(String solicitorSession, String topicType) throws Exception{
 		
-		List<Topic> results = LendMe.getTopics(solicitorSession, topicType);;
+		List<Topic> results = LendMe.getTopics(solicitorSession, topicType);
+		Collections.sort(results);
 		String[] handled = new String[results.size()];
 		Iterator<Topic> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -142,24 +184,38 @@ public class LendMeFacade {
 	
 	public String[] getTopicMessages(String solicitorSession, String topicId) throws Exception{
 		
-		List<Message> results = LendMe.getTopicMessages(solicitorSession, topicId);;
+		List<Message> results = LendMe.getTopicMessages(solicitorSession, topicId);
+		Collections.sort(results);
 		String[] handled = new String[results.size()];
 		Iterator<Message> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
 			handled[i] = iterator.next().getMessage();
 		}
-		return handled;		
+		return handled;
 	}
 
-	public void registerItem(String creatorSession, String name, String description, String category)
+	public String registerItem(String creatorSession, String name, String description, String category)
 		throws Exception{
 		
-		LendMe.registerItem(creatorSession, name, description, category);
+		return LendMe.registerItem(creatorSession, name, description, category);
+	}
+	
+	public String[] searchForItems(String solicitorSession, String key, String attribute,
+		String disposition, String criteria) throws Exception{
+		
+		List<Item> results = LendMe.searchForItem(solicitorSession, key, attribute, disposition, criteria);
+		String[] handled = new String[results.size()];
+		Iterator<Item> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().getName();
+		}
+		return handled;
 	}
 	
 	public String[] getItems(String solicitorSession) throws Exception{
 		
-		Set<Item> results = LendMe.getItems(solicitorSession);
+		List<Item> results = new ArrayList<Item>(LendMe.getItems(solicitorSession));
+		Collections.sort(results);
 		String[] handled = new String[results.size()];
 		Iterator<Item> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -170,13 +226,20 @@ public class LendMeFacade {
 
 	public String[] getItems(String solicitorSession, String solicitedLogin) throws Exception{
 		
-		Set<Item> results = LendMe.getItems(solicitorSession, solicitedLogin);
+		List<Item> results = new ArrayList<Item>(LendMe.getItems(solicitorSession, solicitedLogin));
+		Collections.sort(results);
 		String[] handled = new String[results.size()];
 		Iterator<Item> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
 			handled[i] = iterator.next().getName();
 		}
 		return handled;
+	}
+	
+	public String getItemAttribute(String itemId, String attribute)
+		throws Exception{
+		
+		return LendMe.getItemAttribute(itemId, attribute);
 	}
 	
 	public void deleteItem(String solicitorSession, String itemId) throws Exception{
@@ -221,7 +284,7 @@ public class LendMeFacade {
 
 	public String[] getLendingRecords(String solicitorSession, String kind) throws Exception{
 		
-		Collection<Lending> results = LendMe.getLendingRecords(solicitorSession, kind);
+		List<Lending> results = new ArrayList<Lending>(LendMe.getLendingRecords(solicitorSession, kind));
 		String[] handled = new String[results.size()];
 		Iterator<Lending> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -234,6 +297,11 @@ public class LendMeFacade {
 					tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ) );
 		}
 		return handled;
+	}
+	
+	public String getRanking(String solicitorSession, String category) throws Exception{
+		
+		return LendMe.getRanking(solicitorSession, category);
 	}
 	
 }

@@ -15,8 +15,9 @@ public class LendMeTextInterface {
 	private static final int LEAVE_UNLOGGED = 3;
 	private static final int REGISTER_ITEM = 1;
 	private static final int SEARCH_USER = 2;
-	private static final int ADD_FRIEND = 3;
-	private static final int LOG_OUT = 4;
+	private static final int REQUEST_FRIENDSHIP = 3;
+	private static final int ACCEPT_FRIENDSHIP = 4;
+	private static final int LOG_OUT = 5;
 	
 	public static void main(String[] args) {
 		try {
@@ -61,7 +62,9 @@ public class LendMeTextInterface {
 			}
 			else {
 				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator()+
-						"\n \t Escolha uma opcao a seguir:\n \t [1]Cadastrar Item \t[2]Localizar Usuario \t[3]Adicionar Amigo \t[4]Deslogar\n",4)){
+						"\n \t Escolha uma opcao a seguir:\n \t [1]Cadastrar Item \t" +
+						"[2]Localizar Usuario \t[3]Requisitar Amizade \t[4]Aceitar Amizade \t" +
+						"[5]Deslogar\n [5]Deslogar\n",5)){
 				case REGISTER_ITEM:{
 						try{
 						}
@@ -80,15 +83,25 @@ public class LendMeTextInterface {
 						}
 						break;
 						}
-				case ADD_FRIEND:{
+				case REQUEST_FRIENDSHIP:{
 						try{
-							//addFriend();
+							requestFriendship();
 						}
 						catch ( Exception e ){
 							System.out.println(e.getMessage());
 						}
 						break;
 						}
+				case ACCEPT_FRIENDSHIP:{
+					try{
+						acceptFriendship();
+					}
+					catch ( Exception e ){
+						System.out.println(e.getMessage());
+					}
+					break;
+					}
+				
 				case LOG_OUT:{
 						try {
 							lendMeFacade.closeSession(currentUserSessionId);
@@ -99,7 +112,6 @@ public class LendMeTextInterface {
 						}
 						break;
 					}
-				// Create cases for register item and etc here!
 			}
 		}
 		}
@@ -116,14 +128,34 @@ public class LendMeTextInterface {
 		String newUserLogin = lendMeFacade.registerUser(returnCorrectString("\n \t Informe o login : "),
 		returnCorrectString("\n \t Informe o nome : "), returnCorrectString("\n \t Informe o endereço : "));
 		
-		System.out.println(String.format("O usuário com login %s foi cadastrado com sucesso!", newUserLogin));
+		System.out.println(String.format("\n \tO usuário com login %s foi cadastrado com sucesso!", newUserLogin));
 	}
 	
 	private static void searchUsersByAttribute() throws Exception {
 		
-		System.out.println(listObjectsInArray(lendMeFacade.searchUsersByAttributeKey(currentUserSessionId,
-			returnCorrectString("\n \t Informe o atributo: "),
-			 returnCorrectString("\n \t Informe o tipo do atributo: "))));
+		System.out.println(listObjectsInArray("Lista de usuários com o atributo especificado",
+			lendMeFacade.searchUsersByAttributeKey(currentUserSessionId,
+				returnCorrectString("\n \t Informe o atributo: "),
+					returnCorrectString("\n \t Informe o tipo do atributo: "))));
+	}
+	
+	private static void requestFriendship() throws Exception {
+		String requestedFriendLogin = returnCorrectString("\n \t Informe o login do usuário: ");
+		
+		lendMeFacade.askForFriendship(currentUserSessionId, requestedFriendLogin);
+		System.out.println("\n \t Requisição de amizade enviada para o usuário "
+				+ requestedFriendLogin);
+	}
+	
+	private static void acceptFriendship() throws Exception {
+		
+		System.out.println(listObjectsInArray("Lista de requisições de amizade",
+				lendMeFacade.getFriendshipRequests(currentUserSessionId)));
+		
+		String friendLogin = returnCorrectString("\n \t Informe o login do usuário: ");
+		
+		lendMeFacade.acceptFriendship(currentUserSessionId, friendLogin);
+		System.out.println("\n \t Amizade com o usuário " + friendLogin + " aceita.");
 	}
 	
 	private static String logIn() throws Exception{
@@ -134,9 +166,9 @@ public class LendMeTextInterface {
 		return currentUserSessionId;
 	}
 	
-	public static String listObjectsInArray(Object[] array){
+	public static String listObjectsInArray(String message, Object[] array){
 		
-		String arrayObjectsStr = "\n \t Selecione uma das opcoes abaixo: \n";
+		String arrayObjectsStr = "\n \t " + message + ": \n";
 		
 		int lineBreak = 3;
 		

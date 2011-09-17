@@ -13,7 +13,8 @@ public class LendMeAcceptanceTestClient {
         List<String> files = new ArrayList<String>();
         for ( int i=1; i<15; i++ ){
       	  files.add(String.format(".."+File.separator+
-      			  "acceptance-tests-scripts"+File.separator+"US%02d.txt", i));
+      			  "acceptance-test-scripts"+File.separator+ "scripts" +
+      			  File.separator + "US%02d.txt", i));
         }
         LendMeAcceptanceTestInterface lendMeInterface = new LendMeAcceptanceTestInterface();
         EasyAcceptFacade eaFacade = new EasyAcceptFacade(lendMeInterface, files);

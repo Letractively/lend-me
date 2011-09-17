@@ -127,7 +127,7 @@ public class LendMeAcceptanceTestInterface {
 	
 	public String aprovarEmprestimo(String idSessao, String idRequisicaoEmprestimo) throws Exception{
 		
-			return system.approveLoan(idSessao, idRequisicaoEmprestimo);
+			return system.approveLending(idSessao, idRequisicaoEmprestimo);
 	}
 	
 	public String devolverItem(String idSessao, String idEmprestimo) throws Exception{

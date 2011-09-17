@@ -68,10 +68,10 @@ public class Item implements Identifiable, Comparable<Item>{
 	public String toString() {
 		StringBuilder itemToString = new StringBuilder();
 		
-		itemToString.append(this.name);
-		itemToString.append(this.description);
-		itemToString.append(this.category.toString());
-		itemToString.append(this.id);
+		itemToString.append(" \tNome: " + this.name + "\n");
+		itemToString.append(" \t\tDescrição: " + this.description + "\n");
+		itemToString.append(" \t\tCategoria: " + this.category.toString() + "\n");
+		itemToString.append(" \t\tId: " + this.id + "\n");
 		return itemToString.toString();
 	}
 	

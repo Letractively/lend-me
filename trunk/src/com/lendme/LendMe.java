@@ -568,7 +568,7 @@ public class LendMe {
 	 */
 	protected static String approveLending(String sessionId, String requestId)  throws Exception{
 		Profile viewer = getUserProfile(sessionId);
-		return viewer.approveLoan(requestId);
+		return viewer.approveLending(requestId);
 	}
 
 	/**
@@ -861,8 +861,19 @@ public class LendMe {
 		}
 		ranking = ranking + "-";
 	
-	return ranking.replace("; -", "");
-}
+		return ranking.replace("; -", "");
+	}
 	
+	protected static String viewProfile(String solicitorSessionId, 
+			String solicitedUserLogin) throws Exception {
+		Profile solicitorViewer = getUserProfile(solicitorSessionId);
+		solicitorViewer = solicitorViewer.viewOtherProfile(LendMe.getUserByLogin(solicitedUserLogin));
+		return solicitorViewer.toString();
+	}
 	
+	protected static Set<Lending> getReceivedItemRequests(String sessionId)
+			throws Exception {
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.getReceivedItemRequests();
+	}
 }

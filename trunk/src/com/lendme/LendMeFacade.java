@@ -250,7 +250,7 @@ public class LendMeFacade {
 		return LendMe.requestItem(solicitorSession, itemId, requiredDays);
 	}
 	
-	public String approveLoan(String solicitorSession, String requestId) throws Exception{
+	public String approveLending(String solicitorSession, String requestId) throws Exception{
 		
 		return LendMe.approveLending(solicitorSession, requestId);
 	}
@@ -274,6 +274,22 @@ public class LendMeFacade {
 		
 		return LendMe.denyLendingTermination(solicitorSession, lendingId);
 	}
+	
+	public String[] getReceivedItemRequests(String solicitorSession) throws Exception{
+		
+		List<Lending> results = new ArrayList<Lending>(LendMe.getReceivedItemRequests(
+				solicitorSession));
+		Collections.sort(results);
+		String[] handled = new String[results.size()];
+		Iterator<Lending> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			Lending actualLending = iterator.next();
+			handled[i] = "\n \tID:" + actualLending.getID() +
+				"\n \tSolicitador: " + actualLending.getBorrower().getName() +	
+				"\n \tItem:\n" + actualLending.getItem().toString();
+		}
+		return handled;
+	}
 
 	public String[] getLendingRecords(String solicitorSession, String kind) throws Exception{
 		
@@ -295,6 +311,12 @@ public class LendMeFacade {
 	public String getRanking(String solicitorSession, String category) throws Exception{
 		
 		return LendMe.getRanking(solicitorSession, category);
+	}
+	
+	public String viewProfile(String solicitorSessionId, 
+			String solicitedUserLogin) throws Exception {
+		
+		return LendMe.viewProfile(solicitorSessionId, solicitedUserLogin);
 	}
 	
 }

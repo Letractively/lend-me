@@ -2,6 +2,7 @@ package com.lendme;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -238,7 +239,7 @@ public class Profile {
 		throw new Exception("O usuário não possue este item");//"Item does not belong to this user");
 	}
 
-	protected String approveLoan(String requestId) throws Exception{
+	protected String approveLending(String requestId) throws Exception{
 		User me = LendMe.getUserByLogin(observer.getLogin());
 		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
 			throw new Exception("O empréstimo só pode ser aprovado pelo dono do item");//Only the owner of the item is allowed to lend it
@@ -409,6 +410,33 @@ public class Profile {
 			}
 		}
 		throw new Exception("Item inexistente");
+	}
+	
+	protected Set<Lending> getReceivedItemRequests() throws Exception {
+		return owner.getReceivedItemRequests();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder profileSB = new StringBuilder();
+		profileSB.append("\n \tUsuário:\n");
+		profileSB.append("\n \t" + owner.toString() + "\n");
+		
+		profileSB.append("\n \tAmigos:\n");
+		for (User friend: ownerFriends) {
+			profileSB.append("\n \t" + friend.toString() + "\n\n");
+		}
+		profileSB.append("\n \tÍtens:\n");
+		if (ownerItems != null ) {
+			for (Item item: ownerItems) {
+				profileSB.append("\n \t" + item.toString() + "\n\n");
+			}
+		} else {
+			profileSB.append(" \tVocê não pode visualizar ítens de um usuário\n" +
+					"\tque não é seu amigo.");
+		}
+		
+		return profileSB.toString();
 	}
 	
 }

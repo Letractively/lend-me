@@ -110,9 +110,9 @@ public class User implements Comparable<User>{
 	@Override
 	public String toString(){
 		StringBuilder userToString = new StringBuilder();
-		userToString.append(this.name);
-		userToString.append(this.login);
-		userToString.append(this.address);
+		userToString.append(" \tNome: " + this.name + "\n");
+		userToString.append(" \t\tLogin: " + this.login + "\n");
+		userToString.append(" \t\tEndereço: " + this.address + "\n");
 		return userToString.toString();
 	}
 	
@@ -1027,6 +1027,10 @@ public class User implements Comparable<User>{
 
 	public int getReputation() {
 		return myLentItems.size() + lentRegistryHistory.size();
+	}
+
+	public Set<Lending> getReceivedItemRequests() {
+		return receivedItemRequests;
 	}
 	
 }

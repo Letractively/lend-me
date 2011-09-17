@@ -284,9 +284,9 @@ public class LendMeFacade {
 		Iterator<Lending> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
 			Lending actualLending = iterator.next();
-			handled[i] = "\n \tID:" + actualLending.getID() +
-				"\n \tSolicitador: " + actualLending.getBorrower().getName() +	
-				"\n \tItem:\n" + actualLending.getItem().toString();
+			handled[i] = " ID:" + actualLending.getID() +
+				"\n\tSolicitador: " + actualLending.getBorrower().getName() +	
+				"\n\tItem:\n\t" + actualLending.getItem().toString();
 		}
 		return handled;
 	}

@@ -219,6 +219,18 @@ public class LendMeFacade {
 		return handled;
 	}
 	
+	public String[] searchForItemsWithIds(String solicitorSession, String key, String attribute,
+			String disposition, String criteria) throws Exception{
+			
+			List<Item> results = LendMe.searchForItem(solicitorSession, key, attribute, disposition, criteria);
+			String[] handled = new String[results.size()];
+			Iterator<Item> iterator = results.iterator();
+			for ( int i=0; i<handled.length; i++ ){
+				handled[i] = iterator.next().toString();
+			}
+			return handled;
+		}
+	
 	public String[] getItems(String solicitorSession) throws Exception{
 		
 		List<Item> results = new ArrayList<Item>(LendMe.getItems(solicitorSession));

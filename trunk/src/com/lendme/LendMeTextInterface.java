@@ -35,13 +35,15 @@ public class LendMeTextInterface {
 	
 	//Item Tools
 	private static final int REGISTER_ITEM = 1;
-	private static final int REQUEST_ITEM = 2;
-	private static final int APPROVE_ITEM_REQUEST = 3;
-	private static final int ASK_FOR_ITEM_RETURN = 4;
-	private static final int DELETE_ITEM = 5;
-	private static final int REGISTER_INTEREST_IN_ITEM = 6;
-	private static final int SEARCH_ITEM = 7;
-	private static final int GO_BACK_ITEMS_TOOLS = 8;
+	private static final int SEARCH_ITEM = 2;
+	private static final int REQUEST_ITEM = 3;
+	private static final int APPROVE_ITEM_REQUEST = 4;
+	private static final int RETURN_ITEM = 5;
+	private static final int APPROVE_ITEM_RETURN = 6;
+	private static final int ASK_FOR_ITEM_RETURN = 7;
+	private static final int DELETE_ITEM = 8;
+	private static final int REGISTER_INTEREST_IN_ITEM = 9;
+	private static final int GO_BACK_ITEMS_TOOLS = 10;
 	
 	//Messages Tools
 	private static final int SEND_OFF_TOPIC_MESSAGE = 1;
@@ -170,11 +172,12 @@ public class LendMeTextInterface {
 			
 			else if (itemsTools) {
 				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME-" +
-						"---------\n\n"+postStepsSeparator()+ "\n \t Escolha" +
-							" uma opcao a seguir:\n\t [1]Cadastrar Item\t" +
-								"[2]Requisitar Empréstimo \n\t [3]Aprovar" +
-									" Empréstimo \t[4]Pedir devolução de item" +
-										"\n\t [5]Apagar Item \t[6]Voltar\n",6)){
+					"---------\n\n"+postStepsSeparator()+ "\n \t Escolha" +
+						" uma opcao a seguir:\n\t [1]Cadastrar Item \t\t\t" +
+						"[2]Buscar Item \n\t [3]Requisitar Empréstimo \t\t[4]Aprovar" +
+						" Empréstimo \n\t [5]Devolver Item \t\t\t[6]Aprovar Devolução de Item " +
+						"\n\t [7]Pedir devolução de item \t\t[8]Apagar Item \n\t [9]Registrar Interesse" +
+						" em Item \t[10]Voltar\n",10)){
 				
 				case REGISTER_ITEM:{
 					try{
@@ -185,10 +188,9 @@ public class LendMeTextInterface {
 					}
 					break;
 				}
-				
-				case DELETE_ITEM:{
+				case SEARCH_ITEM:{
 					try{
-						deleteItem();
+						searchItem();
 					}
 					catch ( Exception e ){
 						printException(e);
@@ -215,6 +217,27 @@ public class LendMeTextInterface {
 					}
 					break;
 						}
+				
+				case RETURN_ITEM:{
+					try{
+						returnItem();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+						}
+				
+				case APPROVE_ITEM_RETURN:{
+					try{
+						approveItemReturn();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+						}
+				
 				case ASK_FOR_ITEM_RETURN:{
 					try{
 						askForItemReturn();
@@ -224,6 +247,26 @@ public class LendMeTextInterface {
 					}
 					break;
 						}
+				case DELETE_ITEM:{
+					try{
+						deleteItem();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+						}
+				
+				case REGISTER_INTEREST_IN_ITEM:{
+					try{
+						registerInterestInItem();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+						}
+				
 				case GO_BACK_ITEMS_TOOLS:{
 					itemsTools = false;
 					break;
@@ -426,7 +469,8 @@ public class LendMeTextInterface {
 	}
 	
 	private static void readMessages() throws Exception {
-		System.out.println(listObjectsInArray("Mensagens do Tópico Escolhido", lendMeFacade.getTopicMessages(currentUserSessionId, 
+		System.out.println(listObjectsInArray("Mensagens do Tópico Escolhido",
+			lendMeFacade.getTopicMessages(currentUserSessionId, 
 				returnCorrectString("\n\tInforme o id do tópico: "))));
 	}
 	
@@ -462,6 +506,52 @@ public class LendMeTextInterface {
 				"\n \tInforme o login do usuário: "));
 		
 		System.out.println("\n\t Amizade desfeita!");
+	}
+	
+	private static void searchItem() throws Exception {
+		
+		System.out.println(listObjectsInArray("Itens encontrados",
+			lendMeFacade.searchForItemsWithIds(currentUserSessionId,
+			returnCorrectString("\n \tInforme a chave a ser pesquisada: "), 
+				returnCorrectString("\n \tInforme o atributo (descricao, nome, " +
+					"id, categoria): "), returnCorrectString("\n \tInforme a" +
+						" disposição dos resultados (crescente, descrescente): ")
+						, returnCorrectString("\n \tInforme o critério de busca" +
+							" (datacriacao, reputacao): "))));
+	}
+	
+	private static void returnItem() throws Exception {
+		System.out.println(listObjectsInArray("Lista de requisições de empréstimo",
+				lendMeFacade.getLendingRecordsWithIds(currentUserSessionId, "beneficiado")));
+		
+		String requestId = returnCorrectString("\n \tInforme o id da requisição de empréstimo: ");
+		
+		lendMeFacade.returnItem(currentUserSessionId, requestId);
+		
+		System.out.println("\n\t Devolução do item da requisição de id " +
+			requestId + " efetuada." + "\n\t Esperando aprovação do emprestador.");
+	}
+	
+	private static void approveItemReturn() throws Exception {
+		
+		System.out.println(listObjectsInArray("Lista de requisições de empréstimo",
+				lendMeFacade.getLendingRecordsWithIds(currentUserSessionId, "emprestador")));
+		
+		String requestId = returnCorrectString("\n\t Informe o id da requisição de empréstimo: ");
+		lendMeFacade.confirmLendingTermination(currentUserSessionId, requestId);
+		
+		System.out.println("\n\t Devolução do item da requisição de empréstimo de id " + 
+				requestId + "\n\t confirmada!");
+	}
+	
+	
+	private static void registerInterestInItem() throws Exception {
+		
+		String itemId = returnCorrectString("\n \tInforme o id do item: ");
+		lendMeFacade.registerInterestForItem(currentUserSessionId, 
+				itemId);
+		
+		System.out.println("\n\t Interesse registrado no item de id " + itemId);
 	}
 	
 	private static void viewUsersRanking() throws Exception {

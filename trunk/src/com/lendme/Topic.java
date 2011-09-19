@@ -61,8 +61,7 @@ public class Topic implements Identifiable, Comparable<Topic> {
 	public String toString() {
 		StringBuilder topicSb = new StringBuilder();
 		
-		topicSb.append(this.subject);
-		topicSb.append(this.messages);
+		topicSb.append(" \tAssunto: " + this.subject + "\n");
 		return topicSb.toString();
 	}
 	

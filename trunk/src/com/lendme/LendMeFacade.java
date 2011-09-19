@@ -175,6 +175,20 @@ public class LendMeFacade {
 		return handled;
 	}
 	
+	public String[] getTopicsWithIds(String solicitorSession, String topicType) throws Exception{
+		
+		List<Topic> results = LendMe.getTopics(solicitorSession, topicType);
+		Collections.sort(results);
+		String[] handled = new String[results.size()];
+		Iterator<Topic> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			Topic actualTopic = iterator.next();
+			handled[i] = "\n\tAssunto: " + actualTopic.getSubject()
+					 + "\n\tId: " + actualTopic.getID();
+		}
+		return handled;
+	}
+	
 	public String[] getTopicMessages(String solicitorSession, String topicId) throws Exception{
 		
 		List<Message> results = LendMe.getTopicMessages(solicitorSession, topicId);
@@ -213,6 +227,18 @@ public class LendMeFacade {
 		Iterator<Item> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
 			handled[i] = iterator.next().getName();
+		}
+		return handled;
+	}
+	
+	public String[] getItemsWithIds(String solicitorSession) throws Exception{
+		
+		List<Item> results = new ArrayList<Item>(LendMe.getItems(solicitorSession));
+		Collections.sort(results);
+		String[] handled = new String[results.size()];
+		Iterator<Item> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			handled[i] = iterator.next().toString();
 		}
 		return handled;
 	}
@@ -303,7 +329,25 @@ public class LendMeFacade {
 					tmp.getBorrower().getLogin(), tmp.getItem().getName(),
 					tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
 				  ( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : 
-					tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ) );
+					tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ));
+		}
+		return handled;
+	}
+	
+	public String[] getLendingRecordsWithIds(String solicitorSession, String kind) throws Exception{
+		
+		List<Lending> results = new ArrayList<Lending>(LendMe.getLendingRecords(solicitorSession, kind));
+		String[] handled = new String[results.size()];
+		Iterator<Lending> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			String template = "%s-%s:%s:%s\n\t Id: %s";
+			Lending tmp = iterator.next();
+			handled[i] = String.format(template, tmp.getLender().getLogin(),
+					tmp.getBorrower().getLogin(), tmp.getItem().getName(),
+					tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
+				  ( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : 
+					tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ),
+					tmp.getID());
 		}
 		return handled;
 	}

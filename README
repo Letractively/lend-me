@@ -1,0 +1,41 @@
+#############################
+#       LEND-ME SYSTEM      #
+#       Team: Lenders	    #
+#############################
+
+Language: Pt-Br
+
+1. Instalação;
+
+Para fazer o build do sistema basta ter o pacote lend-me_vxxx.tar.gz,
+descompacta-lo e logo em seguinda rodar os comandos de build antravés 
+do software Ant, o qual deve ser baixado antes de proceder na continuação
+da leitura desse README. Os comandos são:
+      $ ant all
+        ou
+      $ ant init compila doc jar
+        ou
+      $ ant compila jar ---> Para o caso de querer apenas rodar sem gerar a documentação.
+
+2. Execução;
+Para executar basta depois de tudo Instalado conforme o passo 1, rodar os comandos abaixo:
+      $ ant run ---> Para o caso de querer rodar com o ant
+        ou
+      $ java -jar jars/lendMe.jar
+
+Language: En
+
+1. Instalation;
+For build of the system you need package download lend-me_vxxx.tar.gz and
+decompress it. So, execute the comands with ant:
+      $ ant all
+        or
+      $ ant init compila doc jar
+        or
+      $ ant compila jar ---> In the only execute.
+
+2. Runing;
+For runing the system you need make step 1 and behind execute the following commands:
+    $ ant run
+      or
+    $ java -jar jars/lendMe.jar

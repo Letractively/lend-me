@@ -13,10 +13,7 @@ import java.util.Set;
 /**
  * The System.
  * Here is where the created Users and open Sessions are located. It also keeps track of the system time.
- * In fact, it contains all Business Logic, but the problem is this is also the System Facade.
- * So we can make no difference between both things.
-
- * Some methods that are public shouldn't be.
+ * In fact, it contains most of the Business Logic, and is the access point to User and Profile logic.
  */
 
 public class LendMe {
@@ -144,9 +141,10 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method is only used by unity tests
-	 * @param name
-	 * @return
+	 * Searches for users in the system with the given name match.
+	 * 
+	 * @param name the given name
+	 * @return a set with users found by search
 	 */
 	protected static Set<User> searchUsersByName(String name) {
 		Set<User> foundUsers = new HashSet<User>();
@@ -161,9 +159,9 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method is only used by unity tests
-	 * @param address
-	 * @return
+	 * Searches for users with given address match.
+	 * @param address the given address
+	 * @return a set with users found by search
 	 */
 	protected static Set<User> searchUsersByAddress(String address) {
 		Set<User> foundUsers = new HashSet<User>();
@@ -178,9 +176,9 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method is only used by unity tests
-	 * @param login
-	 * @return
+	 * Searches for sessions with given login
+	 * @param login the login
+	 * @return a set of sessions found by search
 	 */
 	protected static Set<Session> searchSessionsByLogin(String login) {
 		Set<Session> results = new HashSet<Session>();
@@ -193,12 +191,12 @@ public class LendMe {
 	}
 
 	/**
-	 * This method is only used by acceptance tests interface
-	 * @param sessionId
-	 * @param key
-	 * @param attribute
-	 * @return
-	 * @throws Exception
+	 * Searches for users with given attribute specified by key.
+	 * @param sessionId the id of a session of the user who is requiring a search
+	 * @param key the search key-value
+	 * @param attribute the kind of attribute to guide the search
+	 * @return a set of users found by search
+	 * @throws Exception if attribute key or kind is invalid or if kind does not exists
 	 */
 	protected static Set<User> searchUsersByAttributeKey(String sessionId,
 			String key, String attribute) throws Exception{
@@ -237,12 +235,12 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method is only used by local methods
-	 * @param id
-	 * @return
-	 * @throws Exception
+	 * Returns the session that have the specified id
+	 * @param id the session id
+	 * @return the session
+	 * @throws Exception if session doesn't exists
 	 */
-	public static Session getSessionByID(String id) throws Exception{
+	private static Session getSessionByID(String id) throws Exception{
 		if ( id == null || id.trim().isEmpty() ){
 			throw new Exception("Sessão inválida");//"Invalid session");
 		}
@@ -255,11 +253,11 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method is only used by acceptance tests interface
-	 * @param login
-	 * @param attribute
-	 * @return
-	 * @throws Exception
+	 * Returns some user attribute.
+	 * @param login the user login
+	 * @param attribute the user attribute kind
+	 * @return the user attribute value
+	 * @throws Exception if attribute or login is invalid
 	 */
 	protected static String getUserAttribute(String login, String attribute)
 			throws Exception{
@@ -284,11 +282,11 @@ public class LendMe {
 	}
 
 	/**
-	 * This method is only used by acceptance tests interface
-	 * @param itemId
-	 * @param attribute
-	 * @return
-	 * @throws Exception
+	 * Returns some item attribute.
+	 * @param itemId the item id
+	 * @param attribute the user attribute
+	 * @return the item attribute value
+	 * @throws Exception if parameters are invalid
 	 */
 	protected static String getItemAttribute(String itemId, String attribute) throws Exception{
 		
@@ -300,10 +298,10 @@ public class LendMe {
 	}
 
 	/**
-	 * This method is used by unity tests and local methods
-	 * @param sessionId
-	 * @return
-	 * @throws Exception
+	 * Retrieves a profile for user with existing session specified by session id.
+	 * @param sessionId the session id
+	 * @return a profile
+	 * @throws Exception if user doesn't exists or there is no alive session for that user
 	 */
 	protected static Profile getUserProfile(String sessionId) throws Exception {
 		Session session = getSessionByID(sessionId);
@@ -315,10 +313,12 @@ public class LendMe {
 	}
 
 	/**
-	 * This method belongs to the public system interface
-	 * @param sessionId
-	 * @return
-	 * @throws Exception
+	 * Returns the friends of user with existing session specified by session id.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionId the session id
+	 * @return a set of friends
+	 * @throws Exception if user doesn't exists
 	 */
 	protected static Set<User> getFriends(String sessionId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
@@ -327,11 +327,13 @@ public class LendMe {
 	}
 
 	/**
-	 * This method belongs to the public system interface
-	 * @param solicitorSessionId
-	 * @param solicitedLogin
-	 * @return
-	 * @throws Exception
+	 * Returns the friends of another user if a session specified by solicitor session id exists.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param solicitorSessionId the session id
+	 * @param solicitedLogin the user login whose friends are being required
+	 * @return a set of friends
+	 * @throws Exception if one of the users involved doesn't exists
 	 */
 	protected static Set<User> getFriends(String solicitorSessionId, String solicitedLogin) throws Exception{
 		Profile solicitorViewer = LendMe.getUserProfile(solicitorSessionId);
@@ -341,10 +343,10 @@ public class LendMe {
 	}
 
 	/**
-	 * This method is only used by acceptance tests interface and business logic
-	 * @param login
-	 * @return
-	 * @throws Exception
+	 * Returns user with given login.
+	 * @param login the login
+	 * @return the user
+	 * @throws Exception if login is invalid or user with given login doesn't exists
 	 */
 	protected static User getUserByLogin(String login) throws Exception{
 		if ( login == null || login.trim().isEmpty() ){
@@ -359,10 +361,12 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
-	 * @param sessionId
-	 * @return
-	 * @throws Exception
+	 * Returns the items of the user with existing session specified by session id.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionId the session id
+	 * @return a set of items
+	 * @throws Exception if user doesn't exists
 	 */
 	protected static Set<Item> getItems(String sessionId) throws Exception {
 		Profile viewer = LendMe.getUserProfile(sessionId);
@@ -371,11 +375,13 @@ public class LendMe {
 	}
 
 	/**
-	 * This method belongs to the public system interface
-	 * @param observerSessionId
-	 * @param ownerLogin
-	 * @return
-	 * @throws Exception
+	 * Returns the items of user specified by login if solicitor user has existing session specified by session id.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param observerSessionId the solicitor session id
+	 * @param ownerLogin the solicited user login
+	 * @return a set of items of the solicited user
+	 * @throws Exception if users involved doesn't exists or solicitor user has no permission to access solicited items
 	 */
 	protected static Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
 		Profile viewer = LendMe.getUserProfile(observerSessionId);
@@ -385,10 +391,12 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
-	 * @param solicitorSessionId
-	 * @param solicitedLogin
-	 * @throws Exception
+	 * Solicitor user sends a friendship request to solicited user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param solicitorSessionId the solicitor session id
+	 * @param solicitedLogin the solicited login
+	 * @throws Exception if users involved doesn't exists or friendship request was already sent
 	 */
 	protected static void askForFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
 		Profile solicitorProfile = getUserProfile(solicitorSessionId);
@@ -397,10 +405,12 @@ public class LendMe {
 	}
 
 	/**
-	 * This method belongs to the public system interface
-	 * @param solicitedSessionId
-	 * @param solicitorLogin
-	 * @throws Exception
+	 * Solicited user accepts friendship request sent by solicitor user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param solicitedSessionId the solicited session id
+	 * @param solicitorLogin the solicitor login
+	 * @throws Exception if users involved doesn't exists or friendship request was already accepted
 	 */
 	protected static void acceptFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
 		Profile solicitedProfile = getUserProfile(solicitedSessionId);
@@ -409,10 +419,12 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
-	 * @param solicitedSessionId
-	 * @param solicitorLogin
-	 * @throws Exception
+	 * Solicited user declines friendship request sent by solicitor user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param solicitedSessionId the solicited session id
+	 * @param solicitorLogin the solicitor login
+	 * @throws Exception if users involved doesn't exists or if solicited user already declined request
 	 */
 	protected static void declineFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
 		Profile solicitedProfile = getUserProfile(solicitedSessionId);
@@ -421,10 +433,12 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
-	 * @param solicitorSessionId
-	 * @param solicitedLogin
-	 * @throws Exception
+	 * Solicitor user breaks friendship with solicited user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param solicitorSessionId the solicitor session id
+	 * @param solicitedLogin the solicited login
+	 * @throws Exception if users involved doesn't exists
 	 */
 	protected static void breakFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
 		Profile solicitorProfile = getUserProfile(solicitorSessionId);
@@ -433,11 +447,13 @@ public class LendMe {
 	}
 
 	/**
-	 * This method belongs to the public system interface
-	 * @param solicitorSessionId
-	 * @param solicitedUserLogin
-	 * @return
-	 * @throws Exception
+	 * Returns true if solicitor user is friend of solicited user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param solicitorSessionId the solicitor session id
+	 * @param solicitedUserLogin the solicited login
+	 * @return true if users involved are friends
+	 * @throws Exception if users involved doesn't exists or are not friends
 	 */
 	protected static boolean hasFriend(String solicitorSessionId, String solicitedUserLogin) throws Exception{
 		Profile solicitorViewer = getUserProfile(solicitorSessionId);
@@ -446,7 +462,9 @@ public class LendMe {
 	}
 
 	/**
-	 * This method is only user by the acceptance tests interface
+	 * Gets the user friendship requests.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
 	 * @return
 	 * @throws Exception
@@ -456,6 +474,18 @@ public class LendMe {
 		return viewer.getOwnerFriendshipRequests();
 	}
 
+	/**
+	 * Solicitor user sends a message to solicited user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param senderSessionId
+	 * @param subject
+	 * @param message
+	 * @param receiverLogin
+	 * @param lendingId
+	 * @return
+	 * @throws Exception
+	 */
 	protected static String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
 		
@@ -490,6 +520,17 @@ public class LendMe {
 		
 	}
 	
+	/**
+	 * Solicitor user sends message to solicited user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param senderSessionId
+	 * @param subject
+	 * @param message
+	 * @param receiverLogin
+	 * @return
+	 * @throws Exception
+	 */
 	protected static String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
 		
@@ -518,6 +559,15 @@ public class LendMe {
 		
 	}
 	
+	/**
+	 * Returns user with session specified by session id message topics.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionId
+	 * @param topicType
+	 * @return
+	 * @throws Exception
+	 */
 	protected static List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
 		
@@ -526,6 +576,15 @@ public class LendMe {
 		
 	}
 	
+	/**
+	 * Returns user with session specified by sesison id topic messages.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionId
+	 * @param topicId
+	 * @return
+	 * @throws Exception
+	 */
 	protected static List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
 		
@@ -534,7 +593,9 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
+	 * Returns user lending history.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
 	 * @param kind
 	 * @return
@@ -546,7 +607,9 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
+	 * Solicited user requests an item from another user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
 	 * @param itemId
 	 * @param requiredDays
@@ -560,7 +623,9 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
+	 * Solicited user allows lending of item.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
 	 * @param requestId
 	 * @return
@@ -572,7 +637,9 @@ public class LendMe {
 	}
 
 	/**
-	 * This method belongs to the public system interface
+	 * Solicited user denies lending of item.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
 	 * @param requestId
 	 * @return
@@ -584,7 +651,9 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
+	 * Solicitor user returns item back.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
 	 * @param requestId
 	 * @return
@@ -596,7 +665,9 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
+	 * Lender confirms returning of item.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
 	 * @param lendingId
 	 * @return
@@ -608,6 +679,15 @@ public class LendMe {
 		return viewer.confirmLendingTermination(lendingId);
 	}
 
+	/**
+	 * Lender denies returning of lending.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionId
+	 * @param lendingId
+	 * @return
+	 * @throws Exception
+	 */
 	protected static String denyLendingTermination(String sessionId,
 			String lendingId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
@@ -615,7 +695,9 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method belongs to the public system interface
+	 * Lender asks his item back.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
 	 * @param lendingId
 	 * @return
@@ -628,7 +710,8 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method is only used by local methods
+	 * Returns the owner of the item.
+	 * 
 	 * @param itemId
 	 * @return
 	 * @throws Exception
@@ -648,7 +731,7 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method is only used by system logic
+	 * Returns the lending record with specific lending id.
 	 * @param lendingId
 	 * @return
 	 * @throws Exception
@@ -664,7 +747,7 @@ public class LendMe {
 	}
 	
 	/**
-	 * This method is only used by system logic
+	 * Returns lending record with specific request id.
 	 * @param requestId
 	 * @return
 	 * @throws Exception
@@ -679,39 +762,33 @@ public class LendMe {
 		throw new Exception("Requisição de empréstimo inexistente");
 	}
 
+	/**
+	 * Solicitor removes item from his item set.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionId
+	 * @param itemId
+	 * @throws Exception
+	 */
 	protected static void deleteItem(String sessionId, String itemId) throws Exception {
 		User userOwnerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
 		userOwnerSession.deleteMyItem(itemId);
 	}
 
-	private static void validator(String key, String atribute, String disposition, String criterion) throws Exception{
-		
-		if(key == null || key.trim().isEmpty()){
-			throw new Exception("Chave inválida");//"invalid key"
-		}
-		if(atribute == null || atribute.trim().isEmpty()){
-			throw new Exception("Atributo inválido");
-		}
-		if(!Arrays.toString(AtributeForSearch.values()).toLowerCase().contains(atribute.toLowerCase())){
-			throw new Exception("Atributo inexistente");
-		}
-		if(disposition == null || disposition.trim().isEmpty()){
-			throw new Exception("Tipo inválido de ordenação");
-		}
-		if(!Arrays.toString(DispositionForSearch.values()).toLowerCase().contains(disposition.toLowerCase())){
-			throw new Exception("Tipo de ordenação inexistente");
-		}
-		if(criterion == null || criterion.trim().isEmpty()){
-			throw new Exception("Critério inválido de ordenação");
-		}
-		if(!Arrays.toString(CriterionForSearch.values()).toLowerCase().contains(criterion.toLowerCase())){
-			throw new Exception("Critério de ordenação inexistente");
-		}
-		
-	}
-	
+	/**
+	 * Searches for specific with specific criteria and disposals.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionId
+	 * @param key
+	 * @param attribute
+	 * @param disposal
+	 * @param criteria
+	 * @return
+	 * @throws Exception
+	 */
 	protected static List<Item> searchForItem(String sessionId, String key, String attribute,
-			String disposition ,String criteria) throws Exception{
+			String disposal ,String criteria) throws Exception{
 		
 		List<Item> results = new ArrayList<Item>();
 		Session session = getSessionByID(sessionId);
@@ -719,7 +796,27 @@ public class LendMe {
 		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
 		CriterionForSearch criterionAux = CriterionForSearch.DATACRIACAO;
 		
-		validator(key, attribute, disposition, criteria);
+		if(key == null || key.trim().isEmpty()){
+			throw new Exception("Chave inválida");//"invalid key"
+		}
+		if(attribute == null || attribute.trim().isEmpty()){
+			throw new Exception("Atributo inválido");
+		}
+		if(!Arrays.toString(AtributeForSearch.values()).toLowerCase().contains(attribute.toLowerCase())){
+			throw new Exception("Atributo inexistente");
+		}
+		if(disposal == null || disposal.trim().isEmpty()){
+			throw new Exception("Tipo inválido de ordenação");
+		}
+		if(!Arrays.toString(DispositionForSearch.values()).toLowerCase().contains(disposal.toLowerCase())){
+			throw new Exception("Tipo de ordenação inexistente");
+		}
+		if(criteria == null || criteria.trim().isEmpty()){
+			throw new Exception("Critério inválido de ordenação");
+		}
+		if(!Arrays.toString(CriterionForSearch.values()).toLowerCase().contains(criteria.toLowerCase())){
+			throw new Exception("Critério de ordenação inexistente");
+		}
 		
 		for(AtributeForSearch actual : AtributeForSearch.values()){
 			if(actual.toString().toLowerCase().contains(attribute.toLowerCase()))
@@ -780,7 +877,7 @@ public class LendMe {
 
 		case DATACRIACAO: {
 			Collections.sort(results);
-			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposition.toLowerCase())) {
+			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposal.toLowerCase())) {
 				return results;
 
 			} else {
@@ -792,7 +889,7 @@ public class LendMe {
 
 		case REPUTACAO: {
 			Collections.sort(results, new ComparatorOfItems());
-			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposition.toLowerCase())) {
+			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposal.toLowerCase())) {
 				return results;
 			} else {
 				Collections.reverse(results);
@@ -805,12 +902,27 @@ public class LendMe {
 		}
 	}
 	
+	/**
+	 * Solicitor registers interest for a specific item.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionId
+	 * @param itemId
+	 * @throws Exception
+	 */
 	protected static void registerInterestForItem(String sessionId, String itemId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
 		viewer.registerInterestForItem(itemId);
 	}
 
+	/**
+	 * Returns messages with given topic.
+	 * 
+	 * @param topicId
+	 * @return
+	 * @throws Exception
+	 */
 	protected static List<Message> getMessagesByTopicId(String topicId) throws Exception{
 
 		for ( User user : users ){
@@ -822,27 +934,35 @@ public class LendMe {
 		throw new Exception("Tópico inexistente");//"Inexistent topic");
 	}
 	
-	protected static String getRanking(String idSession, String categoria) throws Exception{
+	/**
+	 * Get system user ranking.
+	 * 
+	 * @param sessionId
+	 * @param category
+	 * @return
+	 * @throws Exception
+	 */
+	protected static String getRanking(String sessionId, String category) throws Exception{
 		String ranking = "";
 		
-		if(idSession == null || idSession.trim().equals("")){
+		if(sessionId == null || sessionId.trim().equals("")){
 			throw new Exception("Sessão inválida");
 		}
 				
-		if(getSessionByID(idSession) == null){
+		if(getSessionByID(sessionId) == null){
 			throw new Exception("Sessão inexistente");
 		}
 		
-		if(categoria == null || categoria.trim().equals("")){
+		if(category == null || category.trim().equals("")){
 			throw new Exception("Categoria inválida");
 		}
 		
-		if(!categoria.equals("global") && !categoria.equals("amigos")){
+		if(!category.equals("global") && !category.equals("amigos")){
 			throw new Exception("Categoria inexistente");
 		}
 		
-		if(categoria.equals("amigos")){
-			User user = getUserByLogin(getSessionByID(idSession).getLogin());
+		if(category.equals("amigos")){
+			User user = getUserByLogin(getSessionByID(sessionId).getLogin());
 			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size() + 1]);
 			friendList[user.getFriends().size()] = user;
 			
@@ -851,7 +971,7 @@ public class LendMe {
 				ranking = current.getLogin() + "; " + ranking;
 			}
 		}
-		if(categoria.equals("global")){
+		if(category.equals("global")){
 			User[] usersList = users.toArray(new User[users.size()]);
 			
 			Arrays.sort(usersList, comparator);
@@ -864,6 +984,14 @@ public class LendMe {
 		return ranking.replace("; -", "");
 	}
 	
+	/**
+	 * Logged user receives access to some user info through his profile.
+	 * 
+	 * @param solicitorSessionId
+	 * @param solicitedUserLogin
+	 * @return
+	 * @throws Exception
+	 */
 	protected static String viewProfile(String solicitorSessionId, 
 			String solicitedUserLogin) throws Exception {
 		Profile solicitorViewer = getUserProfile(solicitorSessionId);
@@ -871,6 +999,13 @@ public class LendMe {
 		return solicitorViewer.toString();
 	}
 	
+	/**
+	 * Returns the user received item requests.
+	 * 
+	 * @param sessionId
+	 * @return
+	 * @throws Exception
+	 */
 	protected static Set<Lending> getReceivedItemRequests(String sessionId)
 			throws Exception {
 		Profile viewer = getUserProfile(sessionId);

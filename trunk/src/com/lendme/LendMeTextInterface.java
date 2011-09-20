@@ -54,7 +54,7 @@ public class LendMeTextInterface {
 	
 	public static void main(String[] args) {
 		try {
-			//TODO Take this admin register out. It is here just for testing the text interface.
+			//TODO Take this admin registration out. It is here just for testing the text interface.
 			LendMe.registerUser("admin","Administrador do Sistema", "Rua Montevideo", "33", "Monte Santo", "CG",
 				"PB", "BR", "58102000");
 			

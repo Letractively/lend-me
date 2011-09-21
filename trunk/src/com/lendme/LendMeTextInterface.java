@@ -372,7 +372,7 @@ public class LendMeTextInterface {
 		System.out.println(listObjectsInArray("Lista de usuários com o atributo especificado",
 			lendMeFacade.searchUsersByAttributeKey(currentUserSessionId,
 				returnCorrectString("\n \t Informe o atributo: "),
-					returnCorrectString("\n \t Informe o tipo do atributo: "))));
+					returnCorrectString("\n \t Informe o tipo do atributo (nome,login,endereco) : "))));
 	}
 	
 	private static void requestFriendship() throws Exception {
@@ -658,7 +658,7 @@ public class LendMeTextInterface {
 	}
 		
 	private static String logo() {
-		return "\t  _       _ _ _   __     _    _ _ _        _       _   _ _ _  " +
+		return   "\t  _       _ _ _   __     _    _ _ _        _       _   _ _ _  " +
 			   "\n\t | |     | |_|_| |  |   | |  |     |      | |     | | | |_|_|" +
 			   "\n\t | |     | |     | | |  | |  |  __  |     |  |   |  | | |    " +
 			   "\n\t | |     | |_ _  | || | | |  | |  |  | __ | | |_| | | | |_ _ " +

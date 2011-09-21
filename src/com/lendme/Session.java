@@ -1,6 +1,7 @@
 package com.lendme;
 
 /**
+ * @author THE LENDERS
  * This class represents a record of an user that is logged in the system.
  *
  */

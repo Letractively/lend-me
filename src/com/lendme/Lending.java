@@ -2,6 +2,7 @@ package com.lendme;
 
 
 /**
+ * @author THE LENDERS
  * This class represents a unique lending record, storing info regarding the lender, the borrower,
  * the lent item, the amount of days required by the borrower, as well as the lending status.
  *

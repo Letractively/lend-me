@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * @author THE LENDERS
  * The permissions management is delegated from LendMe to this class, which is the one who deals with
  * concepts of logged users (observer) and target users (profile owners).
  */

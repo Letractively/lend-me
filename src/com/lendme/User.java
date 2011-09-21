@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * @author THE LENDERS
  * Represents a user of the System.
  */
 

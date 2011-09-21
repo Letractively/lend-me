@@ -27,7 +27,7 @@ public class LendMeTextInterface {
 	//User Tools
 	private static final int SEARCH_USER = 1;
 	private static final int REQUEST_FRIENDSHIP = 2;
-	private static final int ACCEPT_FRIENDSHIP = 3;
+	private static final int EVALUATE_FRIENDSHIP = 3;
 	private static final int VISUALIZE_PROFILE = 4;
 	private static final int BREAK_FRIENDSHIP = 5;
 	private static final int VIEW_USERS_RANKING = 6;
@@ -37,9 +37,9 @@ public class LendMeTextInterface {
 	private static final int REGISTER_ITEM = 1;
 	private static final int SEARCH_ITEM = 2;
 	private static final int REQUEST_ITEM = 3;
-	private static final int APPROVE_ITEM_REQUEST = 4;
+	private static final int EVALUATE_ITEM_REQUEST = 4;
 	private static final int RETURN_ITEM = 5;
-	private static final int APPROVE_ITEM_RETURN = 6;
+	private static final int EVALUATE_ITEM_RETURN = 6;
 	private static final int ASK_FOR_ITEM_RETURN = 7;
 	private static final int DELETE_ITEM = 8;
 	private static final int REGISTER_INTEREST_IN_ITEM = 9;
@@ -99,11 +99,11 @@ public class LendMeTextInterface {
 			else if (usersTools) {
 				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME-" +
 						"---------\n\n"+postStepsSeparator()+ "\n \t Escolha uma" +
-							" opcao a seguir:\n\t [1]Localizar Usuario \t" +
-								"[2]Requisitar Amizade \t[3]Aceitar Amizade \t" +
-									"\n\t [4]Visualizar Perfil \t[5]Desfazer" +
-									" Amizade \t[6]Visualizar Ranking de Usuários" +
-									"\n\t [7]Voltar\n",7)){
+							" opcao a seguir:\n\t [1]Localizar Usuario " +
+							"\t\t [2]Requisitar Amizade \n\t [3]Avaliar Req. de Amizade" +
+							"\t [4]Visualizar Perfil \n\t [5]Desfazer Amizade" +
+							"\t\t [6]Visualizar Ranking de Usuários" +
+							"\n\t [7]Voltar\n",7)){
 		
 				case SEARCH_USER:{
 					try{
@@ -123,9 +123,9 @@ public class LendMeTextInterface {
 						}
 						break;
 						}
-				case ACCEPT_FRIENDSHIP:{
+				case EVALUATE_FRIENDSHIP:{
 					try{
-						acceptFriendship();
+						evaluateFriendship();
 					}
 					catch ( Exception e ){
 						printException(e);
@@ -174,8 +174,8 @@ public class LendMeTextInterface {
 				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME-" +
 					"---------\n\n"+postStepsSeparator()+ "\n \t Escolha" +
 						" uma opcao a seguir:\n\t [1]Cadastrar Item \t\t\t" +
-						"[2]Buscar Item \n\t [3]Requisitar Empréstimo \t\t[4]Aprovar" +
-						" Empréstimo \n\t [5]Devolver Item \t\t\t[6]Aprovar Devolução de Item " +
+						"[2]Buscar Item \n\t [3]Requisitar Empréstimo \t\t[4]Avaliar" +
+						" Empréstimo \n\t [5]Devolver Item \t\t\t[6]Avaliar Devolução de Item " +
 						"\n\t [7]Pedir devolução de item \t\t[8]Apagar Item \n\t [9]Registrar Interesse" +
 						" em Item \t[10]Voltar\n",10)){
 				
@@ -208,9 +208,9 @@ public class LendMeTextInterface {
 					break;
 				}
 				
-				case APPROVE_ITEM_REQUEST:{
+				case EVALUATE_ITEM_REQUEST:{
 					try{
-						approveItemRequest();
+						evaluateItemRequest();
 					}
 					catch ( Exception e ){
 						printException(e);
@@ -228,9 +228,9 @@ public class LendMeTextInterface {
 					break;
 						}
 				
-				case APPROVE_ITEM_RETURN:{
+				case EVALUATE_ITEM_RETURN:{
 					try{
-						approveItemReturn();
+						evaluateItemReturn();
 					}
 					catch ( Exception e ){
 						printException(e);
@@ -277,7 +277,7 @@ public class LendMeTextInterface {
 				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator()+
 						"\n \t Escolha uma opcao a seguir:\n\t [1]Enviar Mensagem" +
 							" Off-Topic\t[2]Enviar Mensagem de Negociação \n\t [3]Ler" +
-								" Tópicos \t[4]Ler Mensagens de um Tópico\t[5]Voltar\n",5)){
+								" Tópicos \t\t[4]Ler Mensagens de um Tópico \n\t [5]Voltar\n",5)){
 				
 				case SEND_OFF_TOPIC_MESSAGE:{
 					try{
@@ -386,15 +386,26 @@ public class LendMeTextInterface {
 				+ requestedFriendLogin);
 	}
 	
-	private static void acceptFriendship() throws Exception {
+	private static void evaluateFriendship() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de requisições de amizade",
 				lendMeFacade.getFriendshipRequests(currentUserSessionId)));
 		
 		String friendLogin = returnCorrectString("\n \t Informe o login do usuário: ");
 		
-		lendMeFacade.acceptFriendship(currentUserSessionId, friendLogin);
-		System.out.println("\n \t Amizade com o usuário " + friendLogin + " aceita.");
+		String acceptOrDenyStr = returnCorrectString("\n \t Informe sua avaliação (aprovar,rejeitar): ");
+		
+		if (acceptOrDenyStr.toLowerCase().equals("aprovar")) {
+			lendMeFacade.acceptFriendship(currentUserSessionId, friendLogin);
+			System.out.println("\n \t Amizade com o usuário " + friendLogin + " aprovada.");
+		}
+		else if (acceptOrDenyStr.toLowerCase().equals("rejeitar")) {
+			lendMeFacade.declineFriendship(currentUserSessionId, friendLogin);
+			System.out.println("\n \t Amizade com o usuário " + friendLogin + " rejeitada.");
+		}
+		else {
+			System.out.println("\n\t Opção inválida!");
+		}
 	}
 	
 	private static void visualizeProfile() throws Exception {
@@ -427,7 +438,7 @@ public class LendMeTextInterface {
 				itemId + " enviada.");
 	}
 	
-	private static void approveItemRequest() throws Exception {
+	private static void evaluateItemRequest() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de requisições de empréstimo",
 				lendMeFacade.getReceivedItemRequests(currentUserSessionId)));
@@ -435,11 +446,23 @@ public class LendMeTextInterface {
 		String requestId = returnCorrectString("\n \tInforme o id da requisição de" +
 				" empréstimo: ");
 		
-		lendMeFacade.approveLending(currentUserSessionId, 
-				requestId);
+		String acceptOrDenyStr = returnCorrectString("\n \t Informe sua avaliação (aprovar,rejeitar): ");
 		
-		System.out.println("\n\tRequisição de empréstimo com id " + requestId
-				+ " aprovada!");
+		if (acceptOrDenyStr.toLowerCase().equals("aprovar")) {
+			lendMeFacade.approveLending(currentUserSessionId,requestId);
+			System.out.println("\n\tRequisição de empréstimo com id " + requestId
+					+ " aprovada!");
+		}
+		else if (acceptOrDenyStr.toLowerCase().equals("rejeitar")) {
+			lendMeFacade.denyLending(currentUserSessionId, requestId);
+			System.out.println("\n\tRequisição de empréstimo com id " + requestId
+					+ " rejeitada!");
+		}
+		else {
+			System.out.println("\n\t Opção inválida!");
+		}
+		
+		
 	}
 	
 	private static void sendOffTopicMessage() throws Exception {
@@ -465,7 +488,7 @@ public class LendMeTextInterface {
 		System.out.println(listObjectsInArray("Tópicos" +
 				"", lendMeFacade.getTopicsWithIds(
 				currentUserSessionId, returnCorrectString("\n\tInforme o" +
-						" tipo do tópico: "))));
+						" tipo do tópico (offtopic,negociacao,todos): "))));
 	}
 	
 	private static void readMessages() throws Exception {
@@ -532,16 +555,29 @@ public class LendMeTextInterface {
 			requestId + " efetuada." + "\n\t Esperando aprovação do emprestador.");
 	}
 	
-	private static void approveItemReturn() throws Exception {
+	private static void evaluateItemReturn() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de requisições de empréstimo",
 				lendMeFacade.getLendingRecordsWithIds(currentUserSessionId, "emprestador")));
 		
 		String requestId = returnCorrectString("\n\t Informe o id da requisição de empréstimo: ");
-		lendMeFacade.confirmLendingTermination(currentUserSessionId, requestId);
 		
-		System.out.println("\n\t Devolução do item da requisição de empréstimo de id " + 
-				requestId + "\n\t confirmada!");
+		String acceptOrDenyStr = returnCorrectString("\n \t Informe sua avaliação (confirmar,negar): ");
+		
+		if (acceptOrDenyStr.toLowerCase().equals("confirmar")) {
+			lendMeFacade.confirmLendingTermination(currentUserSessionId, requestId);
+			
+			System.out.println("\n\t Devolução do item da requisição de empréstimo de id " + 
+					requestId + "\n\t confirmada!");
+		}
+		else if (acceptOrDenyStr.toLowerCase().equals("negar")) {
+			lendMeFacade.denyLendingTermination(currentUserSessionId, requestId);
+			
+			System.out.println("\n\t Devolução do item da requisição de empréstimo de id " + 
+					requestId + "\n\t negada!");		}
+		else {
+			System.out.println("\n\t Opção inválida!");
+		}
 	}
 	
 	
@@ -555,7 +591,7 @@ public class LendMeTextInterface {
 	}
 	
 	private static void viewUsersRanking() throws Exception {
-		System.out.println("\n \tRanking:\n" + lendMeFacade.getRanking(
+		System.out.println("\n \tRanking:\n\t " + lendMeFacade.getRanking(
 			currentUserSessionId, returnCorrectString("\n \tInforme" +
 				" a categoria do ranking (global/amigos):")));
 	}
@@ -572,7 +608,7 @@ public class LendMeTextInterface {
 		
 		String arrayObjectsStr = "\n \t " + message + ": \n";
 		
-		int lineBreak = 3;
+		int lineBreak = 1;
 		
 		for(int i = 0; i < array.length; i++) {
 			if ((i + 1) % lineBreak == 0) {

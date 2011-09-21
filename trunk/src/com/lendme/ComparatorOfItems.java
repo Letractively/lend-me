@@ -12,7 +12,7 @@ public class ComparatorOfItems implements Comparator<Item>{
 			User user2 = LendMe.getItemOwner(o2.getID());
 			
 			//Subtraction between user's reputation
-			return -(user2.getReputation() - user1.getReputation());
+			return -(user2.getScore() - user1.getScore());
 			
 		} catch (Exception e) {
 			return 0;

@@ -3,6 +3,12 @@ package com.lendme;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * User addresses can be of two kinds: a full string with all info in it or a more organized
+ * structure with several fields distinguishing the parts that compose the address.
+ *
+ */
+
 public class Address {
 
 		private enum AddressElements {
@@ -12,6 +18,9 @@ public class Address {
 		private Map<AddressElements, String> address = new HashMap<AddressElements, String>();
 		
         public Address(String... addressInfo) {
+        	for ( AddressElements e : AddressElements.values() ){
+        		this.address.put(e, "");
+        	}
         	if (addressInfo.length == 1) {
         		for(int i = 0; i < addressInfo.length - 1; i++ ){
             		this.address.put(AddressElements.values()[i], "");

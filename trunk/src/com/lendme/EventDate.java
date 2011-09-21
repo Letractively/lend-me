@@ -3,6 +3,10 @@ package com.lendme;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * This class represents an event in the System, such as "User logged", "Item created", etc.
+ */
+
 public class EventDate {
 
 	private Date date;

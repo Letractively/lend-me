@@ -4,6 +4,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class represents a group of messages with a given topic, a.k.a. Conversation
+ *
+ */
+
 public class Topic implements Identifiable, Comparable<Topic> {
 	
 	private String subject;

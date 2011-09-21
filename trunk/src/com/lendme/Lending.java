@@ -1,7 +1,11 @@
 package com.lendme;
 
 
-
+/**
+ * This class represents a unique lending record, storing info regarding the lender, the borrower,
+ * the lent item, the amount of days required by the borrower, as well as the lending status.
+ *
+ */
 
 public class Lending implements Identifiable, Comparable<Lending> {
 	
@@ -112,7 +116,9 @@ public class Lending implements Identifiable, Comparable<Lending> {
 		this.lender = lender;
 	}
 
-	@Override
+	/* (non-Javadoc)
+	 * @see com.lendme.Identifiable#getID()
+	 */
 	public String getID() {
 		return this.id;
 	}

@@ -20,6 +20,7 @@ public class LendMe {
 
 	private static Set<User> users = new HashSet<User>();
 	private static Set<Session> sessions = new HashSet<Session>();
+	private static Set<Session> sessionsHystory = new HashSet<Session>();
 	private static EventDate time = new EventDate("System time");
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
@@ -98,7 +99,10 @@ public class LendMe {
 	 * @throws Exception for inexistent sessions
 	 */
 	protected static void closeSession(String id) throws Exception{
-		sessions.remove(getSessionByID(id));
+		Session toBeFinished = getSessionByID(id);
+		toBeFinished.finishSession();
+		sessions.remove(toBeFinished);
+		sessionsHystory.add(toBeFinished);
 	}
 	
 	/**

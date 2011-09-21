@@ -1,6 +1,9 @@
 package com.lendme;
 
-
+/**
+ * This class represents a item in the System.
+ *
+ */
 
 public class Item implements Identifiable, Comparable<Item>{
 	

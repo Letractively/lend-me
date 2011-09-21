@@ -65,8 +65,8 @@ public class LendMeTextInterface {
 		while (!sair){
 			
 			if ( currentUserSessionId == null ){
-				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME-" +
-						"---------\n\n"+postStepsSeparator() + "\n \t Escolha uma" +
+				switch(chooseOption(preStepsSeparator()+logo() +
+						postStepsSeparator() + "\n \t Escolha uma" +
 							" opcao a seguir:\n \t [1]Logar\t[2]Cadastrar Usuário \t" +
 								"[3]Sair\n",3)){
 					case LOG_IN:{
@@ -88,8 +88,7 @@ public class LendMeTextInterface {
 						break;
 					}
 					case LEAVE_UNLOGGED:{
-						System.out.println(preStepsSeparator()+"\n\n\t---------" +
-								"-LENDME----------\n\n"+postStepsSeparator());
+						System.out.println(preStepsSeparator()+logo()+postStepsSeparator());
 						sair = true;
 						System.out.println("\n \t Saindo do sistema...\n");
 						break;
@@ -97,8 +96,7 @@ public class LendMeTextInterface {
 				}
 			}
 			else if (usersTools) {
-				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME-" +
-						"---------\n\n"+postStepsSeparator()+ "\n \t Escolha uma" +
+				switch(chooseOption(preStepsSeparator()+logo()+postStepsSeparator()+ "\n \t Escolha uma" +
 							" opcao a seguir:\n\t [1]Localizar Usuario " +
 							"\t\t [2]Requisitar Amizade \n\t [3]Avaliar Req. de Amizade" +
 							"\t [4]Visualizar Perfil \n\t [5]Desfazer Amizade" +
@@ -171,8 +169,7 @@ public class LendMeTextInterface {
 			}
 			
 			else if (itemsTools) {
-				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME-" +
-					"---------\n\n"+postStepsSeparator()+ "\n \t Escolha" +
+				switch(chooseOption(preStepsSeparator()+logo()+postStepsSeparator()+ "\n \t Escolha" +
 						" uma opcao a seguir:\n\t [1]Cadastrar Item \t\t\t" +
 						"[2]Buscar Item \n\t [3]Requisitar Empréstimo \t\t[4]Avaliar" +
 						" Empréstimo \n\t [5]Devolver Item \t\t\t[6]Avaliar Devolução de Item " +
@@ -274,7 +271,7 @@ public class LendMeTextInterface {
 				}
 			}
 			else if (messagesTools) {
-				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator()+
+				switch(chooseOption(preStepsSeparator()+logo()+postStepsSeparator()+
 						"\n \t Escolha uma opcao a seguir:\n\t [1]Enviar Mensagem" +
 							" Off-Topic\t[2]Enviar Mensagem de Negociação \n\t [3]Ler" +
 								" Tópicos \t\t[4]Ler Mensagens de um Tópico \n\t [5]Voltar\n",5)){
@@ -326,7 +323,7 @@ public class LendMeTextInterface {
 			}
 			
 			else {
-				switch(chooseOption(preStepsSeparator()+"\n\n\t----------LENDME----------\n\n"+postStepsSeparator()+
+				switch(chooseOption(preStepsSeparator()+logo()+postStepsSeparator()+
 						"\n \t Escolha uma opcao a seguir:\n \t [1]Usuários \t" +
 						"[2]Itens \t[3]Mensagens \t[4]Deslogar\n",4)){
 				
@@ -361,7 +358,7 @@ public class LendMeTextInterface {
 	private static void registerUser() throws Exception {
 		
 		System.out.println("\t\t========================");
-		System.out.println("\t\t Cadastrando Locador");
+		System.out.println("\t\t Cadastrando Usuário");
 		System.out.println("\t\t========================");
 		
 		String newUserLogin = lendMeFacade.registerUser(returnCorrectString("\n \t Informe o login : "),
@@ -660,6 +657,17 @@ public class LendMeTextInterface {
 		return true;
 	}
 		
+	private static String logo() {
+		return "\t  _       _ _ _   __     _    _ _ _        _       _   _ _ _  " +
+			   "\n\t | |     | |_|_| |  |   | |  |     |      | |     | | | |_|_|" +
+			   "\n\t | |     | |     | | |  | |  |  __  |     |  |   |  | | |    " +
+			   "\n\t | |     | |_ _  | || | | |  | |  |  | __ | | |_| | | | |_ _ " +
+			   "\n\t | |     | |_|_| | | | || |  | |  |  ||__|| |     | | | |_|_|" +
+			   "\n\t | |     | |     | |  | | |  | |__|  |    | |     | | | |    " +
+			   "\n\t | |_ _  | |_ _  | |   |  |  |      |     | |     | | | |_ _ " +
+			   "\n\t |_|_|_| |_|_|_| |_|    |_|  |_ _ _|      |_|     |_| |_|_|_|\n";
+	}
+	
 	private static String preStepsSeparator(){
 		return "\n\t==============================================================\n";
 	}
@@ -693,14 +701,13 @@ public class LendMeTextInterface {
 			return chooseOption(message, maximum);
 		}
 		
-		for (int i=0; i<chosenString.length(); i++){
-			if(!Character.isDigit(chosenString.charAt(i))){
-				System.out.println("\n \t <Entrada nao eh um inteiro valido!>\n");
-				return chooseOption(message, maximum);
-			}			
-		}		
-		
-		int chosenInt = Integer.parseInt(chosenString);
+		int chosenInt = 0;
+		try {
+			chosenInt = Integer.parseInt(chosenString);
+		} catch (NumberFormatException nfe) {
+			System.out.println("\n \t <Entrada não é um inteiro ou não é um inteiro válido!>\n");
+			return chooseOption(message, maximum);
+		}
 		
 		if ( chosenInt <= 0 || chosenInt > maximum ){
 			System.out.println("\n \t <Entrada eh um inteiro valido mas nao esta no intervalo de 1 a "+maximum+"!>\n");

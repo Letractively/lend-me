@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @author THE LENDERS
  * User addresses can be of two kinds: a full string with all info in it or a more organized
  * structure with several fields distinguishing the parts that compose the address.
  *

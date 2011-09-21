@@ -3,6 +3,7 @@ package com.lendme;
 import java.util.Date;
 
 /**
+ * @author THE LENDERS
  * This class represents a message in the System, storing info regarding the sender, the receiver,
  * the subject, the message itself as well as a flag indicating whether or not it is a negotiation message.
  *

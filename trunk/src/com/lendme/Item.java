@@ -1,6 +1,7 @@
 package com.lendme;
 
 /**
+ * @author THE LENDERS
  * This class represents a item in the System.
  *
  */

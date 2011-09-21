@@ -1,6 +1,7 @@
 package com.lendme;
 
 /**
+ * @author THE LENDERS
  * Item categories.
  *
  */

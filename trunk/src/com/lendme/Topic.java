@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * @author THE LENDERS
  * This class represents a group of messages with a given topic, a.k.a. Conversation
  *
  */

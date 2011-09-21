@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * @author THE LENDERS
  * The System.
  * Here is where the created Users and open Sessions are located. It also keeps track of the system time.
  * In fact, it contains most of the Business Logic, and is the access point to User and Profile logic.
@@ -26,7 +27,7 @@ public class LendMe {
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
 	
-	private static Comparator<? super User> comparator = new Comparator<User>() {
+	private static Comparator<? super User> comparator = new Comparator<User>(){
 
 		@Override
 		public int compare(User o1, User o2) {

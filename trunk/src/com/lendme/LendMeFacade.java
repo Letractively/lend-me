@@ -430,6 +430,16 @@ public class LendMeFacade {
 		
 		return LendMe.approveLending(solicitorSession, requestId);
 	}
+	
+	/**
+	 * (Non-javadoc)
+	 * @see com.lendme.LendMe#denyLending(String, String)
+	 */	
+	public String denyLending(String solicitorSession, String requestId) throws Exception{
+		
+		return LendMe.denyLending(solicitorSession, requestId);
+	}
+	
 
 	/**
 	 * (Non-javadoc)

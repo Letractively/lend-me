@@ -282,7 +282,7 @@ public class User implements Comparable<User>{
 				return lendingRequest.getID();
 			}
 		}
-		throw new Exception("Solicitado não possue o item ou item não está disponível");
+		throw new Exception("Solicitado não possui o item ou item não está disponível");
 	}
 
 	private void requestItem(Lending requestLending) {

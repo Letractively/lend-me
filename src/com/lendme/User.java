@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Represents a user of the System.
+ */
 
 public class User implements Comparable<User>{
 
@@ -64,18 +67,21 @@ public class User implements Comparable<User>{
 		
 	}
 	
-	
-
+	/**
+	 * Returns user lending score.
+	 * @return
+	 */
 	public int getScore() {
 		return score;
-	}
-
-	public void setScore(int score) {
-		this.score = score;
+		//TODO remove this field and use lentRecord size
 	}
 	
+	/**
+	 * User gains one lending score point.
+	 */
 	private void point(){
 		this.score++;
+		//TODO remove this field and use lentRecord size
 	}
 
 	public String getLogin() {
@@ -103,6 +109,11 @@ public class User implements Comparable<User>{
 		return address;
 	}
 
+	/**
+	 * Returns true if user name matches to string.
+	 * @param toBeMatched
+	 * @return
+	 */
 	public boolean nameMatches(String toBeMatched) {
 		return this.name.toUpperCase().contains(toBeMatched.toUpperCase());
 	}
@@ -131,11 +142,23 @@ public class User implements Comparable<User>{
 		return this.login.hashCode() == other.getLogin().hashCode();
 	}
 	
-
+	/**
+	 * Returns true if user has item.
+	 * @param item
+	 * @return
+	 */
 	public boolean hasItem(Item item) {
 		return myItems.containsKey(item);
 	}
 
+	/**
+	 * User receives a new item.
+	 * @param itemName
+	 * @param description
+	 * @param category
+	 * @return
+	 * @throws Exception
+	 */
 	public String addItem(String itemName, String description, String category)
 			throws Exception{
 		
@@ -144,6 +167,11 @@ public class User implements Comparable<User>{
 		return myNewItem.getID();
 	}
 
+	/**
+	 * User requests friendship with another user.
+	 * @param otherUser
+	 * @throws Exception
+	 */
 	public void requestFriendship(User otherUser) throws Exception{
 		if ( sentFriendshipRequests.contains(otherUser) ){
 			throw new Exception("Requisição já solicitada");//"The request has already been sent");
@@ -159,6 +187,11 @@ public class User implements Comparable<User>{
 		receivedFriendshipRequests.add(otherUser);
 	}
 
+	/**
+	 * User accepts friendship request from another user.
+	 * @param otherUser
+	 * @throws Exception
+	 */
 	public void acceptFriendshipRequest(User otherUser) throws Exception{
 		if ( myFriends.contains(otherUser) ){
 			throw new Exception("Os usuários já são amigos");//"The users are already friends");
@@ -180,6 +213,10 @@ public class User implements Comparable<User>{
 		}
 	}
 	
+	/**
+	 * User declines friendship request from another user.
+	 * @param otherUser
+	 */
 	public void declineFriendshipRequest(User otherUser){
 		if ( receivedFriendshipRequests.contains(otherUser) ){
 			receivedFriendshipRequests.remove(otherUser);
@@ -193,10 +230,20 @@ public class User implements Comparable<User>{
 		}
 	}
 		
+	/**
+	 * Returns true if user has another user as friend.
+	 * @param otherUser
+	 * @return
+	 */
 	public boolean hasFriend(User otherUser) {
 		return this.myFriends.contains(otherUser);
 	}
 
+	/**
+	 * Returns true if user has lent the specified item.
+	 * @param item
+	 * @return
+	 */
 	public boolean hasLentThis(Item item) {
 		for ( Lending lentItem : myLentItems ){
 			if ( lentItem.getItem().equals(item) ){
@@ -206,6 +253,14 @@ public class User implements Comparable<User>{
 		return false;
 	}
 
+	/**
+	 * User sends a borrow request of specified item to another user.
+	 * @param item
+	 * @param lender
+	 * @param days
+	 * @return
+	 * @throws Exception
+	 */
 	public String borrowItem(Item item, User lender, int days) throws Exception {
 		if ( days <=0 ){
 			throw new Exception("Duracao inválida");//"Requested day amount is invalid");
@@ -233,6 +288,12 @@ public class User implements Comparable<User>{
 		receivedItemRequests.add(requestLending);
 	}
 
+	/**
+	 * User approves lending of one of his avaliable items.
+	 * @param requestId
+	 * @return
+	 * @throws Exception
+	 */
 	public String approveLending(String requestId) throws Exception{
 		if ( requestId == null || requestId.trim().isEmpty() ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
@@ -250,6 +311,14 @@ public class User implements Comparable<User>{
 		throw new Exception("Requisição de empréstimo inexistente");//"Inexistent item request");
 	}
 	
+	/**
+	 * User sends a lending request of item to another user.
+	 * @param item
+	 * @param borrower
+	 * @param days
+	 * @return
+	 * @throws Exception
+	 */
 	protected String lendItem(Item item, User borrower, int days) throws Exception{
 
 		Lending requestAccepted = null;
@@ -290,6 +359,12 @@ public class User implements Comparable<User>{
 		}
 	}
 	
+	/**
+	 * User refuses lending one of his available items.
+	 * @param requestId
+	 * @return
+	 * @throws Exception
+	 */
 	public String denyLending(String requestId) throws Exception{
 		if ( requestId == null || requestId.trim().isEmpty() ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
@@ -307,6 +382,9 @@ public class User implements Comparable<User>{
 		throw new Exception("Requisição de empréstimo inexistente");//"Inexistent item request");
 	}
 	
+	/**
+	 * @see com.lendme.User#denyLending(String);
+	 */
 	protected String declineLendingItem(Item item, User borrower, int days) throws Exception{
 		
 		Lending requestDenied = null;
@@ -344,6 +422,11 @@ public class User implements Comparable<User>{
 		}
 	}
 	
+	/**
+	 * Returns true if user has borrowed the specified item.
+	 * @param item
+	 * @return
+	 */
 	public boolean hasBorrowedThis(Item item) {
 		for (Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item)){
@@ -353,6 +436,12 @@ public class User implements Comparable<User>{
 		return false;
 	}
 
+	/**
+	 * User gives item back.
+	 * @param lendingId
+	 * @return
+	 * @throws Exception
+	 */
 	public String approveItemReturning(String lendingId) throws Exception{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
@@ -365,6 +454,9 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
 	}
 	
+	/**
+	 * @see com.lendme.User#approveItemReturning(String)
+	 */
 	protected String returnItem(Item item) throws Exception{
 		for(Lending record : myBorrowedItems){
 			if(record.getItem().equals(item)){
@@ -392,6 +484,12 @@ public class User implements Comparable<User>{
 		throw new Exception("ERR: lender was required to set his item as toBeReturned but he doesn't have it");
 	}
 	
+	/**
+	 * User approves item receipt.
+	 * @param lendingId
+	 * @return
+	 * @throws Exception
+	 */
 	public String confirmLendingTermination(String lendingId) throws Exception{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending identifier is invalid");
@@ -400,7 +498,12 @@ public class User implements Comparable<User>{
 			if ( record.getID().equals(lendingId) ){
 				receiveLentItem(record.getItem());
 				point();
-				return record.getID();
+				for ( Lending recordx: lentRegistryHistory ){
+					if ( recordx.getID().equals(lendingId) ){
+						return record.getID();
+					}
+				}
+				throw new Exception("Lending not recorded.");
 			}
 		}
 		for ( Lending record : lentRegistryHistory ){
@@ -411,6 +514,9 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");
 	}
 	
+	/**
+	 * @see com.lendme.User#confirmLendingTermination(String)
+	 */
 	protected void receiveLentItem(Item item) throws Exception{
 
 		Lending requestAttended = null;
@@ -446,6 +552,12 @@ public class User implements Comparable<User>{
 		}
 	}
 
+	/**
+	 * User denies item receipt.
+	 * @param lendingId
+	 * @return
+	 * @throws Exception
+	 */
 	public String denyLendingTermination(String lendingId) throws Exception{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending identifier is invalid");
@@ -464,6 +576,9 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");
 	}
 
+	/**
+	 * @see com.lendme.User#denyLendingTermination(String)
+	 */
 	protected void denyReceivingLentItem(Item item) throws Exception{
 		for(Lending record : myLentItems){
 			if(record.getItem().equals(item)){
@@ -510,6 +625,14 @@ public class User implements Comparable<User>{
 		}
 	}
 	
+	/**
+	 * User sends a message to another user.
+	 * @param subject
+	 * @param message
+	 * @param receiver
+	 * @return
+	 * @throws Exception
+	 */
 	public String sendMessage(String subject, String message, User receiver) 
 			throws Exception {
 		
@@ -520,6 +643,15 @@ public class User implements Comparable<User>{
 				receiver.getLogin(), true, "");
 	}
 	
+	/**
+	 * User sends a negotiation message to another user.
+	 * @param subject
+	 * @param message
+	 * @param receiver
+	 * @param lendingId
+	 * @return
+	 * @throws Exception
+	 */
 	public String sendMessage(String subject, String message, User receiver,
 			String lendingId) throws Exception {
 		
@@ -574,6 +706,12 @@ public class User implements Comparable<User>{
 		return foundTopic.getID();
 	}
 	
+	/**
+	 * Returns user messages by topic id.
+	 * @param topicId
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Message> getMessagesByTopicId(String topicId) throws Exception {
 		Topic foundTopic = getTopicById(negotiationTopics, topicId); 
 		
@@ -591,6 +729,13 @@ public class User implements Comparable<User>{
 		
 	}
 		
+	/**
+	 * Returns messages topic by its id.
+	 * @param topicSet
+	 * @param topicId
+	 * @return
+	 * @throws Exception
+	 */
 	private Topic getTopicById(Set<Topic> topicSet, String topicId) throws Exception{
 		if ( topicId == null || topicId.trim().isEmpty() ){
 			throw new Exception("Identificador do tópico é inválido");
@@ -604,6 +749,12 @@ public class User implements Comparable<User>{
 		return null;
 	}
 
+	/**
+	 * Returns messages by topic subject.
+	 * @param topicSubject
+	 * @return
+	 * @throws Exception
+	 */
 	public Set<Message> getMessagesByTopicSubject(String topicSubject) throws Exception {
 		Topic foundTopic = getTopicBySubject(negotiationTopics, topicSubject); 
 		
@@ -632,7 +783,17 @@ public class User implements Comparable<User>{
 		return null;
 	}
 
+	/**
+	 * User asks for his item back.
+	 * @param lendingId
+	 * @param systemDate
+	 * @return
+	 * @throws Exception
+	 */
 	public String askForReturnOfItem(String lendingId, Date systemDate) throws Exception{
+		if ( systemDate == null ){
+			throw new Exception("Data inválida");
+		}
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
 		}
@@ -664,6 +825,9 @@ public class User implements Comparable<User>{
 		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
 	}
 	
+	/**
+	 * @see com.lendme.User#askForReturnOfItem(String, Date)
+	 */
 	protected String requestBack(Item item, Date systemDate) throws Exception{
 		for ( Lending record : myLentItems ){
 			if(record.getItem().equals(item)){
@@ -693,6 +857,11 @@ public class User implements Comparable<User>{
 		}
 	}
 	
+	/**
+	 * Returns true if item this user borrowed was requested back.
+	 * @param item
+	 * @return
+	 */
 	public boolean hasRequestedBack(Item item){
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item) && actual.isRequestedBack()){
@@ -702,6 +871,9 @@ public class User implements Comparable<User>{
 		return false;
 	}
 	
+	/**
+	 * Returns true if item this user has borrowed was requested back as lending was canceled.
+	 */
 	public boolean hasCanceled(Item item){
 		for(Lending actual : myBorrowedItems){
 			if(actual.getItem().equals(item) && actual.isCanceled()){
@@ -711,6 +883,10 @@ public class User implements Comparable<User>{
 		return false;
 	}
 	
+	/**
+	 * Returns user items that were requested back.
+	 * @return
+	 */
 	public Set<Item> getRequestedBackItems(){
 		Set<Item> requestedBackItems = new HashSet<Item>();
 		for(Lending actual : myBorrowedItems){
@@ -722,6 +898,10 @@ public class User implements Comparable<User>{
 		
 	}
 	
+	/**
+	 * Returns user items which were requested back as their lending was canceled.
+	 * @return
+	 */
 	public Set<Item> getCanceledItems(){
 		Set<Item> canceledItems = new HashSet<Item>();
 		for(Lending actual : myBorrowedItems){
@@ -733,6 +913,12 @@ public class User implements Comparable<User>{
 		
 	}
 	
+	/**
+	 * Returns topics by type.
+	 * @param topicType
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Topic> getTopics(String topicType) throws Exception {
 		
 		if (topicType == null || topicType.trim().isEmpty()) {
@@ -772,6 +958,12 @@ public class User implements Comparable<User>{
 		
 	}
 
+	/**
+	 * User registers interest for item if he is friend of the owner.
+	 * @param item
+	 * @param owner
+	 * @throws Exception
+	 */
 	public void registerInterestForItem(Item item, User owner) throws Exception{
 
 		if ( myFriends.contains(owner) ){
@@ -799,6 +991,13 @@ public class User implements Comparable<User>{
 		}
 	}
 
+	/**
+	 * Returns true if another user is interested on item whose owner is this user.
+	 * @param item
+	 * @param interested
+	 * @return
+	 * @throws Exception
+	 */
 	public boolean isInterestedOnMyItem(Item item, User interested) throws Exception{
 		if ( item == null ){
 			throw new Exception("Item inválido");
@@ -817,12 +1016,20 @@ public class User implements Comparable<User>{
 		return false;
 	}
 	
+	/**
+	 * Returns all items whose owner is this user.
+	 * @return
+	 */
 	public Set<Item> getAllItems() {
 		Map<Item, User> toBeReturned = new HashMap<Item, User>();
 		toBeReturned.putAll(myItems);
 		return toBeReturned.keySet();
 	}
-	
+
+	/**
+	 * Returns this user lent items.
+	 * @return
+	 */
 	public Set<Item> getLentItems() {
 		Set<Item> result = new HashSet<Item>();
 		for ( Lending record : myLentItems ){
@@ -831,6 +1038,10 @@ public class User implements Comparable<User>{
 		return result;
 	}
 
+	/**
+	 * Returns items borrowed by this user.
+	 * @return
+	 */
 	public Set<Item> getBorrowedItems() {
 		Set<Item> result = new HashSet<Item>();
 		for ( Lending record : myBorrowedItems ){
@@ -839,12 +1050,21 @@ public class User implements Comparable<User>{
 		return result;
 	}
 	
+	/**
+	 * Returns user friends.
+	 * @return
+	 */
 	public Set<User> getFriends() {
 		Set<User> toBeReturned = new HashSet<User>();
 		toBeReturned.addAll(myFriends);
 		return toBeReturned;
 	}
 
+	/**
+	 * Returns true if item was requested by another user.
+	 * @param item
+	 * @return
+	 */
 	public boolean isMyItemRequested(Item item){
 		
 		for(Lending record: receivedItemRequests){
@@ -854,6 +1074,10 @@ public class User implements Comparable<User>{
 		return false;
 	}
 		
+	/**
+	 * User breaks friendship with another user.
+	 * @param user
+	 */
 	public void breakFriendship(User user){
 		this.forceRemoveFriend(user);
 		user.forceRemoveFriend(this);
@@ -873,6 +1097,12 @@ public class User implements Comparable<User>{
 		}
 	}
 	
+	/**
+	 * Returns a lending record by its id.
+	 * @param requestId
+	 * @return
+	 * @throws Exception
+	 */
 	public Lending getLendingByRequestId(String requestId) throws Exception{
 		if ( requestId == null || requestId.trim().isEmpty() ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
@@ -915,6 +1145,12 @@ public class User implements Comparable<User>{
 		return null;
 	}
 
+	/**
+	 * Returns a lending record by its id.
+	 * @param requestId
+	 * @return
+	 * @throws Exception
+	 */
 	public Lending getLendingByLendingId(String lendingId) throws Exception{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
@@ -988,6 +1224,12 @@ public class User implements Comparable<User>{
 		return borrowedRegistryHistory;
 	}
 
+	/**
+	 * Deletes a item this user is owner.
+	 * @param requestId
+	 * @return
+	 * @throws Exception
+	 */
 	public void deleteMyItem(String itemId) throws Exception{
 		
 		Item toBeRemoved = null;

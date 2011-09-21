@@ -1,6 +1,9 @@
 package com.lendme;
 
-
+/**
+ * This class represents a record of an user that is logged in the system.
+ *
+ */
 
 public class Session {
 

@@ -2,6 +2,12 @@ package com.lendme;
 
 import java.util.Date;
 
+/**
+ * This class represents a message in the System, storing info regarding the sender, the receiver,
+ * the subject, the message itself as well as a flag indicating whether or not it is a negotiation message.
+ *
+ */
+
 public class Message implements Comparable<Message> {
 	
 	private String subject;

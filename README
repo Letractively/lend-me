@@ -16,8 +16,15 @@ da leitura desse README. Os comandos são:
       $ ant init compila doc jar
         ou
       $ ant compila jar ---> Para o caso de querer apenas rodar sem gerar a documentação.
+      
+2. Visualização dos diagramas UML;
 
-2. Execução;
+Para visualizar os diagramas UML do projeto é necessário um plugin do eclipse chamado euml2.
+A instalação é muito simples basta seguir o tutorial desse link:
+http://www.soyatec.com/euml2/installation/galileo/index.php depois bastar clicar no arquivo Lend-me_UML_Diagram.ucd
+dentro do eclipse.
+
+3. Execução;
 Para executar basta depois de tudo Instalado conforme o passo 1, rodar os comandos abaixo:
       $ ant run ---> Para o caso de querer rodar com o ant
         ou

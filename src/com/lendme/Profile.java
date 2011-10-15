@@ -628,4 +628,8 @@ public class Profile {
 		return profileSB.toString();
 	}
 	
+	protected Set<ActivityRegistry> getActivityHistory() throws Exception {
+		return owner.getActivityHistory();
+	}
+	
 }

@@ -555,4 +555,18 @@ public class LendMeFacade {
 		return LendMe.viewProfile(solicitorSessionId, solicitedUserLogin);
 	}
 	
+	public String[] getActivityHistory(String solicitorSessionId) throws Exception {
+		
+		List<ActivityRegistry> results = new ArrayList<ActivityRegistry>(LendMe.getActivityHistory(
+				solicitorSessionId));
+		Collections.sort(results);
+		String[] handled = new String[results.size()];
+		Iterator<ActivityRegistry> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			ActivityRegistry actualActivityRegistry = iterator.next();
+			handled[i] = actualActivityRegistry.getDescription();
+		}
+		return handled;
+	}
+	
 }

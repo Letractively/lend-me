@@ -34,6 +34,7 @@ public class User implements Comparable<User>{
 	private Set<Lending> sentItemDevolutionRequests = new HashSet<Lending>();
 	private Set<Topic> negotiationTopics = new HashSet<Topic>();
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
+	private Set<ActivityRegistry> myActivityHistory = new HashSet<ActivityRegistry>();
 	private Map<Item, ArrayList<User>> myInterestingItems = new HashMap<Item, ArrayList<User>>();
 	private EventDate creationDate;
 	private int score;
@@ -203,6 +204,7 @@ public class User implements Comparable<User>{
 		else{
 			myFriends.add(otherUser);
 			receivedFriendshipRequests.remove(otherUser);
+			myActivityHistory.add(new ActivityRegistry());
 			otherUser.addRequestedFriend(this);
 		}
 	}
@@ -1274,6 +1276,10 @@ public class User implements Comparable<User>{
 
 	public Set<Lending> getReceivedItemRequests() {
 		return receivedItemRequests;
+	}
+	
+	public Set<ActivityRegistry> getActivityHistory() {
+		return myActivityHistory;
 	}
 	
 }

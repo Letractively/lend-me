@@ -1016,4 +1016,9 @@ public class LendMe {
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.getReceivedItemRequests();
 	}
+	
+	protected static Set<ActivityRegistry> getActivityHistory(String solicitorSessionId) throws Exception {
+		Profile viewer = getUserProfile(solicitorSessionId);
+		return viewer.getActivityHistory();
+	}
 }

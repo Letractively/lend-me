@@ -1319,7 +1319,7 @@ public class User implements Comparable<User>{
 				throw new Exception("Não se pode publicar pedido de seu próprio item");
 			}
 		}
-		Lending itemRequest = new Lending(this, itemName);
+		Lending itemRequest = new Lending(this, itemName, itemDescription);
 		myActivityHistory.add(new ActivityRegistry(ActivityKind.PEDIDO_DE_ITEM,
 				String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_ACTIVITY, getName(),
 						itemName)));
@@ -1361,12 +1361,24 @@ public class User implements Comparable<User>{
 			}
 		}
 		if ( toBeReplaced != null ){
-			publishedItemRequests.remove(toBeReplaced);
+//			publishedItemRequests.remove(toBeReplaced);
 			myBorrowedItems.add(publishedRequestAttended);
 		}
 		else{
 			throw new Exception("Publicacao de pedido inexistente");			
 		}
+	}
+
+	public void republishItemRequest(Lending petition) throws Exception{
+		for ( Item item : myItems.keySet() ){
+			if ( item.getName().equals(petition.getDesiredItemName())
+					&& item.getDescription().equals(petition.getDesiredItemDescription()) ){
+				throw new Exception("Não se pode publicar pedido de seu próprio item");
+			}
+		}
+		myActivityHistory.add(new ActivityRegistry(ActivityKind.PEDIDO_DE_ITEM,
+				String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_ACTIVITY, petition.getBorrower().getName(),
+						petition.getDesiredItemName())));
 	}
 	
 }

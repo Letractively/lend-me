@@ -250,4 +250,10 @@ public class LendMeAcceptanceTestInterface {
 		
 	}
 	
+	public void rePublicarPedido(String idSessao, String idPublicacaoPedido) throws Exception{
+		
+		system.republishItemRequest(idSessao, idPublicacaoPedido);
+		
+	}
+	
 }

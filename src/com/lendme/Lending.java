@@ -21,12 +21,14 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	private String id;
 	private LendingStatus status;
 	private String desiredItemName;
-
+	private String desiredItemDescription;
+	
 	public Lending(User borrower, User lender,Item item,int days) {
 		this.borrower = borrower;
 		this.lender = lender;
 		this.item = item;
 		this.desiredItemName = null;
+		this.desiredItemDescription = null;
 		this.requiredDays = days;
 		this.requestedBack = false;
 		this.requestionDate = new EventDate(String.format(EntitiesConstants.ITEM_REQUESTED_MESSAGE,
@@ -35,11 +37,18 @@ public class Lending implements Identifiable, Comparable<Lending> {
 		this.status = LendingStatus.ONGOING;
 	}
 
-	public Lending(User borrower, String desiredItemName){
+	public Lending(User borrower, String desiredItemName, String desiredItemDescription) throws Exception{
+		if ( desiredItemName == null || desiredItemName.trim().isEmpty() ){
+			throw new Exception("Nome inválido");
+		}
+		if ( desiredItemDescription == null || desiredItemDescription.trim().isEmpty() ){
+			throw new Exception("Descrição inválida");
+		}
 		this.borrower = borrower;
 		this.lender = null;
 		this.item = null;
 		this.desiredItemName = desiredItemName;
+		this.desiredItemDescription = desiredItemDescription;
 		this.requiredDays = 1;
 		this.requestedBack = false;
 		this.requestionDate = new EventDate(String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_MESSAGE, borrower.getLogin(), desiredItemName));
@@ -52,6 +61,7 @@ public class Lending implements Identifiable, Comparable<Lending> {
 		this.lender = lender;
 		this.item = item;
 		this.desiredItemName = null;
+		this.desiredItemDescription = null;
 		this.requiredDays = publishedRequest.getRequiredDays();
 		this.requestedBack = false;
 		this.requestionDate = publishedRequest.getRequestionDate();
@@ -186,6 +196,14 @@ public class Lending implements Identifiable, Comparable<Lending> {
 
 	public void setStatus(LendingStatus status) {
 		this.status = status;
-	}	
-	
+	}
+
+	public String getDesiredItemName() {
+		return desiredItemName;
+	}
+
+	public String getDesiredItemDescription() {
+		return desiredItemDescription;
+	}
+
 }

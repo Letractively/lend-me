@@ -31,7 +31,9 @@ public class LendMeTextInterface {
 	private static final int VISUALIZE_PROFILE = 4;
 	private static final int BREAK_FRIENDSHIP = 5;
 	private static final int VIEW_USERS_RANKING = 6;
-	private static final int GO_BACK_USERS_TOOLS = 7;
+	private static final int VIEW_MY_ACTIVITY_HISTORY = 7;
+	private static final int VIEW_JOINT_ACTIVITY_HISTORY = 8;
+	private static final int GO_BACK_USERS_TOOLS = 9;
 	
 	//Item Tools
 	private static final int REGISTER_ITEM = 1;
@@ -101,7 +103,9 @@ public class LendMeTextInterface {
 							"\t\t [2]Requisitar Amizade \n\t [3]Avaliar Req. de Amizade" +
 							"\t [4]Visualizar Perfil \n\t [5]Desfazer Amizade" +
 							"\t\t [6]Visualizar Ranking de Usuários" +
-							"\n\t [7]Voltar\n",7)){
+							"\n\t [7]Ver meu Hist. de Atividades" +
+							"\t [8]Ver Hist. Conjunto de Atividades" +
+							"\n\t [9]Voltar\n",9)){
 		
 				case SEARCH_USER:{
 					try{
@@ -160,7 +164,27 @@ public class LendMeTextInterface {
 					}
 					break;
 					}
+				
+				case VIEW_MY_ACTIVITY_HISTORY:{
+					try{
+						viewMyActivityHistory();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+					}
 		
+				case VIEW_JOINT_ACTIVITY_HISTORY:{
+					try{
+						viewJointActivityHistory();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+					}
+				
 				case GO_BACK_USERS_TOOLS:{
 					usersTools = false;
 					break;
@@ -591,6 +615,16 @@ public class LendMeTextInterface {
 		System.out.println("\n \tRanking:\n\t " + lendMeFacade.getRanking(
 			currentUserSessionId, returnCorrectString("\n \tInforme" +
 				" a categoria do ranking (global/amigos):")));
+	}
+	
+	private static void viewMyActivityHistory() throws Exception {
+		System.out.println(listObjectsInArray("Meu Histórico de Atividades", 
+				lendMeFacade.getActivityHistory(currentUserSessionId)));
+	}
+	
+	private static void viewJointActivityHistory() throws Exception {
+		System.out.println(listObjectsInArray("Histórico Conjunto de Atividades", 
+				lendMeFacade.getJointActivityHistory(currentUserSessionId)));
 	}
 	
 	private static String logIn() throws Exception{

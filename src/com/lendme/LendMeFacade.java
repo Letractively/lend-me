@@ -575,5 +575,29 @@ public class LendMeFacade {
 		}
 		return handled;
 	}
+
+	public String[] getJointActivityHistory(String solicitorSessionId) throws Exception {
+		List<ActivityRegistry> results = LendMe.getJointActivityHistory(
+				solicitorSessionId);
+		String[] handled;
+		
+		if (results.size() == 0) {
+			handled = new String[1];
+			handled[0] = "Não há atividades";
+			return handled;
+		}
+		
+		handled = new String[results.size()];
+		Iterator<ActivityRegistry> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			ActivityRegistry actualActivityRegistry = iterator.next();
+			handled[i] = actualActivityRegistry.getDescription();
+		}
+		return handled;
+	}
+	
+	
+	
+	
 	
 }

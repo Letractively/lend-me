@@ -220,7 +220,7 @@ public class User implements Comparable<User>{
 					ActivityRegistry.ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA
 					, String.format(EntitiesConstants.FRIENDSHIP_ACCEPTED_ACTIVITY,
 					otherUser.getName(), this.getName()),
-					friendshipAccepted.getDate()));
+					friendshipAccepted.getTimeInNanos()));
 		}
 	}
 	

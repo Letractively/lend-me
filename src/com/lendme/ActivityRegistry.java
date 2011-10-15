@@ -10,36 +10,37 @@ public class ActivityRegistry implements Comparable<ActivityRegistry>{
 	}
 	
 	private ActivityKind kind;
-	private EventDate activityAccomplished;
-	private long timeInMillis;
+	private String description;
+	private long timeInNanos;
 
 	public ActivityRegistry(ActivityKind kind, String description) {
 		this.kind = kind;
-		this.activityAccomplished = new EventDate(description);
-		this.timeInMillis = System.nanoTime();
+		this.description = description;
+		this.timeInNanos = System.nanoTime();
 	}
 	
-	public ActivityRegistry(ActivityKind kind, String description, Date date) {
+	public ActivityRegistry(ActivityKind kind, String description, long timeInNanos) {
 		this.kind = kind;
-		this.activityAccomplished = new EventDate(description, date);
+		this.description = description;
+		this.timeInNanos = timeInNanos;
 	}
 
 
 	public String getDescription() {
-		return this.activityAccomplished.getEventDescription();
+		return this.description;
 	}
 
 	public ActivityKind getKind() {
 		return kind;
 	}
 	
-	public Date getDate() {
-		return this.activityAccomplished.getDate();
+	public long getTimeInNanos() {
+		return this.timeInNanos;
 	}
 	
 	@Override
 	public int compareTo(ActivityRegistry otherAR) {
-		return this.timeInMillis > otherAR.timeInMillis ? -1:1;
+		return this.timeInNanos > otherAR.timeInNanos ? -1:1;
 	}
 	
 	@Override

@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.lendme.ActivityRegistry.ActivityKind;
+
 /**
  * @author THE LENDERS
  * The System.
@@ -1020,5 +1022,30 @@ public class LendMe {
 	protected static List<ActivityRegistry> getActivityHistory(String solicitorSessionId) throws Exception {
 		Profile viewer = getUserProfile(solicitorSessionId);
 		return viewer.getActivityHistory();
+	}
+
+	public static List<ActivityRegistry> getJointActivityHistory(
+			String solicitorSessionId) throws Exception {
+		
+		Session session = getSessionByID(solicitorSessionId);
+		User userOwnerSession = getUserByLogin(session.getLogin());
+		List<ActivityRegistry> results = 
+				new ArrayList<ActivityRegistry>(userOwnerSession.getMyActivityHistory());
+		
+		
+		for (User actualFriend : userOwnerSession.getFriends()) {
+			for (ActivityRegistry actualAR : actualFriend.getMyActivityHistory()) {
+				if (actualAR.getKind() == ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA 
+						&& actualAR.getDescription().contains(" e " + 
+								userOwnerSession.getName() + " são amigos agora")) {
+					continue;
+				}
+				results.add(actualAR);
+			}
+		}
+		
+		Collections.sort(results);
+		
+		return results;
 	}
 }

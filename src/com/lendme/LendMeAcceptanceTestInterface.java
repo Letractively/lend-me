@@ -221,6 +221,12 @@ public class LendMeAcceptanceTestInterface {
 		return formatarASaida(system.getActivityHistory(idSessao));
 	}
 	
+	public String historicoAtividadesConjunto(String idSessao) throws Exception{
+		return formatarASaida(system.getJointActivityHistory(idSessao));
+	}
+	
+	
+	
 	private String formatarASaida(String[] resultado) {
 
 		StringBuilder resultadoFormatado = new StringBuilder();

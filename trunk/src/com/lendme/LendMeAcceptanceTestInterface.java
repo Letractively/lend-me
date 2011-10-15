@@ -225,8 +225,6 @@ public class LendMeAcceptanceTestInterface {
 		return formatarASaida(system.getJointActivityHistory(idSessao));
 	}
 	
-	
-	
 	private String formatarASaida(String[] resultado) {
 
 		StringBuilder resultadoFormatado = new StringBuilder();
@@ -237,6 +235,19 @@ public class LendMeAcceptanceTestInterface {
 			}
 		}
 		return resultadoFormatado.toString();
+	}
+	
+	public String publicarPedido(String idSessao, String nomeItem, String descricaoItem) throws Exception{
+
+		return system.publishItemRequest(idSessao, nomeItem, descricaoItem);
+		
+	}
+	
+	public void oferecerItem(String idSessao, String idPublicacaoPedido, String idItem)
+		throws Exception{
+		
+		system.offerItem(idSessao, idPublicacaoPedido, idItem);
+		
 	}
 	
 }

@@ -217,6 +217,10 @@ public class LendMeAcceptanceTestInterface {
 		return system.getRanking(idSession, categoria);
 	}
 	
+	public String historicoAtividades(String idSessao) throws Exception{
+		return formatarASaida(system.getActivityHistory(idSessao));
+	}
+	
 	private String formatarASaida(String[] resultado) {
 
 		StringBuilder resultadoFormatado = new StringBuilder();

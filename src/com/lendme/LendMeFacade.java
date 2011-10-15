@@ -557,10 +557,17 @@ public class LendMeFacade {
 	
 	public String[] getActivityHistory(String solicitorSessionId) throws Exception {
 		
-		List<ActivityRegistry> results = new ArrayList<ActivityRegistry>(LendMe.getActivityHistory(
-				solicitorSessionId));
-		Collections.sort(results);
-		String[] handled = new String[results.size()];
+		List<ActivityRegistry> results = LendMe.getActivityHistory(
+				solicitorSessionId);
+		String[] handled;
+		
+		if (results.size() == 0) {
+			handled = new String[1];
+			handled[0] = "Não há atividades";
+			return handled;
+		}
+		
+		handled = new String[results.size()];
 		Iterator<ActivityRegistry> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
 			ActivityRegistry actualActivityRegistry = iterator.next();

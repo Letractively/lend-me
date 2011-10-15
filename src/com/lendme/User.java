@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.accessibility.AccessibleKeyBinding;
+
+import com.lendme.ActivityRegistry.ActivityKind;
+
 /**
  * @author THE LENDERS
  * Represents a user of the System.
@@ -166,6 +170,8 @@ public class User implements Comparable<User>{
 		
 		Item myNewItem = new Item(itemName, description, category);
 		this.myItems.put(myNewItem, this);
+		myActivityHistory.add(new ActivityRegistry(ActivityKind.CADASTRO_DE_ITEM,
+					String.format(EntitiesConstants.ITEM_REGISTERED_ACTIVITY, getName(), itemName)));
 		return myNewItem.getID();
 	}
 
@@ -204,8 +210,17 @@ public class User implements Comparable<User>{
 		else{
 			myFriends.add(otherUser);
 			receivedFriendshipRequests.remove(otherUser);
-			myActivityHistory.add(new ActivityRegistry());
+			ActivityRegistry friendshipAccepted = new ActivityRegistry(
+					ActivityRegistry.ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA
+					, String.format(EntitiesConstants.FRIENDSHIP_ACCEPTED_ACTIVITY,
+					this.getName(), otherUser.getName()));
+			myActivityHistory.add(friendshipAccepted);
 			otherUser.addRequestedFriend(this);
+			otherUser.myActivityHistory.add(new ActivityRegistry(
+					ActivityRegistry.ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA
+					, String.format(EntitiesConstants.FRIENDSHIP_ACCEPTED_ACTIVITY,
+					otherUser.getName(), this.getName()),
+					friendshipAccepted.getDate()));
 		}
 	}
 	
@@ -303,6 +318,10 @@ public class User implements Comparable<User>{
 		}
 		for ( Lending record : receivedItemRequests ){
 			if ( record.getID().equals(requestId) ){
+				myActivityHistory.add(new ActivityRegistry(ActivityKind.EMPRESTIMO_EM_ANDAMENTO,
+						String.format(EntitiesConstants.LENDING_IN_COURSE_ACTIVITY, getName(),
+						record.getItem().getName(), record.getBorrower().getName())));
+				
 				return lendItem(record.getItem(), record.getBorrower(), record.getRequiredDays());
 			}
 		}
@@ -503,6 +522,10 @@ public class User implements Comparable<User>{
 				point();
 				for ( Lending recordx: lentRegistryHistory ){
 					if ( recordx.getID().equals(lendingId) ){
+						myActivityHistory.add(new ActivityRegistry(ActivityKind.TERMINO_DE_EMPRESTIMO,
+								String.format(EntitiesConstants.LENDING_END_APPROVAL_ACTIVITY, getName(), 
+								record.getItem().getName())));
+						
 						return record.getID();
 					}
 				}
@@ -973,6 +996,11 @@ public class User implements Comparable<User>{
 			if ( owner.hasItem(item) ) {
 				if ( owner.hasLentThis(item) ) {
 					if ( !(owner.isInterestedOnMyItem(item, this)) ){
+						myActivityHistory.add(new ActivityRegistry(ActivityKind.
+							REGISTRO_DE_INTERESSE_EM_ITEM, String.format(
+							EntitiesConstants.REGISTER_INTEREST_IN_ITEM_ACTIVITY,
+							this.getName(), item.getName(), owner.getName())));
+						
 						owner.markAsInterested(item, this);
 						return;
 					}
@@ -1278,8 +1306,10 @@ public class User implements Comparable<User>{
 		return receivedItemRequests;
 	}
 	
-	public Set<ActivityRegistry> getActivityHistory() {
-		return myActivityHistory;
+	public List<ActivityRegistry> getMyActivityHistory() {
+		List<ActivityRegistry> actReg = new ArrayList<ActivityRegistry>(myActivityHistory);
+		Collections.sort(actReg);
+		return actReg;
 	}
 	
 }

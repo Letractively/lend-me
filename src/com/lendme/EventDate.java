@@ -21,6 +21,11 @@ public class EventDate {
 		this.date = new Date();
 		this.eventDescription = eventDescription;
 	}
+	
+	public EventDate(String eventDescription, Date date){
+		this.date = date;
+		this.eventDescription = eventDescription;
+	}
 
 	public Date getDate() {
 		return date;

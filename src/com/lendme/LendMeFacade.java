@@ -595,9 +595,15 @@ public class LendMeFacade {
 		}
 		return handled;
 	}
-	
-	
-	
-	
+
+	public String publishItemRequest(String sessionId, String itemName,
+			String itemDescription) throws Exception{
+		return LendMe.publishItemRequest(sessionId, itemName, itemDescription);
+	}
+
+	public void offerItem(String sessionId, String requestPublicationId,
+			String itemId) throws Exception{
+		LendMe.offerItem(sessionId, requestPublicationId, itemId);
+	}
 	
 }

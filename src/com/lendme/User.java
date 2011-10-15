@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.accessibility.AccessibleKeyBinding;
-
 import com.lendme.ActivityRegistry.ActivityKind;
 
 /**
@@ -30,6 +28,7 @@ public class User implements Comparable<User>{
 	private Map<Item,User> myItems = new HashMap<Item,User>();
 	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
 	private Set<Lending> sentItemRequests = new HashSet<Lending>();
+	private Set<Lending> publishedItemRequests = new HashSet<Lending>();
 	private Set<Lending> myBorrowedItems = new HashSet<Lending>();
 	private Set<Lending> myLentItems = new HashSet<Lending>();
 	private Set<Lending> lentRegistryHistory = new HashSet<Lending>();
@@ -370,6 +369,7 @@ public class User implements Comparable<User>{
 					&& record.getRequiredDays() == days ){
 				requestAccepted = record;
 				record.setLendingDate();
+				record.getLendingDate().addDays(record.getRequiredDays());
 			}
 		}
 		if ( requestAccepted != null ){
@@ -1310,6 +1310,63 @@ public class User implements Comparable<User>{
 		List<ActivityRegistry> actReg = new ArrayList<ActivityRegistry>(myActivityHistory);
 		Collections.sort(actReg);
 		return actReg;
+	}
+
+	public String publishItemRequest(String itemName, String itemDescription) throws Exception{
+		
+		for ( Item item : myItems.keySet() ){
+			if ( item.getName().equals(itemName) && item.getDescription().equals(itemDescription) ){
+				throw new Exception("Não se pode publicar pedido de seu próprio item");
+			}
+		}
+		Lending itemRequest = new Lending(this, itemName);
+		myActivityHistory.add(new ActivityRegistry(ActivityKind.PEDIDO_DE_ITEM,
+				String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_ACTIVITY, getName(),
+						itemName)));
+		publishedItemRequests.add(itemRequest);
+		return itemRequest.getID();
+		
+	}
+	
+	public Set<Lending> getPublishedItemRequests(){
+		return publishedItemRequests;
+	}
+
+	public void offerItem(Lending publishedRequest, Item item) throws Exception{
+		if ( this.hasLentThis(item) ){
+			throw new Exception("Não se pode oferecer um item que já está emprestado");
+		}
+
+		Lending record = new Lending(publishedRequest, this, item);
+		record.setLendingDate();
+		record.getLendingDate().addDays(record.getRequiredDays());
+		User borrower = publishedRequest.getBorrower();
+		borrower.receiveRequestedItem(record, item);
+
+		sendMessage(
+				String.format(EntitiesConstants.REQUESTED_ITEM_LENT_ACTIVITY, getName(), item.getName()),
+				"Item oferecido: " + item.getName() + " - " + item.getDescription(), borrower);
+		
+		myLentItems.add(record);
+		myItems.put(item, borrower);
+		myActivityHistory.add(new ActivityRegistry(ActivityKind.PEDIDO_DE_ITEM,
+				String.format(EntitiesConstants.REQUESTED_ITEM_LENT_ACTIVITY, getName(), item.getName())));
+	}
+
+	private void receiveRequestedItem(Lending publishedRequestAttended, Item item) throws Exception{
+		Lending toBeReplaced = null;
+		for ( Lending publishedRequest : publishedItemRequests ){
+			if ( publishedRequest.getID().equals(publishedRequestAttended.getID()) ){
+				toBeReplaced = publishedRequest;
+			}
+		}
+		if ( toBeReplaced != null ){
+			publishedItemRequests.remove(toBeReplaced);
+			myBorrowedItems.add(publishedRequestAttended);
+		}
+		else{
+			throw new Exception("Publicacao de pedido inexistente");			
+		}
 	}
 	
 }

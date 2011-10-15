@@ -1048,4 +1048,29 @@ public class LendMe {
 		
 		return results;
 	}
+
+	public static String publishItemRequest(String sessionId, String itemName,
+			String itemDescription) throws Exception {
+		Profile viewer = getUserProfile(sessionId);
+		return viewer.publishItemRequest(itemName, itemDescription);
+	}
+
+	public static void offerItem(String sessionId,
+			String requestPublicationId, String itemId) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		Lending petition = LendMe.getPetition(requestPublicationId);
+		viewer.offerItem(petition, itemId);
+	}
+
+	private static Lending getPetition(String requestPublicationId) throws Exception{
+		for ( User user : users ){
+			for ( Lending publishedRequest : user.getPublishedItemRequests() ){
+				if ( publishedRequest.getID().equals(requestPublicationId) ){
+					return publishedRequest;
+				}
+			}
+		}
+		throw new Exception("Esse pedido de item não foi publicado ou já foi atendido.");
+	}
+	
 }

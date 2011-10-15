@@ -20,11 +20,13 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	private EventDate lendingDate;
 	private String id;
 	private LendingStatus status;
+	private String desiredItemName;
 
 	public Lending(User borrower, User lender,Item item,int days) {
 		this.borrower = borrower;
 		this.lender = lender;
 		this.item = item;
+		this.desiredItemName = null;
 		this.requiredDays = days;
 		this.requestedBack = false;
 		this.requestionDate = new EventDate(String.format(EntitiesConstants.ITEM_REQUESTED_MESSAGE,
@@ -33,6 +35,30 @@ public class Lending implements Identifiable, Comparable<Lending> {
 		this.status = LendingStatus.ONGOING;
 	}
 
+	public Lending(User borrower, String desiredItemName){
+		this.borrower = borrower;
+		this.lender = null;
+		this.item = null;
+		this.desiredItemName = desiredItemName;
+		this.requiredDays = 1;
+		this.requestedBack = false;
+		this.requestionDate = new EventDate(String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_MESSAGE, borrower.getLogin(), desiredItemName));
+		this.id = Integer.toString(((Object) this).hashCode());
+		this.status = LendingStatus.REQUEST_PUBLISHED;
+	}
+	
+	public Lending(Lending publishedRequest, User lender, Item item ){
+		this.borrower = publishedRequest.getBorrower();
+		this.lender = lender;
+		this.item = item;
+		this.desiredItemName = null;
+		this.requiredDays = publishedRequest.getRequiredDays();
+		this.requestedBack = false;
+		this.requestionDate = publishedRequest.getRequestionDate();
+		this.id = publishedRequest.getID();
+		this.status = LendingStatus.ONGOING;
+	}
+	
 	public EventDate getLendingDate() throws Exception{
 		if ( lendingDate == null ){
 			throw new Exception("Registro ainda não possui data de devolução.");//"Lending slot still does not have a lending date");
@@ -81,9 +107,10 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	public String toString() {
 		StringBuilder lendingToString = new StringBuilder();
 		
-		lendingToString.append(lender).toString();
-		lendingToString.append(item.toString());
+		if ( lender != null ) lendingToString.append(lender).toString();
+		if ( item != null ) lendingToString.append(item.toString());
 		lendingToString.append(borrower.toString());
+		if ( item == null ) lendingToString.append(desiredItemName);
 		lendingToString.append(Integer.toString(requiredDays));
 		return lendingToString.toString();
 	}
@@ -126,6 +153,25 @@ public class Lending implements Identifiable, Comparable<Lending> {
 
 	@Override
 	public int compareTo(Lending o) {
+		try {
+			o.getLendingDate();
+		}
+		catch(Exception e){
+			try{
+				this.getLendingDate();
+				return 1;
+			}
+			catch(Exception f){
+				return 0;
+			}
+		}
+		try{
+			this.getLendingDate();
+		}
+		catch(Exception g){
+			return -1;
+		}
+		
 		if(this.lendingDate.getDate().after(o.lendingDate.getDate())){
 			return 1;
 		}else if(this.lendingDate.getDate().before(o.lendingDate.getDate())){

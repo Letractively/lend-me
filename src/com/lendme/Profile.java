@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.omg.CORBA.ARG_IN;
-
 /**
  * @author THE LENDERS
  * The permissions management is delegated from LendMe to this class, which is the one who deals with
@@ -632,6 +630,21 @@ public class Profile {
 	
 	protected List<ActivityRegistry> getActivityHistory() throws Exception {
 		return owner.getMyActivityHistory();
+	}
+
+	public String publishItemRequest(String itemName, String itemDescription) 
+		throws Exception{
+		return owner.publishItemRequest(itemName, itemDescription);
+	}
+
+	public void offerItem(Lending publishedRequest, String itemId) throws Exception{
+		for ( Item item : owner.getAllItems() ){
+			if ( item.getID().equals(itemId) ){
+				owner.offerItem(publishedRequest, item);
+				return;
+			}
+		}
+		throw new Exception("Item inexistente");
 	}
 	
 }

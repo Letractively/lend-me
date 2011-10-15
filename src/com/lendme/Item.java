@@ -29,7 +29,7 @@ public class Item implements Identifiable, Comparable<Item>{
 			throw new Exception("Categoria inválida");//"Invalid category");
 		}
 		
-		Category chosenCategory;
+		Category chosenCategory = null;
 		try {
 			chosenCategory = Category.valueOf(category.toUpperCase());
 		}

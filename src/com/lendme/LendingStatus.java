@@ -2,6 +2,6 @@ package com.lendme;
 
 public enum LendingStatus {
 
-		ONGOING, FINISHED, DENIED, CANCELLED;
+		ONGOING, FINISHED, DENIED, CANCELLED, REQUEST_PUBLISHED;
 
 }

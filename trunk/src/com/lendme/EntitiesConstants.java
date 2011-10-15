@@ -10,7 +10,13 @@ public class EntitiesConstants {
 	public static final String USER_REGISTERED_MESSAGE = "User %s named %s registered.";
 	public static final String ITEM_REGISTERED_MESSAGE = "Item %s of id: %s registered.";
 	public static final String ITEM_REQUESTED_MESSAGE = "Item %s of %s was requested for %d days by %s";
+	public static final String ITEM_REGISTERED_ACTIVITY = "%s cadastrou %s";
+	public static final String FRIENDSHIP_ACCEPTED_ACTIVITY = "%s e %s são amigos agora";
+	public static final String LENDING_IN_COURSE_ACTIVITY = "%s emprestou %s a %s";
+	public static final String REGISTER_INTEREST_IN_ITEM_ACTIVITY = "%s tem interesse pelo item %s de %s";
+	public static final String LENDING_END_APPROVAL_ACTIVITY = "%s confirmou o término no empréstimo do item %s";
 	public static final String GLOBAL = "global";
 	public static final String AMIGOS = "amigos";
-
+// ENGLISH MESSAGES
+	//public static final String ITEM_REGISTERED_ACTIVITY = "%s registered %s";
 }

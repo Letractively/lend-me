@@ -605,5 +605,10 @@ public class LendMeFacade {
 			String itemId) throws Exception{
 		LendMe.offerItem(sessionId, requestPublicationId, itemId);
 	}
+
+	public void republishItemRequest(String sessionId, String requestPublicationId) 
+		throws Exception{
+		LendMe.republishItemRequest(sessionId, requestPublicationId);		
+	}
 	
 }

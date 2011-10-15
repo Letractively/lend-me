@@ -646,5 +646,9 @@ public class Profile {
 		}
 		throw new Exception("Item inexistente");
 	}
+
+	public void republishItemRequest(Lending petition) throws Exception {
+		owner.republishItemRequest(petition);
+	}
 	
 }

@@ -1057,6 +1057,12 @@ public class LendMe {
 
 	public static void offerItem(String sessionId,
 			String requestPublicationId, String itemId) throws Exception{
+		if ( requestPublicationId == null || requestPublicationId.trim().isEmpty() ){
+			throw new Exception("Identificador da publicação de pedido é inválido");
+		}
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é inválido");
+		}
 		Profile viewer = getUserProfile(sessionId);
 		Lending petition = LendMe.getPetition(requestPublicationId);
 		viewer.offerItem(petition, itemId);
@@ -1070,7 +1076,13 @@ public class LendMe {
 				}
 			}
 		}
-		throw new Exception("Esse pedido de item não foi publicado ou já foi atendido.");
+		throw new Exception("Publicação de pedido inexistente");
+	}
+
+	public static void republishItemRequest(String sessionId,
+			String requestPublicationId) throws Exception{
+		Profile viewer = getUserProfile(sessionId);
+		viewer.republishItemRequest(LendMe.getPetition(requestPublicationId));
 	}
 	
 }

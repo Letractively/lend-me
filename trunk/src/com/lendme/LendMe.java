@@ -138,10 +138,10 @@ public class LendMe {
 	 */
 	protected static String registerItem(String sessionId, String name, 
 			String description, String category) throws Exception{
-		
-		if ( category == null || category.trim().isEmpty() ){
-			throw new Exception("Categoria inválida");//"Invalid category");
-		}
+//		
+//		if ( category == null || category.trim().isEmpty() ){
+//			throw new Exception("Categoria inválida");//"Invalid category");
+//		}
 		
 		User owner = getUserByLogin(getSessionByID(sessionId).getLogin());
 		return owner.addItem(name, description, category);
@@ -868,9 +868,11 @@ public class LendMe {
 		}
 		
 		case CATEGORIA: {
-			for(User actualFriend : userOwnerSession.getFriends()){
+			Set<User> searchScope = userOwnerSession.getFriends();
+			searchScope.add(userOwnerSession);
+			for(User actualFriend : searchScope){
 				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getCategory().toString().toUpperCase().contains(key.toUpperCase()))
+					if(itemOfMyFriend.getCategory().toUpperCase().contains(key.toUpperCase()))
 						results.add(itemOfMyFriend);
 				}
 			}

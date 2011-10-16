@@ -10,20 +10,12 @@ public class LendMeAcceptanceTestClient {
 
 	public static void main(String[] args) throws Exception {
 
+		
         List<String> files = new ArrayList<String>();
-//        for ( int i=1; i<18; i++ ){
-//        	if ( i != 17){
-//        		files.add(String.format(".."+File.separator+
-//        				"acceptance-test-scripts" + File.separator + "scripts" + File.separator + "US%02d.txt", i));        		
-//        	}
-//        	else{
-//        		files.add(String.format(".."+File.separator+
-//        				"acceptance-test-scripts" + File.separator + "scripts" + File.separator + "US17_18.txt", i));        		
-//        	}
-//        }
-        files.add(".."+File.separator+
-             	  "acceptance-test-scripts"+File.separator + "scripts" + File.separator + "US17_18.txt");
-        
+        for ( int i=1; i<21; i++ ){
+      	  files.add(String.format(".."+File.separator+
+      			  "acceptance-test-scripts"+File.separator + "scripts" + File.separator + "US%02d.txt", i));
+        }
         LendMeAcceptanceTestInterface lendMeInterface = new LendMeAcceptanceTestInterface();
         EasyAcceptFacade eaFacade = new EasyAcceptFacade(lendMeInterface, files);
         eaFacade.executeTests();

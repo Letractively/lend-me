@@ -37,11 +37,11 @@ public class ItemTest {
 		
 		item.setCategory("Filme");
 		
-		Assert.assertEquals(Category.FILME, item.getCategory());
+		Assert.assertEquals("Filme", item.getCategory());
 		
 		item.setCategory("jogo");
 		
-		Assert.assertEquals(Category.JOGO, item.getCategory());
+		Assert.assertEquals("jogo", item.getCategory());
 		
 	}
 	

@@ -10,7 +10,8 @@ public class Item implements Identifiable, Comparable<Item>{
 	
 	private String name;
 	private String description;
-	private Category category;
+	//private Category category;
+	private String category;
 	private String id;
 	private EventDate creationDate;
 	
@@ -29,17 +30,18 @@ public class Item implements Identifiable, Comparable<Item>{
 			throw new Exception("Categoria inválida");//"Invalid category");
 		}
 		
-		Category chosenCategory = null;
-		try {
-			chosenCategory = Category.valueOf(category.toUpperCase());
-		}
-		catch (IllegalArgumentException e) {
-			throw new Exception("Categoria inexistente");//"Inexistent category");
-		}
+//		Category chosenCategory;
+//		try {
+//			chosenCategory = Category.valueOf(category.toUpperCase());
+//		}
+//		catch (IllegalArgumentException e) {
+//			throw new Exception("Categoria inexistente");//"Inexistent category");
+//		}
 		
 		this.name = name;
 		this.description = description;
-		this.category = chosenCategory;
+//		this.category = chosenCategory;
+		this.category = category;
 		this.id = Integer.toString(((Object) this).hashCode());
 		this.creationDate = new EventDate(String.format(EntitiesConstants.ITEM_REGISTERED_MESSAGE, this.name, this.id));
 	}
@@ -56,7 +58,7 @@ public class Item implements Identifiable, Comparable<Item>{
 		return this.description;
 	}
 
-	public Category getCategory() {
+	public String getCategory() {
 		return this.category;
 	}
 	
@@ -120,14 +122,48 @@ public class Item implements Identifiable, Comparable<Item>{
 	}
 
 	public void setCategory(String category) throws Exception{
-		Category chosenCategory;
-		try {
-			chosenCategory = Category.valueOf(category.toUpperCase());
+//		Category chosenCategory;
+//		try {
+//			chosenCategory = Category.valueOf(category.toUpperCase());
+//		}
+//		catch (IllegalArgumentException e) {
+//			throw new Exception("Categoria inexistente");//"Inexistent category");
+//		}
+		if(!(category == null) && !(category.trim().isEmpty())){
+			this.category = category;
+		}else{
+			throw new Exception("Categoria inválida.");
 		}
-		catch (IllegalArgumentException e) {
-			throw new Exception("Categoria inexistente");//"Inexistent category");
-		}
-		this.category = chosenCategory;
 	}
+	
+	public void addCategory(String category) throws Exception{
+		if(!(category == null) && !(category.trim().isEmpty())){
+			this.category = this.category + ", " + category;
+		}else{
+			throw new Exception("Categoria inválida.");
+		}
+	}
+	
+	public void removeCategory(String category) throws Exception{
+		if(!(category == null) && !(category.trim().isEmpty())){
+			if(!this.category.contains(category)){
+				throw new Exception("Categoria inexistente.");
+			}else{
+				
+				if(this.category.contains(category + ",")){
+					this.category.replace(category+ ",", "");
+				}
+				else if(this.category.contains(", " + category)){
+					this.category.replace(", " + category, "");
+				}else{
+					this.category.replace(category, "");
+				}
+				
+			}	
+		}else{
+			throw new Exception("Categoria inválida.");
+		}	
+	}
+	
 	
 }

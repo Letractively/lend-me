@@ -6,7 +6,8 @@ public class ActivityRegistry implements Comparable<ActivityRegistry>{
 	
 	public static enum ActivityKind {
 		ADICAO_DE_AMIGO_CONCLUIDA, CADASTRO_DE_ITEM, EMPRESTIMO_EM_ANDAMENTO,
-		REGISTRO_DE_INTERESSE_EM_ITEM, TERMINO_DE_EMPRESTIMO, PEDIDO_DE_ITEM;
+		REGISTRO_DE_INTERESSE_EM_ITEM, TERMINO_DE_EMPRESTIMO, PEDIDO_DE_ITEM,
+		REPUBLICACAO_DE_PEDIDO_DE_ITEM;
 	}
 	
 	private String id;
@@ -60,6 +61,25 @@ public class ActivityRegistry implements Comparable<ActivityRegistry>{
 	
 	public String getId(){
 		return id;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!( obj instanceof ActivityRegistry)) {
+			return false;
+		}
+		
+		ActivityRegistry otherAR = (ActivityRegistry) obj;
+		
+		if (getTimeInNanos() == otherAR.getTimeInNanos() && getDescription().equals(otherAR.getDescription())) {
+			return true;
+		} else if ((getKind() == ActivityKind.REPUBLICACAO_DE_PEDIDO_DE_ITEM || 
+			otherAR.getKind() == ActivityKind.REPUBLICACAO_DE_PEDIDO_DE_ITEM)
+			&& this.getDescription().equals(otherAR.getDescription()) ) {
+				return true;
+		} else {
+			return false;	
+		}
 	}
 	
 }

@@ -218,8 +218,8 @@ public class User implements Comparable<User>{
 			otherUser.myActivityHistory.add(new ActivityRegistry(
 					ActivityRegistry.ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA
 					, String.format(EntitiesConstants.FRIENDSHIP_ACCEPTED_ACTIVITY,
-					otherUser.getName(), this.getName()),
-					friendshipAccepted.getTimeInNanos()));
+					otherUser.getName(), this.getName())));
+//					,friendshipAccepted.getTimeInNanos()));
 		}
 	}
 	
@@ -1349,8 +1349,6 @@ public class User implements Comparable<User>{
 		
 		myLentItems.add(record);
 		myItems.put(item, borrower);
-		myActivityHistory.add(new ActivityRegistry(ActivityKind.PEDIDO_DE_ITEM,
-				String.format(EntitiesConstants.REQUESTED_ITEM_LENT_ACTIVITY, getName(), item.getName())));
 	}
 
 	private void receiveRequestedItem(Lending publishedRequestAttended, Item item) throws Exception{
@@ -1376,7 +1374,7 @@ public class User implements Comparable<User>{
 				throw new Exception("Não se pode publicar pedido de seu próprio item");
 			}
 		}
-		myActivityHistory.add(new ActivityRegistry(ActivityKind.PEDIDO_DE_ITEM,
+		myActivityHistory.add(new ActivityRegistry(ActivityKind.REPUBLICACAO_DE_PEDIDO_DE_ITEM,
 				String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_ACTIVITY, petition.getBorrower().getName(),
 						petition.getDesiredItemName())));
 	}

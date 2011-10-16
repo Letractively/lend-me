@@ -1037,7 +1037,8 @@ public class LendMe {
 			for (ActivityRegistry actualAR : actualFriend.getMyActivityHistory()) {
 				if (actualAR.getKind() == ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA 
 						&& actualAR.getDescription().contains(" e " + 
-								userOwnerSession.getName() + " são amigos agora")) {
+						userOwnerSession.getName() + " são amigos agora")
+						|| userOwnerSession.getMyActivityHistory().contains(actualAR)) {
 					continue;
 				}
 				results.add(actualAR);

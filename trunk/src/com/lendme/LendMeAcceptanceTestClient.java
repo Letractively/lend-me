@@ -11,19 +11,18 @@ public class LendMeAcceptanceTestClient {
 	public static void main(String[] args) throws Exception {
 
         List<String> files = new ArrayList<String>();
-        for ( int i=1; i<21; i++ ){
-        	if ( i != 17 && i != 18 ){
-        		files.add(String.format(".."+File.separator+
-        				"acceptance-test-scripts" + File.separator + "US%02d.txt", i));        		
-        	}
-        	else if (i == 18) continue;
-        	else{
-        		files.add(String.format(".."+File.separator+
-        				"acceptance-test-scripts" + File.separator + "US17_18.txt", i));        		
-        	}
-        }
-//        files.add(".."+File.separator+
-//             	  "acceptance-test-scripts"+File.separator + "scripts" + File.separator + "US15.txt");
+//        for ( int i=1; i<18; i++ ){
+//        	if ( i != 17){
+//        		files.add(String.format(".."+File.separator+
+//        				"acceptance-test-scripts" + File.separator + "scripts" + File.separator + "US%02d.txt", i));        		
+//        	}
+//        	else{
+//        		files.add(String.format(".."+File.separator+
+//        				"acceptance-test-scripts" + File.separator + "scripts" + File.separator + "US17_18.txt", i));        		
+//        	}
+//        }
+        files.add(".."+File.separator+
+             	  "acceptance-test-scripts"+File.separator + "scripts" + File.separator + "US17_18.txt");
         
         LendMeAcceptanceTestInterface lendMeInterface = new LendMeAcceptanceTestInterface();
         EasyAcceptFacade eaFacade = new EasyAcceptFacade(lendMeInterface, files);

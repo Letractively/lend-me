@@ -15,6 +15,9 @@ public class Address {
 		private enum AddressElements {
 			STREET, NUMBER, NEIGHBORHOOD, CITY, STATE, COUNTRY, ZIPCODE,FULL_ADDRESS;
 		}
+		
+		private double latitude;
+		private double longitude;
         
 		private Map<AddressElements, String> address = new HashMap<AddressElements, String>();
 		
@@ -89,4 +92,22 @@ public class Address {
         public boolean addressMatches(String toBeMatched) {
                 return this.toString().toUpperCase().contains(toBeMatched.toUpperCase());
         }
+
+		public double getLatitude() {
+			return latitude;
+		}
+
+		public void setLatitude(double latitude) {
+			//TODO call method of Localizator
+			this.latitude = latitude;
+		}
+
+		public double getLongitude() {
+			return longitude;
+		}
+
+		public void setLongitude(double longitude) {
+			//TODO call method of Localizator
+			this.longitude = longitude;
+		}
 }

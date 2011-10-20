@@ -10,21 +10,21 @@ import java.util.Date;
 public class EventDate {
 
 	private Date date;
+	private long timeInNanos;
 	private String eventDescription;
+
+	public EventDate(String eventDescription, Date date, long nanoTime){
+		this.date = date;
+		this.eventDescription = eventDescription;
+		this.timeInNanos = nanoTime;
+	}
 	
 	public EventDate(){
-		this.date = new Date();
-		this.eventDescription = "";
+		this("", new Date(), System.nanoTime());
 	}
 	
 	public EventDate(String eventDescription){
-		this.date = new Date();
-		this.eventDescription = eventDescription;
-	}
-	
-	public EventDate(String eventDescription, Date date){
-		this.date = date;
-		this.eventDescription = eventDescription;
+		this(eventDescription, new Date(), System.nanoTime());
 	}
 
 	public Date getDate() {
@@ -44,6 +44,11 @@ public class EventDate {
 		today.setTime(date);
 		today.add(Calendar.DAY_OF_MONTH, days);
 		this.date = today.getTime();
+	}
+	
+	public int compareTo(EventDate otherDate){
+			return (otherDate.date.compareTo(this.date) != 0) ? otherDate.date.compareTo(this.date)
+					: ( (otherDate.timeInNanos > this.timeInNanos) ? 1 : (otherDate.timeInNanos < this.timeInNanos) ? -1 : 0 );
 	}
 	
 	@Override

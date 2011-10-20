@@ -1337,35 +1337,35 @@ public class User implements Comparable<User>{
 			throw new Exception("Não se pode oferecer um item que já está emprestado");
 		}
 
-		Lending record = new Lending(publishedRequest, this, item);
-		record.setLendingDate();
-		record.getLendingDate().addDays(record.getRequiredDays());
-		User borrower = publishedRequest.getBorrower();
-		borrower.receiveRequestedItem(record, item);
+//		Lending record = new Lending(publishedRequest, this, item);
+//		record.setLendingDate();
+//		record.getLendingDate().addDays(record.getRequiredDays());
+		User requester = publishedRequest.getBorrower();
+//		borrower.receiveRequestedItem(record, item);
 
 		sendMessage(
 				String.format(EntitiesConstants.REQUESTED_ITEM_LENT_ACTIVITY, getName(), item.getName()),
-				"Item oferecido: " + item.getName() + " - " + item.getDescription(), borrower);
+				"Item oferecido: " + item.getName() + " - " + item.getDescription(), requester);
 		
-		myLentItems.add(record);
-		myItems.put(item, borrower);
+//		myLentItems.add(record);
+//		myItems.put(item, borrower);
 	}
 
-	private void receiveRequestedItem(Lending publishedRequestAttended, Item item) throws Exception{
-		Lending toBeReplaced = null;
-		for ( Lending publishedRequest : publishedItemRequests ){
-			if ( publishedRequest.getID().equals(publishedRequestAttended.getID()) ){
-				toBeReplaced = publishedRequest;
-			}
-		}
-		if ( toBeReplaced != null ){
-//			publishedItemRequests.remove(toBeReplaced);
-			myBorrowedItems.add(publishedRequestAttended);
-		}
-		else{
-			throw new Exception("Publicacao de pedido inexistente");			
-		}
-	}
+//	private void receiveRequestedItem(Lending publishedRequestAttended, Item item) throws Exception{
+//		Lending toBeReplaced = null;
+//		for ( Lending publishedRequest : publishedItemRequests ){
+//			if ( publishedRequest.getID().equals(publishedRequestAttended.getID()) ){
+//				toBeReplaced = publishedRequest;
+//			}
+//		}
+//		if ( toBeReplaced != null ){
+////			publishedItemRequests.remove(toBeReplaced);
+//			myBorrowedItems.add(publishedRequestAttended);
+//		}
+//		else{
+//			throw new Exception("Publicacao de pedido inexistente");			
+//		}
+//	}
 
 	public void republishItemRequest(Lending petition) throws Exception{
 		for ( Item item : myItems.keySet() ){

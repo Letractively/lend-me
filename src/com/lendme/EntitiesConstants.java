@@ -15,7 +15,7 @@ public class EntitiesConstants {
 	public static final String FRIENDSHIP_ACCEPTED_ACTIVITY = "%s e %s são amigos agora";
 	public static final String LENDING_IN_COURSE_ACTIVITY = "%s emprestou %s a %s";
 	public static final String REGISTER_INTEREST_IN_ITEM_ACTIVITY = "%s tem interesse pelo item %s de %s";
-	public static final String LENDING_END_APPROVAL_ACTIVITY = "%s confirmou o término no empréstimo do item %s";
+	public static final String LENDING_END_APPROVAL_ACTIVITY = "%s confirmou o término do empréstimo do item %s";
 	public static final String ITEM_REQUEST_PUBLISHED_ACTIVITY = "%s precisa do item %s";
 	public static final String REQUESTED_ITEM_LENT_ACTIVITY = "O usuário %s ofereceu o item %s";
 	public static final String GLOBAL = "global";

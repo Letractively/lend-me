@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.lendme.entities.ActivityRegistry;
-import com.lendme.entities.EventDate;
 import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
 import com.lendme.entities.Message;

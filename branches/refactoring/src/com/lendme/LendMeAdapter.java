@@ -12,6 +12,7 @@ import com.lendme.entities.Lending.LendingStatus;
 import com.lendme.entities.Message;
 import com.lendme.entities.Topic;
 import com.lendme.entities.User;
+import com.lendme.utils.ComparatorOfDateStrategy;
 
 public class LendMeAdapter {
 	
@@ -81,7 +82,7 @@ public class LendMeAdapter {
 	public String[] searchUsersByName(String name){
 		
 		List<User> results = new ArrayList<User>(LendMe.searchUsersByName(name));
-		Collections.sort(results);
+		Collections.sort(results, new ComparatorOfDateStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -98,7 +99,7 @@ public class LendMeAdapter {
 	public String[] searchUsersByAddress(String address){
 
 		List<User> results = new ArrayList<User>(LendMe.searchUsersByAddress(address));
-		Collections.sort(results);
+		Collections.sort(results,  new ComparatorOfDateStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -119,7 +120,7 @@ public class LendMeAdapter {
 		
 		List<User> results = 
 				new ArrayList<User>(LendMe.searchUsersByAttributeKey(solicitorSession, key, attribute));
-		Collections.sort(results);
+		Collections.sort(results,  new ComparatorOfDateStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -199,7 +200,7 @@ public class LendMeAdapter {
 	public String[] getFriendshipRequests(String solicitorSession) throws Exception {
 
 		List<User> results = new ArrayList<User>(LendMe.getFriendshipRequests(solicitorSession));
-		Collections.sort(results);
+		Collections.sort(results,  new ComparatorOfDateStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -217,7 +218,7 @@ public class LendMeAdapter {
 		throws Exception{
 
 		List<User> results = new ArrayList<User>(LendMe.getFriends(solicitorSession));
-		Collections.sort(results);
+		Collections.sort(results,  new ComparatorOfDateStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -235,7 +236,7 @@ public class LendMeAdapter {
 		throws Exception{
 
 		List<User> results = new ArrayList<User>(LendMe.getFriends(solicitorSession, solicitedLogin));
-		Collections.sort(results);
+		Collections.sort(results,  new ComparatorOfDateStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){

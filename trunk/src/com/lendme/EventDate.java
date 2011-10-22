@@ -34,10 +34,6 @@ public class EventDate {
 	public String getEventDescription() {
 		return eventDescription;
 	}
-
-	public void setEventDescription(String eventDescription) {
-		this.eventDescription = eventDescription;
-	}
 	
 	public void addDays(int days){
 		Calendar today = Calendar.getInstance();

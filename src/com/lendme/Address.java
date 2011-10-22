@@ -45,6 +45,11 @@ public class Address {
 	        	}
 	        	this.address.put(AddressElements.FULL_ADDRESS, fullAddress.toString());
         	}
+        	
+        	Localizator lcz = Localizator.getInstance();
+        	double[] lat_and_log = lcz.getLatAndLong(this.getFullAddress());
+        	this.setLatitude(lat_and_log[0]);
+        	this.setLongitude(lat_and_log[1]);
         }
 
 		public String getStreet() {

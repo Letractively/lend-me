@@ -76,12 +76,27 @@ public class LendMe {
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
 	protected static String openSession(String login) throws Exception {
+		if (userExists(login)) {
+			Session session = new Session(LendMe.getUserByLogin(login));
+			sessions.add(session);
+			return session.getId();
+		} else {
+			throw new Exception("Usuário inexistente");
+		}
+			
+	}
+	
+	private static boolean userExists(String login) throws Exception {
 		if (login == null || login.trim().isEmpty()){
 			throw new Exception("Login inválido");//"Invalid login");
 		}
-		Session session = new Session(LendMe.getUserByLogin(login));
-		sessions.add(session);
-		return session.getId();
+		
+		for (User user : users) {
+			if (user.getLogin().equals(login)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

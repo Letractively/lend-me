@@ -111,6 +111,21 @@ public class LendMeFacade {
 		return handled;
 	}
 	
+	public String[] listUsersByDistance(String solicitorSession) throws Exception{
+		
+		List<User> results = new ArrayList<User>(LendMe.listUsersByDistance(solicitorSession));
+		
+		String[] handled = new String[results.size()];
+		Iterator<User> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			User tmp = iterator.next();
+			handled[i] = tmp.getName() + " - " + tmp.getAddress();
+		}
+		return handled;
+			
+		
+	}
+	
    /** Handles with results from search in System, transforming them in a string array
 	 * @param solicitorSession the id of the session of the solicitor user
 	 * @param attribute the attribute whose value is required

@@ -196,6 +196,35 @@ public class LendMe {
 		}
 		return results;
 	}
+	
+	protected static List<User> listUsersByDistance(String sessionId) throws Exception{
+		
+		if(sessionId == null || sessionId.trim().equals("")) throw new Exception("Sessão inválida");
+				
+		
+		List<User> listUsersByDistance = new ArrayList<User>();
+		listUsersByDistance.addAll(users);//Expensive Operation
+		
+		User ownerOfSession = null;
+		
+		for(Session actualSession : sessions){
+			if(actualSession.getId().equals(sessionId)){
+				ownerOfSession = LendMe.getUserByLogin(actualSession.getLogin());
+				break;
+			}
+		}
+		
+		if(ownerOfSession == null) throw new Exception("Sessão inexistente");
+		
+		/* Sugestao usar Um tree-set para usuarios e manter sempre ordenado pela distancia
+		 * Para evitar exatamente essa operacao
+		*/
+		listUsersByDistance.remove(ownerOfSession);
+		Collections.sort(listUsersByDistance, new ComparatorOfAddress(ownerOfSession.getAddress()));
+		
+		
+		return listUsersByDistance;
+	}
 
 	/**
 	 * Searches for users with given attribute specified by key.

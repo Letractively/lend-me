@@ -115,6 +115,15 @@ public class LendMeAcceptanceTestInterface {
 		return formatarASaida(resultado);
 	}
 	
+	public String localizarUsuario(String idSessao) throws Exception{
+	    String[] resultado = system.listUsersByDistance(idSessao);	
+	    
+	    if ( resultado.length == 0 ){
+			return "Nenhum usuário encontrado";
+		}
+		return formatarASaida(resultado);
+	}
+	
 	public String getRequisicoesDeAmizade(String idSessao) throws Exception{
 
 		String[] resultado = system.getFriendshipRequests(idSessao);

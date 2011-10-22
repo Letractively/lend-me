@@ -18,7 +18,7 @@ public class LendMeAdapter {
 	
 	/*
 	 * Refactoring comment:
-	 * In this class we used the Adapter project pattern........
+	 * In this class we used the Adapter design pattern........
 	 * 
 	 * 
 	 * 

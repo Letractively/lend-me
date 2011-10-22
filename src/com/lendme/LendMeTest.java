@@ -8,6 +8,10 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.lendme.entities.Item;
+import com.lendme.entities.Session;
+import com.lendme.entities.User;
+
 public class LendMeTest {
 	
 	Set<User> users = new HashSet<User>();

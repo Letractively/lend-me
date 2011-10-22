@@ -5,6 +5,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.lendme.entities.ActivityRegistry;
+import com.lendme.entities.Item;
+import com.lendme.entities.Lending;
+import com.lendme.entities.Lending.LendingStatus;
+import com.lendme.entities.Message;
+import com.lendme.entities.Topic;
+import com.lendme.entities.User;
+
 public class LendMeFacade {
 
 	/* (non-Javadoc)

@@ -1,4 +1,4 @@
-package com.lendme;
+package com.lendme.entities;
 
 import java.util.HashSet;
 import java.util.Set;

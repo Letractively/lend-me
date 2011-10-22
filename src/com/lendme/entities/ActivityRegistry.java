@@ -1,5 +1,4 @@
-package com.lendme;
-
+package com.lendme.entities;
 
 public class ActivityRegistry implements Comparable<ActivityRegistry>{
 	

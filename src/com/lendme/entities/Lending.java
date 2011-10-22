@@ -1,4 +1,5 @@
-package com.lendme;
+package com.lendme.entities;
+
 
 
 /**
@@ -9,6 +10,12 @@ package com.lendme;
  */
 
 public class Lending implements Identifiable, Comparable<Lending> {
+	
+	public enum LendingStatus {
+
+		ONGOING, FINISHED, DENIED, CANCELLED, REQUEST_PUBLISHED;
+
+	}
 	
 	private User borrower;
 	private User lender;

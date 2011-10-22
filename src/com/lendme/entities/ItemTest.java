@@ -1,4 +1,4 @@
-package com.lendme;
+package com.lendme.entities;
 
 import junit.framework.Assert;
 

@@ -5,6 +5,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.lendme.entities.ActivityRegistry;
+import com.lendme.entities.Item;
+import com.lendme.entities.Lending;
+import com.lendme.entities.Message;
+import com.lendme.entities.Session;
+import com.lendme.entities.Topic;
+import com.lendme.entities.User;
+
 /**
  * @author THE LENDERS
  * The permissions management is delegated from LendMe to this class, which is the one who deals with

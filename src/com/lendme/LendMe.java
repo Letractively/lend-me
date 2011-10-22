@@ -9,7 +9,18 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import com.lendme.ActivityRegistry.ActivityKind;
+
+import com.lendme.entities.ActivityRegistry;
+import com.lendme.entities.ActivityRegistry.ActivityKind;
+import com.lendme.entities.EventDate;
+import com.lendme.entities.Item;
+import com.lendme.entities.Lending;
+import com.lendme.entities.Message;
+import com.lendme.entities.Session;
+import com.lendme.entities.Topic;
+import com.lendme.entities.User;
+import com.lendme.utils.ComparatorOfAddress;
+import com.lendme.utils.ComparatorOfItems;
 
 /**
  * @author THE LENDERS
@@ -17,6 +28,7 @@ import com.lendme.ActivityRegistry.ActivityKind;
  * Here is where the created Users and open Sessions are located. It also keeps track of the system time.
  * In fact, it contains most of the Business Logic, and is the access point to User and Profile logic.
  */
+
 public class LendMe {
 
 	private static Set<User> users = new HashSet<User>();
@@ -27,17 +39,19 @@ public class LendMe {
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
 	
-	private static Comparator<? super User> comparator = new Comparator<User>(){
+	private static Comparator<? super User> comparator = new Comparator<User>() {
+
 		@Override
 		public int compare(User o1, User o2) {
 			int result = 0;
-			if(o1.getScore() > o2.getScore()){
+			if (o1.getScore() > o2.getScore()) {
 				result = 1;
-			}else if(o1.getScore() < o2.getScore()){
+			} else if (o1.getScore() < o2.getScore()) {
 				result = -1;
 			}
-			return result;				
+			return result;
 		}
+		
 	};
 	
 	/**
@@ -61,13 +75,14 @@ public class LendMe {
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
 	protected static String openSession(String login) throws Exception {
+		if (login == null || login.trim().isEmpty()){
+			throw new Exception("Login inválido");//"Invalid login");
+		}
 		LendMe.getUserByLogin(login);
 		Session session = new Session(login);
 		sessions.add(session);
 		return session.getId();
 	}
-	
-
 
 	/**
 	 * Returns the system date.
@@ -117,7 +132,7 @@ public class LendMe {
 	protected static String registerUser(String login, String name, String... address) throws Exception{
 		User newUser = new User(login, name, address);
 		if(!users.add(newUser)){
-			throw new Exception("Já existe um usuário com este login");
+			throw new Exception("Já existe um usuário com este login");//"User with this login already exists");
 		}
 		return newUser.getLogin();
 	}
@@ -127,15 +142,19 @@ public class LendMe {
 	 * 
 	 * <i>This method belongs to the public system interface </i>
 	 * @param sessionId the owner of the item session id
-	 * @param name the item namemyFriends
+	 * @param name the item name
 	 * @param description the item description
 	 * @param category the item category
 	 * @return
 	 * @throws Exception for invalid parameters
 	 */
 	protected static String registerItem(String sessionId, String name, 
-		String description, String category) throws Exception{
-
+			String description, String category) throws Exception{
+//		
+//		if ( category == null || category.trim().isEmpty() ){
+//			throw new Exception("Categoria inválida");//"Invalid category");
+//		}
+		
 		User owner = getUserByLogin(getSessionByID(sessionId).getLogin());
 		return owner.addItem(name, description, category);
 	}
@@ -210,6 +229,9 @@ public class LendMe {
 		
 		if(ownerOfSession == null) throw new Exception("Sessão inexistente");
 		
+		/* Sugestao usar Um tree-set para usuarios e manter sempre ordenado pela distancia
+		 * Para evitar exatamente essa operacao
+		*/
 		listUsersByDistance.remove(ownerOfSession);
 		Collections.sort(listUsersByDistance, new ComparatorOfAddress(ownerOfSession.getAddress()));
 		
@@ -743,7 +765,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static User getItemOwner(String itemId) throws Exception{
+	public static User getItemOwner(String itemId) throws Exception{
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}
@@ -854,6 +876,17 @@ public class LendMe {
 			if(actual.toString().toLowerCase().contains(criteria.toLowerCase()))
 				criterionAux = actual;
 		}
+		
+//TODO
+//		for ( User actual : userOwnerSession.getFriends() ){
+//			for ( Item item : actual.getAllItems() ){
+//				if (((String) item.getClass().getMethod(atributeAux.toString(), (Class<?>)null)
+//						.invoke(item, (Object[])null)).contains(key.toUpperCase())){
+//					results.add(item);
+//				}
+//			}
+//		}
+//TODO
 		
 		switch(atributeAux){
 	

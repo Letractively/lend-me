@@ -14,8 +14,10 @@ public class Main {
 	 */
 	public static void main(String[] args) throws Exception{//To mandando jogar pra fora pq qualquer excecao eu vejo
 		
-		long time0 = System.currentTimeMillis(); 
-		
+		long time0 = System.currentTimeMillis();
+		final int LAT = 0;
+		final int LOG = 1;
+				
 		String address = "350+Joaquim+Caroca,+Bairro+Universitario,+Campina+Grande,+Paraíba,+Brasil";
 		String strURL = "http://maps.google.com/maps/api/geocode/json?address="+address+"&sensor=false";
 		String sliceOfString = "";
@@ -44,13 +46,20 @@ public class Main {
 	    	System.out.println(sliceOfString);//Imprime o Json
 	    }
 	    
+	    System.out.println("==================");
+	    
 	    //Pensar numa estrategia eficiente para pegar o pedaco da str que interessa.
+	    String lat = strJSON.toString().split("\"location\"")[1].split(",")[LAT].split(":")[LAT+2].replace("}", "").trim();
+	    System.out.println(lat);
+	    String log = strJSON.toString().split("\"location\"")[1].split(",")[LOG].split(":")[LOG].replace("}", "").trim();
+	    System.out.println(log);
 	    
-	    String[] slices = strJSON.toString().split("\"location\"");
-	    System.out.println(slices[0]);
-	    System.out.println("============");
-	    System.out.println(slices[1]);//Pedaco que comeca com as coordenadas
+	    //Ja em modo double
+	    System.out.println(Double.parseDouble(lat));
+	    System.out.println(Double.parseDouble(log));
 	    
+	    long time1 = System.currentTimeMillis();
+	    System.out.println("Tempo medio de chamada do metodo sera: "+(time1 - time0)+" ms");
 	}
 
 }

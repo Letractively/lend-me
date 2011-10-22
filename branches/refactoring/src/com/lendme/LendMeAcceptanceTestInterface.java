@@ -3,7 +3,7 @@ package com.lendme;
 
 public class LendMeAcceptanceTestInterface {
 	
-	LendMeFacade system = new LendMeFacade();
+	LendMeAdapter system = new LendMeAdapter();
 	
 	public void zerarSistema(){
 		

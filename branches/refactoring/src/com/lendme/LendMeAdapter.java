@@ -13,7 +13,17 @@ import com.lendme.entities.Message;
 import com.lendme.entities.Topic;
 import com.lendme.entities.User;
 
-public class LendMeFacade {
+public class LendMeAdapter {
+	
+	/*
+	 * Refactoring comment:
+	 * In this class we used the Adapter project pattern........
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 
 	/* (non-Javadoc)
 	 * @see com.lendme.LendMe#resetSystem()

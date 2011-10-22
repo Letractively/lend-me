@@ -120,13 +120,13 @@ public class Message implements Comparable<Message> {
 				&& this.isOffTopic() == otherMsg.isOffTopic();
 	}
 
-	public Date getDate() {
-		return this.sending.getDate();
+	public EventDate getDate() {
+		return this.sending;
 	}
 
 	@Override
 	public int compareTo(Message otherMsg) {
-		return this.getDate().compareTo(otherMsg.getDate());
+		return - this.getDate().compareTo(otherMsg.getDate());
 	}
 
 	public String getLendingId() {

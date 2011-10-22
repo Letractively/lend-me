@@ -47,8 +47,8 @@ public class EventDate {
 	}
 	
 	public int compareTo(EventDate otherDate){
-			return (otherDate.date.compareTo(this.date) != 0) ? otherDate.date.compareTo(this.date)
-					: ( (otherDate.timeInNanos > this.timeInNanos) ? 1 : (otherDate.timeInNanos < this.timeInNanos) ? -1 : 0 );
+		return (otherDate.date.compareTo(this.date) != 0) ? otherDate.date.compareTo(this.date)
+			: ( (otherDate.timeInNanos > this.timeInNanos) ? 1 : (otherDate.timeInNanos < this.timeInNanos) ? -1 : 0 );
 	}
 	
 	@Override

@@ -54,13 +54,13 @@ public class Topic implements Identifiable, Comparable<Topic> {
 		return id;
 	}
 	
-	public Date getDate() {
-		return this.creationDate.getDate();
+	public EventDate getDate() {
+		return this.creationDate;
 	}
 
 	@Override
 	public int compareTo(Topic otherTopic) {
-		return this.getDate().after(otherTopic.getDate())? -1 : 1;
+		return this.getDate().compareTo(otherTopic.getDate());
 	}
 	
 	@Override

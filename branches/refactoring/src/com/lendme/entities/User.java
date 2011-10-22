@@ -18,7 +18,7 @@ import com.lendme.entities.Lending.LendingStatus;
  * Represents a user of the System.
  */
 
-public class User implements Comparable<User>{
+public class User{
 
 	private String login;
 	private String name;
@@ -1224,11 +1224,7 @@ public class User implements Comparable<User>{
 		}
 		return null;
 	}	
-	@Override
-	public int compareTo(User o) {
-		return - this.creationDate.compareTo(o.getCreationDate());
-	}
-
+	
 	public EventDate getCreationDate() {
 		return creationDate;
 	}

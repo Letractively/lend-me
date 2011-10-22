@@ -6,7 +6,7 @@ import com.lendme.LendMe;
 import com.lendme.entities.User;
 import com.lendme.entities.Item;
 
-public class ComparatorOfItems implements Comparator<Item>{
+public class ComparatorOfItemsStrategy implements Comparator<Item>{
 
 	@Override
 	public int compare(Item o1, Item o2) {

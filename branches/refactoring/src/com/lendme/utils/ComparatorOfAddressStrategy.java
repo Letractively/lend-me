@@ -5,11 +5,11 @@ import java.util.Comparator;
 import com.lendme.entities.User;
 import com.lendme.entities.Address;
 
-public class ComparatorOfAddress implements Comparator<User>{
+public class ComparatorOfAddressStrategy implements Comparator<User>{
 
 	private Address addressRef;
 	
-	public ComparatorOfAddress(Address addressRef){
+	public ComparatorOfAddressStrategy(Address addressRef){
 		this.addressRef = addressRef;
 	}
 	

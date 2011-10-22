@@ -8,23 +8,23 @@ package com.lendme.entities;
 
 public class Session {
 
-	private String login;
+	private User owner;
 	private String id;
 	private EventDate startedAt;
 	private EventDate finishedAt;
 	
-	public Session(String login) throws Exception{
-		if(login == null || login.trim().isEmpty()){
-			throw new Exception("Invalid login");
+	public Session(User owner) throws Exception{
+		if(owner == null){
+			throw new Exception("Invalid user");
 		}
-		this.login = login;
+		this.owner = owner;
 		this.id = Integer.toString(((Object) this).hashCode());
-		this.startedAt = new EventDate(String.format(EntitiesConstants.SESSION_STARTED_MESSAGE, login, id, startedAt));
+		this.startedAt = new EventDate(String.format(EntitiesConstants.SESSION_STARTED_MESSAGE, owner.getLogin(), id, startedAt));
 		this.finishedAt = null;
 	}
 
-	public String getLogin() {
-		return this.login;
+	public User getOwner() {
+		return this.owner;
 	}
 	
 	public String getId(){
@@ -37,8 +37,9 @@ public class Session {
 			return false;
 		}
 		
-		return ((Session) obj).getLogin().equals(login) &&
-			   ((Session) obj).getId().equals(this.id);	
+		Session other = (Session) obj;
+		
+		return hasSameUser(other) && idMatches(other.getId());	
 	}
 	
 	public boolean idMatches(String id){
@@ -46,11 +47,13 @@ public class Session {
 	}
 	
 	public boolean hasSameUser(Session otherSession){
-		return this.login.equals(otherSession.getLogin());
+		return this.owner.equals(otherSession.getOwner());
 	}
 	
 	public void finishSession(){
-		this.finishedAt = new EventDate(String.format(EntitiesConstants.SESSION_FINISHED_MESSAGE, login, id, finishedAt));
+		if ( finishedAt == null ){
+			this.finishedAt = new EventDate(String.format(EntitiesConstants.SESSION_FINISHED_MESSAGE, owner, id, finishedAt));
+		}
 	}
 	
 	public EventDate startedAt(){

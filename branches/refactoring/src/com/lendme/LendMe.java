@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +21,7 @@ import com.lendme.entities.User;
 import com.lendme.utils.ComparatorOfAddressStrategy;
 import com.lendme.utils.ComparatorOfDateStrategy;
 import com.lendme.utils.ComparatorOfItemsStrategy;
+import com.lendme.utils.ComparatorOfRankingStrategy;
 
 /**
  * @author THE LENDERS
@@ -40,20 +40,6 @@ public class LendMe {
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
 	
-	private static Comparator<? super User> comparator = new Comparator<User>() {
-
-		@Override
-		public int compare(User o1, User o2) {
-			int result = 0;
-			if (o1.getScore() > o2.getScore()) {
-				result = 1;
-			} else if (o1.getScore() < o2.getScore()) {
-				result = -1;
-			}
-			return result;
-		}
-		
-	};
 	
 	/**
 	 * Resets the whole system: all living sessions are shutdown as well as all users are deleted.
@@ -165,11 +151,7 @@ public class LendMe {
 	 */
 	protected static String registerItem(String sessionId, String name, 
 			String description, String category) throws Exception{
-//		
-//		if ( category == null || category.trim().isEmpty() ){
-//			throw new Exception("Categoria inválida");//"Invalid category");
-//		}
-		
+
 		User owner = getSessionByID(sessionId).getOwner();
 		return owner.addItem(name, description, category);
 	}
@@ -244,9 +226,6 @@ public class LendMe {
 		
 		if(ownerOfSession == null) throw new Exception("Sessão inexistente");
 		
-		/* Sugestao usar Um tree-set para usuarios e manter sempre ordenado pela distancia
-		 * Para evitar exatamente essa operacao
-		*/
 		listUsersByDistance.remove(ownerOfSession);
 		Collections.sort(listUsersByDistance, new ComparatorOfAddressStrategy(ownerOfSession.getAddress()));
 		
@@ -1033,7 +1012,7 @@ public class LendMe {
 			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size() + 1]);
 			friendList[user.getFriends().size()] = user;
 			
-			Arrays.sort(friendList, comparator);
+			Arrays.sort(friendList, new ComparatorOfRankingStrategy());
 			for(User current : friendList){
 				ranking = current.getLogin() + "; " + ranking;
 			}
@@ -1041,7 +1020,7 @@ public class LendMe {
 		if(category.equals("global")){
 			User[] usersList = users.toArray(new User[users.size()]);
 			
-			Arrays.sort(usersList, comparator);
+			Arrays.sort(usersList, new ComparatorOfRankingStrategy());
 			for(User current : usersList){
 				ranking = current.getLogin() + "; " + ranking;
 			}

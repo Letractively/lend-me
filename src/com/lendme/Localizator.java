@@ -61,7 +61,6 @@ public class Localizator {
 
 		}catch(Exception e){
 			e.getStackTrace();
-			System.out.println("Caiu em excecao");
 			System.out.println(e.getMessage());
 		}
 		

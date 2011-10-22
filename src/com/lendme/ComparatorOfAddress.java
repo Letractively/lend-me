@@ -2,7 +2,7 @@ package com.lendme;
 
 import java.util.Comparator;
 
-public class ComparatorOfAddress implements Comparator<Address>{
+public class ComparatorOfAddress implements Comparator<User>{
 
 	private Address addressRef;
 	
@@ -11,9 +11,13 @@ public class ComparatorOfAddress implements Comparator<Address>{
 	}
 	
 	@Override
-	public int compare(Address arg0, Address arg1) {
-		return ((int)( calcDistanceOfPoints(addressRef.getLatitude(), addressRef.getLongitude(), arg0.getLatitude(), arg0.getLongitude())
-				- calcDistanceOfPoints(addressRef.getLatitude(), addressRef.getLongitude(), arg1.getLatitude(), arg1.getLongitude())));
+	public int compare(User arg0, User arg1) {
+		
+		Address argx = arg0.getAddress();
+		Address argy = arg1.getAddress();
+				
+		return ((int)( calcDistanceOfPoints(addressRef.getLatitude(), addressRef.getLongitude(), argx.getLatitude(), argx.getLongitude())
+				- calcDistanceOfPoints(addressRef.getLatitude(), addressRef.getLongitude(), argy.getLatitude(), argy.getLongitude())));
 	}
 	
 	private double calcDistanceOfPoints(double x1, double y1, double x2, double y2){

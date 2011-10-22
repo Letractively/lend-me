@@ -2,10 +2,12 @@ package com.lendme;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import com.lendme.entities.ActivityRegistry;
+import com.lendme.entities.EventDate;
 import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
 import com.lendme.entities.Message;
@@ -21,7 +23,7 @@ import com.lendme.entities.User;
 
 public class Profile {
 
-	private Session observer;
+	private Session observerSession;
 	private User owner;
 	private Set<User> ownerFriends;
 	private Set<Item> ownerItems;
@@ -29,40 +31,40 @@ public class Profile {
 	private Profile(Session observer, User user) throws Exception{
 
 		if ( observer == null ){
-			throw new Exception("Usuário observador inválido");//"Invalid observer user");
+			throw new Exception("Sessao do usuário observador inválida");//"Invalid observer user");
 		}
-		if ( observer.getLogin() == null || observer.getLogin().trim().isEmpty() ){
-			throw new Exception("Login do usuário observador inválido");//"Invalid observer user login");
+		if ( observer.getOwner() == null ){
+			throw new Exception("Usuário observador inválido");//"Invalid observer user login");
 		}
 		if ( user == null ){
-			throw new Exception("Usuário dono do perfil inválido");//"Invalid profile owner user");
+			throw new Exception("Usuário observado inválido");//"Invalid profile owner user");
 		}
 		if ( user.getFriends() == null ){
-			throw new Exception("Amigos do dono do perfil inválidos");//"Invalid profile owner user friends");
+			throw new Exception("Amigos do observado inválidos");//"Invalid profile owner user friends");
 		}
 		if ( user.getAllItems() == null ){
-			throw new Exception("Itens do dono do perfil inválidos");//"Invalid profile owner user items");
+			throw new Exception("Itens do observado inválidos");//"Invalid profile owner user items");
 		}
 		if ( user.getName() == null || user.getName().trim().isEmpty() ){
-			throw new Exception("Nome do usuário dono do perfil inválido");//"Invalid profile owner user name");
+			throw new Exception("Nome do observado inválido");//"Invalid profile owner user name");
 		}
 		if ( user.getLogin() == null || user.getLogin().trim().isEmpty() ){
-			throw new Exception("Login do usuário dono do perfil inválido");//"Invalid profile owner user login");
+			throw new Exception("Login do observado inválido");//"Invalid profile owner user login");
 		}
 		if ( user.getAddress() == null || user.getAddress().getFullAddress() == null 
 				|| user.getAddress().getFullAddress().trim().isEmpty() ){
-			throw new Exception("Endereço do usuário dono do perfil inválido");//"Invalid profile owner user address");
+			throw new Exception("Endereço do observado inválido");//"Invalid profile owner user address");
 		}
 		
-		this.observer = observer;
+		observerSession = observer;
 		owner = user;
 		ownerFriends = owner.getFriends();
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		if ( observerSession.getOwner().equals(owner) ){
 			ownerItems = owner.getAllItems();
 		}
 		else{
 			for ( User friend : ownerFriends ){
-				if ( friend.getLogin().equals(observer.getLogin())){
+				if ( friend.equals(observerSession.getOwner())){
 					ownerItems = owner.getAllItems();
 					return;
 				}
@@ -76,12 +78,12 @@ public class Profile {
 	 */
 	protected void update() throws Exception{
 		ownerFriends = owner.getFriends();
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		if ( observerSession.getOwner().equals(owner) ){
 			ownerItems = owner.getAllItems();
 		}
 		else{
 			for ( User friend : ownerFriends ){
-				if ( friend.getLogin().equals(observer.getLogin())){
+				if ( friend.equals(observerSession.getOwner())){
 					ownerItems = owner.getAllItems();
 					return;
 				}
@@ -106,7 +108,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected Profile viewOwnProfile() throws Exception{
-		return new Profile(observer, LendMe.getUserByLogin(observer.getLogin()));
+		return new Profile(observerSession, observerSession.getOwner());
 	}
 	
 	/**
@@ -116,13 +118,13 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected Profile viewOtherProfile(User other) throws Exception{
-		if ( observer == null ){
+		if ( observerSession == null || other == null ){
 			throw new Exception("Nao eh possivel visualizar este perfil");//"This profile is not accessible");
 		}
-		if ( observer.getLogin().equals(other.getLogin()) ){
+		if ( observerSession.getOwner().equals(other) ){
 			return viewOwnProfile();
 		}
-		return new Profile(observer, other);
+		return new Profile(observerSession, other);
 	}
 
 	/**
@@ -182,7 +184,7 @@ public class Profile {
 	 * @return
 	 */
 	protected Session getObserver() {
-		return observer;
+		return observerSession;
 	}
 
 	/**
@@ -190,11 +192,10 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected void askForFriendship() throws Exception{
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		if ( observerSession.getOwner().equals(owner) ){
 			throw new Exception("Amizade inexistente");//inválida - pedido de amizade para si próprio");//"Invalid friendship");
 		}
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		me.requestFriendship(owner);
+		observerSession.getOwner().requestFriendship(owner);
 	}
 
 	/**
@@ -202,11 +203,10 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected void acceptFriendshipRequest() throws Exception{
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		if ( observerSession.getOwner().equals(owner) ){
 			throw new Exception("Amizade inexistente");//inválida - aceitação de amizade para si próprio");//"Invalid friendship");
 		}
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		me.acceptFriendshipRequest(owner);
+		observerSession.getOwner().acceptFriendshipRequest(owner);
 	}
 
 	/**
@@ -214,11 +214,10 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected void declineFriendshipRequest() throws Exception{
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		if ( observerSession.getOwner().equals(owner) ){
 			throw new Exception("Amizade inexistente");//inválida - negação de amizade para si próprio");//"Invalid friendship");
 		}
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		me.declineFriendshipRequest(owner);
+		observerSession.getOwner().declineFriendshipRequest(owner);
 	}
 
 	/**
@@ -226,10 +225,10 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected void breakFriendship() throws Exception{
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		if ( observerSession.getOwner().equals(owner) ){
 			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com si próprio");//"Invalid friendship");
 		}
-		User me = LendMe.getUserByLogin(observer.getLogin());
+		User me = observerSession.getOwner();
 		if ( !me.hasFriend(owner) ){
 			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com alguem que não é seu amigo");
 		}
@@ -243,11 +242,10 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected boolean isFriendOfOwner() throws Exception{
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		if ( observerSession.getOwner().equals(owner) ){
 			throw new Exception("Amizade inválida - consulta para amizade com si próprio");//"Invalid friendship");
 		}
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		return me.hasFriend(owner);
+		return observerSession.getOwner().hasFriend(owner);
 	}
 
 	/**
@@ -257,8 +255,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected boolean searchByName(String key) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		if ( owner.getLogin().equals(me.getLogin()) ){
+		if ( owner.getLogin().equals(observerSession.getOwner().getLogin()) ){
 			return false;
 		}
 		return owner.getName().contains(key);
@@ -271,8 +268,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected boolean searchByLogin(String key) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		if ( owner.getLogin().equals(me.getLogin()) ){
+		if ( owner.getLogin().equals(observerSession.getOwner().getLogin()) ){
 			return false;
 		}
 		return owner.getLogin().contains(key);
@@ -285,8 +281,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected boolean searchByAddress(String key) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		if ( owner.getLogin().equals(me.getLogin()) ){
+		if ( owner.getLogin().equals(observerSession.getOwner().getLogin()) ){
 			return false;
 		}
 		return owner.getAddress().getFullAddress().contains(key);
@@ -336,11 +331,10 @@ public class Profile {
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é invalido");//"Invalid item identifier");
 		}
-		User me = LendMe.getUserByLogin(observer.getLogin());
 		try{
 			for ( Item item : getOwnerItems() ){
 				if ( item.getID().equals(itemId) ){
-					return me.borrowItem(item, owner, requiredDays);
+					return observerSession.getOwner().borrowItem(item, owner, requiredDays);
 				}
 			}
 		}
@@ -363,7 +357,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected String approveLending(String requestId) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
+		User me = observerSession.getOwner();
 		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
 			throw new Exception("O empréstimo só pode ser aprovado pelo dono do item");//Only the owner of the item is allowed to lend it
 		}
@@ -377,7 +371,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected String denyLoan(String requestId) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
+		User me = observerSession.getOwner();
 		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
 			throw new Exception("O empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to lend it
 		}
@@ -391,7 +385,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected String returnItem(String lendingId) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
+		User me = observerSession.getOwner();
 		if ( !LendMe.getLendingByLendingId(lendingId).getBorrower().equals(me) ) {
 			throw new Exception("O item só pode ser devolvido pelo usuário beneficiado");//Only the owner of the item is allowed to lend it
 		}
@@ -405,7 +399,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected String confirmLendingTermination(String lendingId) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
+		User me = observerSession.getOwner();
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O término do empréstimo só pode ser confirmado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
 		}
@@ -419,7 +413,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected String denyLendingTermination(String lendingId) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
+		User me = observerSession.getOwner();
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O término do empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
 		}
@@ -432,12 +426,12 @@ public class Profile {
 	 * @return
 	 * @throws Exception
 	 */
-	protected String askForReturnOfItem(String lendingId) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
+	protected String askForReturnOfItem(String lendingId, Date date) throws Exception{
+		User me = observerSession.getOwner();
 		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O usuário não tem permissão para requisitar a devolução deste item");//Only the owner of the item is allowed to ask for return of item
 		}
-		return me.askForReturnOfItem(lendingId, LendMe.getSystemDate());
+		return me.askForReturnOfItem(lendingId, date);
 	}
 
 	/**
@@ -449,8 +443,8 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected String sendMessage(String subject, String message, String lendingId) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		User me = observerSession.getOwner();
+		if ( me.equals(owner) ){
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
 		}
 		
@@ -486,8 +480,8 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected String sendMessage(String subject, String message) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		if ( observer.getLogin().equals(owner.getLogin()) ){
+		User me = observerSession.getOwner();
+		if ( me.equals(owner.getLogin()) ){
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
 		}
 		
@@ -509,8 +503,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected List<Topic> getTopics(String topicType) throws Exception{
-		User me = LendMe.getUserByLogin(observer.getLogin());
-		return me.getTopics(topicType);
+		return observerSession.getOwner().getTopics(topicType);
 	}
 
 	/**
@@ -527,7 +520,7 @@ public class Profile {
 		List<Message> messages = LendMe.getMessagesByTopicId(topicId);
 		Message sampleMessage = messages.iterator().next();
 
-		User me = LendMe.getUserByLogin(observer.getLogin());
+		User me = observerSession.getOwner();
 		
 		if ( !( sampleMessage.getSender().equals(me.getLogin()) 
 				|| sampleMessage.getReceiver().equals(me.getLogin())) ) {
@@ -546,16 +539,14 @@ public class Profile {
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}
-		if ( observer.getLogin().equals(getOwnerLogin()) ){
+		if ( observerSession.getOwner().getLogin().equals(getOwnerLogin()) ){
 			throw new Exception("O usuário não pode registrar interesse no próprio item");
 		}
 		
-		User me = LendMe.getUserByLogin(observer.getLogin());
-
 		try{
 			for ( Item item : getOwnerItems() ){
 				if ( item.getID().equals(itemId) ){
-					me.registerInterestForItem(item, owner);
+					observerSession.getOwner().registerInterestForItem(item, owner);
 					return;
 				}
 			}

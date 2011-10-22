@@ -83,8 +83,8 @@ public class LendMeTest {
 		LendMe.openSession("pedrorml");
 		
 		for ( Session session : LendMe.searchSessionsByLogin("pedrorml") ){
-			Assert.assertTrue((new Session("pedrorml")).hasSameUser(session));
-			Assert.assertFalse((new Session("pedrorml")).getId() == session.getId());
+			Assert.assertTrue((new Session(pedro)).hasSameUser(session));
+			Assert.assertFalse((new Session(pedro)).getId() == session.getId());
 		}
 		
 	}

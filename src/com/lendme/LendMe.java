@@ -79,8 +79,7 @@ public class LendMe {
 		if (login == null || login.trim().isEmpty()){
 			throw new Exception("Login inválido");//"Invalid login");
 		}
-		LendMe.getUserByLogin(login);
-		Session session = new Session(login);
+		Session session = new Session(LendMe.getUserByLogin(login));
 		sessions.add(session);
 		return session.getId();
 	}
@@ -156,7 +155,7 @@ public class LendMe {
 //			throw new Exception("Categoria inválida");//"Invalid category");
 //		}
 		
-		User owner = getUserByLogin(getSessionByID(sessionId).getLogin());
+		User owner = getSessionByID(sessionId).getOwner();
 		return owner.addItem(name, description, category);
 	}
 	
@@ -203,7 +202,7 @@ public class LendMe {
 	protected static Set<Session> searchSessionsByLogin(String login) {
 		Set<Session> results = new HashSet<Session>();
 		for(Session actualSession : sessions){
-			if(actualSession.getLogin().equals(login)){
+			if(actualSession.getOwner().getLogin().equals(login)){
 				results.add(actualSession);
 			}
 		}
@@ -223,7 +222,7 @@ public class LendMe {
 		
 		for(Session actualSession : sessions){
 			if(actualSession.getId().equals(sessionId)){
-				ownerOfSession = LendMe.getUserByLogin(actualSession.getLogin());
+				ownerOfSession = actualSession.getOwner();
 				break;
 			}
 		}
@@ -355,7 +354,7 @@ public class LendMe {
 	 */
 	protected static Profile getUserProfile(String sessionId) throws Exception {
 		Session session = getSessionByID(sessionId);
-		User user = getUserByLogin(session.getLogin());
+		User user = session.getOwner();
 		if (user == null) {
 			throw new Exception("Sessão se refere a usuário desconhecido");// "Session belongs to unknown user");
 		}
@@ -756,7 +755,7 @@ public class LendMe {
 	protected static String askForReturnOfItem(String sessionId,
 			String lendingId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
-		return viewer.askForReturnOfItem(lendingId);
+		return viewer.askForReturnOfItem(lendingId, getSystemDate());
 	}
 	
 	/**
@@ -821,7 +820,7 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	protected static void deleteItem(String sessionId, String itemId) throws Exception {
-		User userOwnerSession = getUserByLogin(getSessionByID(sessionId).getLogin());
+		User userOwnerSession = getSessionByID(sessionId).getOwner();
 		userOwnerSession.deleteMyItem(itemId);
 	}
 
@@ -842,7 +841,7 @@ public class LendMe {
 		
 		List<Item> results = new ArrayList<Item>();
 		Session session = getSessionByID(sessionId);
-		User userOwnerSession = getUserByLogin(session.getLogin());
+		User userOwnerSession = session.getOwner();
 		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
 		CriterionForSearch criterionAux = CriterionForSearch.DATACRIACAO;
 		
@@ -877,17 +876,7 @@ public class LendMe {
 			if(actual.toString().toLowerCase().contains(criteria.toLowerCase()))
 				criterionAux = actual;
 		}
-		
-//TODO
-//		for ( User actual : userOwnerSession.getFriends() ){
-//			for ( Item item : actual.getAllItems() ){
-//				if (((String) item.getClass().getMethod(atributeAux.toString(), (Class<?>)null)
-//						.invoke(item, (Object[])null)).contains(key.toUpperCase())){
-//					results.add(item);
-//				}
-//			}
-//		}
-//TODO
+
 		
 		switch(atributeAux){
 	
@@ -1025,7 +1014,7 @@ public class LendMe {
 		}
 		
 		if(category.equals("amigos")){
-			User user = getUserByLogin(getSessionByID(sessionId).getLogin());
+			User user = getSessionByID(sessionId).getOwner();
 			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size() + 1]);
 			friendList[user.getFriends().size()] = user;
 			
@@ -1084,7 +1073,7 @@ public class LendMe {
 			String solicitorSessionId) throws Exception {
 		
 		Session session = getSessionByID(solicitorSessionId);
-		User userOwnerSession = getUserByLogin(session.getLogin());
+		User userOwnerSession = session.getOwner();
 		List<ActivityRegistry> results = 
 				new ArrayList<ActivityRegistry>(userOwnerSession.getMyActivityHistory());
 		

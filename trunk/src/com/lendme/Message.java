@@ -1,6 +1,5 @@
 package com.lendme;
 
-import java.util.Date;
 
 /**
  * @author THE LENDERS

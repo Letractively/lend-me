@@ -19,8 +19,9 @@ import com.lendme.entities.Message;
 import com.lendme.entities.Session;
 import com.lendme.entities.Topic;
 import com.lendme.entities.User;
-import com.lendme.utils.ComparatorOfAddress;
-import com.lendme.utils.ComparatorOfItems;
+import com.lendme.utils.ComparatorOfAddressStrategy;
+import com.lendme.utils.ComparatorOfDateStrategy;
+import com.lendme.utils.ComparatorOfItemsStrategy;
 
 /**
  * @author THE LENDERS
@@ -216,7 +217,7 @@ public class LendMe {
 		
 		List<User> listUsersByDistance = new ArrayList<User>();
 		listUsersByDistance.addAll(users);//Expensive Operation
-		Collections.sort(listUsersByDistance);
+		Collections.sort(listUsersByDistance, new ComparatorOfDateStrategy());
 		
 		User ownerOfSession = null;
 		
@@ -233,7 +234,7 @@ public class LendMe {
 		 * Para evitar exatamente essa operacao
 		*/
 		listUsersByDistance.remove(ownerOfSession);
-		Collections.sort(listUsersByDistance, new ComparatorOfAddress(ownerOfSession.getAddress()));
+		Collections.sort(listUsersByDistance, new ComparatorOfAddressStrategy(ownerOfSession.getAddress()));
 		
 		
 		return listUsersByDistance;
@@ -950,7 +951,7 @@ public class LendMe {
 		}
 
 		case REPUTACAO: {
-			Collections.sort(results, new ComparatorOfItems());
+			Collections.sort(results, new ComparatorOfItemsStrategy());
 			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposal.toLowerCase())) {
 				return results;
 			} else {

@@ -1225,10 +1225,7 @@ public class User implements Comparable<User>{
 	}	
 	@Override
 	public int compareTo(User o) {
-		if(this.creationDate.getDate().after(o.getCreationDate().getDate())){
-			return 1;
-		}
-		return 0;
+		return - this.creationDate.compareTo(o.getCreationDate());
 	}
 
 	public EventDate getCreationDate() {

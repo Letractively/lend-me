@@ -105,12 +105,7 @@ public class Item implements Identifiable, Comparable<Item>{
 
 	@Override
 	public int compareTo(Item o) {
-		if(this.creationDate.getDate().after(o.getCreationDate().getDate())){
-			return 1;
-		}else if(this.creationDate.getDate().before(o.getCreationDate().getDate())){
-			return -1;
-		}
-		return 0;
+		return - this.getCreationDate().compareTo(o.getCreationDate());
 	}
 
 	public void setName(String name) {

@@ -1,4 +1,4 @@
-package com.lendme;
+package com.lendme.entities;
 
 import java.util.Calendar;
 import java.util.Date;

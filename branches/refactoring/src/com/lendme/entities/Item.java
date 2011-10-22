@@ -1,4 +1,5 @@
-package com.lendme;
+package com.lendme.entities;
+
 
 /**
  * @author THE LENDERS

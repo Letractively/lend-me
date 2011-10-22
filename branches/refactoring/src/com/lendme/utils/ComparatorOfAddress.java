@@ -1,6 +1,9 @@
-package com.lendme;
+package com.lendme.utils;
 
 import java.util.Comparator;
+
+import com.lendme.entities.User;
+import com.lendme.entities.Address;
 
 public class ComparatorOfAddress implements Comparator<User>{
 

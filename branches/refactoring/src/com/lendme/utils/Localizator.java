@@ -1,4 +1,4 @@
-package com.lendme;
+package com.lendme.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -60,8 +60,9 @@ public class Localizator {
 			 latAndLog[1] = Double.parseDouble(logStr);
 
 		}catch(Exception e){
+			
 			e.getStackTrace();
-			System.out.println(e.getMessage());
+			
 		}
 		
 		

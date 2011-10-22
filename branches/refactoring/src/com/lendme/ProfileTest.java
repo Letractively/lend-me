@@ -6,6 +6,11 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.lendme.LendMe;
+import com.lendme.LendMeFacade;
+import com.lendme.Profile;
+import com.lendme.entities.User;
+
 
 public class ProfileTest {
 

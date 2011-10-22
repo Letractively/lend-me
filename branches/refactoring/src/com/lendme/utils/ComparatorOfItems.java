@@ -1,6 +1,10 @@
-package com.lendme;
+package com.lendme.utils;
 
 import java.util.Comparator;
+
+import com.lendme.LendMe;
+import com.lendme.entities.User;
+import com.lendme.entities.Item;
 
 public class ComparatorOfItems implements Comparator<Item>{
 

@@ -1,8 +1,10 @@
-package com.lendme;
+package com.lendme.entities;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
+
+import com.lendme.entities.Address;
 
 
 public class AddressTest {

@@ -1,7 +1,9 @@
-package com.lendme;
+package com.lendme.entities;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.lendme.utils.Localizator;
 
 /**
  * @author THE LENDERS

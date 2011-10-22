@@ -204,6 +204,7 @@ public class LendMe {
 		
 		List<User> listUsersByDistance = new ArrayList<User>();
 		listUsersByDistance.addAll(users);//Expensive Operation
+		Collections.sort(listUsersByDistance);
 		
 		User ownerOfSession = null;
 		

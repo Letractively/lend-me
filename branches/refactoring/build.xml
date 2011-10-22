@@ -1,0 +1,70 @@
+<!-- Build File of Lend-me project 
+     Team: THE LENDERS
+-->
+
+<project name="lend-me" default="all" basedir=".">
+
+   <property name="src" value="\${basedir}/src/"  />
+   <property name="build" value="\${basedir}/bin/"/>
+   <property name="doc" value="\${basedir}/doc"   />
+   <property name="jars" value="\${basedir}/jars" />
+   <property name="classpath" value="\${basedir}:easyaccept.jar:junit.jar" />
+
+   <target name="init">
+     <echo> 
+	  #############################
+	  #    LEND-ME BUILD SYSTEM   #
+	  ############################# 
+     </echo>
+
+     <echo> 1. Stage of preparation.  </echo>
+   
+     <mkdir dir="\${build}"/>
+     <mkdir dir="\${doc}"  />
+     <mkdir dir="\${jars}" />
+
+   </target>
+
+   <target name="limpa">
+     <echo> Clear </echo>
+     <delete dir="\${build}"/>
+     <delete dir="\${doc}"  />
+     <delete dir="\${jars}" />
+   </target>
+
+
+   <target name="compila" depends="init">
+     <echo> 2. Stage of compilations.  </echo>
+     <javac classpath="\${classpath}" srcdir="\${src}" destdir="\${build}" />
+   </target>
+
+   <target name="testa" depends="init,compila">
+     <echo> 3. Stage of tests.  </echo>
+     <java classname="com.lendme.LendMeAcceptanceTestClient">
+       <classpath path="\${classpath}:\${build}" />
+     </java>
+   </target>
+
+   <target name="doc" depends="init">
+     <echo> 4. Stage of javadocs generations. </echo>
+     <javadoc sourcepath="\${src}" destdir="\${doc}"/>
+   </target>
+
+   <target name="jar" depends="init,compila">
+     <echo> 5. Stage of jars generations. </echo>
+     <jar destfile="\${jars}/lendMe.jar" basedir="\${build}">
+       <manifest>
+         <attribute name="Main-Class" value="com.lendme.LendMeTextInterface"/>
+       </manifest>
+     </jar>
+   </target>
+
+   <target name="run" depends="init,compila,jar">
+     <java jar="\${jars}/lendMe.jar" fork="true" />
+   </target>
+
+   <target name="all" depends="init,compila,jar,testa">
+     <echo> ###### All Targets were execute ######</echo>
+   </target>
+
+</project>

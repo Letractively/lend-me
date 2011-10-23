@@ -103,7 +103,7 @@ public class LendMeAcceptanceTestInterface {
 	
 	public String requisitarEmprestimo(String idSessao,  String idItem, int duracao) throws Exception{
 		
-		return LendMe.requestItem(idSessao, idItem, duracao);
+		return system.requestItem(idSessao, idItem, duracao);
 	}
 	
 	public String localizarUsuario(String idSessao, String chave, String atributo) throws Exception{

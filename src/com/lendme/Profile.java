@@ -26,6 +26,7 @@ public class Profile {
 	private User owner;
 	private Set<User> ownerFriends;
 	private Set<Item> ownerItems;
+	private LendMe lendMe = new LendMe();
 	
 	private Profile(Session observer, User user) throws Exception{
 
@@ -357,7 +358,7 @@ public class Profile {
 	 */
 	protected String approveLending(String requestId) throws Exception{
 		User me = observerSession.getOwner();
-		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
+		if ( !lendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
 			throw new Exception("O empréstimo só pode ser aprovado pelo dono do item");//Only the owner of the item is allowed to lend it
 		}
 		return me.approveLending(requestId);
@@ -371,7 +372,7 @@ public class Profile {
 	 */
 	protected String denyLoan(String requestId) throws Exception{
 		User me = observerSession.getOwner();
-		if ( !LendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
+		if ( !lendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
 			throw new Exception("O empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to lend it
 		}
 		return me.denyLending(requestId);
@@ -385,7 +386,7 @@ public class Profile {
 	 */
 	protected String returnItem(String lendingId) throws Exception{
 		User me = observerSession.getOwner();
-		if ( !LendMe.getLendingByLendingId(lendingId).getBorrower().equals(me) ) {
+		if ( !lendMe.getLendingByLendingId(lendingId).getBorrower().equals(me) ) {
 			throw new Exception("O item só pode ser devolvido pelo usuário beneficiado");//Only the owner of the item is allowed to lend it
 		}
 		return me.approveItemReturning(lendingId);
@@ -399,7 +400,7 @@ public class Profile {
 	 */
 	protected String confirmLendingTermination(String lendingId) throws Exception{
 		User me = observerSession.getOwner();
-		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
+		if ( !lendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O término do empréstimo só pode ser confirmado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
 		}
 		return me.confirmLendingTermination(lendingId);
@@ -413,7 +414,7 @@ public class Profile {
 	 */
 	protected String denyLendingTermination(String lendingId) throws Exception{
 		User me = observerSession.getOwner();
-		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
+		if ( !lendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O término do empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
 		}
 		return me.denyLendingTermination(lendingId);
@@ -427,7 +428,7 @@ public class Profile {
 	 */
 	protected String askForReturnOfItem(String lendingId, Date date) throws Exception{
 		User me = observerSession.getOwner();
-		if ( !LendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
+		if ( !lendMe.getLendingByLendingId(lendingId).getLender().equals(me) ) {
 			throw new Exception("O usuário não tem permissão para requisitar a devolução deste item");//Only the owner of the item is allowed to ask for return of item
 		}
 		return me.askForReturnOfItem(lendingId, date);
@@ -460,7 +461,7 @@ public class Profile {
 					" inválido");//"Invalid lending identifier");
 		}
 		
-		Lending actualLending = LendMe.getLendingByLendingId(lendingId);
+		Lending actualLending = lendMe.getLendingByLendingId(lendingId);
 		
 		if (! actualLending.getLender().equals(me) && ! actualLending.getBorrower().equals(me)) {
 			throw new Exception("O usuário não participa deste empréstimo");
@@ -516,7 +517,7 @@ public class Profile {
 			throw new Exception("Identificador do tópico é inválido");
 			// "Invalid topic identifier");
 		}
-		List<Message> messages = LendMe.getMessagesByTopicId(topicId);
+		List<Message> messages = lendMe.getMessagesByTopicId(topicId);
 		Message sampleMessage = messages.iterator().next();
 
 		User me = observerSession.getOwner();

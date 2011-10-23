@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class LendMeTextInterface {
 	
-	private static LendMeAdapter lendMeFacade = new LendMeAdapter();
+	private static LendMeAdapter lendMeAdapter = new LendMeAdapter();
 	private static Scanner scanner = new Scanner(System.in);
 	private static boolean sair;
 	private static boolean usersTools;
@@ -57,7 +57,7 @@ public class LendMeTextInterface {
 	public static void main(String[] args) {
 		try {
 			//TODO Take this admin registration out. It is here just for testing the text interface.
-			LendMe.registerUser("admin","Administrador do Sistema", "Rua Montevideo", "33", "Monte Santo", "CG",
+			lendMeAdapter.registerUser("admin","Administrador do Sistema", "Rua Montevideo", "33", "Monte Santo", "CG",
 				"PB", "BR", "58102000");
 			
 		} catch (Exception e) {
@@ -365,7 +365,7 @@ public class LendMeTextInterface {
 					}
 				case LOG_OUT:{
 					try {
-						lendMeFacade.closeSession(currentUserSessionId);
+						lendMeAdapter.closeSession(currentUserSessionId);
 						currentUserSessionId = null;
 						System.out.println("\n\tUsuário deslogado!");
 					} catch (Exception e) {
@@ -385,7 +385,7 @@ public class LendMeTextInterface {
 		System.out.println("\t\t Cadastrando Usuário");
 		System.out.println("\t\t========================");
 		
-		String newUserLogin = lendMeFacade.registerUser(returnCorrectString("\n \t Informe o login : "),
+		String newUserLogin = lendMeAdapter.registerUser(returnCorrectString("\n \t Informe o login : "),
 		returnCorrectString("\n \t Informe o nome : "), returnCorrectString("\n \t Informe o endereço : "));
 		
 		System.out.println(String.format("\n \tO usuário com login %s foi cadastrado com sucesso!", newUserLogin));
@@ -394,7 +394,7 @@ public class LendMeTextInterface {
 	private static void searchUsersByAttribute() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de usuários com o atributo especificado",
-			lendMeFacade.searchUsersByAttributeKey(currentUserSessionId,
+			lendMeAdapter.searchUsersByAttributeKey(currentUserSessionId,
 				returnCorrectString("\n \t Informe o atributo: "),
 					returnCorrectString("\n \t Informe o tipo do atributo (nome,login,endereco) : "))));
 	}
@@ -402,7 +402,7 @@ public class LendMeTextInterface {
 	private static void requestFriendship() throws Exception {
 		String requestedFriendLogin = returnCorrectString("\n \t Informe o login do usuário: ");
 		
-		lendMeFacade.askForFriendship(currentUserSessionId, requestedFriendLogin);
+		lendMeAdapter.askForFriendship(currentUserSessionId, requestedFriendLogin);
 		System.out.println("\n \t Requisição de amizade enviada para o usuário "
 				+ requestedFriendLogin);
 	}
@@ -410,18 +410,18 @@ public class LendMeTextInterface {
 	private static void evaluateFriendship() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de requisições de amizade",
-				lendMeFacade.getFriendshipRequests(currentUserSessionId)));
+				lendMeAdapter.getFriendshipRequests(currentUserSessionId)));
 		
 		String friendLogin = returnCorrectString("\n \t Informe o login do usuário: ");
 		
 		String acceptOrDenyStr = returnCorrectString("\n \t Informe sua avaliação (aprovar,rejeitar): ");
 		
 		if (acceptOrDenyStr.toLowerCase().equals("aprovar")) {
-			lendMeFacade.acceptFriendship(currentUserSessionId, friendLogin);
+			lendMeAdapter.acceptFriendship(currentUserSessionId, friendLogin);
 			System.out.println("\n \t Amizade com o usuário " + friendLogin + " aprovada.");
 		}
 		else if (acceptOrDenyStr.toLowerCase().equals("rejeitar")) {
-			lendMeFacade.declineFriendship(currentUserSessionId, friendLogin);
+			lendMeAdapter.declineFriendship(currentUserSessionId, friendLogin);
 			System.out.println("\n \t Amizade com o usuário " + friendLogin + " rejeitada.");
 		}
 		else {
@@ -432,14 +432,14 @@ public class LendMeTextInterface {
 	private static void visualizeProfile() throws Exception {
 		String solicitedUserLogin = returnCorrectString("\n \t Informe o login do usuário: ");
 		
-		System.out.println(lendMeFacade.viewProfile(currentUserSessionId, solicitedUserLogin));
+		System.out.println(lendMeAdapter.viewProfile(currentUserSessionId, solicitedUserLogin));
 	}
 	
 	private static void registerItem() throws Exception {
 		
 		String itemName = returnCorrectString("\n \t Informe o nome do item: "); 
 		
-		lendMeFacade.registerItem(currentUserSessionId, 
+		lendMeAdapter.registerItem(currentUserSessionId, 
 				itemName, returnCorrectString("\n \t Informe a descrição do item: "),
 					returnCorrectString("\n \t Informe a categoria do item (" +
 						"LIVRO, FILME ou JOGO): "));
@@ -451,7 +451,7 @@ public class LendMeTextInterface {
 		
 		String itemId = returnCorrectString("\n \tInforme o id do item desejado: ");
 		
-		lendMeFacade.requestItem(currentUserSessionId, itemId, Integer.parseInt(
+		lendMeAdapter.requestItem(currentUserSessionId, itemId, Integer.parseInt(
 				returnCorrectString("\n \tInforme a quantidade de dias esperada" +
 						" do empréstimo: ")));
 		
@@ -462,7 +462,7 @@ public class LendMeTextInterface {
 	private static void evaluateItemRequest() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de requisições de empréstimo",
-				lendMeFacade.getReceivedItemRequests(currentUserSessionId)));
+				lendMeAdapter.getReceivedItemRequests(currentUserSessionId)));
 		
 		String requestId = returnCorrectString("\n \tInforme o id da requisição de" +
 				" empréstimo: ");
@@ -470,12 +470,12 @@ public class LendMeTextInterface {
 		String acceptOrDenyStr = returnCorrectString("\n \t Informe sua avaliação (aprovar,rejeitar): ");
 		
 		if (acceptOrDenyStr.toLowerCase().equals("aprovar")) {
-			lendMeFacade.approveLending(currentUserSessionId,requestId);
+			lendMeAdapter.approveLending(currentUserSessionId,requestId);
 			System.out.println("\n\tRequisição de empréstimo com id " + requestId
 					+ " aprovada!");
 		}
 		else if (acceptOrDenyStr.toLowerCase().equals("rejeitar")) {
-			lendMeFacade.denyLending(currentUserSessionId, requestId);
+			lendMeAdapter.denyLending(currentUserSessionId, requestId);
 			System.out.println("\n\tRequisição de empréstimo com id " + requestId
 					+ " rejeitada!");
 		}
@@ -487,7 +487,7 @@ public class LendMeTextInterface {
 	}
 	
 	private static void sendOffTopicMessage() throws Exception {
-		lendMeFacade.sendMessage(currentUserSessionId, 
+		lendMeAdapter.sendMessage(currentUserSessionId, 
 				returnCorrectString("\n\tInforme o assunto da mensagem: "), 
 					returnCorrectString("\n\tInforme o conteúdo da mensagem: "),
 						returnCorrectString("\n\tInforme o login do destinatário: "));
@@ -496,7 +496,7 @@ public class LendMeTextInterface {
 	}
 	
 	private static void sendNegotiationMessage() throws Exception {
-		lendMeFacade.sendMessage(currentUserSessionId, 
+		lendMeAdapter.sendMessage(currentUserSessionId, 
 				returnCorrectString("\n\tInforme o assunto da mensagem: "), 
 					returnCorrectString("\n\tInforme o conteúdo da mensagem: "),
 						returnCorrectString("\n\tInforme o login do destinatário: "),
@@ -507,26 +507,26 @@ public class LendMeTextInterface {
 	
 	private static void readTopics() throws Exception {
 		System.out.println(listObjectsInArray("Tópicos" +
-				"", lendMeFacade.getTopicsWithIds(
+				"", lendMeAdapter.getTopicsWithIds(
 				currentUserSessionId, returnCorrectString("\n\tInforme o" +
 						" tipo do tópico (offtopic,negociacao,todos): "))));
 	}
 	
 	private static void readMessages() throws Exception {
 		System.out.println(listObjectsInArray("Mensagens do Tópico Escolhido",
-			lendMeFacade.getTopicMessages(currentUserSessionId, 
+			lendMeAdapter.getTopicMessages(currentUserSessionId, 
 				returnCorrectString("\n\tInforme o id do tópico: "))));
 	}
 	
 	private static void askForItemReturn() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de requisições de empréstimo",
-				lendMeFacade.getLendingRecordsWithIds(currentUserSessionId, "emprestador")));
+				lendMeAdapter.getLendingRecordsWithIds(currentUserSessionId, "emprestador")));
 		
 		String requestId = returnCorrectString("\n \tInforme o id da requisição de" +
 				" empréstimo: ");
 		
-		lendMeFacade.askForReturnOfItem(currentUserSessionId, requestId);
+		lendMeAdapter.askForReturnOfItem(currentUserSessionId, requestId);
 		
 		System.out.println("\n\tFoi feito o pedido da devolução do item" +
 				" da requisição de id: " + requestId);
@@ -534,9 +534,9 @@ public class LendMeTextInterface {
 	
 	private static void deleteItem() throws Exception {
 		System.out.println(listObjectsInArray("Objetos existentes", 
-				lendMeFacade.getItemsWithIds(currentUserSessionId)));
+				lendMeAdapter.getItemsWithIds(currentUserSessionId)));
 		
-		lendMeFacade.deleteItem(currentUserSessionId, returnCorrectString(
+		lendMeAdapter.deleteItem(currentUserSessionId, returnCorrectString(
 				"\n \t Informe o id do item: "));
 		
 		System.out.println("\n\t Item apagado com sucesso!");
@@ -544,9 +544,9 @@ public class LendMeTextInterface {
 	
 	private static void breakFriendship() throws Exception {
 		System.out.println(listObjectsInArray("Amigos atuais", 
-				lendMeFacade.getFriends(currentUserSessionId)));
+				lendMeAdapter.getFriends(currentUserSessionId)));
 		
-		lendMeFacade.breakFriendship(currentUserSessionId, returnCorrectString(
+		lendMeAdapter.breakFriendship(currentUserSessionId, returnCorrectString(
 				"\n \tInforme o login do usuário: "));
 		
 		System.out.println("\n\t Amizade desfeita!");
@@ -555,7 +555,7 @@ public class LendMeTextInterface {
 	private static void searchItem() throws Exception {
 		
 		System.out.println(listObjectsInArray("Itens encontrados",
-			lendMeFacade.searchForItemsWithIds(currentUserSessionId,
+			lendMeAdapter.searchForItemsWithIds(currentUserSessionId,
 			returnCorrectString("\n \tInforme a chave a ser pesquisada: "), 
 				returnCorrectString("\n \tInforme o atributo (descricao, nome, " +
 					"id, categoria): "), returnCorrectString("\n \tInforme a" +
@@ -566,11 +566,11 @@ public class LendMeTextInterface {
 	
 	private static void returnItem() throws Exception {
 		System.out.println(listObjectsInArray("Lista de requisições de empréstimo",
-				lendMeFacade.getLendingRecordsWithIds(currentUserSessionId, "beneficiado")));
+				lendMeAdapter.getLendingRecordsWithIds(currentUserSessionId, "beneficiado")));
 		
 		String requestId = returnCorrectString("\n \tInforme o id da requisição de empréstimo: ");
 		
-		lendMeFacade.returnItem(currentUserSessionId, requestId);
+		lendMeAdapter.returnItem(currentUserSessionId, requestId);
 		
 		System.out.println("\n\t Devolução do item da requisição de id " +
 			requestId + " efetuada." + "\n\t Esperando aprovação do emprestador.");
@@ -579,20 +579,20 @@ public class LendMeTextInterface {
 	private static void evaluateItemReturn() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de requisições de empréstimo",
-				lendMeFacade.getLendingRecordsWithIds(currentUserSessionId, "emprestador")));
+				lendMeAdapter.getLendingRecordsWithIds(currentUserSessionId, "emprestador")));
 		
 		String requestId = returnCorrectString("\n\t Informe o id da requisição de empréstimo: ");
 		
 		String acceptOrDenyStr = returnCorrectString("\n \t Informe sua avaliação (confirmar,negar): ");
 		
 		if (acceptOrDenyStr.toLowerCase().equals("confirmar")) {
-			lendMeFacade.confirmLendingTermination(currentUserSessionId, requestId);
+			lendMeAdapter.confirmLendingTermination(currentUserSessionId, requestId);
 			
 			System.out.println("\n\t Devolução do item da requisição de empréstimo de id " + 
 					requestId + "\n\t confirmada!");
 		}
 		else if (acceptOrDenyStr.toLowerCase().equals("negar")) {
-			lendMeFacade.denyLendingTermination(currentUserSessionId, requestId);
+			lendMeAdapter.denyLendingTermination(currentUserSessionId, requestId);
 			
 			System.out.println("\n\t Devolução do item da requisição de empréstimo de id " + 
 					requestId + "\n\t negada!");		}
@@ -605,32 +605,32 @@ public class LendMeTextInterface {
 	private static void registerInterestInItem() throws Exception {
 		
 		String itemId = returnCorrectString("\n \tInforme o id do item: ");
-		lendMeFacade.registerInterestForItem(currentUserSessionId, 
+		lendMeAdapter.registerInterestForItem(currentUserSessionId, 
 				itemId);
 		
 		System.out.println("\n\t Interesse registrado no item de id " + itemId);
 	}
 	
 	private static void viewUsersRanking() throws Exception {
-		System.out.println("\n \tRanking:\n\t " + lendMeFacade.getRanking(
+		System.out.println("\n \tRanking:\n\t " + lendMeAdapter.getRanking(
 			currentUserSessionId, returnCorrectString("\n \tInforme" +
 				" a categoria do ranking (global/amigos):")));
 	}
 	
 	private static void viewMyActivityHistory() throws Exception {
 		System.out.println(listObjectsInArray("Meu Histórico de Atividades", 
-				lendMeFacade.getActivityHistory(currentUserSessionId)));
+				lendMeAdapter.getActivityHistory(currentUserSessionId)));
 	}
 	
 	private static void viewJointActivityHistory() throws Exception {
 		System.out.println(listObjectsInArray("Histórico Conjunto de Atividades", 
-				lendMeFacade.getJointActivityHistory(currentUserSessionId)));
+				lendMeAdapter.getJointActivityHistory(currentUserSessionId)));
 	}
 	
 	private static String logIn() throws Exception{
 		
 		String login = returnCorrectString("\n \t Informe o login : ");
-		currentUserSessionId = lendMeFacade.openSession(login);
+		currentUserSessionId = lendMeAdapter.openSession(login);
 		System.out.println("\n \t Login realizado com sucesso!");
 		return currentUserSessionId;
 	}

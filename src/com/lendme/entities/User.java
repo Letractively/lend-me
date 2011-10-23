@@ -24,9 +24,6 @@ public class User implements InterestedOn<Item>{
 	private String name;
 	private Address address;
 	private FriendshipManager friendshipManager;
-//	private Set<User> myFriends = new HashSet<User>();
-//	private Set<User> receivedFriendshipRequests = new HashSet<User>();
-//	private Set<User> sentFriendshipRequests = new HashSet<User>();
 	private Map<Item,User> myItems = new HashMap<Item,User>();
 	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
 	private Set<Lending> sentItemRequests = new HashSet<Lending>();

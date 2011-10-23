@@ -1351,10 +1351,8 @@ public class User implements InterestedOn<Item>{
 
 		Item item = target;
 		sendMessage(
-				"O item " + item.getName() + " do usuário "
-				+ this.getName() + " está disponível",
-				"Corra pra pedir emprestado, pois "
-				+ (interestedOnMyItems.get(item).size()-1)
+				"O item " + item.getName() + " do usuário "	+ this.getName() + " está disponível",
+				"Corra pra pedir emprestado, pois "	+ (interestedOnMyItems.get(item).size()-1)
 				+ " pessoas além de você pediram por ele!", (User)interested);
 	}
 	

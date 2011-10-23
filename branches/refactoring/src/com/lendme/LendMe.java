@@ -1,7 +1,6 @@
 package com.lendme;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,8 +20,6 @@ import com.lendme.entities.Topic;
 import com.lendme.entities.User;
 import com.lendme.utils.ComparatorOfAddressStrategy;
 import com.lendme.utils.ComparatorOfDateStrategy;
-import com.lendme.utils.ComparatorOfItemsStrategy;
-import com.lendme.utils.ComparatorOfRankingStrategy;
 
 /**
  * @author THE LENDERS
@@ -296,8 +293,8 @@ public class LendMe {
 	 * @throws Exception if user doesn't exists
 	 */
 	public  Set<Item> getItems(String sessionId) throws Exception {
-		Profile viewerProfile = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.getItems(viewerProfile);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.getItems(viewer);
 	}
 
 	/**
@@ -310,10 +307,9 @@ public class LendMe {
 	 * @throws Exception if users involved doesn't exists or solicitor user has no permission to access solicited items
 	 */
 	public  Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
-		Profile viewer = getUserProfile(observerSessionId);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(observerSessionId));
 		viewer = viewer.viewOtherProfile(repository.getUserByLogin(ownerLogin));
-		Set<Item> items = viewer.getOwnerItems();
-		return items;
+		return itemModule.getItems(viewer);
 	}
 	
 	/**
@@ -462,8 +458,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  Collection<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.getLendingRecords(kind);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.getLendingRecords(viewer, kind);
 	}
 	
 	/**
@@ -477,9 +473,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
-		Profile viewer = getUserProfile(sessionId);
-		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
-		return viewer.requestItem(itemId, requiredDays);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.requestItem(viewer, itemId, requiredDays, repository.getUsers());
 	}
 	
 	/**
@@ -492,8 +487,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  String approveLending(String sessionId, String requestId)  throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.approveLending(requestId);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.approveLending(viewer, requestId);
 	}
 
 	/**
@@ -506,8 +501,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  String denyLending(String sessionId, String requestId)  throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.denyLoan(requestId);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.denyLending(viewer, requestId);
 	}
 	
 	/**
@@ -520,8 +515,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  String returnItem(String sessionId, String requestId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.returnItem(requestId);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.returnItem(viewer, requestId);
 	}
 	
 	/**
@@ -535,8 +530,8 @@ public class LendMe {
 	 */
 	public  String confirmLendingTermination(String sessionId,
 			String lendingId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.confirmLendingTermination(lendingId);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.confirmLendingTermination(viewer, lendingId);
 	}
 
 	/**
@@ -550,8 +545,8 @@ public class LendMe {
 	 */
 	public  String denyLendingTermination(String sessionId,
 			String lendingId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.denyLendingTermination(lendingId);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.denyLendingTermination(viewer, lendingId);
 	}
 	
 	/**
@@ -565,8 +560,8 @@ public class LendMe {
 	 */
 	public  String askForReturnOfItem(String sessionId,
 			String lendingId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.askForReturnOfItem(lendingId, getSystemDate());
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.askForReturnOfItem(viewer, lendingId, getSystemDate());
 	}
 	
 	/**
@@ -577,17 +572,7 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public User getItemOwner(String itemId) throws Exception{
-		if ( itemId == null || itemId.trim().isEmpty() ){
-			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
-		}
-		for ( User user : repository.getUsers() ){
-			for ( Item item : user.getAllItems() ){
-				if ( item.getID().equals(itemId) ){
-					return user;
-				}
-			}
-		}
-		throw new Exception("Item inexistente");//"Inexistent item");
+		return itemModule.getItemOwner(itemId, repository.getUsers());
 	}
 	
 	/**
@@ -597,13 +582,7 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  Lending getLendingByLendingId(String lendingId) throws Exception{
-		for ( User user : repository.getUsers() ){
-			Lending record = user.getLendingByLendingId(lendingId);
-			if ( record != null ){
-				return record;
-			}
-		}
-		throw new Exception("Empréstimo inexistente");		
+		return itemModule.getLendingByLendingId(lendingId, repository.getUsers());		
 	}
 	
 	/**
@@ -613,13 +592,7 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  Lending getLendingByRequestId(String requestId) throws Exception{
-		for ( User user : repository.getUsers() ){
-			Lending record = user.getLendingByRequestId(requestId);
-			if ( record != null ){
-				return record;
-			}
-		}
-		throw new Exception("Requisição de empréstimo inexistente");
+		return itemModule.getLendingByRequestId(requestId, repository.getUsers());
 	}
 
 	/**
@@ -631,8 +604,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  void deleteItem(String sessionId, String itemId) throws Exception {
-		User userOwnerSession = repository.getSessionByID(sessionId).getOwner();
-		userOwnerSession.deleteMyItem(itemId);
+		User ownerUser = repository.getSessionByID(sessionId).getOwner();
+		itemModule.deleteItem(ownerUser, itemId);
 	}
 
 	/**
@@ -649,120 +622,8 @@ public class LendMe {
 	 */
 	public  List<Item> searchForItem(String sessionId, String key, String attribute,
 			String disposal ,String criteria) throws Exception{
-		
-		List<Item> results = new ArrayList<Item>();
-		Session session = repository.getSessionByID(sessionId);
-		User userOwnerSession = session.getOwner();
-		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
-		CriterionForSearch criterionAux = CriterionForSearch.DATACRIACAO;
-		
-		if(key == null || key.trim().isEmpty()){
-			throw new Exception("Chave inválida");//"invalid key"
-		}
-		if(attribute == null || attribute.trim().isEmpty()){
-			throw new Exception("Atributo inválido");
-		}
-		if(!Arrays.toString(AtributeForSearch.values()).toLowerCase().contains(attribute.toLowerCase())){
-			throw new Exception("Atributo inexistente");
-		}
-		if(disposal == null || disposal.trim().isEmpty()){
-			throw new Exception("Tipo inválido de ordenação");
-		}
-		if(!Arrays.toString(DispositionForSearch.values()).toLowerCase().contains(disposal.toLowerCase())){
-			throw new Exception("Tipo de ordenação inexistente");
-		}
-		if(criteria == null || criteria.trim().isEmpty()){
-			throw new Exception("Critério inválido de ordenação");
-		}
-		if(!Arrays.toString(CriterionForSearch.values()).toLowerCase().contains(criteria.toLowerCase())){
-			throw new Exception("Critério de ordenação inexistente");
-		}
-		
-		for(AtributeForSearch actual : AtributeForSearch.values()){
-			if(actual.toString().toLowerCase().contains(attribute.toLowerCase()))
-				atributeAux = actual;
-		}
-		
-		for(CriterionForSearch actual : CriterionForSearch.values()){
-			if(actual.toString().toLowerCase().contains(criteria.toLowerCase()))
-				criterionAux = actual;
-		}
-
-		
-		switch(atributeAux){
-	
-		case DESCRICAO:{
-			for(User actualFriend : userOwnerSession.getFriends()){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getDescription().toUpperCase().contains(key.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
-			 break;
-		}
-		
-		case NOME:{
-			for(User actualFriend : userOwnerSession.getFriends()){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getName().toUpperCase().contains(key.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
-			 break;
-		}
-		
-		case ID: {
-			for(User actualFriend : userOwnerSession.getFriends()){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getID().toUpperCase().contains(key.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
-			 break;
-		}
-		
-		case CATEGORIA: {
-			Set<User> searchScope = userOwnerSession.getFriends();
-			searchScope.add(userOwnerSession);
-			for(User actualFriend : searchScope){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getCategory().toUpperCase().contains(key.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
-			 break;
-		}
-		
-		default:	throw new Exception("Atributo  inválido");
-	}
-
-		switch (criterionAux) {
-
-		case DATACRIACAO: {
-			Collections.sort(results);
-			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposal.toLowerCase())) {
-				return results;
-
-			} else {
-				Collections.reverse(results);
-				return results;
-
-			}
-		}
-
-		case REPUTACAO: {
-			Collections.sort(results, new ComparatorOfItemsStrategy());
-			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposal.toLowerCase())) {
-				return results;
-			} else {
-				Collections.reverse(results);
-				return results;
-			}
-		}
-
-		default:
-			return results;
-		}
+		User ownerUser = repository.getSessionByID(sessionId).getOwner();
+		return itemModule.searchForItem(ownerUser, key, attribute, disposal, criteria);
 	}
 	
 	/**
@@ -774,9 +635,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  void registerInterestForItem(String sessionId, String itemId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
-		viewer.registerInterestForItem(itemId);
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		itemModule.registerInterestForItem(viewer, itemId, repository.getUsers());
 	}
 
 	/**
@@ -800,45 +660,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  String getRanking(String sessionId, String category) throws Exception{
-		String ranking = "";
-		
-		if(sessionId == null || sessionId.trim().equals("")){
-			throw new Exception("Sessão inválida");
-		}
-				
-		if(repository.getSessionByID(sessionId) == null){
-			throw new Exception("Sessão inexistente");
-		}
-		
-		if(category == null || category.trim().equals("")){
-			throw new Exception("Categoria inválida");
-		}
-		
-		if(!category.equals("global") && !category.equals("amigos")){
-			throw new Exception("Categoria inexistente");
-		}
-		
-		if(category.equals("amigos")){
-			User user = repository.getSessionByID(sessionId).getOwner();
-			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size() + 1]);
-			friendList[user.getFriends().size()] = user;
-			
-			Arrays.sort(friendList, new ComparatorOfRankingStrategy());
-			for(User current : friendList){
-				ranking = current.getLogin() + "; " + ranking;
-			}
-		}
-		if(category.equals("global")){
-			User[] usersList = repository.getUsers().toArray(new User[repository.getUsers().size()]);
-			
-			Arrays.sort(usersList, new ComparatorOfRankingStrategy());
-			for(User current : usersList){
-				ranking = current.getLogin() + "; " + ranking;
-			}
-		}
-		ranking = ranking + "-";
-	
-		return ranking.replace("; -", "");
+		Session actualSession = repository.getSessionByID(sessionId);
+		return itemModule.getRanking(category, actualSession, repository.getUsers());
 	}
 	
 	/**
@@ -865,8 +688,8 @@ public class LendMe {
 	 */
 	public  Set<Lending> getReceivedItemRequests(String sessionId)
 			throws Exception {
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.getReceivedItemRequests();
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.getReceivedItemRequests(viewer);
 	}
 	
 	public  List<ActivityRegistry> getActivityHistory(String solicitorSessionId) throws Exception {
@@ -934,42 +757,5 @@ public class LendMe {
 			String requestPublicationId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		viewer.republishItemRequest(getPetition(requestPublicationId));
-	}
-	
-	public User getUserBySessionId(String sessionId) {
-		return repository.getUserBySessionId(sessionId);
-	}
-	
-	/**
-	 * Searches for sessions with given login
-	 * @param login the login
-	 * @return a set of sessions found by search
-	 */
-	public Set<Session> searchSessionsByLogin(String login) {
-		return repository.searchSessionsByLogin(login);
-	}
-	
-	/**
-	 * Returns the session that have the specified id
-	 * @param id the session id
-	 * @return the session
-	 * @throws Exception if session doesn't exists
-	 */
-	public  Session getSessionByID(String id) throws Exception{
-		return repository.getSessionByID(id);
-	}
-	
-	/**
-	 * Returns user with given login.
-	 * @param login the login
-	 * @return the user
-	 * @throws Exception if login is invalid or user with given login doesn't exists
-	 */
-	public User getUserByLogin(String login) throws Exception{
-		return repository.getUserByLogin(login);
-	}
-	
-	public boolean userExists(String login) throws Exception {
-		return repository.userExists(login);
 	}
 }

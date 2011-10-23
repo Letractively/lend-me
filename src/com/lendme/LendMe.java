@@ -35,6 +35,7 @@ public class LendMe {
 
 	private Calendar time;
 	private LendMeRepository repository;
+	private LendMeUserModule userModule = new LendMeUserModule();
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
@@ -253,11 +254,7 @@ public class LendMe {
 	 */
 	public  Profile getUserProfile(String sessionId) throws Exception {
 		Session session = repository.getSessionByID(sessionId);
-		User user = session.getOwner();
-		if (user == null) {
-			throw new Exception("Sessão se refere a usuário desconhecido");// "Session belongs to unknown user");
-		}
-		return Profile.getUserProfile(session, user);
+		return userModule.getUserProfile(session);
 	}
 
 	/**
@@ -269,9 +266,7 @@ public class LendMe {
 	 * @throws Exception if user doesn't exists
 	 */
 	public  Set<User> getFriends(String sessionId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		Set<User> users = viewer.getOwnerFriends();
-		return users;
+		return userModule.getFriends(getUserProfile(sessionId));
 	}
 
 	/**
@@ -284,10 +279,7 @@ public class LendMe {
 	 * @throws Exception if one of the users involved doesn't exists
 	 */
 	public  Set<User> getFriends(String solicitorSessionId, String solicitedLogin) throws Exception{
-		Profile solicitorViewer = getUserProfile(solicitorSessionId);
-		solicitorViewer = solicitorViewer.viewOtherProfile(repository.getUserByLogin(solicitedLogin));
-		Set<User> users = solicitorViewer.getOwnerFriends();
-		return users;
+		return userModule.getFriends(getUserProfile(solicitorSessionId), repository.getUserByLogin(solicitedLogin));
 	}
 
 	/**
@@ -1012,40 +1004,4 @@ public class LendMe {
 		viewer.republishItemRequest(getPetition(requestPublicationId));
 	}
 	
-	public User getUserBySessionId(String sessionId) {
-		return repository.getUserBySessionId(sessionId);
-	}
-	
-	/**
-	 * Searches for sessions with given login
-	 * @param login the login
-	 * @return a set of sessions found by search
-	 */
-	public Set<Session> searchSessionsByLogin(String login) {
-		return repository.searchSessionsByLogin(login);
-	}
-	
-	/**
-	 * Returns the session that have the specified id
-	 * @param id the session id
-	 * @return the session
-	 * @throws Exception if session doesn't exists
-	 */
-	public  Session getSessionByID(String id) throws Exception{
-		return repository.getSessionByID(id);
-	}
-	
-	/**
-	 * Returns user with given login.
-	 * @param login the login
-	 * @return the user
-	 * @throws Exception if login is invalid or user with given login doesn't exists
-	 */
-	public User getUserByLogin(String login) throws Exception{
-		return repository.getUserByLogin(login);
-	}
-	
-	public boolean userExists(String login) throws Exception {
-		return repository.userExists(login);
-	}
 }

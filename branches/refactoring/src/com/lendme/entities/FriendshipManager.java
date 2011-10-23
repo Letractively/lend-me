@@ -1,6 +1,5 @@
 package com.lendme.entities;
 
-import java.util.List;
 import java.util.Set;
 
 public class FriendshipManager extends RequestManager<User> {
@@ -45,26 +44,7 @@ public class FriendshipManager extends RequestManager<User> {
 		if ( !receivedRequests.contains(request) ){
 			throw new Exception("Requisição de amizade inexistente");//Inexistent friendship request");
 		}
-		else{
-
-			ActivityRegistry friendshipAccepted = new ActivityRegistry(
-					ActivityRegistry.ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA
-					, String.format(EntitiesConstants.FRIENDSHIP_ACCEPTED_ACTIVITY,
-					me.getName(), request.getName()));
-			List<ActivityRegistry> activities = me.getMyActivityHistory();
-			activities.add(friendshipAccepted);
-			me.setMyActivityHistory(activities);
-
-			request.getFriendshipManager().acceptingActionMirror(me);
-
-			friendshipAccepted = new ActivityRegistry(
-					ActivityRegistry.ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA
-					, String.format(EntitiesConstants.FRIENDSHIP_ACCEPTED_ACTIVITY,
-					request.getName(), me.getName()));
-			activities = request.getMyActivityHistory();
-			activities.add(friendshipAccepted);			
-			request.setMyActivityHistory(activities);
-		}
+		request.getFriendshipManager().acceptingActionMirror(me);
 	}
 
 	@Override

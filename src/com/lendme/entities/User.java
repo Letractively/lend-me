@@ -1,8 +1,6 @@
 package com.lendme.entities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.lendme.entities.ActivityRegistry.ActivityKind;
 import com.lendme.entities.Lending.LendingStatus;
 
 /**
@@ -34,10 +31,9 @@ public class User implements InterestedOn<Item>{
 	private Set<Lending> borrowedRegistryHistory = new HashSet<Lending>();
 	private Set<Lending> loanDenialRegistryHistory = new HashSet<Lending>();
 	private Set<Lending> sentItemDevolutionRequests = new HashSet<Lending>();
-	private Set<Topic> negotiationTopics = new HashSet<Topic>();
-	private Set<Topic> offTopicTopics = new HashSet<Topic>();
-	private Set<ActivityRegistry> myActivityHistory = new HashSet<ActivityRegistry>();
 	private Map<Item, ArrayList<InterestedOn<Item>>> interestedOnMyItems = new HashMap<Item, ArrayList<InterestedOn<Item>>>();
+	
+	private CommunicationManager communicationManager;
 	private EventDate creationDate;
 	private int score;
 	
@@ -67,6 +63,7 @@ public class User implements InterestedOn<Item>{
 		this.name = name;
 		this.address = new Address(address);
 		this.friendshipManager = new FriendshipManager(this);
+		this.communicationManager = new CommunicationManager(this);
 		this.creationDate = new EventDate(String.format(EntitiesConstants.USER_REGISTERED_MESSAGE, this.login, this.name));
 		this.score = 0;
 		
@@ -173,8 +170,7 @@ public class User implements InterestedOn<Item>{
 		
 		Item myNewItem = new Item(itemName, description, category);
 		this.myItems.put(myNewItem, this);
-		myActivityHistory.add(new ActivityRegistry(ActivityKind.CADASTRO_DE_ITEM,
-					String.format(EntitiesConstants.ITEM_REGISTERED_ACTIVITY, getName(), itemName)));
+		communicationManager.publishItemRegisteredActivity(itemName);
 		return myNewItem.getID();
 	}
 
@@ -195,9 +191,15 @@ public class User implements InterestedOn<Item>{
 	 */
 	public void acceptFriendshipRequest(User otherUser) throws Exception{
 		friendshipManager.acceptRequest(otherUser);
+		communicationManager.publishFriendshipAcceptedActivity(otherUser.getName());
+		otherUser.getCommunicationManager().publishFriendshipAcceptedActivity(this.getName());
 	}
 
 	
+	public CommunicationManager getCommunicationManager() {
+		return communicationManager;
+	}
+
 	/**
 	 * User declines friendship request from another user.
 	 * @param otherUser
@@ -276,9 +278,8 @@ public class User implements InterestedOn<Item>{
 		}
 		for ( Lending record : receivedItemRequests ){
 			if ( record.getID().equals(requestId) ){
-				myActivityHistory.add(new ActivityRegistry(ActivityKind.EMPRESTIMO_EM_ANDAMENTO,
-						String.format(EntitiesConstants.LENDING_IN_COURSE_ACTIVITY, getName(),
-						record.getItem().getName(), record.getBorrower().getName())));
+				communicationManager.publishOngoingLendingActivity(record.getItem().getName(),
+						record.getBorrower().getName());
 				
 				return lendItem(record.getItem(), record.getBorrower(), record.getRequiredDays());
 			}
@@ -481,10 +482,7 @@ public class User implements InterestedOn<Item>{
 				point();
 				for ( Lending recordx: lentRegistryHistory ){
 					if ( recordx.getID().equals(lendingId) ){
-						myActivityHistory.add(new ActivityRegistry(ActivityKind.TERMINO_DE_EMPRESTIMO,
-								String.format(EntitiesConstants.LENDING_END_APPROVAL_ACTIVITY, getName(), 
-								record.getItem().getName())));
-						
+						communicationManager.publishLendingFinishApprovalActivity(record.getItem().getName());						
 						return record.getID();
 					}
 				}
@@ -615,12 +613,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public String sendMessage(String subject, String message, User receiver) 
 			throws Exception {
-		
-		storeMessage(subject, message, this.getLogin(), receiver.getLogin(),
-				true, "");
-		
-		return receiver.storeMessage(subject, message, this.getLogin(),
-				receiver.getLogin(), true, "");
+		return communicationManager.sendMessage(subject, message, receiver);
 	}
 	
 	/**
@@ -634,133 +627,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public String sendMessage(String subject, String message, User receiver,
 			String lendingId) throws Exception {
-		
-		if ( lendingId == null || lendingId.trim().isEmpty()) {
-			throw new Exception("Identificador da requisição de empréstimo é inválido");// "Invalid lending identifier"); 
-		}
-		
-		if (getLendingByLendingId(lendingId) == null) {
-			throw new Exception("Requisição de empréstimo inexistente");
-				// "Inexistent lending");
-		}
-		
-		storeMessage(subject, message, this.getLogin(), receiver.getLogin(),
-				false, lendingId);
-		
-		//TODO Treat how is it going to deal with the Lending id
-		return receiver.storeMessage(subject, message, this.getLogin(),
-				receiver.getLogin(), false, lendingId);
-	}
-
-	private String storeMessage(String subject, String message, String senderLogin,
-			String receiverLogin, boolean isOffTopic, String lendingId) {
-		
-		if (isOffTopic) {
-			return addMessageToTopic(offTopicTopics, subject, message, senderLogin,
-					receiverLogin, isOffTopic, lendingId);
-		}
-		
-		else {
-			return addMessageToTopic(negotiationTopics, subject, message, senderLogin,
-					receiverLogin, isOffTopic, lendingId);
-		}
-	}
-
-	private String addMessageToTopic(Set<Topic> topicSet, String subject, 
-			String message, String senderLogin, String receiverLogin,
-			boolean isOffTopic,	String lendingId) {
-		
-		Topic foundTopic = getTopicBySubject(topicSet, subject); 
-		
-		if ( foundTopic != null) {
-			foundTopic.addMessage(subject, message, senderLogin, receiverLogin, 
-					isOffTopic, lendingId);
-		}
-		else {
-			Topic newTopic = new Topic(subject);
-			newTopic.addMessage(subject, message, senderLogin, receiverLogin, 
-					isOffTopic, lendingId);
-			topicSet.add(newTopic);
-			foundTopic = newTopic;
-		}		
-		return foundTopic.getID();
-	}
-	
-	/**
-	 * Returns user messages by topic id.
-	 * @param topicId
-	 * @return
-	 * @throws Exception
-	 */
-	public List<Message> getMessagesByTopicId(String topicId) throws Exception {
-		Topic foundTopic = getTopicById(negotiationTopics, topicId); 
-		
-		if ( foundTopic == null) {
-			foundTopic = getTopicById(offTopicTopics, topicId);
-			
-			if ( foundTopic == null) {
-				return null;
-			}
-		}
-		Message[] msgArray = foundTopic.getMessages().toArray(
-				new Message[foundTopic.getMessages().size()]);
-		Arrays.sort(msgArray);
-		return Arrays.asList(msgArray);
-		
-	}
-		
-	/**
-	 * Returns messages topic by its id.
-	 * @param topicSet
-	 * @param topicId
-	 * @return
-	 * @throws Exception
-	 */
-	private Topic getTopicById(Set<Topic> topicSet, String topicId) throws Exception{
-		if ( topicId == null || topicId.trim().isEmpty() ){
-			throw new Exception("Identificador do tópico é inválido");
-		}
-		for (Topic topic : topicSet) {
-			if (topic.getID().equals(topicId)) {
-				return topic;
-			}
-		}
-		
-		return null;
-	}
-
-	/**
-	 * Returns messages by topic subject.
-	 * @param topicSubject
-	 * @return
-	 * @throws Exception
-	 */
-	public Set<Message> getMessagesByTopicSubject(String topicSubject) throws Exception {
-		Topic foundTopic = getTopicBySubject(negotiationTopics, topicSubject); 
-		
-		if ( foundTopic != null) {
-			return foundTopic.getMessages();
-		}
-		
-		else {
-			foundTopic = getTopicBySubject(offTopicTopics, topicSubject);
-			
-			if ( foundTopic != null) {
-				return foundTopic.getMessages();
-			}
-		}
-		
-		throw new Exception("Tópico inexistente");
-		//"Could not find any topic with the given subject.");
-	}
-	
-	private Topic getTopicBySubject(Set<Topic> topicSet, String subject) {
-		for (Topic topic : topicSet) {
-			if (topic.getSubject().equals(subject)) {
-				return topic;
-			}
-		}
-		return null;
+		return communicationManager.sendMessage(subject, message, receiver, lendingId);
 	}
 
 	/**
@@ -890,52 +757,6 @@ public class User implements InterestedOn<Item>{
 			}
 		}
 		return canceledItems;
-		
-	}
-	
-	/**
-	 * Returns topics by type.
-	 * @param topicType
-	 * @return
-	 * @throws Exception
-	 */
-	public List<Topic> getTopics(String topicType) throws Exception {
-		
-		if (topicType == null || topicType.trim().isEmpty()) {
-			throw new Exception("Tipo inválido");//"Invalid type");
-		}
-		
-		if (topicType.equals("negociacao")) {
-			topicType = EntitiesConstants.NEGOTIATION_TOPIC;
-		} else if (topicType.equals("offtopic")) {
-			topicType = EntitiesConstants.OFF_TOPIC;
-		} else if (topicType.equals("todos")){
-			topicType = EntitiesConstants.ALL_TOPICS;
-		} else {
-			throw new Exception("Tipo inexistente");//"Inexistent type");
-		}
-		
-		if (topicType.equals(EntitiesConstants.OFF_TOPIC)) {
-			
-			List<Topic> offTopicsList = new ArrayList<Topic>(offTopicTopics);
-			Collections.sort(offTopicsList);
-			return offTopicsList;
-		}
-		
-		else if (topicType.equals(EntitiesConstants.NEGOTIATION_TOPIC)) {
-			
-			List<Topic> negotiationTopicsList = new ArrayList<Topic>(negotiationTopics);
-			Collections.sort(negotiationTopicsList);
-			return negotiationTopicsList;
-		}
-		else {
-
-			List<Topic> allTopicsList = new ArrayList<Topic>(offTopicTopics);
-			allTopicsList.addAll(negotiationTopics);
-			Collections.sort(allTopicsList);
-			return allTopicsList;
-		}
-		
 	}
 
 	/**
@@ -950,11 +771,7 @@ public class User implements InterestedOn<Item>{
 			if ( owner.hasItem(item) ) {
 				if ( owner.hasLentThis(item) ) {
 					if ( !(owner.isInterestedOnMyItem(item, this)) ){
-						myActivityHistory.add(new ActivityRegistry(ActivityKind.
-							REGISTRO_DE_INTERESSE_EM_ITEM, String.format(
-							EntitiesConstants.REGISTER_INTEREST_IN_ITEM_ACTIVITY,
-							this.getName(), item.getName(), owner.getName())));
-						
+						communicationManager.publishInterestOnItemActivity(item.getName(), owner.getName());
 						owner.markAsInterested(item, this);
 						return;
 					}
@@ -1238,16 +1055,6 @@ public class User implements InterestedOn<Item>{
 		return receivedItemRequests;
 	}
 	
-	public void setMyActivityHistory(List<ActivityRegistry> activities) {
-		this.myActivityHistory = new HashSet<ActivityRegistry>(activities);
-	}
-	
-	public List<ActivityRegistry> getMyActivityHistory() {
-		List<ActivityRegistry> actReg = new ArrayList<ActivityRegistry>(myActivityHistory);
-		Collections.sort(actReg);
-		return actReg;
-	}
-
 	public String publishItemRequest(String itemName, String itemDescription) throws Exception{
 		
 		for ( Item item : myItems.keySet() ){
@@ -1256,9 +1063,7 @@ public class User implements InterestedOn<Item>{
 			}
 		}
 		Lending itemRequest = new Lending(this, itemName, itemDescription);
-		myActivityHistory.add(new ActivityRegistry(ActivityKind.PEDIDO_DE_ITEM,
-				String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_ACTIVITY, getName(),
-						itemName)));
+		communicationManager.publishItemRequestActivity(itemName);
 		publishedItemRequests.add(itemRequest);
 		return itemRequest.getID();
 		
@@ -1287,9 +1092,7 @@ public class User implements InterestedOn<Item>{
 				throw new Exception("Não se pode publicar pedido de seu próprio item");
 			}
 		}
-		myActivityHistory.add(new ActivityRegistry(ActivityKind.REPUBLICACAO_DE_PEDIDO_DE_ITEM,
-				String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_ACTIVITY, petition.getBorrower().getName(),
-						petition.getDesiredItemName())));
+		communicationManager.republishItemRequestActivity(petition.getBorrower().getName(), petition.getDesiredItemName());
 	}
 
 	@Override
@@ -1305,6 +1108,18 @@ public class User implements InterestedOn<Item>{
 
 	public Set<Lending> getSentItemRequests() {
 		return sentItemRequests;
+	}
+
+	public List<ActivityRegistry> getMyActivityHistory() {
+		return communicationManager.getMyActivityHistory();
+	}
+
+	public List<Message> getMessagesByTopicId(String topicId) throws Exception{
+		return communicationManager.getMessagesByTopicId(topicId);
+	}
+
+	public List<Topic> getTopics(String topicType) throws Exception{
+		return communicationManager.getTopics(topicType);
 	}
 	
 }

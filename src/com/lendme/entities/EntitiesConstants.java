@@ -13,7 +13,7 @@ public class EntitiesConstants {
 	public static final String ITEM_REQUEST_PUBLISHED_MESSAGE = "User %s published request for item %s.";
 	public static final String ITEM_REGISTERED_ACTIVITY = "%s cadastrou %s";
 	public static final String FRIENDSHIP_ACCEPTED_ACTIVITY = "%s e %s são amigos agora";
-	public static final String LENDING_IN_COURSE_ACTIVITY = "%s emprestou %s a %s";
+	public static final String ONGOING_LENDING_ACTIVITY = "%s emprestou %s a %s";
 	public static final String REGISTER_INTEREST_IN_ITEM_ACTIVITY = "%s tem interesse pelo item %s de %s";
 	public static final String LENDING_END_APPROVAL_ACTIVITY = "%s confirmou o término do empréstimo do item %s";
 	public static final String ITEM_REQUEST_PUBLISHED_ACTIVITY = "%s precisa do item %s";

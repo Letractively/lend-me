@@ -36,6 +36,7 @@ public class LendMe {
 	private Calendar time;
 	private LendMeRepository repository;
 	private LendMeItemModule itemModule;
+	private LendMeCommunicationModule  communicationModule; 
 	private LendMeUserModule userModule;
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
@@ -47,6 +48,7 @@ public class LendMe {
 		repository = LendMeRepository.getInstance();
 		userModule = new LendMeUserModule();
 		itemModule = new LendMeItemModule();
+		communicationModule = new LendMeCommunicationModule();
 	}
 	
 	/**
@@ -402,35 +404,7 @@ public class LendMe {
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
 		
-		Profile solicitorViewer = null;
-		
-		try {
-			solicitorViewer = getUserProfile(senderSessionId);
-		
-			solicitorViewer = solicitorViewer.viewOtherProfile(
-					repository.getUserByLogin(receiverLogin));
-		
-			return solicitorViewer.sendMessage(subject, message, lendingId);
-			
-		} catch (Exception e) {
-			
-			if (e.getMessage().equals("Login inválido")) {
-				throw new Exception("Destinatário inválido");//"Invalid receiver");
-			}
-			
-			else if (e.getMessage().equals("Usuário inexistente")) {
-				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
-			}
-			
-			else if (e.getMessage().equals("Empréstimo inexistente")) {
-				throw new Exception("Requisição de empréstimo inexistente" );
-				//"Inexistent lending");
-			}
-			
-			throw e;
-		}
-		
-		
+			return communicationModule.sendMessage(senderSessionId, subject, message, receiverLogin, lendingId);
 	}
 	
 	/**
@@ -446,30 +420,7 @@ public class LendMe {
 	 */
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
-		
-		Profile solicitorViewer = null;
-		
-		try {
-			solicitorViewer = getUserProfile(senderSessionId);
-		
-			solicitorViewer = solicitorViewer.viewOtherProfile(
-					repository.getUserByLogin(receiverLogin));
-		
-		} catch (Exception e) {
-			
-			if (e.getMessage().equals("Login inválido")) {
-				throw new Exception("Destinatário inválido");//"Invalid receiver");
-			}
-			
-			else if (e.getMessage().equals("Usuário inexistente")) {
-				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
-			}
-			
-			throw e;
-		}
-		
-		return solicitorViewer.sendMessage(subject, message);
-		
+			return communicationModule.sendMessage(senderSessionId, subject, message, receiverLogin);
 	}
 	
 	/**
@@ -483,10 +434,7 @@ public class LendMe {
 	 */
 	public  List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
-		
-		Profile solicitorViewer = getUserProfile(sessionId);
-		return solicitorViewer.getTopics(topicType);
-		
+			return communicationModule.getTopics(sessionId, topicType);
 	}
 	
 	/**
@@ -500,9 +448,8 @@ public class LendMe {
 	 */
 	public  List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
-		
-		Profile solicitorViewer = getUserProfile(sessionId);
-		return solicitorViewer.getTopicMessages(topicId);
+
+			return communicationModule.getTopicMessages(sessionId, topicId);
 	}
 	
 	/**
@@ -840,14 +787,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  List<Message> getMessagesByTopicId(String topicId) throws Exception{
+			return communicationModule.getMessagesByTopicId(topicId);
 
-		for ( User user : repository.getUsers() ){
-			List<Message> messages = user.getMessagesByTopicId(topicId);
-			if ( messages != null ){
-				return messages;
-			}
-		}
-		throw new Exception("Tópico inexistente");//"Inexistent topic");
 	}
 	
 	/**

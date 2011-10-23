@@ -18,7 +18,7 @@ import com.lendme.entities.Lending.LendingStatus;
  * Represents a user of the System.
  */
 
-public class User{
+public class User implements InterestedOn<Item>{
 
 	private String login;
 	private String name;
@@ -39,7 +39,7 @@ public class User{
 	private Set<Topic> negotiationTopics = new HashSet<Topic>();
 	private Set<Topic> offTopicTopics = new HashSet<Topic>();
 	private Set<ActivityRegistry> myActivityHistory = new HashSet<ActivityRegistry>();
-	private Map<Item, ArrayList<User>> myInterestingItems = new HashMap<Item, ArrayList<User>>();
+	private Map<Item, ArrayList<InterestedOn<Item>>> interestedOnMyItems = new HashMap<Item, ArrayList<InterestedOn<Item>>>();
 	private EventDate creationDate;
 	private int score;
 	
@@ -550,18 +550,13 @@ public class User{
 		for ( Lending record : myLentItems ){
 			if ( record.getItem().equals(item) && record.isReturned() ) {
 				requestAttended = record;
-				if ( myInterestingItems.containsKey(item) ) {
-					Set<User> toBeWarned = new HashSet<User>();
-					for ( User interested : myInterestingItems.get(item) ) {
-						interested.sendMessage(
-								"O item " + item.getName() + " do usuário "
-								+ this.getName() + " está disponível",
-								"Corra pra pedir emprestado, pois "
-								+ (myInterestingItems.get(item).size()-1)
-								+ " pessoas além de você pediram por ele!", interested);
+				if ( interestedOnMyItems.containsKey(item) ) {
+					Set<InterestedOn<Item>> toBeWarned = new HashSet<InterestedOn<Item>>();
+					for ( InterestedOn<Item> interested : interestedOnMyItems.get(item) ) {
+						this.warnInterestedThatTargetIsAvailable(item, interested);
 						toBeWarned.add(interested);
 					}
-					myInterestingItems.get(item).removeAll(toBeWarned);
+					interestedOnMyItems.get(item).removeAll(toBeWarned);
 				}
 			}
 		}
@@ -1014,12 +1009,12 @@ public class User{
 		throw new Exception("Item inexistente");
 	}
 
-	private void markAsInterested(Item item, User interested) {
-		if(myInterestingItems.containsKey(item)){
-			myInterestingItems.get(item).add(interested);
+	private void markAsInterested(Item item, InterestedOn<Item> interested) {
+		if(interestedOnMyItems.containsKey(item)){
+			interestedOnMyItems.get(item).add(interested);
 		}else{
-			myInterestingItems.put(item, new ArrayList<User>());
-			myInterestingItems.get(item).add(interested);
+			interestedOnMyItems.put(item, new ArrayList<InterestedOn<Item>>());
+			interestedOnMyItems.get(item).add(interested);
 		}
 	}
 
@@ -1037,9 +1032,9 @@ public class User{
 		if ( interested == null ){
 			throw new Exception("Usuário inválido");
 		}
-		if ( myInterestingItems.containsKey(item) ){
-			if ( myInterestingItems.get(item) != null ){
-				return this.myInterestingItems.get(item).contains(interested);
+		if ( interestedOnMyItems.containsKey(item) ){
+			if ( interestedOnMyItems.get(item) != null ){
+				return this.interestedOnMyItems.get(item).contains(interested);
 			}
 			else{
 				return false;
@@ -1331,37 +1326,13 @@ public class User{
 			throw new Exception("Não se pode oferecer um item que já está emprestado");
 		}
 
-//FIXME	ALL OF THE COMMENTED CODE BELOW MAKES THE OFFER ACTION ESTABLISH A LENDING AUTOMATICALLY
-//		Lending record = new Lending(publishedRequest, this, item);
-//		record.setLendingDate();
-//		record.getLendingDate().addDays(record.getRequiredDays());
 		User requester = publishedRequest.getBorrower();
-//		borrower.receiveRequestedItem(record, item);
-
+		
 		sendMessage(
 				String.format(EntitiesConstants.REQUESTED_ITEM_LENT_ACTIVITY, getName(), item.getName()),
-				"Item oferecido: " + item.getName() + " - " + item.getDescription(), requester);
-		
-//		myLentItems.add(record);
-//		myItems.put(item, borrower);
+				"Item oferecido: " + item.getName() + " - " + item.getDescription(), requester);		
 	}
-
-//	private void receiveRequestedItem(Lending publishedRequestAttended, Item item) throws Exception{
-//		Lending toBeReplaced = null;
-//		for ( Lending publishedRequest : publishedItemRequests ){
-//			if ( publishedRequest.getID().equals(publishedRequestAttended.getID()) ){
-//				toBeReplaced = publishedRequest;
-//			}
-//		}
-//		if ( toBeReplaced != null ){
-////			publishedItemRequests.remove(toBeReplaced);
-//			myBorrowedItems.add(publishedRequestAttended);
-//		}
-//		else{
-//			throw new Exception("Publicacao de pedido inexistente");			
-//		}
-//	}
-
+	
 	public void republishItemRequest(Lending petition) throws Exception{
 		for ( Item item : myItems.keySet() ){
 			if ( item.getName().equals(petition.getDesiredItemName())
@@ -1372,6 +1343,19 @@ public class User{
 		myActivityHistory.add(new ActivityRegistry(ActivityKind.REPUBLICACAO_DE_PEDIDO_DE_ITEM,
 				String.format(EntitiesConstants.ITEM_REQUEST_PUBLISHED_ACTIVITY, petition.getBorrower().getName(),
 						petition.getDesiredItemName())));
+	}
+
+	@Override
+	public void warnInterestedThatTargetIsAvailable(Item target,
+			InterestedOn<Item> interested) throws Exception{
+
+		Item item = target;
+		sendMessage(
+				"O item " + item.getName() + " do usuário "
+				+ this.getName() + " está disponível",
+				"Corra pra pedir emprestado, pois "
+				+ (interestedOnMyItems.get(item).size()-1)
+				+ " pessoas além de você pediram por ele!", (User)interested);
 	}
 	
 }

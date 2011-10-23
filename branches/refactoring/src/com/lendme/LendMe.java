@@ -33,8 +33,8 @@ import com.lendme.utils.ComparatorOfRankingStrategy;
 
 public class LendMe {
 
-	private static Calendar time = GregorianCalendar.getInstance();
-	private static LendMeRepository repository = LendMeRepository.getInstance();
+	private Calendar time = GregorianCalendar.getInstance();
+	private LendMeRepository repository = LendMeRepository.getInstance();
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
@@ -46,7 +46,7 @@ public class LendMe {
 	 * 
 	 * <i>This method belongs to the public system interface</i>
 	 */
-	protected static void resetSystem(){
+	public void resetSystem(){
 		repository.resetRepository();
 		time = GregorianCalendar.getInstance();
 	}
@@ -59,7 +59,7 @@ public class LendMe {
 	 * @return the session id
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
-	protected static String openSession(String login) throws Exception {
+	public String openSession(String login) throws Exception {
 		return repository.openSession(login);
 	}
 	
@@ -69,7 +69,7 @@ public class LendMe {
 	 * <i>This method belongs to the public system interface </i>
 	 * @return the system time
 	 */
-	protected static Date getSystemDate() {
+	public Date getSystemDate() {
 		return time.getTime();
 	}
 	
@@ -80,7 +80,7 @@ public class LendMe {
 	 * @param amount the amount of days
 	 * @return the string representing the new system time
 	 */
-	protected static String someDaysPassed(int amount){
+	public String someDaysPassed(int amount){
 		time.add(Calendar.DAY_OF_MONTH, amount+1);
 		return time.getTime().toString();
 	}
@@ -92,7 +92,7 @@ public class LendMe {
 	 * @param id the session id
 	 * @throws Exception for inexistent sessions
 	 */
-	protected static void closeSession(String id) throws Exception{
+	public void closeSession(String id) throws Exception{
 		repository.closeSession(id);
 	}
 	
@@ -105,7 +105,7 @@ public class LendMe {
 	 * @param address the user address
 	 * @throws Exception for invalid parameters or if a user with login already exists
 	 */
-	protected static String registerUser(String login, String name, String... address) throws Exception{
+	public String registerUser(String login, String name, String... address) throws Exception{
 		return repository.registerUser(login, name, address);
 	}
 	
@@ -120,13 +120,13 @@ public class LendMe {
 	 * @return
 	 * @throws Exception for invalid parameters
 	 */
-	protected static String registerItem(String sessionId, String name, 
+	public  String registerItem(String sessionId, String name, 
 			String description, String category) throws Exception{
 
 		return repository.registerItem(sessionId, name, description, category);
 	}
 	
-	protected static List<User> listUsersByDistance(String sessionId) throws Exception{
+	public  List<User> listUsersByDistance(String sessionId) throws Exception{
 		
 		if(sessionId == null || sessionId.trim().equals("")) throw new Exception("Sessão inválida");
 				
@@ -154,7 +154,7 @@ public class LendMe {
 	 * @return a set of users found by search
 	 * @throws Exception if attribute key or kind is invalid or if kind does not exists
 	 */
-	protected static Set<User> searchUsersByAttributeKey(String sessionId,
+	public  Set<User> searchUsersByAttributeKey(String sessionId,
 			String key, String attribute) throws Exception{
 
 		if ( attribute == null || attribute.trim().isEmpty() ){
@@ -191,7 +191,7 @@ public class LendMe {
 		return results;
 	}
 	
-	protected static String getUserAttribute(String login, String attribute)
+	public  String getUserAttribute(String login, String attribute)
 			throws Exception{
 		return getUserAttribute(repository.getUserByLogin(login), attribute);
 	}
@@ -203,7 +203,7 @@ public class LendMe {
 	 * @return the user attribute value
 	 * @throws Exception if attribute or login is invalid
 	 */
-	protected static String getUserAttribute(User user, String attribute)
+	public  String getUserAttribute(User user, String attribute)
 			throws Exception{
 		
 		if ( attribute == null || attribute.trim().isEmpty() ){
@@ -231,7 +231,7 @@ public class LendMe {
 	 * @return the item attribute value
 	 * @throws Exception if parameters are invalid
 	 */
-	protected static String getItemAttribute(String itemId, String attribute) throws Exception{
+	public  String getItemAttribute(String itemId, String attribute) throws Exception{
 		
 		String ownerSessionId = repository.searchSessionsByLogin(getItemOwner(itemId).getLogin())
 				.iterator().next().getId();
@@ -246,7 +246,7 @@ public class LendMe {
 	 * @return a profile
 	 * @throws Exception if user doesn't exists or there is no alive session for that user
 	 */
-	protected static Profile getUserProfile(String sessionId) throws Exception {
+	public  Profile getUserProfile(String sessionId) throws Exception {
 		Session session = repository.getSessionByID(sessionId);
 		User user = session.getOwner();
 		if (user == null) {
@@ -263,7 +263,7 @@ public class LendMe {
 	 * @return a set of friends
 	 * @throws Exception if user doesn't exists
 	 */
-	protected static Set<User> getFriends(String sessionId) throws Exception{
+	public  Set<User> getFriends(String sessionId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		Set<User> users = viewer.getOwnerFriends();
 		return users;
@@ -278,8 +278,8 @@ public class LendMe {
 	 * @return a set of friends
 	 * @throws Exception if one of the users involved doesn't exists
 	 */
-	protected static Set<User> getFriends(String solicitorSessionId, String solicitedLogin) throws Exception{
-		Profile solicitorViewer = LendMe.getUserProfile(solicitorSessionId);
+	public  Set<User> getFriends(String solicitorSessionId, String solicitedLogin) throws Exception{
+		Profile solicitorViewer = getUserProfile(solicitorSessionId);
 		solicitorViewer = solicitorViewer.viewOtherProfile(repository.getUserByLogin(solicitedLogin));
 		Set<User> users = solicitorViewer.getOwnerFriends();
 		return users;
@@ -293,8 +293,8 @@ public class LendMe {
 	 * @return a set of items
 	 * @throws Exception if user doesn't exists
 	 */
-	protected static Set<Item> getItems(String sessionId) throws Exception {
-		Profile viewer = LendMe.getUserProfile(sessionId);
+	public  Set<Item> getItems(String sessionId) throws Exception {
+		Profile viewer = getUserProfile(sessionId);
 		Set<Item> items = viewer.getOwnerItems();
 		return items;
 	}
@@ -308,8 +308,8 @@ public class LendMe {
 	 * @return a set of items of the solicited user
 	 * @throws Exception if users involved doesn't exists or solicitor user has no permission to access solicited items
 	 */
-	protected static Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
-		Profile viewer = LendMe.getUserProfile(observerSessionId);
+	public  Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
+		Profile viewer = getUserProfile(observerSessionId);
 		viewer = viewer.viewOtherProfile(repository.getUserByLogin(ownerLogin));
 		Set<Item> items = viewer.getOwnerItems();
 		return items;
@@ -323,7 +323,7 @@ public class LendMe {
 	 * @param solicitedLogin the solicited login
 	 * @throws Exception if users involved doesn't exists or friendship request was already sent
 	 */
-	protected static void askForFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
+	public  void askForFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
 		Profile solicitorProfile = getUserProfile(solicitorSessionId);
 		solicitorProfile = solicitorProfile.viewOtherProfile(repository.getUserByLogin(solicitedLogin));
 		solicitorProfile.askForFriendship();
@@ -337,7 +337,7 @@ public class LendMe {
 	 * @param solicitorLogin the solicitor login
 	 * @throws Exception if users involved doesn't exists or friendship request was already accepted
 	 */
-	protected static void acceptFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
+	public  void acceptFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
 		Profile solicitedProfile = getUserProfile(solicitedSessionId);
 		solicitedProfile = solicitedProfile.viewOtherProfile(repository.getUserByLogin(solicitorLogin));
 		solicitedProfile.acceptFriendshipRequest();
@@ -351,7 +351,7 @@ public class LendMe {
 	 * @param solicitorLogin the solicitor login
 	 * @throws Exception if users involved doesn't exists or if solicited user already declined request
 	 */
-	protected static void declineFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
+	public  void declineFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
 		Profile solicitedProfile = getUserProfile(solicitedSessionId);
 		solicitedProfile = solicitedProfile.viewOtherProfile(repository.getUserByLogin(solicitorLogin));
 		solicitedProfile.declineFriendshipRequest();
@@ -365,7 +365,7 @@ public class LendMe {
 	 * @param solicitedLogin the solicited login
 	 * @throws Exception if users involved doesn't exists
 	 */
-	protected static void breakFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
+	public  void breakFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
 		Profile solicitorProfile = getUserProfile(solicitorSessionId);
 		solicitorProfile = solicitorProfile.viewOtherProfile(repository.getUserByLogin(solicitedLogin));
 		solicitorProfile.breakFriendship();
@@ -380,7 +380,7 @@ public class LendMe {
 	 * @return true if users involved are friends
 	 * @throws Exception if users involved doesn't exists or are not friends
 	 */
-	protected static boolean hasFriend(String solicitorSessionId, String solicitedUserLogin) throws Exception{
+	public  boolean hasFriend(String solicitorSessionId, String solicitedUserLogin) throws Exception{
 		Profile solicitorViewer = getUserProfile(solicitorSessionId);
 		solicitorViewer = solicitorViewer.viewOtherProfile(repository.getUserByLogin(solicitedUserLogin));
 		return solicitorViewer.isFriendOfOwner();
@@ -394,7 +394,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static Set<User> getFriendshipRequests(String sessionId) throws Exception{
+	public  Set<User> getFriendshipRequests(String sessionId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.getOwnerFriendshipRequests();
 	}
@@ -411,7 +411,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String sendMessage(String senderSessionId, String subject, String message, 
+	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
 		
 		Profile solicitorViewer = null;
@@ -456,7 +456,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String sendMessage(String senderSessionId, String subject, String message, 
+	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
 		
 		Profile solicitorViewer = null;
@@ -493,7 +493,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static List<Topic> getTopics(String sessionId, String topicType)
+	public  List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
 		
 		Profile solicitorViewer = getUserProfile(sessionId);
@@ -510,7 +510,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static List<Message> getTopicMessages(String sessionId, String topicId)
+	public  List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
 		
 		Profile solicitorViewer = getUserProfile(sessionId);
@@ -526,7 +526,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static Collection<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
+	public  Collection<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.getLendingRecords(kind);
 	}
@@ -541,7 +541,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
+	public  String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
 		Profile viewer = getUserProfile(sessionId);
 		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
 		return viewer.requestItem(itemId, requiredDays);
@@ -556,7 +556,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String approveLending(String sessionId, String requestId)  throws Exception{
+	public  String approveLending(String sessionId, String requestId)  throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.approveLending(requestId);
 	}
@@ -570,7 +570,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String denyLending(String sessionId, String requestId)  throws Exception{
+	public  String denyLending(String sessionId, String requestId)  throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.denyLoan(requestId);
 	}
@@ -584,7 +584,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String returnItem(String sessionId, String requestId) throws Exception{
+	public  String returnItem(String sessionId, String requestId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.returnItem(requestId);
 	}
@@ -598,7 +598,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String confirmLendingTermination(String sessionId,
+	public  String confirmLendingTermination(String sessionId,
 			String lendingId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.confirmLendingTermination(lendingId);
@@ -613,7 +613,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String denyLendingTermination(String sessionId,
+	public  String denyLendingTermination(String sessionId,
 			String lendingId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.denyLendingTermination(lendingId);
@@ -628,7 +628,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String askForReturnOfItem(String sessionId,
+	public  String askForReturnOfItem(String sessionId,
 			String lendingId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.askForReturnOfItem(lendingId, getSystemDate());
@@ -641,7 +641,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public static User getItemOwner(String itemId) throws Exception{
+	public User getItemOwner(String itemId) throws Exception{
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}
@@ -661,7 +661,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static Lending getLendingByLendingId(String lendingId) throws Exception{
+	public  Lending getLendingByLendingId(String lendingId) throws Exception{
 		for ( User user : repository.getUsers() ){
 			Lending record = user.getLendingByLendingId(lendingId);
 			if ( record != null ){
@@ -677,7 +677,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static Lending getLendingByRequestId(String requestId) throws Exception{
+	public  Lending getLendingByRequestId(String requestId) throws Exception{
 		for ( User user : repository.getUsers() ){
 			Lending record = user.getLendingByRequestId(requestId);
 			if ( record != null ){
@@ -695,7 +695,7 @@ public class LendMe {
 	 * @param itemId
 	 * @throws Exception
 	 */
-	protected static void deleteItem(String sessionId, String itemId) throws Exception {
+	public  void deleteItem(String sessionId, String itemId) throws Exception {
 		User userOwnerSession = repository.getSessionByID(sessionId).getOwner();
 		userOwnerSession.deleteMyItem(itemId);
 	}
@@ -712,7 +712,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static List<Item> searchForItem(String sessionId, String key, String attribute,
+	public  List<Item> searchForItem(String sessionId, String key, String attribute,
 			String disposal ,String criteria) throws Exception{
 		
 		List<Item> results = new ArrayList<Item>();
@@ -838,7 +838,7 @@ public class LendMe {
 	 * @param itemId
 	 * @throws Exception
 	 */
-	protected static void registerInterestForItem(String sessionId, String itemId) throws Exception{
+	public  void registerInterestForItem(String sessionId, String itemId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
 		viewer = viewer.viewOtherProfile(getItemOwner(itemId));
 		viewer.registerInterestForItem(itemId);
@@ -851,7 +851,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static List<Message> getMessagesByTopicId(String topicId) throws Exception{
+	public  List<Message> getMessagesByTopicId(String topicId) throws Exception{
 
 		for ( User user : repository.getUsers() ){
 			List<Message> messages = user.getMessagesByTopicId(topicId);
@@ -870,7 +870,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String getRanking(String sessionId, String category) throws Exception{
+	public  String getRanking(String sessionId, String category) throws Exception{
 		String ranking = "";
 		
 		if(sessionId == null || sessionId.trim().equals("")){
@@ -920,7 +920,7 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static String viewProfile(String solicitorSessionId, 
+	public  String viewProfile(String solicitorSessionId, 
 			String solicitedUserLogin) throws Exception {
 		Profile solicitorViewer = getUserProfile(solicitorSessionId);
 		solicitorViewer = solicitorViewer.viewOtherProfile(repository.getUserByLogin(solicitedUserLogin));
@@ -934,18 +934,18 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static Set<Lending> getReceivedItemRequests(String sessionId)
+	public  Set<Lending> getReceivedItemRequests(String sessionId)
 			throws Exception {
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.getReceivedItemRequests();
 	}
 	
-	protected static List<ActivityRegistry> getActivityHistory(String solicitorSessionId) throws Exception {
+	public  List<ActivityRegistry> getActivityHistory(String solicitorSessionId) throws Exception {
 		Profile viewer = getUserProfile(solicitorSessionId);
 		return viewer.getActivityHistory();
 	}
 
-	public static List<ActivityRegistry> getJointActivityHistory(
+	public List<ActivityRegistry> getJointActivityHistory(
 			String solicitorSessionId) throws Exception {
 		
 		Session session = repository.getSessionByID(solicitorSessionId);
@@ -971,13 +971,13 @@ public class LendMe {
 		return results;
 	}
 
-	public static String publishItemRequest(String sessionId, String itemName,
+	public String publishItemRequest(String sessionId, String itemName,
 			String itemDescription) throws Exception {
 		Profile viewer = getUserProfile(sessionId);
 		return viewer.publishItemRequest(itemName, itemDescription);
 	}
 
-	public static void offerItem(String sessionId,
+	public void offerItem(String sessionId,
 			String requestPublicationId, String itemId) throws Exception{
 		if ( requestPublicationId == null || requestPublicationId.trim().isEmpty() ){
 			throw new Exception("Identificador da publicação de pedido é inválido");
@@ -986,11 +986,11 @@ public class LendMe {
 			throw new Exception("Identificador do item é inválido");
 		}
 		Profile viewer = getUserProfile(sessionId);
-		Lending petition = LendMe.getPetition(requestPublicationId);
+		Lending petition = getPetition(requestPublicationId);
 		viewer.offerItem(petition, itemId);
 	}
 
-	private static Lending getPetition(String requestPublicationId) throws Exception{
+	private Lending getPetition(String requestPublicationId) throws Exception{
 		for ( User user : repository.getUsers() ){
 			for ( Lending publishedRequest : user.getPublishedItemRequests() ){
 				if ( publishedRequest.getID().equals(requestPublicationId) ){
@@ -1001,10 +1001,10 @@ public class LendMe {
 		throw new Exception("Publicação de pedido inexistente");
 	}
 
-	public static void republishItemRequest(String sessionId,
+	public void republishItemRequest(String sessionId,
 			String requestPublicationId) throws Exception{
 		Profile viewer = getUserProfile(sessionId);
-		viewer.republishItemRequest(LendMe.getPetition(requestPublicationId));
+		viewer.republishItemRequest(getPetition(requestPublicationId));
 	}
 	
 }

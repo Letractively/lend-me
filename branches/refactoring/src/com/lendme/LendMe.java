@@ -293,9 +293,8 @@ public class LendMe {
 	 * @throws Exception if user doesn't exists
 	 */
 	public  Set<Item> getItems(String sessionId) throws Exception {
-		Profile viewer = getUserProfile(sessionId);
-		Set<Item> items = viewer.getOwnerItems();
-		return items;
+		Profile viewerProfile = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		return itemModule.getItems(viewerProfile);
 	}
 
 	/**

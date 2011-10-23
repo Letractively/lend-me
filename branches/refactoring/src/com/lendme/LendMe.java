@@ -36,7 +36,7 @@ public class LendMe {
 	private Calendar time;
 	private LendMeRepository repository;
 	private LendMeItemModule itemModule;
-	private LendMeUserModule userModule = new LendMeUserModule();
+	private LendMeUserModule userModule;
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
@@ -45,6 +45,7 @@ public class LendMe {
 	public LendMe() {
 		time = GregorianCalendar.getInstance();
 		repository = LendMeRepository.getInstance();
+		userModule = new LendMeUserModule();
 		itemModule = new LendMeItemModule();
 	}
 	
@@ -322,9 +323,7 @@ public class LendMe {
 	 * @throws Exception if users involved doesn't exists or friendship request was already sent
 	 */
 	public  void askForFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
-		Profile solicitorProfile = getUserProfile(solicitorSessionId);
-		solicitorProfile = solicitorProfile.viewOtherProfile(repository.getUserByLogin(solicitedLogin));
-		solicitorProfile.askForFriendship();
+		userModule.askForFriendship(getUserProfile(solicitorSessionId), repository.getUserByLogin(solicitedLogin));
 	}
 
 	/**
@@ -336,9 +335,7 @@ public class LendMe {
 	 * @throws Exception if users involved doesn't exists or friendship request was already accepted
 	 */
 	public  void acceptFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
-		Profile solicitedProfile = getUserProfile(solicitedSessionId);
-		solicitedProfile = solicitedProfile.viewOtherProfile(repository.getUserByLogin(solicitorLogin));
-		solicitedProfile.acceptFriendshipRequest();
+		userModule.acceptFriendship(getUserProfile(solicitedSessionId), repository.getUserByLogin(solicitorLogin));
 	}
 	
 	/**
@@ -350,9 +347,7 @@ public class LendMe {
 	 * @throws Exception if users involved doesn't exists or if solicited user already declined request
 	 */
 	public  void declineFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
-		Profile solicitedProfile = getUserProfile(solicitedSessionId);
-		solicitedProfile = solicitedProfile.viewOtherProfile(repository.getUserByLogin(solicitorLogin));
-		solicitedProfile.declineFriendshipRequest();
+		userModule.declineFriendship(getUserProfile(solicitedSessionId), repository.getUserByLogin(solicitorLogin));
 	}
 	
 	/**
@@ -364,9 +359,7 @@ public class LendMe {
 	 * @throws Exception if users involved doesn't exists
 	 */
 	public  void breakFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
-		Profile solicitorProfile = getUserProfile(solicitorSessionId);
-		solicitorProfile = solicitorProfile.viewOtherProfile(repository.getUserByLogin(solicitedLogin));
-		solicitorProfile.breakFriendship();
+		userModule.breakFriendship(getUserProfile(solicitorSessionId), repository.getUserByLogin(solicitedLogin));
 	}
 
 	/**
@@ -378,10 +371,8 @@ public class LendMe {
 	 * @return true if users involved are friends
 	 * @throws Exception if users involved doesn't exists or are not friends
 	 */
-	public  boolean hasFriend(String solicitorSessionId, String solicitedUserLogin) throws Exception{
-		Profile solicitorViewer = getUserProfile(solicitorSessionId);
-		solicitorViewer = solicitorViewer.viewOtherProfile(repository.getUserByLogin(solicitedUserLogin));
-		return solicitorViewer.isFriendOfOwner();
+	public  boolean hasFriend(String solicitorSessionId, String solicitedLogin) throws Exception{
+		return userModule.hasFriend(getUserProfile(solicitorSessionId), repository.getUserByLogin(solicitedLogin));
 	}
 
 	/**
@@ -393,8 +384,7 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  Set<User> getFriendshipRequests(String sessionId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		return viewer.getOwnerFriendshipRequests();
+		return userModule.getOwnerFriendshipRequests(getUserProfile(sessionId));
 	}
 
 	/**

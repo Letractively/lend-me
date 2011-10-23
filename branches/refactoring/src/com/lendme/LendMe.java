@@ -157,41 +157,6 @@ public class LendMe {
 	}
 	
 	/**
-	 * Searches for users in the system with the given name match.
-	 * 
-	 * @param name the given name
-	 * @return a set with users found by search
-	 */
-	protected static Set<User> searchUsersByName(String name) {
-		Set<User> foundUsers = new HashSet<User>();
-		
-		for ( User user : users ){
-			if ( user.nameMatches(name) ){
-				foundUsers.add(user);
-			}
-		}
-		
-		return foundUsers;
-	}
-	
-	/**
-	 * Searches for users with given address match.
-	 * @param address the given address
-	 * @return a set with users found by search
-	 */
-	protected static Set<User> searchUsersByAddress(String address) {
-		Set<User> foundUsers = new HashSet<User>();
-		
-		for ( User user : users ){
-			if ( user.getAddress().addressMatches(address) ){
-				foundUsers.add(user);
-			}
-		}
-		
-		return foundUsers;
-	}
-	
-	/**
 	 * Searches for sessions with given login
 	 * @param login the login
 	 * @return a set of sessions found by search
@@ -255,21 +220,22 @@ public class LendMe {
 		}
 		
 		Set<User> results = new HashSet<User>();
-		Profile viewer = getUserProfile(sessionId);
 		for ( User user : users ){
-			viewer = viewer.viewOtherProfile(user);
+			if ( getUserProfile(sessionId).getObserver().getOwner().equals(user) ){
+				continue;
+			}
 			if ( attribute.equals("nome") ){
-				if ( viewer.searchByName(key) ){
+				if ( getUserAttribute(user, "nome").contains(key) ){
 					results.add(user);
 				}
 			}
 			else if ( attribute.equals("login") ){
-				if ( viewer.searchByLogin(key) ){
+				if ( ( getUserAttribute(user, "login").contains(key) ) ){
 					results.add(user);
 				}
 			}
 			else if ( attribute.equals("endereco") ){
-				if ( viewer.searchByAddress(key) ){
+				if ( ( getUserAttribute(user, "endereco").contains(key) ) ){
 					results.add(user);
 				}
 			}
@@ -302,24 +268,23 @@ public class LendMe {
 	 * @return the user attribute value
 	 * @throws Exception if attribute or login is invalid
 	 */
-	protected static String getUserAttribute(String login, String attribute)
+	protected static String getUserAttribute(User user, String attribute)
 			throws Exception{
 		
 		if ( attribute == null || attribute.trim().isEmpty() ){
 			throw new Exception("Atributo inválido");//"Invalid attribute");
 		}
-		if (!(attribute.equals("nome") || attribute.equals("endereco"))){
+		if (!(attribute.equals("nome") || attribute.equals("endereco") || attribute.equals("login") )){
 			throw new Exception("Atributo inexistente");//"Inexistent attribute");
 		}
-		if ( login == null || login.trim().isEmpty() ){
-			throw new Exception("Login inválido");//"Invalid login");
-		}
 		
-		User user = getUserByLogin(login);
-
 		if(attribute.equals("nome")){
 			return user.getName();
-		}else{
+		}
+		else if ( attribute.equals("login") ){
+			return user.getLogin();
+		}
+		else{
 			return user.getAddress().toString();
 		}
 	}

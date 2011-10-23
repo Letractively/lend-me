@@ -2,16 +2,17 @@ package com.lendme;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.lendme.entities.ActivityRegistry;
 import com.lendme.entities.ActivityRegistry.ActivityKind;
-import com.lendme.entities.EventDate;
 import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
 import com.lendme.entities.Message;
@@ -32,7 +33,7 @@ import com.lendme.utils.ComparatorOfRankingStrategy;
 
 public class LendMe {
 
-	private static EventDate time = new EventDate("System time");
+	private static Calendar time = GregorianCalendar.getInstance();
 	private static LendMeRepository repository = LendMeRepository.getInstance();
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
@@ -47,7 +48,7 @@ public class LendMe {
 	 */
 	protected static void resetSystem(){
 		repository.resetRepository();
-		time = new EventDate("System reset at "+time.getDate());
+		time = GregorianCalendar.getInstance();
 	}
 	
 	/**
@@ -69,7 +70,7 @@ public class LendMe {
 	 * @return the system time
 	 */
 	protected static Date getSystemDate() {
-		return time.getDate();
+		return time.getTime();
 	}
 	
 	/**
@@ -80,8 +81,8 @@ public class LendMe {
 	 * @return the string representing the new system time
 	 */
 	protected static String someDaysPassed(int amount){
-		time.addDays(amount+1);
-		return time.getDate().toString();
+		time.add(Calendar.DAY_OF_MONTH, amount+1);
+		return time.getTime().toString();
 	}
 	
 	/**

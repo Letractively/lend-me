@@ -158,7 +158,7 @@ public final class LendMeRepository {
 		throw new Exception("Sessão inexistente");//"Inexistent session");
 	}
 	
-	private boolean userExists(String login) throws Exception {
+	public boolean userExists(String login) throws Exception {
 		if (login == null || login.trim().isEmpty()){
 			throw new Exception("Login inválido");//"Invalid login");
 		}

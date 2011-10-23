@@ -33,12 +33,17 @@ import com.lendme.utils.ComparatorOfRankingStrategy;
 
 public class LendMe {
 
-	private Calendar time = GregorianCalendar.getInstance();
-	private LendMeRepository repository = LendMeRepository.getInstance();
+	private Calendar time;
+	private LendMeRepository repository;
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
 	
+	
+	public LendMe() {
+		time = GregorianCalendar.getInstance();
+		repository = LendMeRepository.getInstance();
+	}
 	
 	/**
 	 * Resets the whole system: all living sessions are shutdown as well as all users are deleted.
@@ -1007,4 +1012,40 @@ public class LendMe {
 		viewer.republishItemRequest(getPetition(requestPublicationId));
 	}
 	
+	public User getUserBySessionId(String sessionId) {
+		return repository.getUserBySessionId(sessionId);
+	}
+	
+	/**
+	 * Searches for sessions with given login
+	 * @param login the login
+	 * @return a set of sessions found by search
+	 */
+	public Set<Session> searchSessionsByLogin(String login) {
+		return repository.searchSessionsByLogin(login);
+	}
+	
+	/**
+	 * Returns the session that have the specified id
+	 * @param id the session id
+	 * @return the session
+	 * @throws Exception if session doesn't exists
+	 */
+	public  Session getSessionByID(String id) throws Exception{
+		return repository.getSessionByID(id);
+	}
+	
+	/**
+	 * Returns user with given login.
+	 * @param login the login
+	 * @return the user
+	 * @throws Exception if login is invalid or user with given login doesn't exists
+	 */
+	public User getUserByLogin(String login) throws Exception{
+		return repository.getUserByLogin(login);
+	}
+	
+	public boolean userExists(String login) throws Exception {
+		return repository.userExists(login);
+	}
 }

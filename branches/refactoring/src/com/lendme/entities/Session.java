@@ -64,4 +64,14 @@ public class Session {
 		return finishedAt;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sessionSB = new StringBuilder();
+		sessionSB.append("Owner: " + getOwner().getLogin() + "\n");
+		sessionSB.append("Id: " + getId() + "\n");
+		sessionSB.append("Started at: " + startedAt().toString() + "\n");
+		sessionSB.append("Finished at: " + finishedAt().toString() + "\n");
+		return super.toString();
+	}
+	
 }

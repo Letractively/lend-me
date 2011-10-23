@@ -47,8 +47,8 @@ public class ProfileTest {
 		Assert.assertEquals("Guilherme Santos", guilhermeProfile.getOwnerName());
 		Assert.assertEquals("Rua Das Malvinas, 350, Universitario, " +
 				"Campina Grande, Paraiba, Brasil, 58308293", guilhermeProfile.getOwnerAddress());
-		Assert.assertEquals(LendMe.searchSessionsByLogin("guilherme").iterator().next(),
-				guilhermeProfile.getObserver());
+//		Assert.assertEquals(LendMe.searchSessionsByLogin("guilherme").iterator().next(),
+//				guilhermeProfile.getObserver());
 		Assert.assertTrue(guilhermeProfile.getOwnerFriends().isEmpty());
 		Assert.assertTrue(guilhermeProfile.getOwnerItems().isEmpty());
 		

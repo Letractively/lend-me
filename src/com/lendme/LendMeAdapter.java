@@ -120,7 +120,7 @@ public class LendMeAdapter {
 	public String getUserAttribute(String login, String attribute)
 		throws Exception{
 		
-		return LendMe.getUserAttribute(LendMe.getUserByLogin(login), attribute);
+		return LendMe.getUserAttribute(login, attribute);
 	}
 	
    /** (Non-javadoc)

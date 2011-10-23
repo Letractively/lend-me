@@ -39,11 +39,15 @@ public abstract class RequestManager<K> {
 	
 	public abstract void acceptingAction(K request) throws Exception;
 	
+	public abstract void acceptingActionMirror(K request) throws Exception;
+	
 	public void declineRequest(K request) throws Exception{
 		decliningAction(request);
 		sentRequests.remove(request);
 	}
 
 	public abstract void decliningAction(K request) throws Exception;
+	
+	public abstract void decliningActionMirror(K request) throws Exception;
 	
 }

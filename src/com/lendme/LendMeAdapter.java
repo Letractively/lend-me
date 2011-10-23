@@ -74,40 +74,6 @@ public class LendMeAdapter {
 		return LendMe.registerUser(login, name, address);
 	}
 	
-   /** Handles with results from search in System, transforming them in a string array
-	 * @param name the name to be matched
-	 * @return an array of strings containing the results logins
-	 * @see com.lendme.LendMe#searchUsersByName(String)
-	 */
-	public String[] searchUsersByName(String name){
-		
-		List<User> results = new ArrayList<User>(LendMe.searchUsersByName(name));
-		Collections.sort(results, new ComparatorOfDateStrategy());
-		String[] handled = new String[results.size()];
-		Iterator<User> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getLogin();
-		}
-		return handled;
-	}
-
-   /** Handles with results from search in System, transforming them in a string array
-	 * @param name the address to be matched
-	 * @return an array of strings containing the results logins
-	 * @see com.lendme.LendMe#searchUsersByAddress(String)
-	 */
-	public String[] searchUsersByAddress(String address){
-
-		List<User> results = new ArrayList<User>(LendMe.searchUsersByAddress(address));
-		Collections.sort(results,  new ComparatorOfDateStrategy());
-		String[] handled = new String[results.size()];
-		Iterator<User> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getLogin();
-		}
-		return handled;
-	}
-	
    /** Handles with results from search in System, transforming them in a string array.
 	 * @param solicitorSession the id of the session of the solicitor
 	 * @param key the value expected for specified attribute
@@ -146,15 +112,15 @@ public class LendMeAdapter {
 	}
 	
    /** Handles with results from search in System, transforming them in a string array
-	 * @param solicitorSession the id of the session of the solicitor user
+	 * @param login the id of the session of the solicitor user
 	 * @param attribute the attribute whose value is required
 	 * @return an array of strings containing the results names
 	 * @see com.lendme.LendMe#getUserAttribute(String, String)
 	 */
-	public String getUserAttribute(String solicitorSession, String attribute)
+	public String getUserAttribute(String login, String attribute)
 		throws Exception{
-			
-		return LendMe.getUserAttribute(solicitorSession, attribute);
+		
+		return LendMe.getUserAttribute(LendMe.getUserByLogin(login), attribute);
 	}
 	
    /** (Non-javadoc)

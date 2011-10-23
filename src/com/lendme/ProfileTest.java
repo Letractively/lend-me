@@ -32,7 +32,7 @@ public class ProfileTest {
 		system.registerUser("pedro", "Pedro Limeira", "Rua das caixas", "29", "Monte Santo",
 				"Campina Grande", "Paraiba", "Brasil", "58308293");
 
-		Set<User> users = LendMe.searchUsersByAddress("Rua");
+		Set<User> users = LendMe.searchUsersByAttributeKey("0", "endereco", "Rua");
 		
 		for ( User user : users ){
 			this.getClass().getDeclaredField(user.getLogin()).set(null, user);

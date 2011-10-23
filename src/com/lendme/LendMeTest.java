@@ -47,7 +47,7 @@ public class LendMeTest {
 		users.add(new User("guilherme", "Guilherme Santos", "Rua Das Malvinas", "350", "Universitario",
 				"Campina Grande", "Paraiba", "Brasil", "58308293"));
 		
-		Set<User> result = LendMe.searchUsersByName("guilherme");
+		Set<User> result = LendMe.searchUsersByAttributeKey("0", "nome", "guilherme");
 		Assert.assertEquals(users, result);
 		
 		LendMe.registerUser("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
@@ -55,7 +55,7 @@ public class LendMeTest {
 		users.add(new User("manoel", "Manoel Neto", "Rua das malvinas", "33", "Monte Santo", "CG",
 				"PB", "BR", "58308293"));
 
-		result = LendMe.searchUsersByAddress("malvinas");
+		result = LendMe.searchUsersByAttributeKey("", "endereco", "malvinas");
 		Assert.assertEquals(users, result);
 		
 	}

@@ -131,7 +131,7 @@ public class LendMe {
 				
 		
 		List<User> listUsersByDistance = new ArrayList<User>();
-		listUsersByDistance.addAll(repository.getUsers());//Expensive Operation
+		listUsersByDistance.addAll(repository.getUsers());
 		Collections.sort(listUsersByDistance, new ComparatorOfDateStrategy());
 		
 		User ownerOfSession = repository.getUserBySessionId(sessionId);

@@ -8,9 +8,9 @@ import com.lendme.entities.User;
 
 public final class LendMeRepository {
 	
-	private static Set<User> users = new HashSet<User>();
-	private static Set<Session> sessions = new HashSet<Session>();
-	private static Set<String> sessionsHystory = new HashSet<String>();
+	private Set<User> users = new HashSet<User>();
+	private Set<Session> sessions = new HashSet<Session>();
+	private Set<String> sessionsHystory = new HashSet<String>();
 	private static LendMeRepository repository;
 	
 	private LendMeRepository() {}
@@ -22,11 +22,11 @@ public final class LendMeRepository {
 		return repository;
 	}
 	
-	public static Set<User> getUsers() {
+	public Set<User> getUsers() {
 		return new HashSet<User>(users);
 	}
 	
-	public static Set<Session> getSessions() {
+	public Set<Session> getSessions() {
 		return new HashSet<Session>(sessions);
 	}
 	

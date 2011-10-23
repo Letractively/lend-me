@@ -1,6 +1,7 @@
 package com.lendme;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -399,8 +400,31 @@ public class LendMe {
 	 */
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
-		
-			return communicationModule.sendMessage(senderSessionId, subject, message, receiverLogin, lendingId);
+			
+			Session senderSession = null;
+			User receiver = null;
+			
+			try {
+				senderSession = repository.getSessionByID(senderSessionId);
+				receiver = repository.getUserByLogin(receiverLogin);
+			} catch (Exception e) {
+				
+				if (e.getMessage().equals("Login inválido")) {
+					throw new Exception("Destinatário inválido");//"Invalid receiver");
+				}
+				
+				else if (e.getMessage().equals("Usuário inexistente")) {
+					throw new Exception("Destinatário inexistente");//"Inexistent receiver");
+				}
+				
+				else if (e.getMessage().equals("Empréstimo inexistente")) {
+					throw new Exception("Requisição de empréstimo inexistente" );
+				}
+				
+				throw e;
+			}
+
+			return communicationModule.sendMessage(senderSession, subject, message, receiver, lendingId);
 	}
 	
 	/**
@@ -416,7 +440,31 @@ public class LendMe {
 	 */
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
-			return communicationModule.sendMessage(senderSessionId, subject, message, receiverLogin);
+			
+			Session senderSession = null;
+			User receiver = null;
+			try {
+				senderSession = repository.getSessionByID(senderSessionId);
+				receiver = repository.getUserByLogin(receiverLogin);
+			} catch (Exception e) {
+				
+				if (e.getMessage().equals("Login inválido")) {
+					throw new Exception("Destinatário inválido");//"Invalid receiver");
+				}
+				
+				else if (e.getMessage().equals("Usuário inexistente")) {
+					throw new Exception("Destinatário inexistente");//"Inexistent receiver");
+				}else{
+					throw new Exception(e.getMessage());
+				}
+				
+//				else if(e.getMessage().equals("Sessão inválida")){
+//					throw new Exception();
+//				}else if(e.getMessage().equals("Sessão inexistente")){
+//					throw new Exception();
+//				}
+			}
+			return communicationModule.sendMessage(senderSession, subject, message, receiver);
 	}
 	
 	/**
@@ -430,7 +478,7 @@ public class LendMe {
 	 */
 	public  List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
-			return communicationModule.getTopics(sessionId, topicType);
+			return communicationModule.getTopics(repository.getSessionByID(sessionId), topicType);
 	}
 	
 	/**
@@ -445,7 +493,7 @@ public class LendMe {
 	public  List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
 
-			return communicationModule.getTopicMessages(sessionId, topicId);
+			return communicationModule.getTopicMessages(repository.getSessionByID(sessionId), topicId);
 	}
 	
 	/**
@@ -647,7 +695,7 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  List<Message> getMessagesByTopicId(String topicId) throws Exception{
-			return communicationModule.getMessagesByTopicId(topicId);
+			return communicationModule.getMessagesByTopicId(topicId, repository.getUsers());
 
 	}
 	

@@ -1,6 +1,7 @@
 package com.lendme;
 
 import java.util.List;
+import java.util.Set;
 
 import com.lendme.entities.Message;
 import com.lendme.entities.Session;
@@ -9,10 +10,10 @@ import com.lendme.entities.User;
 
 public class LendMeCommunicationModule {
 	
-	private static LendMeRepository repository = LendMeRepository.getInstance();
-	private LendMeUserModule userModule = new LendMeUserModule();
+	private LendMeUserModule userModule;
 	
 	public LendMeCommunicationModule(){
+		 this.userModule = new LendMeUserModule();
 	}
 	
 	/**
@@ -22,9 +23,11 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  List<Message> getMessagesByTopicId(String topicId) throws Exception{
-
-		for ( User user : repository.getUsers() ){
+	public  List<Message> getMessagesByTopicId(String topicId, Set<User> searchScope) throws Exception{
+		if(searchScope == null || searchScope.isEmpty()){
+			throw new Exception("Nenhum usuário encontrado");
+		}
+		for ( User user : searchScope){
 			List<Message> messages = user.getMessagesByTopicId(topicId);
 			if ( messages != null ){
 				return messages;
@@ -45,17 +48,15 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String sendMessage(String senderSessionId, String subject, String message, 
-			String receiverLogin, String lendingId) throws Exception {
+	public  String sendMessage(Session senderSession, String subject, String message, 
+			User receiver, String lendingId) throws Exception {
 		
 		Profile solicitorViewer = null;
-		Session senderSession = null;
 		try {
-			senderSession = repository.getSessionByID(senderSessionId);
 			solicitorViewer = userModule.getUserProfile(senderSession);
 		
 			solicitorViewer = solicitorViewer.viewOtherProfile(
-					repository.getUserByLogin(receiverLogin));
+					receiver);
 		
 			return solicitorViewer.sendMessage(subject, message, lendingId);
 			
@@ -71,7 +72,6 @@ public class LendMeCommunicationModule {
 			
 			else if (e.getMessage().equals("Empréstimo inexistente")) {
 				throw new Exception("Requisição de empréstimo inexistente" );
-				//"Inexistent lending");
 			}
 			
 			throw e;
@@ -90,18 +90,15 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String sendMessage(String senderSessionId, String subject, String message, 
-			String receiverLogin) throws Exception {
+	public  String sendMessage(Session senderSession, String subject, String message, 
+			User receiver) throws Exception {
 		
 		Profile solicitorViewer = null;
-		Session senderSession = null;
-		
 		try {
-			senderSession = repository.getSessionByID(senderSessionId);
+			
 			solicitorViewer = userModule.getUserProfile(senderSession);
 		
-			solicitorViewer = solicitorViewer.viewOtherProfile(
-					repository.getUserByLogin(receiverLogin));
+			solicitorViewer = solicitorViewer.viewOtherProfile(receiver);
 		
 		} catch (Exception e) {
 			
@@ -112,12 +109,10 @@ public class LendMeCommunicationModule {
 			else if (e.getMessage().equals("Usuário inexistente")) {
 				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
 			}
-			
 			throw e;
 		}
 		
 		return solicitorViewer.sendMessage(subject, message);
-		
 	}
 	
 	
@@ -130,12 +125,10 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  List<Topic> getTopics(String sessionId, String topicType)
+	public  List<Topic> getTopics(Session session, String topicType)
 			throws Exception {
-		Session session  = repository.getSessionByID(sessionId);
 		Profile solicitorViewer = userModule.getUserProfile(session);
 		return solicitorViewer.getTopics(topicType);
-		
 	}
 	
 	/**
@@ -147,9 +140,8 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  List<Message> getTopicMessages(String sessionId, String topicId)
+	public  List<Message> getTopicMessages(Session session, String topicId)
 			throws Exception {
-		Session session  = repository.getSessionByID(sessionId);
 		Profile solicitorViewer = userModule.getUserProfile(session);
 		return solicitorViewer.getTopicMessages(topicId);
 	}

@@ -35,6 +35,7 @@ public class LendMe {
 
 	private Calendar time;
 	private LendMeRepository repository;
+	private LendMeItemModule itemModule;
 	private LendMeUserModule userModule = new LendMeUserModule();
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
@@ -44,6 +45,7 @@ public class LendMe {
 	public LendMe() {
 		time = GregorianCalendar.getInstance();
 		repository = LendMeRepository.getInstance();
+		itemModule = new LendMeItemModule();
 	}
 	
 	/**
@@ -242,8 +244,8 @@ public class LendMe {
 		String ownerSessionId = repository.searchSessionsByLogin(getItemOwner(itemId).getLogin())
 				.iterator().next().getId();
 		
-		Profile viewer = getUserProfile(ownerSessionId);
-		return viewer.getItemAttribute(itemId, attribute);
+		Profile viewerProfile = getUserProfile(ownerSessionId);
+		return itemModule.getItemAttribute(itemId, attribute, ownerSessionId, viewerProfile);
 	}
 
 	/**
@@ -1004,4 +1006,40 @@ public class LendMe {
 		viewer.republishItemRequest(getPetition(requestPublicationId));
 	}
 	
+	public User getUserBySessionId(String sessionId) {
+		return repository.getUserBySessionId(sessionId);
+	}
+	
+	/**
+	 * Searches for sessions with given login
+	 * @param login the login
+	 * @return a set of sessions found by search
+	 */
+	public Set<Session> searchSessionsByLogin(String login) {
+		return repository.searchSessionsByLogin(login);
+	}
+	
+	/**
+	 * Returns the session that have the specified id
+	 * @param id the session id
+	 * @return the session
+	 * @throws Exception if session doesn't exists
+	 */
+	public  Session getSessionByID(String id) throws Exception{
+		return repository.getSessionByID(id);
+	}
+	
+	/**
+	 * Returns user with given login.
+	 * @param login the login
+	 * @return the user
+	 * @throws Exception if login is invalid or user with given login doesn't exists
+	 */
+	public User getUserByLogin(String login) throws Exception{
+		return repository.getUserByLogin(login);
+	}
+	
+	public boolean userExists(String login) throws Exception {
+		return repository.userExists(login);
+	}
 }

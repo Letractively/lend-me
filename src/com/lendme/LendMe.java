@@ -1,7 +1,6 @@
 package com.lendme;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -457,12 +456,6 @@ public class LendMe {
 				}else{
 					throw new Exception(e.getMessage());
 				}
-				
-//				else if(e.getMessage().equals("Sessão inválida")){
-//					throw new Exception();
-//				}else if(e.getMessage().equals("Sessão inexistente")){
-//					throw new Exception();
-//				}
 			}
 			return communicationModule.sendMessage(senderSession, subject, message, receiver);
 	}

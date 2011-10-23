@@ -50,4 +50,8 @@ public abstract class RequestManager<K> {
 	
 	public abstract void decliningActionMirror(K request) throws Exception;
 	
+	public void removeAcceptedRequest(K request){
+		acceptedRequests.remove(request);
+	}
+	
 }

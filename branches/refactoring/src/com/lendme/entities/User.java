@@ -23,9 +23,10 @@ public class User implements InterestedOn<Item>{
 	private String login;
 	private String name;
 	private Address address;
-	private Set<User> myFriends = new HashSet<User>();
-	private Set<User> receivedFriendshipRequests = new HashSet<User>();
-	private Set<User> sentFriendshipRequests = new HashSet<User>();
+	private FriendshipManager friendshipManager;
+//	private Set<User> myFriends = new HashSet<User>();
+//	private Set<User> receivedFriendshipRequests = new HashSet<User>();
+//	private Set<User> sentFriendshipRequests = new HashSet<User>();
 	private Map<Item,User> myItems = new HashMap<Item,User>();
 	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
 	private Set<Lending> sentItemRequests = new HashSet<Lending>();
@@ -68,11 +69,16 @@ public class User implements InterestedOn<Item>{
 		this.login = login;
 		this.name = name;
 		this.address = new Address(address);
+		this.friendshipManager = new FriendshipManager(this);
 		this.creationDate = new EventDate(String.format(EntitiesConstants.USER_REGISTERED_MESSAGE, this.login, this.name));
 		this.score = 0;
 		
 	}
 	
+	public FriendshipManager getFriendshipManager() {
+		return friendshipManager;
+	}
+
 	/**
 	 * Returns user lending score.
 	 * @return
@@ -181,19 +187,9 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public void requestFriendship(User otherUser) throws Exception{
-		if ( sentFriendshipRequests.contains(otherUser) ){
-			throw new Exception("Requisição já solicitada");//"The request has already been sent");
-		}
-		if ( myFriends.contains(otherUser) ){
-			throw new Exception("Os usuários já são amigos");//"The users are already friends");
-		}
-		this.sentFriendshipRequests.add(otherUser);
-		otherUser.addFriendshipRequest(this);
+		friendshipManager.sendRequest(otherUser);
 	}
 
-	private void addFriendshipRequest(User otherUser) {
-		receivedFriendshipRequests.add(otherUser);
-	}
 
 	/**
 	 * User accepts friendship request from another user.
@@ -201,51 +197,16 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public void acceptFriendshipRequest(User otherUser) throws Exception{
-		if ( myFriends.contains(otherUser) ){
-			throw new Exception("Os usuários já são amigos");//"The users are already friends");
-		}
-		if ( !receivedFriendshipRequests.contains(otherUser) ){
-			throw new Exception("Requisição de amizade inexistente");//Inexistent friendship request");
-		}
-		else{
-			myFriends.add(otherUser);
-			receivedFriendshipRequests.remove(otherUser);
-			ActivityRegistry friendshipAccepted = new ActivityRegistry(
-					ActivityRegistry.ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA
-					, String.format(EntitiesConstants.FRIENDSHIP_ACCEPTED_ACTIVITY,
-					this.getName(), otherUser.getName()));
-			myActivityHistory.add(friendshipAccepted);
-			otherUser.addRequestedFriend(this);
-			otherUser.myActivityHistory.add(new ActivityRegistry(
-					ActivityRegistry.ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA
-					, String.format(EntitiesConstants.FRIENDSHIP_ACCEPTED_ACTIVITY,
-					otherUser.getName(), this.getName())));
-//					,friendshipAccepted.getTimeInNanos()));
-		}
+		friendshipManager.acceptRequest(otherUser);
 	}
-	
-	private void addRequestedFriend(User otherUser) {
-		if ( sentFriendshipRequests.contains(otherUser) ){
-			myFriends.add(otherUser);
-			sentFriendshipRequests.remove(otherUser);
-		}
-	}
+
 	
 	/**
 	 * User declines friendship request from another user.
 	 * @param otherUser
 	 */
-	public void declineFriendshipRequest(User otherUser){
-		if ( receivedFriendshipRequests.contains(otherUser) ){
-			receivedFriendshipRequests.remove(otherUser);
-		}
-		otherUser.removeRequestedFriend(this);
-	}
-
-	private void removeRequestedFriend(User otherUser) {
-		if ( sentFriendshipRequests.contains(otherUser) ){
-			sentFriendshipRequests.remove(otherUser);
-		}
+	public void declineFriendshipRequest(User otherUser) throws Exception{
+		friendshipManager.declineRequest(otherUser);
 	}
 		
 	/**
@@ -254,7 +215,7 @@ public class User implements InterestedOn<Item>{
 	 * @return
 	 */
 	public boolean hasFriend(User otherUser) {
-		return this.myFriends.contains(otherUser);
+		return friendshipManager.hasFriend(otherUser);
 	}
 
 	/**
@@ -288,7 +249,7 @@ public class User implements InterestedOn<Item>{
 				throw new Exception("Requisição já solicitada");//"Request already sent");
 			}
 		}
-		if (myFriends.contains(lender) && lender.hasItem(item)) {                       
+		if (friendshipManager.hasFriend(lender) && lender.hasItem(item)) {                       
 			if (! lender.hasLentThis(item)) {
 				Lending lendingRequest = new Lending(this, lender, item, days);
 				lender.requestItem(lendingRequest);
@@ -988,7 +949,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public void registerInterestForItem(Item item, User owner) throws Exception{
 
-		if ( myFriends.contains(owner) ){
+		if ( friendshipManager.hasFriend(owner) ){
 			if ( owner.hasItem(item) ) {
 				if ( owner.hasLentThis(item) ) {
 					if ( !(owner.isInterestedOnMyItem(item, this)) ){
@@ -1083,7 +1044,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public Set<User> getFriends() {
 		Set<User> toBeReturned = new HashSet<User>();
-		toBeReturned.addAll(myFriends);
+		toBeReturned.addAll(friendshipManager.getFriends());
 		return toBeReturned;
 	}
 
@@ -1106,22 +1067,7 @@ public class User implements InterestedOn<Item>{
 	 * @param user
 	 */
 	public void breakFriendship(User user){
-		this.forceRemoveFriend(user);
-		user.forceRemoveFriend(this);
-	}
-
-	private void forceRemoveFriend(User user){
-		if (this.myFriends.contains(user)) {
-			this.myFriends.remove(user);
-			for (Lending record : this.receivedItemRequests) {
-				if (record.getBorrower().equals(user))
-					receivedItemRequests.remove(record);
-			}
-			for (Lending record : this.sentItemRequests) {
-				if (record.getLender().equals(user))
-					sentItemRequests.remove(record);
-			}
-		}
+		friendshipManager.breakFriendship(user);
 	}
 	
 	/**
@@ -1225,7 +1171,7 @@ public class User implements InterestedOn<Item>{
 	}
 
 	public Set<User> getReceivedFriendshipRequests() {
-		return receivedFriendshipRequests;
+		return friendshipManager.getReceivedFriendshipRequests();
 	}
 	
 	public Set<Lending> getMyBorrowedItemsRecord() {
@@ -1258,7 +1204,7 @@ public class User implements InterestedOn<Item>{
 			throw new Exception("Identificador do item é inválido");
 		}
 		
-		for(User actualFriend : this.myFriends){
+		for(User actualFriend : friendshipManager.getFriends()){
 			for(Item itemMyFriend : actualFriend.getAllItems()){
 				if(itemMyFriend.getID().equals(itemId))
 					throw new Exception("O usuário não tem permissão para apagar este item");
@@ -1293,6 +1239,10 @@ public class User implements InterestedOn<Item>{
 
 	public Set<Lending> getReceivedItemRequests() {
 		return receivedItemRequests;
+	}
+	
+	public void setMyActivityHistory(List<ActivityRegistry> activities) {
+		this.myActivityHistory = new HashSet<ActivityRegistry>(activities);
 	}
 	
 	public List<ActivityRegistry> getMyActivityHistory() {
@@ -1354,6 +1304,10 @@ public class User implements InterestedOn<Item>{
 				"O item " + item.getName() + " do usuário "	+ this.getName() + " está disponível",
 				"Corra pra pedir emprestado, pois "	+ (interestedOnMyItems.get(item).size()-1)
 				+ " pessoas além de você pediram por ele!", (User)interested);
+	}
+
+	public Set<Lending> getSentItemRequests() {
+		return sentItemRequests;
 	}
 	
 }

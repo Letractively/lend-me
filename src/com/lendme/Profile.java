@@ -370,7 +370,7 @@ public class Profile {
 	 * @return
 	 * @throws Exception
 	 */
-	protected String denyLoan(String requestId) throws Exception{
+	protected String denyLending(String requestId) throws Exception{
 		User me = observerSession.getOwner();
 		if ( !lendMe.getLendingByRequestId(requestId).getLender().equals(me) ) {
 			throw new Exception("O empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to lend it

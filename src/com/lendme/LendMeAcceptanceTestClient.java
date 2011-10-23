@@ -14,12 +14,12 @@ public class LendMeAcceptanceTestClient {
         for ( int i=1; i<21; i++ ){
         	if ( i != 17 && i != 18 ){
         		files.add(String.format(".."+File.separator+
-        				"acceptance-test-scripts" + File.separator + "scripts/" + "US%02d.txt", i));
+        				"acceptance-test-scripts" + File.separator + "US%02d.txt", i));
         	}
         	else if ( i == 18 ) continue;
         	else{
         		files.add(String.format(".."+File.separator+
-        				"acceptance-test-scripts" + File.separator + "scripts/" + "US17_18.txt", i));        		
+        				"acceptance-test-scripts" + File.separator + "US17_18.txt", i));        		
         	}
         }
 //        files.add(".."+File.separator+

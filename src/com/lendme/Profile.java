@@ -249,45 +249,6 @@ public class Profile {
 	}
 
 	/**
-	 * Returns true if key matches with profile owner name.
-	 * @param key
-	 * @return
-	 * @throws Exception
-	 */
-	protected boolean searchByName(String key) throws Exception{
-		if ( owner.getLogin().equals(observerSession.getOwner().getLogin()) ){
-			return false;
-		}
-		return owner.getName().contains(key);
-	}
-
-	/**
-	 * Returns true if key matches with profile owner login.
-	 * @param key
-	 * @return
-	 * @throws Exception
-	 */
-	protected boolean searchByLogin(String key) throws Exception{
-		if ( owner.getLogin().equals(observerSession.getOwner().getLogin()) ){
-			return false;
-		}
-		return owner.getLogin().contains(key);
-	}
-	
-	/**
-	 * Returns true if key matches with profile owner address.
-	 * @param key
-	 * @return
-	 * @throws Exception
-	 */
-	protected boolean searchByAddress(String key) throws Exception{
-		if ( owner.getLogin().equals(observerSession.getOwner().getLogin()) ){
-			return false;
-		}
-		return owner.getAddress().getFullAddress().contains(key);
-	}
-
-	/**
 	 * Returns profile owner lending records.
 	 * @param kind
 	 * @return

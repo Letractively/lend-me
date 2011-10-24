@@ -3,7 +3,6 @@ package com.lendme;
 import java.util.Set;
 
 import com.lendme.entities.Item;
-import com.lendme.entities.Lending;
 import com.lendme.entities.Session;
 import com.lendme.entities.User;
 
@@ -19,7 +18,6 @@ public class Viewer {
 	private User owner;
 	private Set<User> ownerFriends;
 	private Set<Item> ownerItems;
-	private LendMeFacade lendMe = new LendMeFacade();
 	
 	private Viewer(Session observer, User user) throws Exception{
 
@@ -178,57 +176,6 @@ public class Viewer {
 	 */
 	protected Session getObserver() {
 		return observerSession;
-	}
-
-	/**
-	 * Observer sends a message to profile owner.
-	 * @param subject
-	 * @param message
-	 * @param lendingId
-	 * @return
-	 * @throws Exception
-	 */
-	protected String sendMessage(String subject, String message, String lendingId) throws Exception{
-		User me = observerSession.getOwner();
-		if ( me.equals(owner) ){
-			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
-		}
-		
-		if (message == null || message.trim().isEmpty()) {
-			throw new Exception("Mensagem inválida");//"Invalid message");
-		}
-		
-		if (subject == null || subject.trim().isEmpty()) {
-			throw new Exception("Assunto inválido");//"Invalid subject");
-		}
-		
-		if (lendingId == null || lendingId.trim().isEmpty()) {
-			throw new Exception("Identificador da requisição de empréstimo é" +
-					" inválido");//"Invalid lending identifier");
-		}
-		
-		Lending actualLending = lendMe.getLendingByLendingId(lendingId);
-		
-		if (! actualLending.getLender().equals(me) && ! actualLending.getBorrower().equals(me)) {
-			throw new Exception("O usuário não participa deste empréstimo");
-		}
-		return me.sendMessage(subject, message, owner, lendingId);
-	}
-	
-	/**
-	 * Observer sends a message to profile owner.
-	 * @param subject
-	 * @param message
-	 * @return
-	 * @throws Exception
-	 */
-	protected String sendMessage(String subject, String message) throws Exception{
-		User me = observerSession.getOwner();
-		if ( me.equals(owner.getLogin()) ){
-			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
-		}
-		
-		return me.sendMessage(subject, message, owner);
 	}
 
 	@Override

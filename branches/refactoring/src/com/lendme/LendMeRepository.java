@@ -1,10 +1,15 @@
 package com.lendme;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.lendme.entities.Session;
 import com.lendme.entities.User;
+import com.lendme.utils.ComparatorOfAddressStrategy;
+import com.lendme.utils.ComparatorOfDateStrategy;
 
 public final class LendMeRepository {
 	
@@ -188,7 +193,88 @@ public final class LendMeRepository {
 		}
 		throw new Exception("Usuário inexistente");//"User does not exist");
 	}
+
+	public List<User> listUsersByDistance(String sessionId) throws Exception{
+		if(sessionId == null || sessionId.trim().equals("")){
+			throw new Exception("Sessão inválida");
+		}
+				
+		
+		List<User> listUsersByDistance = new ArrayList<User>();
+		listUsersByDistance.addAll(getUsers());
+		Collections.sort(listUsersByDistance, new ComparatorOfDateStrategy());
+		
+		User ownerOfSession = getUserBySessionId(sessionId);
+		
+		if(ownerOfSession == null){
+			throw new Exception("Sessão inexistente");
+		}
+		
+		listUsersByDistance.remove(ownerOfSession);
+		Collections.sort(listUsersByDistance, new ComparatorOfAddressStrategy(ownerOfSession.getAddress()));
+		return listUsersByDistance;
+	}
+
+	public Set<User> searchUsersByAttributeKey(String sessionId, String key,
+			String attribute) throws Exception{
+		if ( attribute == null || attribute.trim().isEmpty() ){
+			throw new Exception("Atributo inválido");//"Invalid attribute");
+		}
+		if (!(attribute.equals("nome") || attribute.trim().equals("login") || attribute.trim().equals("endereco"))){
+			throw new Exception("Atributo inexistente");//"Inexistent attribute");
+		}
+		if ( key == null || key.trim().isEmpty() ){
+			throw new Exception("Palavra-chave inválida");//"Invalid search key");
+		}
+		
+		Set<User> results = new HashSet<User>();
+		for ( User user : repository.getUsers() ){
+			if ( repository.getSessionByID(sessionId).getOwner().equals(user) ){
+				continue;
+			}
+			if ( attribute.equals("nome") ){
+				if ( getUserAttribute(user, "nome").contains(key) ){
+					results.add(user);
+				}
+			}
+			else if ( attribute.equals("login") ){
+				if ( ( getUserAttribute(user, "login").contains(key) ) ){
+					results.add(user);
+				}
+			}
+			else if ( attribute.equals("endereco") ){
+				if ( ( getUserAttribute(user, "endereco").contains(key) ) ){
+					results.add(user);
+				}
+			}
+		}
+		return results;
+	}
+	
+	public String getUserAttribute(User user, String attribute)
+			throws Exception {
+
+		if (attribute == null || attribute.trim().isEmpty()) {
+			throw new Exception("Atributo inválido");// "Invalid attribute");
+		}
+		if (!(attribute.equals("nome") || attribute.equals("endereco") || attribute
+				.equals("login"))) {
+			throw new Exception("Atributo inexistente");// "Inexistent attribute");
+		}
+
+		if (attribute.equals("nome")) {
+			return user.getName();
+		} else if (attribute.equals("login")) {
+			return user.getLogin();
+		} else {
+			return user.getAddress().toString();
+		}
+		
+	}
+	
+	public  String getUserAttribute(String login, String attribute)
+	throws Exception{
+		return getUserAttribute(repository.getUserByLogin(login), attribute);
+	}
 	
 }
-
-

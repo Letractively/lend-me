@@ -217,9 +217,6 @@ public class UserOperationManager {
 		throw new Exception("Empréstimo inexistente");
 	}
 	
-	/**
-	 * @see com.lendme.User#confirmLendingTermination(String)
-	 */
 	protected void receiveLentItem(Item item) throws Exception{
 
 		Lending requestAttended = null;
@@ -350,9 +347,6 @@ public class UserOperationManager {
 		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
 	}
 	
-	/**
-	 * @see com.lendme.User#askForReturnOfItem(String, Date)
-	 */
 	protected String requestBack(Item item, Date systemDate) throws Exception{
 		for ( Lending record : itemManager.getMyLentItems() ){
 			if(record.getItem().equals(item)){

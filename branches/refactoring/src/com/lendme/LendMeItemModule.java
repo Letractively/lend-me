@@ -73,8 +73,31 @@ public class LendMeItemModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  Collection<Lending> getLendingRecords(Profile viewerProfile, String kind) throws Exception{
-		return viewerProfile.getLendingRecords(kind);
+	public  Collection<Lending> getLendingRecords(User sessionOwner, String kind) throws Exception{
+		if ( kind == null || kind.trim().isEmpty() ){
+			throw new Exception("Tipo inválido");//"Invalid kind of lending");
+		}
+		if ( kind.equals("emprestador") ){
+			List<Lending> result = new ArrayList<Lending>();
+			result.addAll(sessionOwner.getUserOperationManager().getItemManager().getLentRegistryHistory());
+			result.addAll(sessionOwner.getUserOperationManager().getItemManager().getMyLentItems());
+			return result;
+		}
+		else if ( kind.equals("beneficiado") ){
+			List<Lending> result = new ArrayList<Lending>();
+			result.addAll(sessionOwner.getUserOperationManager().getItemManager().getBorrowedRegistryHistory());
+			result.addAll(sessionOwner.getUserOperationManager().getItemManager().getMyBorrowedItems());
+			return result;
+		}
+		else if ( kind.equals("todos") ){
+			List<Lending> result = new ArrayList<Lending>();
+			result.addAll(sessionOwner.getUserOperationManager().getItemManager().getLentRegistryHistory());
+			result.addAll(sessionOwner.getUserOperationManager().getItemManager().getMyLentItems());
+			result.addAll(sessionOwner.getUserOperationManager().getItemManager().getBorrowedRegistryHistory());
+			result.addAll(sessionOwner.getUserOperationManager().getItemManager().getMyBorrowedItems());
+			return result;
+		}
+		throw new Exception("Tipo inexistente");//"Inexistent kind of lending");
 	}
 	
 	/**
@@ -88,9 +111,26 @@ public class LendMeItemModule {
 	 * @throws Exception
 	 */
 	public  String requestItem(Profile viewer, String itemId, int requiredDays, Set<User> users) throws Exception {
-		User otherUser = getItemOwner(itemId, users);
-		viewer = viewer.viewOtherProfile(otherUser);
-		return viewer.requestItem(itemId, requiredDays);
+
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é invalido");//"Invalid item identifier");
+		}
+		try{
+			for ( Item item : viewer.getOwnerItems() ){
+				if ( item.getID().equals(itemId) ){
+					return viewer.getObserver().getOwner().borrowItem(item, viewer.getOwner(), requiredDays);
+				}
+			}
+		}
+		catch (Exception e){
+			if ( e.getMessage().equals("O usuário não tem permissão para visualizar estes itens") ){
+				throw new Exception("O usuário não tem permissão para requisitar o empréstimo deste item");
+			}
+			else{
+				throw e;
+			}
+		}
+		throw new Exception("O usuário não possue este item");//"Item does not belong to this user");
 	}
 	
 	/**
@@ -119,12 +159,15 @@ public class LendMeItemModule {
 	 * 
 	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
-	 * @param requestId
+	 * @param lending
 	 * @return
 	 * @throws Exception
 	 */
-	public  String approveLending(Profile viewer, String requestId)  throws Exception{
-		return viewer.approveLending(requestId);
+	public  String approveLending(User sessionOwner, Lending lending)  throws Exception{
+		if ( !lending.getLender().equals(sessionOwner) ) {
+			throw new Exception("O empréstimo só pode ser aprovado pelo dono do item");//Only the owner of the item is allowed to lend it
+		}
+		return sessionOwner.approveLending(lending.getID());
 	}
 	
 	/**
@@ -132,12 +175,15 @@ public class LendMeItemModule {
 	 * 
 	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
-	 * @param requestId
+	 * @param lending
 	 * @return
 	 * @throws Exception
 	 */
-	public  String denyLending(Profile viewer, String requestId)  throws Exception{
-		return viewer.denyLending(requestId);
+	public  String denyLending(User sessionOwner, Lending lending)  throws Exception{
+		if ( !lending.getLender().equals(sessionOwner) ) {
+			throw new Exception("O empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to lend it
+		}
+		return sessionOwner.denyLending(lending.getID());
 	}
 	
 	/**
@@ -145,12 +191,15 @@ public class LendMeItemModule {
 	 * 
 	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
-	 * @param requestId
+	 * @param lending
 	 * @return
 	 * @throws Exception
 	 */
-	public  String returnItem(Profile viewer, String requestId) throws Exception{
-		return viewer.returnItem(requestId);
+	public  String returnItem(User sessionOwner, Lending lending) throws Exception{
+		if ( !lending.getBorrower().equals(sessionOwner) ) {
+			throw new Exception("O item só pode ser devolvido pelo usuário beneficiado");//Only the owner of the item is allowed to lend it
+		}
+		return sessionOwner.approveItemReturning(lending.getID());
 	}
 	
 	/**
@@ -158,13 +207,16 @@ public class LendMeItemModule {
 	 * 
 	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
-	 * @param lendingId
+	 * @param lending
 	 * @return
 	 * @throws Exception
 	 */
-	public  String confirmLendingTermination(Profile viewer,
-			String lendingId) throws Exception{
-		return viewer.confirmLendingTermination(lendingId);
+	public  String confirmLendingTermination(User sessionOwner,
+			Lending lending) throws Exception{
+		if ( !lending.getLender().equals(sessionOwner) ) {
+			throw new Exception("O término do empréstimo só pode ser confirmado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
+		}
+		return sessionOwner.confirmLendingTermination(lending.getID());
 	}
 	
 	/**
@@ -176,9 +228,12 @@ public class LendMeItemModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String denyLendingTermination(Profile viewer,
-			String lendingId) throws Exception{
-		return viewer.denyLendingTermination(lendingId);
+	public  String denyLendingTermination(User sessionOwner,
+			Lending lending) throws Exception{
+		if ( !lending.getLender().equals(sessionOwner) ) {
+			throw new Exception("O término do empréstimo só pode ser negado pelo dono do item");//Only the owner of the item is allowed to confirm success in return process
+		}
+		return sessionOwner.denyLendingTermination(lending.getID());
 	}
 	
 	/**
@@ -186,13 +241,16 @@ public class LendMeItemModule {
 	 * 
 	 * <i>This method belongs to the public system interface<i>
 	 * @param sessionId
-	 * @param lendingId
+	 * @param lending
 	 * @return
 	 * @throws Exception
 	 */
-	public  String askForReturnOfItem(Profile viewer,
-			String lendingId, Date date) throws Exception{
-		return viewer.askForReturnOfItem(lendingId, date);
+	public  String askForReturnOfItem(User sessionOwner,
+			Lending lending, Date date) throws Exception{
+		if ( !lending.getLender().equals(sessionOwner) ) {
+			throw new Exception("O usuário não tem permissão para requisitar a devolução deste item");//Only the owner of the item is allowed to ask for return of item
+		}
+		return sessionOwner.askForReturnOfItem(lending.getID(), date);
 	}
 	
 	/**

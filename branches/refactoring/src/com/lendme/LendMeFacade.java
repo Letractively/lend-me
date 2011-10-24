@@ -234,7 +234,8 @@ public class LendMeFacade {
 	 * @throws Exception if users involved doesn't exists or friendship request was already sent
 	 */
 	public  void askForFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
-		userModule.askForFriendship(getUserProfile(solicitorSessionId), repository.getUserByLogin(solicitedLogin));
+		User sessionOwner = getUserProfile(solicitorSessionId).getObserver().getOwner();
+		userModule.askForFriendship(sessionOwner, repository.getUserByLogin(solicitedLogin));
 	}
 
 	/**
@@ -246,7 +247,8 @@ public class LendMeFacade {
 	 * @throws Exception if users involved doesn't exists or friendship request was already accepted
 	 */
 	public  void acceptFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
-		userModule.acceptFriendship(getUserProfile(solicitedSessionId), repository.getUserByLogin(solicitorLogin));
+		User sessionOwner = getUserProfile(solicitedSessionId).getObserver().getOwner();
+		userModule.acceptFriendship(sessionOwner, repository.getUserByLogin(solicitorLogin));
 	}
 	
 	/**
@@ -258,7 +260,8 @@ public class LendMeFacade {
 	 * @throws Exception if users involved doesn't exists or if solicited user already declined request
 	 */
 	public  void declineFriendship(String solicitedSessionId, String solicitorLogin) throws Exception{
-		userModule.declineFriendship(getUserProfile(solicitedSessionId), repository.getUserByLogin(solicitorLogin));
+		User sessionOwner = getUserProfile(solicitedSessionId).getObserver().getOwner();
+		userModule.declineFriendship(sessionOwner, repository.getUserByLogin(solicitorLogin));
 	}
 	
 	/**
@@ -270,7 +273,8 @@ public class LendMeFacade {
 	 * @throws Exception if users involved doesn't exists
 	 */
 	public  void breakFriendship(String solicitorSessionId, String solicitedLogin) throws Exception{
-		userModule.breakFriendship(getUserProfile(solicitorSessionId), repository.getUserByLogin(solicitedLogin));
+		User sessionOwner = getUserProfile(solicitorSessionId).getObserver().getOwner();
+		userModule.breakFriendship(sessionOwner, repository.getUserByLogin(solicitedLogin));
 	}
 
 	/**
@@ -283,7 +287,8 @@ public class LendMeFacade {
 	 * @throws Exception if users involved doesn't exists or are not friends
 	 */
 	public  boolean hasFriend(String solicitorSessionId, String solicitedLogin) throws Exception{
-		return userModule.hasFriend(getUserProfile(solicitorSessionId), repository.getUserByLogin(solicitedLogin));
+		User sessionOwner = getUserProfile(solicitorSessionId).getObserver().getOwner();
+		return userModule.hasFriend(sessionOwner, repository.getUserByLogin(solicitedLogin));
 	}
 
 	/**
@@ -401,8 +406,8 @@ public class LendMeFacade {
 	 * @throws Exception
 	 */
 	public  Collection<Lending> searchForLendingRecords(String sessionId, String kind) throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.getLendingRecords(viewer, kind);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.getLendingRecords(sessionOwner, kind);
 	}
 	
 	public Collection<Lending> searchForLendingRecords(String sessionId) throws Exception{
@@ -420,7 +425,9 @@ public class LendMeFacade {
 	 * @throws Exception
 	 */
 	public  String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		Profile viewer = getUserProfile(sessionId);
+		User itemOwner = getItemOwner(itemId);
+		viewer = getAnotherProfile(viewer, itemOwner.getLogin());
 		return itemModule.requestItem(viewer, itemId, requiredDays, repository.getUsers());
 	}
 	
@@ -434,8 +441,8 @@ public class LendMeFacade {
 	 * @throws Exception
 	 */
 	public  String approveLending(String sessionId, String requestId)  throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.approveLending(viewer, requestId);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.approveLending(sessionOwner, getLendingByRequestId(requestId));
 	}
 
 	/**
@@ -448,8 +455,8 @@ public class LendMeFacade {
 	 * @throws Exception
 	 */
 	public  String denyLending(String sessionId, String requestId)  throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.denyLending(viewer, requestId);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.denyLending(sessionOwner, getLendingByRequestId(requestId));
 	}
 	
 	/**
@@ -461,9 +468,9 @@ public class LendMeFacade {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String returnItem(String sessionId, String requestId) throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.returnItem(viewer, requestId);
+	public  String returnItem(String sessionId, String lendingId) throws Exception{
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.returnItem(sessionOwner, getLendingByLendingId(lendingId));
 	}
 	
 	/**
@@ -477,8 +484,8 @@ public class LendMeFacade {
 	 */
 	public  String confirmLendingTermination(String sessionId,
 			String lendingId) throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.confirmLendingTermination(viewer, lendingId);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.confirmLendingTermination(sessionOwner, getLendingByLendingId(lendingId));
 	}
 
 	/**
@@ -492,8 +499,8 @@ public class LendMeFacade {
 	 */
 	public  String denyLendingTermination(String sessionId,
 			String lendingId) throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.denyLendingTermination(viewer, lendingId);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.denyLendingTermination(sessionOwner, getLendingByLendingId(lendingId));
 	}
 	
 	/**
@@ -507,8 +514,8 @@ public class LendMeFacade {
 	 */
 	public  String askForReturnOfItem(String sessionId,
 			String lendingId) throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.askForReturnOfItem(viewer, lendingId, getSystemDate());
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.askForReturnOfItem(sessionOwner, getLendingByLendingId(lendingId), getSystemDate());
 	}
 	
 	/**

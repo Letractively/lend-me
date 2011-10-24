@@ -22,8 +22,6 @@ public class LendMeAcceptanceTestClient {
         				"acceptance-test-scripts" + File.separator + "US17_18.txt", i));        		
         	}
         }
-//        files.add(".."+File.separator+
-//             	  "acceptance-test-scripts"+File.separator + "scripts" + File.separator + "US08.txt");
         
         LendMeAcceptanceTestInterface lendMeInterface = new LendMeAcceptanceTestInterface();
         EasyAcceptFacade eaFacade = new EasyAcceptFacade(lendMeInterface, files);

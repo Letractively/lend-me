@@ -728,7 +728,7 @@ public class User implements InterestedOn<Item>{
 		}
 		Lending itemRequest = new Lending(this, itemName, itemDescription);
 		communicationManager.publishItemRequestActivity(itemName);
-		itemManager.getReceivedItemRequests().add(itemRequest);
+		itemManager.getPublishedItemRequests().add(itemRequest);
 		return itemRequest.getID();
 		
 	}

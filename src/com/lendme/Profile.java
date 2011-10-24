@@ -240,22 +240,22 @@ public class Profile {
 		}
 		if ( kind.equals("emprestador") ){
 			List<Lending> result = new ArrayList<Lending>();
-			result.addAll(owner.getLentRegistryHistory());
-			result.addAll(owner.getMyLentItemsRecord());
+			result.addAll(owner.getItemManager().getLentRegistryHistory());
+			result.addAll(owner.getItemManager().getMyLentItems());
 			return result;
 		}
 		else if ( kind.equals("beneficiado") ){
 			List<Lending> result = new ArrayList<Lending>();
-			result.addAll(owner.getBorrowedRegistryHistory());
-			result.addAll(owner.getMyBorrowedItemsRecord());
+			result.addAll(owner.getItemManager().getBorrowedRegistryHistory());
+			result.addAll(owner.getItemManager().getMyBorrowedItems());
 			return result;
 		}
 		else if ( kind.equals("todos") ){
 			List<Lending> result = new ArrayList<Lending>();
-			result.addAll(owner.getLentRegistryHistory());
-			result.addAll(owner.getMyLentItemsRecord());
-			result.addAll(owner.getBorrowedRegistryHistory());
-			result.addAll(owner.getMyBorrowedItemsRecord());
+			result.addAll(owner.getItemManager().getLentRegistryHistory());
+			result.addAll(owner.getItemManager().getMyLentItems());
+			result.addAll(owner.getItemManager().getBorrowedRegistryHistory());
+			result.addAll(owner.getItemManager().getMyBorrowedItems());
 			return result;
 		}
 		throw new Exception("Tipo inexistente");//"Inexistent kind of lending");

@@ -20,22 +20,28 @@ public class User implements InterestedOn<Item>{
 	private String login;
 	private String name;
 	private Address address;
+	
 	private FriendshipManager friendshipManager;
-	private Map<Item,User> myItems = new HashMap<Item,User>();
-	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
-	private Set<Lending> sentItemRequests = new HashSet<Lending>();
-	private Set<Lending> publishedItemRequests = new HashSet<Lending>();
-	private Set<Lending> myBorrowedItems = new HashSet<Lending>();
-	private Set<Lending> myLentItems = new HashSet<Lending>();
-	private Set<Lending> lentRegistryHistory = new HashSet<Lending>();
-	private Set<Lending> borrowedRegistryHistory = new HashSet<Lending>();
-	private Set<Lending> loanDenialRegistryHistory = new HashSet<Lending>();
-	private Set<Lending> sentItemDevolutionRequests = new HashSet<Lending>();
-	private Map<Item, ArrayList<InterestedOn<Item>>> interestedOnMyItems = new HashMap<Item, ArrayList<InterestedOn<Item>>>();
+	
+//	private Map<Item,User> itemManager.getMyItems() = new HashMap<Item,User>();
+	
+//	private Set<Lending> myLentItems = new HashSet<Lending>();
+//	private Set<Lending> sentItemRequests = new HashSet<Lending>();
+//	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
+//	private Set<Lending> myBorrowedItems = new HashSet<Lending>();
+//	private Set<Lending> borrowedRegistryHistory = new HashSet<Lending>();
+//	private Set<Lending> lentRegistryHistory = new HashSet<Lending>();
+//	private Set<Lending> lendingDenialRegistryHistory = new HashSet<Lending>();
+//	
+//	
+//	private Set<Lending> publishedItemRequests = new HashSet<Lending>();
+//	private Set<Lending> sentItemDevolutionRequests = new HashSet<Lending>();
+//	private Map<Item, ArrayList<InterestedOn<Item>>> interestedOnMyItems = new HashMap<Item, ArrayList<InterestedOn<Item>>>();
 	
 	private CommunicationManager communicationManager;
 	private EventDate creationDate;
 	private int score;
+	private ItemManager itemManager;
 	
 	public User(){}
 	
@@ -66,11 +72,15 @@ public class User implements InterestedOn<Item>{
 		this.communicationManager = new CommunicationManager(this);
 		this.creationDate = new EventDate(String.format(EntitiesConstants.USER_REGISTERED_MESSAGE, this.login, this.name));
 		this.score = 0;
-		
+		this.itemManager = new ItemManager();
 	}
 	
 	public FriendshipManager getFriendshipManager() {
 		return friendshipManager;
+	}
+	
+	public ItemManager getItemManager() {
+		return itemManager;
 	}
 
 	/**
@@ -149,15 +159,6 @@ public class User implements InterestedOn<Item>{
 	}
 	
 	/**
-	 * Returns true if user has item.
-	 * @param item
-	 * @return
-	 */
-	public boolean hasItem(Item item) {
-		return myItems.containsKey(item);
-	}
-
-	/**
 	 * User receives a new item.
 	 * @param itemName
 	 * @param description
@@ -167,11 +168,8 @@ public class User implements InterestedOn<Item>{
 	 */
 	public String addItem(String itemName, String description, String category)
 			throws Exception{
-		
-		Item myNewItem = new Item(itemName, description, category);
-		this.myItems.put(myNewItem, this);
 		communicationManager.publishItemRegisteredActivity(itemName);
-		return myNewItem.getID();
+		return itemManager.addItem(itemName, description, category, this);
 	}
 
 	/**
@@ -217,19 +215,7 @@ public class User implements InterestedOn<Item>{
 		return friendshipManager.hasFriend(otherUser);
 	}
 
-	/**
-	 * Returns true if user has lent the specified item.
-	 * @param item
-	 * @return
-	 */
-	public boolean hasLentThis(Item item) {
-		for ( Lending lentItem : myLentItems ){
-			if ( lentItem.getItem().equals(item) ){
-				return true;
-			}
-		}
-		return false;
-	}
+	
 
 	/**
 	 * User sends a borrow request of specified item to another user.
@@ -243,27 +229,19 @@ public class User implements InterestedOn<Item>{
 		if ( days <=0 ){
 			throw new Exception("Duracao inválida");//"Requested day amount is invalid");
 		}
-		for ( Lending record : sentItemRequests ){
-			if ( record.getItem().idMatches(item.getID()) ){
-				throw new Exception("Requisição já solicitada");//"Request already sent");
-			}
-		}
-		if (friendshipManager.hasFriend(lender) && lender.hasItem(item)) {                       
-			if (! lender.hasLentThis(item)) {
-				Lending lendingRequest = new Lending(this, lender, item, days);
-				lender.requestItem(lendingRequest);
-				sentItemRequests.add(lendingRequest);
-				sendMessage("Empréstimo do item " + item.getName() + " a " +
-				this.getName(), this.getName() + " solicitou o empréstimo do item " +
-				item.getName(), lender, lendingRequest.getID());
-				return lendingRequest.getID();
+		
+		itemManager.verifyLendingAutenticity(item);
+		
+		if (friendshipManager.hasFriend(lender) && lender.getItemManager().hasItem(item)) {
+			if (! lender.getItemManager().hasLentThis(item)) {
+				String lendingId = itemManager.borrowItem(item, this, lender, days);
+				communicationManager.sendMessage("Empréstimo do item " + item.getName() + " a " +
+						getName(), getName() + " solicitou o empréstimo do item " + item.getName(),
+						lender, lendingId);
+				return lendingId;
 			}
 		}
 		throw new Exception("Solicitado não possui o item ou item não está disponível");
-	}
-
-	private void requestItem(Lending requestLending) {
-		receivedItemRequests.add(requestLending);
 	}
 
 	/**
@@ -276,69 +254,20 @@ public class User implements InterestedOn<Item>{
 		if ( requestId == null || requestId.trim().isEmpty() ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
 		}
-		for ( Lending record : receivedItemRequests ){
-			if ( record.getID().equals(requestId) ){
-				communicationManager.publishOngoingLendingActivity(record.getItem().getName(),
-						record.getBorrower().getName());
-				
-				return lendItem(record.getItem(), record.getBorrower(), record.getRequiredDays());
-			}
+		
+		Lending currentLending = itemManager.getMyReceivedItemRequestById(requestId);
+		if (currentLending != null) {
+			communicationManager.publishOngoingLendingActivity(currentLending.getItem().getName(),
+					currentLending.getBorrower().getName());
+			
+			return itemManager.lendItem(currentLending.getItem(), currentLending.getBorrower(),
+					currentLending.getRequiredDays());
 		}
-		for ( Lending record : myLentItems ){
-			if ( record.getID().equals(requestId) ){
+		if ( itemManager.hasAlreadyApprovedLending(requestId)){
 				throw new Exception("Empréstimo já aprovado");//Lending request already approved
 			}
-		}
 		throw new Exception("Requisição de empréstimo inexistente");//"Inexistent item request");
-	}
-	
-	/**
-	 * User sends a lending request of item to another user.
-	 * @param item
-	 * @param borrower
-	 * @param days
-	 * @return
-	 * @throws Exception
-	 */
-	protected String lendItem(Item item, User borrower, int days) throws Exception{
-
-		Lending requestAccepted = null;
-		for ( Lending record : receivedItemRequests ){
-			if ( record.getItem().equals(item) ){
-				requestAccepted = record;
-				record.setLendingDate();
-				record.getLendingDate().addDays(record.getRequiredDays());
-				borrower.addRequestedItem(item, this, days);
-			}
-		}
-		if ( requestAccepted != null ){
-			receivedItemRequests.remove(requestAccepted);
-			myLentItems.add(requestAccepted);
-			myItems.put(item, borrower);
-			return requestAccepted.getID();
-		}
-		else{
-			throw new Exception("Solicitante não pediu esse item emprestado");
-		}
-	}
-
-	private void addRequestedItem(Item item, User lender, int days) throws Exception{
-		Lending requestAccepted = null;
-		for ( Lending record : sentItemRequests ){
-			if ( record.getItem().equals(item) && record.getLender().equals(lender)
-					&& record.getRequiredDays() == days ){
-				requestAccepted = record;
-				record.setLendingDate();
-				record.getLendingDate().addDays(record.getRequiredDays());
-			}
-		}
-		if ( requestAccepted != null ){
-			sentItemRequests.remove(requestAccepted);
-			myBorrowedItems.add(requestAccepted);
-		}
-		else{
-			throw new Exception("Solicitante não pediu esse item emprestado");
-		}
+		
 	}
 	
 	/**
@@ -348,75 +277,10 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public String denyLending(String requestId) throws Exception{
-		if ( requestId == null || requestId.trim().isEmpty() ){
-			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
-		}
-		for ( Lending record : receivedItemRequests ){
-			if ( record.getID().equals(requestId) ){
-				return declineLendingItem(record.getItem(), record.getBorrower(), record.getRequiredDays());
-			}
-		}
-		for ( Lending record : loanDenialRegistryHistory ){
-			if ( record.getID().equals(requestId) ){
-				throw new Exception("Empréstimo já negado");//Lending request already approved
-			}
-		}
-		throw new Exception("Requisição de empréstimo inexistente");//"Inexistent item request");
+		return itemManager.denyLending(requestId);
 	}
 	
-	/**
-	 * @see com.lendme.User#denyLending(String);
-	 */
-	protected String declineLendingItem(Item item, User borrower, int days) throws Exception{
-		
-		Lending requestDenied = null;
-		for ( Lending record : receivedItemRequests){
-			if (record.getItem().equals(item) && record.getBorrower().equals(borrower) &&
-					record.getRequiredDays() == days ) {
-				requestDenied = record;
-				borrower.removeRequestedItem(item, this, days);
-			}
-		}
-		if ( requestDenied != null ){
-			receivedItemRequests.remove(requestDenied);
-			requestDenied.setStatus(LendingStatus.DENIED);
-			loanDenialRegistryHistory.add(requestDenied);
-			return requestDenied.getID();
-		}
-		else{
-			throw new Exception("Solicitante não pediu esse item emprestado");
-		}
-	}
 	
-	private void removeRequestedItem(Item item, User lender, int days) throws Exception{
-		Lending requestDenied = null;
-		for ( Lending record : sentItemRequests ){
-			if ( record.getItem().equals(item) && record.getLender().equals(lender)
-					&& record.getRequiredDays() == days ){
-				requestDenied = record;
-			}
-		}
-		if ( requestDenied != null ){
-			sentItemRequests.remove(requestDenied);
-		}
-		else{
-			throw new Exception("Solicitante não pediu esse item emprestado");
-		}
-	}
-	
-	/**
-	 * Returns true if user has borrowed the specified item.
-	 * @param item
-	 * @return
-	 */
-	public boolean hasBorrowedThis(Item item) {
-		for (Lending actual : myBorrowedItems){
-			if(actual.getItem().equals(item)){
-				return true;
-			}
-		}
-		return false;
-	}
 
 	/**
 	 * User gives item back.
@@ -425,45 +289,7 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public String approveItemReturning(String lendingId) throws Exception{
-		if ( lendingId == null || lendingId.trim().isEmpty() ){
-			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
-		}
-		for ( Lending record : myBorrowedItems ){
-			if ( record.getID().equals(lendingId) ){
-				return returnItem(record.getItem());
-			}
-		}
-		throw new Exception("Empréstimo inexistente");//"Inexistent item request");
-	}
-	
-	/**
-	 * @see com.lendme.User#approveItemReturning(String)
-	 */
-	protected String returnItem(Item item) throws Exception{
-		for(Lending record : myBorrowedItems){
-			if(record.getItem().equals(item)){
-				if ( record.isReturned() ){
-					throw new Exception("Item já devolvido");//"Item already set to be returned);
-				}
-				record.getLender().setReturned(item);
-				record.setReturned(true);
-				return record.getID();
-			}
-		}
-		throw new Exception("Solicitante não possue o item que quer devolver");
-	}
-	
-	private void setReturned(Item item) throws Exception{
-		for(Lending record : myLentItems){
-			if(record.getItem().equals(item)){
-				if ( record.isReturned() ){
-					throw new Exception("Item já devolvido");//"Item already set to be returned);
-				}
-				record.setReturned(true);
-				return;
-			}
-		}
-		throw new Exception("ERR: lender was required to set his item as toBeReturned but he doesn't have it");
+		return itemManager.approveItemReturning(lendingId);
 	}
 	
 	/**
@@ -476,11 +302,11 @@ public class User implements InterestedOn<Item>{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending identifier is invalid");
 		}
-		for ( Lending record : myLentItems ){
+		for ( Lending record : itemManager.getMyLentItems() ){
 			if ( record.getID().equals(lendingId) ){
 				receiveLentItem(record.getItem());
 				point();
-				for ( Lending recordx: lentRegistryHistory ){
+				for ( Lending recordx: itemManager.getLentRegistryHistory()){
 					if ( recordx.getID().equals(lendingId) ){
 						communicationManager.publishLendingFinishApprovalActivity(record.getItem().getName());						
 						return record.getID();
@@ -489,7 +315,7 @@ public class User implements InterestedOn<Item>{
 				throw new Exception("Lending not recorded.");
 			}
 		}
-		for ( Lending record : lentRegistryHistory ){
+		for ( Lending record : itemManager.getLentRegistryHistory() ){
 			if ( record.getID().equals(lendingId) ){
 				throw new Exception("Término do empréstimo já confirmado");
 			}
@@ -503,9 +329,11 @@ public class User implements InterestedOn<Item>{
 	protected void receiveLentItem(Item item) throws Exception{
 
 		Lending requestAttended = null;
-		for ( Lending record : myLentItems ){
+		for ( Lending record : itemManager.getMyLentItems() ){
 			if ( record.getItem().equals(item) && record.isReturned() ) {
 				requestAttended = record;
+				Map<Item, ArrayList<InterestedOn<Item>>> interestedOnMyItems 
+					= itemManager.getInterestedOnMyItems();
 				if ( interestedOnMyItems.containsKey(item) ) {
 					Set<InterestedOn<Item>> toBeWarned = new HashSet<InterestedOn<Item>>();
 					for ( InterestedOn<Item> interested : interestedOnMyItems.get(item) ) {
@@ -517,12 +345,12 @@ public class User implements InterestedOn<Item>{
 			}
 		}
 		if ( requestAttended != null ){
-			myLentItems.remove(requestAttended);
+			itemManager.getMyLentItems().remove(requestAttended);
 			if ( !(requestAttended.getStatus() == LendingStatus.CANCELLED) ){
 				requestAttended.setStatus(LendingStatus.FINISHED);
 			}
-			lentRegistryHistory.add(requestAttended);
-			myItems.put(item, this);
+			itemManager.getLentRegistryHistory().add(requestAttended);
+			itemManager.getMyItems().put(item, this);
 			requestAttended.getBorrower().removeBorrowedItem(item);
 		}
 		else{
@@ -537,66 +365,22 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public String denyLendingTermination(String lendingId) throws Exception{
-		if ( lendingId == null || lendingId.trim().isEmpty() ){
-			throw new Exception("Identificador do empréstimo é inválido");//"Lending identifier is invalid");
-		}
-		for ( Lending record : lentRegistryHistory ){
-			if ( record.getID().equals(lendingId) ){
-				throw new Exception("O empréstimo já foi finalizado");
-			}
-		}
-		for ( Lending record : myLentItems ){
-			if ( record.getID().equals(lendingId) ){
-				denyReceivingLentItem(record.getItem());
-				return record.getID();
-			}
-		}
-		throw new Exception("Empréstimo inexistente");
-	}
-
-	/**
-	 * @see com.lendme.User#denyLendingTermination(String)
-	 */
-	protected void denyReceivingLentItem(Item item) throws Exception{
-		for(Lending record : myLentItems){
-			if(record.getItem().equals(item)){
-				if ( !record.isReturned() ){
-					throw new Exception("Devolução do item já foi negada");//"Item returning already denied);
-				}
-				record.getBorrower().setNotReturned(item);
-				record.setReturned(false);
-				return;
-			}
-		}
-		throw new Exception("Solicitante quer devolver item que ele não pegou emprestado");
-	}
-
-	private void setNotReturned(Item item) throws Exception{
-		for(Lending record : myBorrowedItems){
-			if(record.getItem().equals(item)){
-				if ( !record.isReturned() ){
-					throw new Exception("Devolução do item já foi negada");//"Item returning already denied);
-				}
-				record.setReturned(false);
-				return;
-			}
-		}
-		throw new Exception("Solicitante quer devolver item que ele não pegou emprestado");
+		return itemManager.denyLendingTermination(lendingId);
 	}
 	
 	private void removeBorrowedItem(Item item) throws Exception{
 		Lending requestAttended = null;
-		for(Lending record : myBorrowedItems){
+		for(Lending record : itemManager.getMyBorrowedItems()){
 			if(record.getItem().equals(item)){
 				requestAttended = record;
 			}
 		}
 		if ( requestAttended != null ){
-			myBorrowedItems.remove(requestAttended);
+			itemManager.getMyBorrowedItems().remove(requestAttended);
 			if ( !(requestAttended.getStatus() == LendingStatus.CANCELLED) ){
 				requestAttended.setStatus(LendingStatus.FINISHED);
 			}
-			borrowedRegistryHistory.add(requestAttended);
+			itemManager.getBorrowedRegistryHistory().add(requestAttended);
 		}
 		else{
 			throw new Exception("Solicitante quer devolver item que ele não pegou emprestado");
@@ -644,12 +428,12 @@ public class User implements InterestedOn<Item>{
 		if ( lendingId == null || lendingId.trim().isEmpty() ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
 		}
-		for ( Lending record : lentRegistryHistory ){
+		for ( Lending record : itemManager.getLentRegistryHistory()){
 			if ( record.getID().equals(lendingId) ){
 				throw new Exception("Item já devolvido");//"Item already returned");				
 			}
 		}
-		for ( Lending record : sentItemDevolutionRequests  ){
+		for ( Lending record : itemManager.getSentItemDevolutionRequests()  ){
 			if ( record.getID().equals(lendingId) ){
 				if ( !record.isReturned() ){
 					throw new Exception("Devolução já requisitada");//"Devolution of item already requested");
@@ -659,7 +443,7 @@ public class User implements InterestedOn<Item>{
 				}
 			}
 		}
-		for ( Lending record : myLentItems ){
+		for ( Lending record : itemManager.getMyLentItems() ){
 			if ( record.getID().equals(lendingId) ){
 				if ( !record.isReturned() ){
 					return requestBack(record.getItem(), systemDate);
@@ -676,15 +460,15 @@ public class User implements InterestedOn<Item>{
 	 * @see com.lendme.User#askForReturnOfItem(String, Date)
 	 */
 	protected String requestBack(Item item, Date systemDate) throws Exception{
-		for ( Lending record : myLentItems ){
+		for ( Lending record : itemManager.getMyLentItems() ){
 			if(record.getItem().equals(item)){
 				record.getBorrower().setRequestedBack(item, systemDate);
 				if(systemDate.before(record.getLendingDate().getDate())){
 					record.setCancelled();
 				}
 				record.setRequestedBack(true);
-				sentItemDevolutionRequests.add(record);
-				sendMessage("Empréstimo do item " + item.getName() + " a " +
+				itemManager.getSentItemDevolutionRequests().add(record);
+				communicationManager.sendMessage("Empréstimo do item " + item.getName() + " a " +
 						record.getBorrower().getName(), this.getName() + " solicitou a devolução do item " +
 						item.getName(), record.getBorrower(), record.getID());
 				return record.getID();
@@ -694,7 +478,7 @@ public class User implements InterestedOn<Item>{
 	}
 
 	private void setRequestedBack(Item item, Date systemDate) throws Exception{
-		for(Lending record : myBorrowedItems){
+		for(Lending record : itemManager.getMyBorrowedItems()){
 			if(record.getItem().equals(item)){
 				record.setRequestedBack(true);
 				if(systemDate.before(record.getLendingDate().getDate())){
@@ -710,7 +494,7 @@ public class User implements InterestedOn<Item>{
 	 * @return
 	 */
 	public boolean hasRequestedBack(Item item){
-		for(Lending actual : myBorrowedItems){
+		for(Lending actual : itemManager.getMyBorrowedItems()){
 			if(actual.getItem().equals(item) && actual.isRequestedBack()){
 				return true;
 			}
@@ -721,8 +505,8 @@ public class User implements InterestedOn<Item>{
 	/**
 	 * Returns true if item this user has borrowed was requested back as lending was canceled.
 	 */
-	public boolean hasCanceled(Item item){
-		for(Lending actual : myBorrowedItems){
+	public boolean hasCancelled(Item item){
+		for(Lending actual : itemManager.getMyBorrowedItems()){
 			if(actual.getItem().equals(item) && actual.isCanceled()){
 				return true;
 			}
@@ -736,7 +520,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public Set<Item> getRequestedBackItems(){
 		Set<Item> requestedBackItems = new HashSet<Item>();
-		for(Lending actual : myBorrowedItems){
+		for(Lending actual : itemManager.getMyBorrowedItems()){
 			if(actual.isRequestedBack()){
 				requestedBackItems.add(actual.getItem());
 			}
@@ -749,9 +533,9 @@ public class User implements InterestedOn<Item>{
 	 * Returns user items which were requested back as their lending was canceled.
 	 * @return
 	 */
-	public Set<Item> getCanceledItems(){
+	public Set<Item> getCancelledItems(){
 		Set<Item> canceledItems = new HashSet<Item>();
-		for(Lending actual : myBorrowedItems){
+		for(Lending actual : itemManager.getMyBorrowedItems()){
 			if(actual.isCanceled()){
 				canceledItems.add(actual.getItem());
 			}
@@ -768,8 +552,8 @@ public class User implements InterestedOn<Item>{
 	public void registerInterestForItem(Item item, User owner) throws Exception{
 
 		if ( friendshipManager.hasFriend(owner) ){
-			if ( owner.hasItem(item) ) {
-				if ( owner.hasLentThis(item) ) {
+			if ( owner.getItemManager().hasItem(item) ) {
+				if ( owner.getItemManager().hasLentThis(item) ) {
 					if ( !(owner.isInterestedOnMyItem(item, this)) ){
 						communicationManager.publishInterestOnItemActivity(item.getName(), owner.getName());
 						owner.markAsInterested(item, this);
@@ -785,6 +569,8 @@ public class User implements InterestedOn<Item>{
 	}
 
 	private void markAsInterested(Item item, InterestedOn<Item> interested) {
+		Map<Item, ArrayList<InterestedOn<Item>>> interestedOnMyItems = 
+				itemManager.getInterestedOnMyItems(); 
 		if(interestedOnMyItems.containsKey(item)){
 			interestedOnMyItems.get(item).add(interested);
 		}else{
@@ -801,21 +587,7 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public boolean isInterestedOnMyItem(Item item, User interested) throws Exception{
-		if ( item == null ){
-			throw new Exception("Item inválido");
-		}
-		if ( interested == null ){
-			throw new Exception("Usuário inválido");
-		}
-		if ( interestedOnMyItems.containsKey(item) ){
-			if ( interestedOnMyItems.get(item) != null ){
-				return this.interestedOnMyItems.get(item).contains(interested);
-			}
-			else{
-				return false;
-			}
-		}
-		return false;
+		return itemManager.isInterestedOnMyItem(item, interested);
 	}
 	
 	/**
@@ -824,7 +596,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public Set<Item> getAllItems() {
 		Map<Item, User> toBeReturned = new HashMap<Item, User>();
-		toBeReturned.putAll(myItems);
+		toBeReturned.putAll(itemManager.getMyItems());
 		return toBeReturned.keySet();
 	}
 
@@ -834,7 +606,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public Set<Item> getLentItems() {
 		Set<Item> result = new HashSet<Item>();
-		for ( Lending record : myLentItems ){
+		for ( Lending record : itemManager.getMyLentItems() ){
 			result.add(record.getItem());
 		}
 		return result;
@@ -846,7 +618,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public Set<Item> getBorrowedItems() {
 		Set<Item> result = new HashSet<Item>();
-		for ( Lending record : myBorrowedItems ){
+		for ( Lending record : itemManager.getMyBorrowedItems()){
 			result.add(record.getItem());
 		}
 		return result;
@@ -869,7 +641,7 @@ public class User implements InterestedOn<Item>{
 	 */
 	public boolean isMyItemRequested(Item item){
 		
-		for(Lending record: receivedItemRequests){
+		for(Lending record: itemManager.getReceivedItemRequests()){
 			if(record.getItem().equals(item))
 				return true;
 		}
@@ -891,45 +663,7 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public Lending getLendingByRequestId(String requestId) throws Exception{
-		if ( requestId == null || requestId.trim().isEmpty() ){
-			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
-		}
-		for (Lending record : this.receivedItemRequests){
-			if(record.getID().equals(requestId)){
-				return record;
-			}
-		}
-		for (Lending record : this.sentItemRequests ){
-			if(record.getID().equals(requestId)){
-				return record;
-			}
-		}
-		for (Lending record : this.myBorrowedItems ){
-			if(record.getID().equals(requestId)){
-				return record;
-			}
-		}
-		for (Lending record : this.myLentItems ){
-			if(record.getID().equals(requestId)){
-				return record;
-			}
-		}
-		for (Lending record : this.lentRegistryHistory ){
-			if(record.getID().equals(requestId)){
-				return record;
-			}			
-		}
-		for (Lending record : this.borrowedRegistryHistory ){
-			if(record.getID().equals(requestId)){
-				return record;
-			}			
-		}
-		for (Lending record : this.loanDenialRegistryHistory ){
-			if(record.getID().equals(requestId)){
-				return record;
-			}			
-		}
-		return null;
+		return itemManager.getLendingByRequestId(requestId);
 	}
 
 	/**
@@ -939,45 +673,7 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public Lending getLendingByLendingId(String lendingId) throws Exception{
-		if ( lendingId == null || lendingId.trim().isEmpty() ){
-			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
-		}
-		for (Lending record : this.receivedItemRequests){
-			if(record.getID().equals(lendingId)){
-				return record;
-			}
-		}
-		for (Lending record : this.sentItemRequests ){
-			if(record.getID().equals(lendingId)){
-				return record;
-			}
-		}
-		for (Lending record : this.myBorrowedItems ){
-			if(record.getID().equals(lendingId)){
-				return record;
-			}
-		}
-		for (Lending record : this.myLentItems ){
-			if(record.getID().equals(lendingId)){
-				return record;
-			}
-		}
-		for (Lending record : this.lentRegistryHistory ){
-			if(record.getID().equals(lendingId)){
-				return record;
-			}
-		}
-		for (Lending record : this.borrowedRegistryHistory ){
-			if(record.getID().equals(lendingId)){
-				return record;
-			}			
-		}
-		for (Lending record : this.loanDenialRegistryHistory ){
-			if(record.getID().equals(lendingId)){
-				return record;
-			}
-		}
-		return null;
+		return itemManager.getLendingByLendingId(lendingId);
 	}	
 	
 	public EventDate getCreationDate() {
@@ -988,22 +684,6 @@ public class User implements InterestedOn<Item>{
 		return friendshipManager.getReceivedFriendshipRequests();
 	}
 	
-	public Set<Lending> getMyBorrowedItemsRecord() {
-		return myBorrowedItems;
-	}
-
-	public Set<Lending> getMyLentItemsRecord() {
-		return myLentItems;
-	}
-	
-	public Set<Lending> getLentRegistryHistory() {
-		return lentRegistryHistory;
-	}
-	
-	public Set<Lending> getBorrowedRegistryHistory() {
-		return borrowedRegistryHistory;
-	}
-
 	/**
 	 * Deletes a item this user is owner.
 	 * @param requestId
@@ -1025,7 +705,7 @@ public class User implements InterestedOn<Item>{
 			}
 		}
 		
-		for(Item actualItem : myItems.keySet())
+		for(Item actualItem : itemManager.getMyItems().keySet())
 			if(actualItem.getID().equals(itemId))
 				toBeRemoved = actualItem;
 		
@@ -1033,48 +713,48 @@ public class User implements InterestedOn<Item>{
 			throw new Exception("Item inexistente");
 		}
 		
-		for(Lending actualLending : this.myLentItems){
+		for(Lending actualLending : itemManager.getMyLentItems()){
 			if(actualLending.getItem().equals(toBeRemoved)){
 				throw new Exception("O usuário não pode apagar este item enquanto estiver emprestado");
 			}
 		}
 		
-		for(Lending actualLending : receivedItemRequests){
+		for(Lending actualLending : itemManager.getReceivedItemRequests()){
 			if(actualLending.getItem().equals(toBeRemoved)){
-				receivedItemRequests.remove(actualLending);
+				itemManager.getReceivedItemRequests().remove(actualLending);
 			}
 		}
-		myItems.remove(toBeRemoved);
+		itemManager.getMyItems().remove(toBeRemoved);
 	}
 
 	public int getReputation() {
-		return myLentItems.size() + lentRegistryHistory.size();
+		return itemManager.getMyLentItems().size() + itemManager.getLentRegistryHistory().size();
 	}
 
 	public Set<Lending> getReceivedItemRequests() {
-		return receivedItemRequests;
+		return itemManager.getReceivedItemRequests();
 	}
 	
 	public String publishItemRequest(String itemName, String itemDescription) throws Exception{
 		
-		for ( Item item : myItems.keySet() ){
+		for ( Item item : itemManager.getMyItems().keySet() ){
 			if ( item.getName().equals(itemName) && item.getDescription().equals(itemDescription) ){
 				throw new Exception("Não se pode publicar pedido de seu próprio item");
 			}
 		}
 		Lending itemRequest = new Lending(this, itemName, itemDescription);
 		communicationManager.publishItemRequestActivity(itemName);
-		publishedItemRequests.add(itemRequest);
+		itemManager.getReceivedItemRequests().add(itemRequest);
 		return itemRequest.getID();
 		
 	}
 	
 	public Set<Lending> getPublishedItemRequests(){
-		return publishedItemRequests;
+		return itemManager.getPublishedItemRequests();
 	}
 
 	public void offerItem(Lending publishedRequest, Item item) throws Exception{
-		if ( this.hasLentThis(item) ){
+		if ( this.getItemManager().hasLentThis(item) ){
 			throw new Exception("Não se pode oferecer um item que já está emprestado");
 		}
 
@@ -1086,7 +766,7 @@ public class User implements InterestedOn<Item>{
 	}
 	
 	public void republishItemRequest(Lending petition) throws Exception{
-		for ( Item item : myItems.keySet() ){
+		for ( Item item : itemManager.getMyItems().keySet() ){
 			if ( item.getName().equals(petition.getDesiredItemName())
 					&& item.getDescription().equals(petition.getDesiredItemDescription()) ){
 				throw new Exception("Não se pode publicar pedido de seu próprio item");
@@ -1100,14 +780,14 @@ public class User implements InterestedOn<Item>{
 			InterestedOn<Item> interested) throws Exception{
 
 		Item item = target;
-		sendMessage(
+		communicationManager.sendMessage(
 				"O item " + item.getName() + " do usuário "	+ this.getName() + " está disponível",
-				"Corra pra pedir emprestado, pois "	+ (interestedOnMyItems.get(item).size()-1)
+				"Corra pra pedir emprestado, pois "	+ (itemManager.getInterestedOnMyItems().get(item).size()-1)
 				+ " pessoas além de você pediram por ele!", (User)interested);
 	}
 
 	public Set<Lending> getSentItemRequests() {
-		return sentItemRequests;
+		return itemManager.getSentItemRequests();
 	}
 
 	public List<ActivityRegistry> getMyActivityHistory() {
@@ -1121,5 +801,4 @@ public class User implements InterestedOn<Item>{
 	public List<Topic> getTopics(String topicType) throws Exception{
 		return communicationManager.getTopics(topicType);
 	}
-	
 }

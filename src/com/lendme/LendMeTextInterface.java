@@ -46,8 +46,8 @@ public class LendMeTextInterface {
 	private static final int DELETE_ITEM = 8;
 	private static final int REGISTER_INTEREST_IN_ITEM = 9;
 	private static final int PUBLISH_ITEM_REQUEST = 10;
-	private static final int OFFER_ITEM = 11;
-	private static final int VIEW_FRIENDS_PUBLISHED_ITEM_REQ = 12;
+	private static final int VIEW_FRIENDS_PUBLISHED_ITEM_REQ = 11;
+	private static final int OFFER_ITEM = 12;
 	private static final int GO_BACK_ITEMS_TOOLS = 13;
 	
 	//Messages Tools
@@ -201,8 +201,8 @@ public class LendMeTextInterface {
 						"[2]Buscar Item \n\t [3]Requisitar Empréstimo \t\t[4]Avaliar" +
 						" Empréstimo \n\t [5]Devolver Item \t\t\t[6]Avaliar Devolução de Item " +
 						"\n\t [7]Pedir devolução de item \t\t[8]Apagar Item \n\t [9]Registrar Interesse" +
-						" em Item \t[10]Publicar Pedido de Item \n\t [11]OferecerItem " +
-						"\t\t\t[12]Ver Publicações de pedidos de amigos [13]Voltar\n",13)){
+						" em Item \t[10]Publicar Pedido de Item \n\t [11]Ver Public de pedidos de amigos  " +
+						"\t[12]OferecerItem \n\t [13]Voltar\n",13)){
 				
 				case REGISTER_ITEM:{
 					try{

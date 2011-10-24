@@ -45,7 +45,10 @@ public class LendMeTextInterface {
 	private static final int ASK_FOR_ITEM_RETURN = 7;
 	private static final int DELETE_ITEM = 8;
 	private static final int REGISTER_INTEREST_IN_ITEM = 9;
-	private static final int GO_BACK_ITEMS_TOOLS = 10;
+	private static final int PUBLISH_ITEM_REQUEST = 10;
+	private static final int OFFER_ITEM = 11;
+	private static final int VIEW_FRIENDS_PUBLISHED_ITEM_REQ = 12;
+	private static final int GO_BACK_ITEMS_TOOLS = 13;
 	
 	//Messages Tools
 	private static final int SEND_OFF_TOPIC_MESSAGE = 1;
@@ -198,7 +201,8 @@ public class LendMeTextInterface {
 						"[2]Buscar Item \n\t [3]Requisitar Empréstimo \t\t[4]Avaliar" +
 						" Empréstimo \n\t [5]Devolver Item \t\t\t[6]Avaliar Devolução de Item " +
 						"\n\t [7]Pedir devolução de item \t\t[8]Apagar Item \n\t [9]Registrar Interesse" +
-						" em Item \t[10]Voltar\n",10)){
+						" em Item \t[10]Publicar Pedido de Item \n\t [11]OferecerItem " +
+						"\t\t\t[12]Ver Publicações de pedidos de amigos [13]Voltar\n",13)){
 				
 				case REGISTER_ITEM:{
 					try{
@@ -281,6 +285,36 @@ public class LendMeTextInterface {
 				case REGISTER_INTEREST_IN_ITEM:{
 					try{
 						registerInterestInItem();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+						}
+				
+				case PUBLISH_ITEM_REQUEST:{
+					try{
+						publishItemRequest();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+						}
+				
+				case OFFER_ITEM:{
+					try{
+						offerItem();
+					}
+					catch ( Exception e ){
+						printException(e);
+					}
+					break;
+						}
+				
+				case VIEW_FRIENDS_PUBLISHED_ITEM_REQ:{
+					try{
+						viewFriendsPublishedItemReq();
 					}
 					catch ( Exception e ){
 						printException(e);
@@ -625,6 +659,27 @@ public class LendMeTextInterface {
 	private static void viewJointActivityHistory() throws Exception {
 		System.out.println(listObjectsInArray("Histórico Conjunto de Atividades", 
 				lendMeAdapter.getJointActivityHistory(currentUserSessionId)));
+	}
+	
+	private static void publishItemRequest() throws Exception {
+		lendMeAdapter.publishItemRequest(currentUserSessionId, 
+				returnCorrectString("\n \t Informe o nome do item: "),
+				returnCorrectString("\n \t Informe a descrição do item: "));
+		
+		System.out.println("\n \t Pedido de item publicado com sucesso!");
+	}
+	
+	private static void offerItem() throws Exception {
+		lendMeAdapter.offerItem(currentUserSessionId, 
+				returnCorrectString("\n \t Informe o id da publicação do pedido: "),
+				returnCorrectString("\n \t Informe o id do item: "));
+		
+		System.out.println("\n \t Item oferecido com sucesso!");
+	}
+	
+	private static void viewFriendsPublishedItemReq() throws Exception {
+		System.out.println(listObjectsInArray("Publicações de pedidos dos amigos",
+				lendMeAdapter.getFriendsPublishedItemRequests(currentUserSessionId)));
 	}
 	
 	private static String logIn() throws Exception{

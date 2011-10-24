@@ -680,4 +680,9 @@ public class LendMeFacade {
 		return repository.getUserAttribute(login, attribute);
 	}
 	
+	public List<Lending> getFriendsPublishedItemRequests(String solicitorSessionId) throws Exception {
+		Viewer viewer = userModule.getUserProfile(repository.getSessionByID(solicitorSessionId));
+		return communicationModule.getFriendsPublishedItemRequests(solicitorSessionId, userModule.getFriends(viewer)); 
+	}
+	
 }

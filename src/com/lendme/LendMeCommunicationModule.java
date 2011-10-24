@@ -210,5 +210,17 @@ public class LendMeCommunicationModule {
 			String itemDescription) throws Exception{
 		return sessionOwner.publishItemRequest(itemName, itemDescription);
 	}
+	
+	public List<Lending> getFriendsPublishedItemRequests(String solicitorSessionId,
+			Set<User> friends) throws Exception {
+		List<Lending> results = new ArrayList<Lending>();
+		
+		for (User actualFriend : friends) {
+			for (Lending currentPubRequest : actualFriend.getPublishedItemRequests()) {
+				results.add(currentPubRequest);
+			}
+		}
+		return results;
+	}
 
 }

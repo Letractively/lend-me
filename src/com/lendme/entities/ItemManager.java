@@ -97,7 +97,7 @@ public class ItemManager {
 	}
 
 	public Map<Item, ArrayList<InterestedOn<Item>>> getInterestedOnMyItems() {
-		return new HashMap<Item,ArrayList<InterestedOn<Item>>>(interestedOnMyItems);
+		return interestedOnMyItems;
 	}
 	
 	public Set<Lending> getBorrowedRegistryHistory() {
@@ -105,11 +105,11 @@ public class ItemManager {
 	}
 	
 	public Set<Lending> getSentItemDevolutionRequests() {
-		return new HashSet<Lending>(sentItemDevolutionRequests);
+		return sentItemDevolutionRequests;
 	}
 	
 	public Set<Lending> getPublishedItemRequests() {
-		return new HashSet<Lending>(publishedItemRequests);
+		return publishedItemRequests;
 	}
 	
 	public void setReceivedItemRequests(Set<Lending> receivedItemRequests) {

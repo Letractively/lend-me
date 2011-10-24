@@ -26,7 +26,7 @@ public class LendMeItemModule {
 	 * @return the item attribute value
 	 * @throws Exception if parameters are invalid
 	 */
-	public  String getItemAttribute(Profile viewer, String itemId, String attribute) throws Exception{
+	public  String getItemAttribute(Viewer viewer, String itemId, String attribute) throws Exception{
 		if ( attribute == null || attribute.trim().isEmpty() ){
 			throw new Exception("Atributo inválido");//"Invalid attribute");
 		}
@@ -60,7 +60,7 @@ public class LendMeItemModule {
 	 * @return a set of items
 	 * @throws Exception if user doesn't exists
 	 */
-	public  Set<Item> getItems(Profile viewer) throws Exception {
+	public  Set<Item> getItems(Viewer viewer) throws Exception {
 		return viewer.getOwnerItems();
 	}
 	
@@ -110,7 +110,7 @@ public class LendMeItemModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String requestItem(Profile viewer, String itemId, int requiredDays, Set<User> users) throws Exception {
+	public  String requestItem(Viewer viewer, String itemId, int requiredDays, Set<User> users) throws Exception {
 
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é invalido");//"Invalid item identifier");
@@ -436,7 +436,7 @@ public class LendMeItemModule {
 	 * @param sessionId
 	 * @throws Exception
 	 */
-	public  void registerInterestForItem(Profile viewer, String itemId) throws Exception{
+	public  void registerInterestForItem(Viewer viewer, String itemId) throws Exception{
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}

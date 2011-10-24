@@ -13,15 +13,15 @@ public class LendMeUserModule {
 	 * @return a profile
 	 * @throws Exception if user doesn't exists or there is no alive session for that user
 	 */
-	public  Profile getUserProfile(Session session) throws Exception {
-		return Profile.getUserProfile(session, session.getOwner());
+	public  Viewer getUserProfile(Session session) throws Exception {
+		return Viewer.getUserProfile(session, session.getOwner());
 	}
 
-	public Set<User> getFriends(Profile viewer) throws Exception {
+	public Set<User> getFriends(Viewer viewer) throws Exception {
 		return viewer.getOwnerFriends();
 	}
 
-	public Set<User> getFriends(Profile solicitorViewer, User solicited) throws Exception {
+	public Set<User> getFriends(Viewer solicitorViewer, User solicited) throws Exception {
 		solicitorViewer = solicitorViewer.viewOtherProfile(solicited);
 		return solicitorViewer.getOwnerFriends();
 	}
@@ -46,11 +46,11 @@ public class LendMeUserModule {
 		return sessionOwner.hasFriend(otherUser);
 	}
 
-	public Set<User> getOwnerFriendshipRequests(Profile solicitorViewer) {
+	public Set<User> getOwnerFriendshipRequests(Viewer solicitorViewer) {
 		return solicitorViewer.getOwnerFriendshipRequests();
 	}
 
-	public Profile viewProfile(Profile solicitorViewer, User user) throws Exception {
+	public Viewer viewProfile(Viewer solicitorViewer, User user) throws Exception {
 		solicitorViewer = solicitorViewer.viewOtherProfile(user);
 		return solicitorViewer;
 	}

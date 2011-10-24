@@ -16,6 +16,10 @@ import com.lendme.entities.Lending;
 import com.lendme.entities.User;
 import com.lendme.utils.ComparatorOfItemsStrategy;
 import com.lendme.utils.ComparatorOfRankingStrategy;
+import com.lendme.utils.CreationDateOrderingStrategy;
+import com.lendme.utils.IncreasingOrderingStrategy;
+import com.lendme.utils.NameSearchStrategy;
+import com.lendme.utils.SearchAndOrdering;
 
 public class LendMeItemModule {
 	

@@ -13,7 +13,7 @@ import com.lendme.entities.User;
  * concepts of logged users (observer) and target users (profile owners).
  */
 
-public class Profile {
+public class Viewer {
 
 	private Session observerSession;
 	private User owner;
@@ -21,7 +21,7 @@ public class Profile {
 	private Set<Item> ownerItems;
 	private LendMeFacade lendMe = new LendMeFacade();
 	
-	private Profile(Session observer, User user) throws Exception{
+	private Viewer(Session observer, User user) throws Exception{
 
 		if ( observer == null ){
 			throw new Exception("Sessao do usuário observador inválida");//"Invalid observer user");
@@ -91,8 +91,8 @@ public class Profile {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static Profile getUserProfile(Session userSession, User user) throws Exception{
-		return new Profile(userSession, user);
+	protected static Viewer getUserProfile(Session userSession, User user) throws Exception{
+		return new Viewer(userSession, user);
 	}
 
 	/**
@@ -100,8 +100,8 @@ public class Profile {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Profile viewOwnProfile() throws Exception{
-		return new Profile(observerSession, observerSession.getOwner());
+	protected Viewer viewOwnProfile() throws Exception{
+		return new Viewer(observerSession, observerSession.getOwner());
 	}
 	
 	/**
@@ -110,14 +110,14 @@ public class Profile {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Profile viewOtherProfile(User other) throws Exception{
+	protected Viewer viewOtherProfile(User other) throws Exception{
 		if ( observerSession == null || other == null ){
 			throw new Exception("Nao eh possivel visualizar este perfil");//"This profile is not accessible");
 		}
 		if ( observerSession.getOwner().equals(other) ){
 			return viewOwnProfile();
 		}
-		return new Profile(observerSession, other);
+		return new Viewer(observerSession, other);
 	}
 
 	/**

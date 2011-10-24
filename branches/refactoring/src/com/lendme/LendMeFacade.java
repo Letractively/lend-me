@@ -152,7 +152,7 @@ public class LendMeFacade {
 		
 		String ownerSessionId = repository.searchSessionsByLogin(getItemOwner(itemId).getLogin())
 				.iterator().next().getId();
-		Profile viewer = getUserProfile(ownerSessionId);
+		Viewer viewer = getUserProfile(ownerSessionId);
 		return itemModule.getItemAttribute(viewer, itemId, attribute);
 	}
 
@@ -162,7 +162,7 @@ public class LendMeFacade {
 	 * @return a profile
 	 * @throws Exception if user doesn't exists or there is no alive session for that user
 	 */
-	public  Profile getUserProfile(String sessionId) throws Exception {
+	public  Viewer getUserProfile(String sessionId) throws Exception {
 		Session session = repository.getSessionByID(sessionId);
 		return userModule.getUserProfile(session);
 	}
@@ -201,7 +201,7 @@ public class LendMeFacade {
 	 * @throws Exception if user doesn't exists
 	 */
 	public  Set<Item> getItems(String sessionId) throws Exception {
-		Profile viewer = getUserProfile(sessionId);
+		Viewer viewer = getUserProfile(sessionId);
 		return itemModule.getItems(viewer);
 	}
 
@@ -215,12 +215,12 @@ public class LendMeFacade {
 	 * @throws Exception if users involved doesn't exists or solicitor user has no permission to access solicited items
 	 */
 	public  Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
-		Profile viewer = getUserProfile(observerSessionId);
+		Viewer viewer = getUserProfile(observerSessionId);
 		viewer = getAnotherProfile(viewer, ownerLogin);
 		return itemModule.getItems(viewer);
 	}
 
-	public Profile getAnotherProfile(Profile viewer, String anotherUser)
+	public Viewer getAnotherProfile(Viewer viewer, String anotherUser)
 			throws Exception {
 		return userModule.viewProfile(viewer, repository.getUserByLogin(anotherUser));
 	}
@@ -306,7 +306,7 @@ public class LendMeFacade {
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
 		
-		Profile senderProfile = getUserProfile(senderSessionId);
+		Viewer senderProfile = getUserProfile(senderSessionId);
 		User sender = null;
 		User receiver = null;
 		try {
@@ -345,7 +345,7 @@ public class LendMeFacade {
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
 		
-		Profile senderProfile = getUserProfile(senderSessionId);
+		Viewer senderProfile = getUserProfile(senderSessionId);
 		User sender = null;
 		User receiver = null;
 		try {
@@ -425,7 +425,7 @@ public class LendMeFacade {
 	 * @throws Exception
 	 */
 	public  String requestItem(String sessionId, String itemId, int requiredDays) throws Exception {
-		Profile viewer = getUserProfile(sessionId);
+		Viewer viewer = getUserProfile(sessionId);
 		User itemOwner = getItemOwner(itemId);
 		viewer = getAnotherProfile(viewer, itemOwner.getLogin());
 		return itemModule.requestItem(viewer, itemId, requiredDays, repository.getUsers());
@@ -589,7 +589,7 @@ public class LendMeFacade {
 	 * @throws Exception
 	 */
 	public  void registerInterestForItem(String sessionId, String itemId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
+		Viewer viewer = getUserProfile(sessionId);
 		viewer = userModule.viewProfile(viewer, itemModule.getItemOwner(itemId, repository.getUsers()));
 		itemModule.registerInterestForItem(viewer, itemId);
 	}
@@ -629,7 +629,7 @@ public class LendMeFacade {
 	 */
 	public  String viewProfile(String solicitorSessionId, 
 			String solicitedUserLogin) throws Exception {
-		Profile solicitorViewer = getUserProfile(solicitorSessionId);
+		Viewer solicitorViewer = getUserProfile(solicitorSessionId);
 		return getAnotherProfile(solicitorViewer, solicitedUserLogin).toString();
 	}
 	

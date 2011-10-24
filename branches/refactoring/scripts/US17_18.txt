@@ -1,0 +1,73 @@
+# User Story 17 - Publicar pedido
+# User Story 18 - Oferecer item
+
+zerarSistema
+
+# entradas válidas
+
+criarUsuario login="mark" nome="Mark Zuckerberg" endereco="Palo Alto, California"
+criarUsuario login="steve" nome="Steven Paul Jobs" endereco="Palo Alto, California"
+criarUsuario login="bill" nome="William Henry Gates III" endereco="Medina, Washington"
+
+sessaoMark=abrirSessao login="mark"
+sessaoSteve=abrirSessao login="steve"
+sessaoBill=abrirSessao login="bill"
+
+requisitarAmizade idSessao=${sessaoSteve} login="mark"
+requisitarAmizade idSessao=${sessaoBill} login="mark"
+
+aprovarAmizade idSessao=${sessaoMark} login="steve"
+aprovarAmizade idSessao=${sessaoMark} login="bill"
+
+idPublicacaoPedido1=publicarPedido idSessao=${sessaoSteve} nomeItem="The Social Network" descricaoItem="O filme mais recente de David Fincher"
+expect "Steven Paul Jobs precisa do item The Social Network; Steven Paul Jobs e Mark Zuckerberg são amigos agora" historicoAtividades idSessao=${sessaoSteve}
+expect "Steven Paul Jobs precisa do item The Social Network; Mark Zuckerberg e William Henry Gates III são amigos agora; Mark Zuckerberg e Steven Paul Jobs são amigos agora" historicoAtividadesConjunto idSessao=${sessaoMark}
+
+idItem1=cadastrarItem idSessao=${sessaoMark} nome="The Social Network" descricao="Filme sobre a fundação da rede social Facebook" categoria="Filme"
+oferecerItem idSessao=${sessaoMark} idPublicacaoPedido=${idPublicacaoPedido1} idItem=${idItem1}
+
+expect "O usuário Mark Zuckerberg ofereceu o item The Social Network" lerTopicos idSessao=${sessaoSteve} tipo="todos"
+idTopico1=enviarMensagem idSessao=${sessaoSteve} destinatario="mark" assunto="O usuário Mark Zuckerberg ofereceu o item The Social Network" mensagem="Thanks!"
+expect "Item oferecido: The Social Network - Filme sobre a fundação da rede social Facebook; Thanks!" lerMensagens idSessao=${sessaoSteve} idTopico=${idTopico1}
+
+idPublicacaoPedido2=publicarPedido idSessao=${sessaoBill} nomeItem="Guia do mochileiro das galáxias" descricaoItem="Livro de Douglas Adams"
+expect "William Henry Gates III precisa do item Guia do mochileiro das galáxias; Mark Zuckerberg cadastrou The Social Network; Steven Paul Jobs precisa do item The Social Network; Mark Zuckerberg e William Henry Gates III são amigos agora; Mark Zuckerberg e Steven Paul Jobs são amigos agora" historicoAtividadesConjunto idSessao=${sessaoMark}
+expect "Mark Zuckerberg cadastrou The Social Network; Steven Paul Jobs precisa do item The Social Network; Mark Zuckerberg e William Henry Gates III são amigos agora; Steven Paul Jobs e Mark Zuckerberg são amigos agora" historicoAtividadesConjunto idSessao=${sessaoSteve}
+
+rePublicarPedido idSessao=${sessaoMark} idPublicacaoPedido=${idPublicacaoPedido2}
+expect "William Henry Gates III precisa do item Guia do mochileiro das galáxias; Mark Zuckerberg cadastrou The Social Network; Steven Paul Jobs precisa do item The Social Network; Mark Zuckerberg e William Henry Gates III são amigos agora; Steven Paul Jobs e Mark Zuckerberg são amigos agora" historicoAtividadesConjunto idSessao=${sessaoSteve}
+expect "William Henry Gates III precisa do item Guia do mochileiro das galáxias; Mark Zuckerberg cadastrou The Social Network; Steven Paul Jobs precisa do item The Social Network; Mark Zuckerberg e William Henry Gates III são amigos agora; Mark Zuckerberg e Steven Paul Jobs são amigos agora" historicoAtividadesConjunto idSessao=${sessaoMark}
+
+idItem2=cadastrarItem idSessao=${sessaoSteve} nome="Guia do mochileiro das galáxias" descricao="Série de ficção científica criada por Douglas Adams" categoria="Livro"
+oferecerItem idSessao=${sessaoSteve} idPublicacaoPedido=${idPublicacaoPedido2} idItem=${idItem2}
+expect "O usuário Steven Paul Jobs ofereceu o item Guia do mochileiro das galáxias" lerTopicos idSessao=${sessaoBill} tipo="todos"
+
+# entradas inválidas
+
+expectError "O usuário não tem permissão para requisitar o empréstimo deste item" requisitarEmprestimo idSessao=${sessaoBill} idItem=${idItem2} duracao=7
+requisitarAmizade idSessao=${sessaoBill} login="steve"
+aprovarAmizade idSessao=${sessaoSteve} login="bill"
+requisitarEmprestimo idSessao=${sessaoBill} idItem=${idItem2} duracao=7
+
+expectError "Sessão inválida" publicarPedido idSessao= nomeItem="xpto" descricaoItem="xpto"
+expectError "Sessão inválida" publicarPedido idSessao="" nomeItem="xpto" descricaoItem="xpto"
+expectError "Sessão inexistente" publicarPedido idSessao="xpto" nomeItem="xpto" descricaoItem="xpto"
+
+expectError "Nome inválido" publicarPedido idSessao=${sessaoMark} nomeItem= descricaoItem="xpto"
+expectError "Nome inválido" publicarPedido idSessao=${sessaoMark} nomeItem="" descricaoItem="xpto"
+expectError "Descrição inválida" publicarPedido idSessao=${sessaoMark} nomeItem="xpto" descricaoItem=
+
+expectError "Sessão inválida" oferecerItem idSessao= idPublicacaoPedido="xpto" idItem="xpto"
+expectError "Sessão inválida" oferecerItem idSessao="" idPublicacaoPedido="xpto" idItem="xpto"
+expectError "Sessão inexistente" oferecerItem idSessao="xpto" idPublicacaoPedido="xpto" idItem="xpto"
+
+expectError "Identificador da publicação de pedido é inválido" oferecerItem idSessao=${sessaoMark} idPublicacaoPedido= idItem="xpto"
+expectError "Identificador da publicação de pedido é inválido" oferecerItem idSessao=${sessaoMark} idPublicacaoPedido="" idItem="xpto"
+expectError "Publicação de pedido inexistente" oferecerItem idSessao=${sessaoMark} idPublicacaoPedido="xpto" idItem="xpto"
+
+expectError "Identificador do item é inválido" oferecerItem idSessao=${sessaoMark} idPublicacaoPedido=${idPublicacaoPedido1} idItem=
+expectError "Identificador do item é inválido" oferecerItem idSessao=${sessaoMark} idPublicacaoPedido=${idPublicacaoPedido1} idItem=""
+expectError "Item inexistente" oferecerItem idSessao=${sessaoMark} idPublicacaoPedido=${idPublicacaoPedido1} idItem="xpto"
+
+encerrarSistema
+quit

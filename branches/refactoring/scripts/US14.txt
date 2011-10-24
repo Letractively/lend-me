@@ -1,0 +1,57 @@
+# User Story 14 - Ranking dos usuários
+
+zerarSistema
+
+# entradas válidas
+
+criarUsuario login="mark" nome="Mark Zuckerberg" endereco="Palo Alto, California"
+criarUsuario login="steve" nome="Steven Paul Jobs" endereco="Palo Alto, California"
+criarUsuario login="bill" nome="William Henry Gates III" endereco="Medina, Washington"
+
+sessaoMark=abrirSessao login="mark"
+sessaoSteve=abrirSessao login="steve"
+sessaoBill=abrirSessao login="bill"
+
+requisitarAmizade idSessao=${sessaoSteve} login="mark"
+requisitarAmizade idSessao=${sessaoBill} login="mark"
+
+aprovarAmizade idSessao=${sessaoMark} login="steve"
+aprovarAmizade idSessao=${sessaoMark} login="bill"
+
+idItem1=cadastrarItem idSessao=${sessaoMark} nome="The Social Network" descricao="Filme sobre a fundação da rede social Facebook" categoria="Filme"
+idItem2=cadastrarItem idSessao=${sessaoSteve} nome="Guia do mochileiro das galáxias" descricao="Série de ficção científica criada por Douglas Adams" categoria="Livro"
+idItem3=cadastrarItem idSessao=${sessaoBill} nome="Final Fantasy XIII" descricao="Décimo terceiro jogo da série produzida pela Square Enix" categoria="Jogo"
+
+idRequisicaoEmprestimo1=requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem2} duracao=7
+idEmprestimo1=aprovarEmprestimo idSessao=${sessaoSteve} idRequisicaoEmprestimo=${idRequisicaoEmprestimo1}
+devolverItem idSessao=${sessaoMark} idEmprestimo=${idEmprestimo1}
+confirmarTerminoEmprestimo idSessao=${sessaoSteve} idEmprestimo=${idEmprestimo1}
+
+idRequisicaoEmprestimo2=requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem2} duracao=7
+idEmprestimo2=aprovarEmprestimo idSessao=${sessaoSteve} idRequisicaoEmprestimo=${idRequisicaoEmprestimo2}
+devolverItem idSessao=${sessaoMark} idEmprestimo=${idEmprestimo2}
+confirmarTerminoEmprestimo idSessao=${sessaoSteve} idEmprestimo=${idEmprestimo2}
+
+idRequisicaoEmprestimo3=requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem3} duracao=7
+idEmprestimo3=aprovarEmprestimo idSessao=${sessaoBill} idRequisicaoEmprestimo=${idRequisicaoEmprestimo3}
+devolverItem idSessao=${sessaoMark} idEmprestimo=${idEmprestimo3}
+confirmarTerminoEmprestimo idSessao=${sessaoBill} idEmprestimo=${idEmprestimo3}
+
+expect "steve; bill; mark" getRanking idSessao=${sessaoMark} categoria="global"
+
+expect "steve; bill; mark" getRanking idSessao=${sessaoMark} categoria="amigos"
+expect "steve; mark" getRanking idSessao=${sessaoSteve} categoria="amigos"
+expect "bill; mark" getRanking idSessao=${sessaoBill} categoria="amigos"
+
+# entradas inválidas
+
+expectError "Sessão inválida" getRanking idSessao= categoria="xpto"
+expectError "Sessão inválida" getRanking idSessao="" categoria="xpto"
+expectError "Sessão inexistente" getRanking idSessao="xpto" categoria="xpto"
+
+expectError "Categoria inválida" getRanking idSessao=${sessaoMark} categoria=
+expectError "Categoria inválida" getRanking idSessao=${sessaoMark} categoria=""
+expectError "Categoria inexistente" getRanking idSessao=${sessaoMark} categoria="xpto"
+
+encerrarSistema
+quit

@@ -1,0 +1,69 @@
+# User Story 04 - Adição de amigos
+
+zerarSistema
+
+# entradas válidas
+
+criarUsuario login="mark" nome="Mark Zuckerberg" endereco="Palo Alto, California"
+criarUsuario login="steve" nome="Steven Paul Jobs" endereco="Palo Alto, California"
+criarUsuario login="bill" nome="William Henry Gates III" endereco="Medina, Washington"
+
+sessaoMark=abrirSessao login="mark"
+expect "Não há requisições" getRequisicoesDeAmizade idSessao=${sessaoMark}
+
+sessaoSteve=abrirSessao login="steve"
+requisitarAmizade idSessao=${sessaoSteve} login="mark"
+expect "steve" getRequisicoesDeAmizade idSessao=${sessaoMark}
+expect "Não há requisições" getRequisicoesDeAmizade idSessao=${sessaoSteve}
+
+sessaoBill=abrirSessao login="bill"
+requisitarAmizade idSessao=${sessaoBill} login="mark"
+expect "steve; bill" getRequisicoesDeAmizade idSessao=${sessaoMark}
+expect "false" ehAmigo idSessao=${sessaoMark} login="steve"
+expect "false" ehAmigo idSessao=${sessaoMark} login="bill"
+
+aprovarAmizade idSessao=${sessaoMark} login="steve"
+expect "bill" getRequisicoesDeAmizade idSessao=${sessaoMark}
+expect "true" ehAmigo idSessao=${sessaoMark} login="steve"
+expect "true" ehAmigo idSessao=${sessaoSteve} login="mark"
+
+aprovarAmizade idSessao=${sessaoMark} login="bill"
+expect "Não há requisições" getRequisicoesDeAmizade idSessao=${sessaoMark}
+expect "true" ehAmigo idSessao=${sessaoMark} login="bill"
+expect "true" ehAmigo idSessao=${sessaoBill} login="mark"
+
+requisitarAmizade idSessao=${sessaoSteve} login="bill"
+
+# entradas inválidas
+
+expectError "Sessão inválida" getRequisicoesDeAmizade idSessao=
+expectError "Sessão inválida" getRequisicoesDeAmizade idSessao=""
+expectError "Sessão inexistente" getRequisicoesDeAmizade idSessao="xpto"
+
+expectError "Sessão inválida" requisitarAmizade idSessao= login="xpto"
+expectError "Sessão inválida" requisitarAmizade idSessao="" login="xpto"
+expectError "Sessão inexistente" requisitarAmizade idSessao="xpto" login="xpto"
+expectError "Login inválido" requisitarAmizade idSessao=${sessaoMark} login=
+expectError "Login inválido" requisitarAmizade idSessao=${sessaoMark} login=""
+expectError "Usuário inexistente" requisitarAmizade idSessao=${sessaoMark} login="xpto"
+expectError "Os usuários já são amigos" requisitarAmizade idSessao=${sessaoMark} login="steve"
+expectError "Requisição já solicitada" requisitarAmizade idSessao=${sessaoSteve} login="bill"
+
+expectError "Sessão inválida" ehAmigo idSessao= login="xpto"
+expectError "Sessão inválida" ehAmigo idSessao="" login="xpto"
+expectError "Sessão inexistente" ehAmigo idSessao="xpto" login="xpto"
+expectError "Login inválido" ehAmigo idSessao=${sessaoMark} login=
+expectError "Login inválido" ehAmigo idSessao=${sessaoMark} login=""
+expectError "Usuário inexistente" ehAmigo idSessao=${sessaoMark} login="xpto"
+
+expectError "Sessão inválida" aprovarAmizade idSessao= login="xpto"
+expectError "Sessão inválida" aprovarAmizade idSessao="" login="xpto"
+expectError "Sessão inexistente" aprovarAmizade idSessao="xpto" login="xpto"
+expectError "Login inválido" aprovarAmizade idSessao=${sessaoMark} login=
+expectError "Login inválido" aprovarAmizade idSessao=${sessaoMark} login=""
+expectError "Usuário inexistente" aprovarAmizade idSessao=${sessaoMark} login="xpto"
+expectError "Os usuários já são amigos" aprovarAmizade idSessao=${sessaoMark} login="bill"
+expectError "Requisição de amizade inexistente" aprovarAmizade idSessao=${sessaoSteve} login="bill"
+
+encerrarSistema
+quit

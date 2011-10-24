@@ -1,0 +1,63 @@
+# User Story 05 - Visualização de perfil
+
+zerarSistema
+
+# entradas válidas
+
+criarUsuario login="mark" nome="Mark Zuckerberg" endereco="Palo Alto, California"
+criarUsuario login="steve" nome="Steven Paul Jobs" endereco="Palo Alto, California"
+criarUsuario login="bill" nome="William Henry Gates III" endereco="Medina, Washington"
+
+sessaoMark=abrirSessao login="mark"
+sessaoSteve=abrirSessao login="steve"
+sessaoBill=abrirSessao login="bill"
+
+requisitarAmizade idSessao=${sessaoSteve} login="mark"
+requisitarAmizade idSessao=${sessaoBill} login="mark"
+expect "O usuário não possui amigos" getAmigos idSessao=${sessaoMark}
+expect "O usuário não possui amigos" getAmigos idSessao=${sessaoMark} login="steve"
+
+aprovarAmizade idSessao=${sessaoMark} login="steve"
+aprovarAmizade idSessao=${sessaoMark} login="bill"
+expect "steve; bill" getAmigos idSessao=${sessaoMark}
+expect "mark" getAmigos idSessao=${sessaoSteve}
+expect "mark" getAmigos idSessao=${sessaoMark} login="steve"
+expect "steve; bill" getAmigos idSessao=${sessaoBill} login="mark"
+
+expect "O usuário não possui itens cadastrados" getItens idSessao=${sessaoMark}
+expect "O usuário não possui itens cadastrados" getItens idSessao=${sessaoBill} login="mark"
+idItem1=cadastrarItem idSessao=${sessaoMark} nome="Guia do mochileiro das galáxias" descricao="Série de ficção científica criada por Douglas Adams" categoria="Livro"
+expect "Guia do mochileiro das galáxias" getItens idSessao=${sessaoMark}
+expect "Guia do mochileiro das galáxias" getItens idSessao=${sessaoBill} login="mark"
+idItem2=cadastrarItem idSessao=${sessaoMark} nome="Final Fantasy XIII" descricao="Décimo terceiro jogo da série produzida pela Square Enix" categoria="Jogo"
+expect "Guia do mochileiro das galáxias; Final Fantasy XIII" getItens idSessao=${sessaoMark}
+expect "Guia do mochileiro das galáxias; Final Fantasy XIII" getItens idSessao=${sessaoBill} login="mark"
+
+# entradas inválidas
+
+expectError "O usuário não tem permissão para visualizar estes itens" getItens idSessao=${sessaoBill} login="steve"
+
+expectError "Sessão inválida" getAmigos idSessao=
+expectError "Sessão inválida" getAmigos idSessao=""
+expectError "Sessão inexistente" getAmigos idSessao="xpto"
+
+expectError "Sessão inválida" getAmigos idSessao= login="xpto"
+expectError "Sessão inválida" getAmigos idSessao="" login="xpto"
+expectError "Sessão inexistente" getAmigos idSessao="xpto" login="xpto"
+expectError "Login inválido" getAmigos idSessao=${sessaoMark} login=
+expectError "Login inválido" getAmigos idSessao=${sessaoMark} login=""
+expectError "Usuário inexistente" getAmigos idSessao=${sessaoMark} login="xpto"
+
+expectError "Sessão inválida" getItens idSessao=
+expectError "Sessão inválida" getItens idSessao=""
+expectError "Sessão inexistente" getItens idSessao="xpto"
+
+expectError "Sessão inválida" getItens idSessao= login="xpto"
+expectError "Sessão inválida" getItens idSessao="" login="xpto"
+expectError "Sessão inexistente" getItens idSessao="xpto" login="xpto"
+expectError "Login inválido" getItens idSessao=${sessaoMark} login=
+expectError "Login inválido" getItens idSessao=${sessaoMark} login=""
+expectError "Usuário inexistente" getItens idSessao=${sessaoMark} login="xpto"
+
+encerrarSistema
+quit

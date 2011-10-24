@@ -1,0 +1,85 @@
+# User Story 06 - Realização de empréstimo
+
+zerarSistema
+
+# entradas válidas
+
+criarUsuario login="mark" nome="Mark Zuckerberg" endereco="Palo Alto, California"
+criarUsuario login="steve" nome="Steven Paul Jobs" endereco="Palo Alto, California"
+criarUsuario login="bill" nome="William Henry Gates III" endereco="Medina, Washington"
+
+sessaoMark=abrirSessao login="mark"
+sessaoSteve=abrirSessao login="steve"
+sessaoBill=abrirSessao login="bill"
+
+requisitarAmizade idSessao=${sessaoSteve} login="mark"
+requisitarAmizade idSessao=${sessaoBill} login="mark"
+
+aprovarAmizade idSessao=${sessaoMark} login="steve"
+aprovarAmizade idSessao=${sessaoMark} login="bill"
+
+idItem1=cadastrarItem idSessao=${sessaoMark} nome="The Social Network" descricao="Filme sobre a fundação da rede social Facebook" categoria="Filme"
+idItem2=cadastrarItem idSessao=${sessaoSteve} nome="Guia do mochileiro das galáxias" descricao="Serie de ficção científica criada por Douglas Adams" categoria="Livro"
+idItem3=cadastrarItem idSessao=${sessaoBill} nome="Final Fantasy XIII" descricao="Décimo terceiro jogo da série produzida pela Square Enix" categoria="Jogo"
+
+expect "Não há empréstimos deste tipo" getEmprestimos idSessao=${sessaoMark} tipo="emprestador"
+expect "Não há empréstimos deste tipo" getEmprestimos idSessao=${sessaoMark} tipo="beneficiado"
+expect "Não há empréstimos deste tipo" getEmprestimos idSessao=${sessaoMark} tipo="todos"
+
+idRequisicaoEmprestimo1=requisitarEmprestimo idSessao=${sessaoSteve} idItem=${idItem1} duracao=7
+expect "Não há empréstimos deste tipo" getEmprestimos idSessao=${sessaoMark} tipo="todos"
+aprovarEmprestimo idSessao=${sessaoMark} idRequisicaoEmprestimo=${idRequisicaoEmprestimo1}
+
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoMark} tipo="emprestador"
+expect "Não há empréstimos deste tipo" getEmprestimos idSessao=${sessaoMark} tipo="beneficiado"
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoMark} tipo="todos"
+
+expect "Não há empréstimos deste tipo" getEmprestimos idSessao=${sessaoSteve} tipo="emprestador"
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoSteve} tipo="beneficiado"
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoSteve} tipo="todos"
+
+idRequisicaoEmprestimo2=requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem2} duracao=7
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoMark} tipo="todos"
+aprovarEmprestimo idSessao=${sessaoSteve} idRequisicaoEmprestimo=${idRequisicaoEmprestimo2}
+
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoMark} tipo="emprestador"
+expect "steve-mark:Guia do mochileiro das galáxias:Andamento" getEmprestimos idSessao=${sessaoMark} tipo="beneficiado"
+expect "mark-steve:The Social Network:Andamento; steve-mark:Guia do mochileiro das galáxias:Andamento" getEmprestimos idSessao=${sessaoMark} tipo="todos"
+
+expect "steve-mark:Guia do mochileiro das galáxias:Andamento" getEmprestimos idSessao=${sessaoSteve} tipo="emprestador"
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoSteve} tipo="beneficiado"
+expect "steve-mark:Guia do mochileiro das galáxias:Andamento; mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoSteve} tipo="todos"
+
+# entradas inválidas
+
+expectError "Sessão inválida" requisitarEmprestimo idSessao= idItem="xpto" duracao=7
+expectError "Sessão inválida" requisitarEmprestimo idSessao="" idItem="xpto" duracao=7
+expectError "Sessão inexistente" requisitarEmprestimo idSessao="xpto" idItem="xpto" duracao=7
+expectError "Identificador do item é inválido" requisitarEmprestimo idSessao=${sessaoMark} idItem= duracao=7
+expectError "Identificador do item é inválido" requisitarEmprestimo idSessao=${sessaoMark} idItem="" duracao=7
+expectError "Item inexistente" requisitarEmprestimo idSessao=${sessaoMark} idItem="xpto" duracao=7
+expectError "Duracao inválida" requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem3} duracao=0
+expectError "Duracao inválida" requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem3} duracao=-1
+
+idRequisicaoEmprestimo3=requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem3} duracao=7
+expectError "Requisição já solicitada" requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem3} duracao=7
+expectError "O usuário não tem permissão para requisitar o empréstimo deste item" requisitarEmprestimo idSessao=${sessaoSteve} idItem=${idItem3} duracao=7
+expectError "O empréstimo só pode ser aprovado pelo dono do item" aprovarEmprestimo idSessao=${sessaoMark} idRequisicaoEmprestimo=${idRequisicaoEmprestimo3}
+
+expectError "Sessão inválida" aprovarEmprestimo idSessao= idRequisicaoEmprestimo="xpto"
+expectError "Sessão inválida" aprovarEmprestimo idSessao="" idRequisicaoEmprestimo="xpto"
+expectError "Sessão inexistente" aprovarEmprestimo idSessao="xpto" idRequisicaoEmprestimo="xpto"
+expectError "Identificador da requisição de empréstimo é inválido" aprovarEmprestimo idSessao=${sessaoSteve} idRequisicaoEmprestimo=
+expectError "Identificador da requisição de empréstimo é inválido" aprovarEmprestimo idSessao=${sessaoSteve} idRequisicaoEmprestimo=""
+expectError "Requisição de empréstimo inexistente" aprovarEmprestimo idSessao=${sessaoSteve} idRequisicaoEmprestimo="xpto"
+expectError "Empréstimo já aprovado" aprovarEmprestimo idSessao=${sessaoMark} idRequisicaoEmprestimo=${idRequisicaoEmprestimo1}
+
+expectError "Sessão inválida" getEmprestimos idSessao= tipo="xpto"
+expectError "Sessão inválida" getEmprestimos idSessao="" tipo="xpto"
+expectError "Sessão inexistente" getEmprestimos idSessao="xpto" tipo="xpto"
+expectError "Tipo inválido" getEmprestimos idSessao=${sessaoMark} tipo=
+expectError "Tipo inválido" getEmprestimos idSessao=${sessaoMark} tipo=""
+expectError "Tipo inexistente" getEmprestimos idSessao=${sessaoMark} tipo="xpto"
+
+encerrarSistema
+quit

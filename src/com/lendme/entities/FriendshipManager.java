@@ -1,82 +1,89 @@
 package com.lendme.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
-public class FriendshipManager extends RequestManager<User> {
+public class FriendshipManager {
 
+	User me;
+	Set<User> friends;
+	Set<User> sentFriendshipRequests;
+	Set<User> receivedFriendshipRequests;
+	
 	public FriendshipManager(User user) {
-		super(user);
+		me = user;
+		friends = new HashSet<User>();
+		sentFriendshipRequests = new HashSet<User>();
+		receivedFriendshipRequests = new HashSet<User>();
 	}
 	
 	public Set<User> getFriends(){
-		return acceptedRequests;
+		return friends;
 	}
 	
 	public Set<User> getReceivedFriendshipRequests(){
-		return receivedRequests;
+		return receivedFriendshipRequests;
 	}
 
 	public Set<User> getSentFriendshipRequests(){
-		return sentRequests;
+		return sentFriendshipRequests;
 	}
 	
-	@Override
-	public void sendingAction(User request) throws Exception{
-		if ( sentRequests.contains(request) ){
-			throw new Exception("Requisição já solicitada");//"The request has already been sent");
+	public void sendRequest(User user) throws Exception{
+		if ( sentFriendshipRequests.contains(user) ){
+			throw new Exception("Requisição já solicitada");//"The user has already been sent");
 		}
-		if ( acceptedRequests.contains(request) ){
+		if ( friends.contains(user) ){
 			throw new Exception("Os usuários já são amigos");//"The users are already friends");
 		}
-		request.getFriendshipManager().receiveRequest(me);
+		sentFriendshipRequests.add(user);
+		user.getFriendshipManager().receiveRequest(me);
 	}
 
-	@Override
-	public void receivingAction(User request) {
-		//Nothing special
+	public void receiveRequest(User user) throws Exception{
+		receivedFriendshipRequests.add(user);
 	}
-
-	@Override
-	public void acceptingAction(User request) throws Exception{
-		if ( acceptedRequests.contains(request) ){
+	
+	public void acceptRequest(User user) throws Exception{
+		if ( friends.contains(user) ){
 			throw new Exception("Os usuários já são amigos");//"The users are already friends");
 		}
-		if ( !receivedRequests.contains(request) ){
+		if ( !receivedFriendshipRequests.contains(user) ){
 			throw new Exception("Requisição de amizade inexistente");//Inexistent friendship request");
 		}
-		request.getFriendshipManager().acceptingActionMirror(me);
+		user.getFriendshipManager().acceptRequestMirror(me);
+		receivedFriendshipRequests.remove(user);
+		friends.add(user);
 	}
 
-	@Override
-	public void acceptingActionMirror(User request){
-		sentRequests.remove(request);
-		acceptedRequests.add(request);
+	public void acceptRequestMirror(User user){
+		sentFriendshipRequests.remove(user);
+		friends.add(user);
 	}
 	
-	@Override
-	public void decliningAction(User request) throws Exception{
-		if ( acceptedRequests.contains(request) ){
+	public void declineRequest(User user) throws Exception{
+		if ( friends.contains(user) ){
 			throw new Exception("Os usuários já são amigos");//"The users are already friends");
 		}
-		if ( !receivedRequests.contains(request) ){
+		if ( !receivedFriendshipRequests.contains(user) ){
 			throw new Exception("Requisição de amizade inexistente");//Inexistent friendship request");
 		}
 		else{
-			request.getFriendshipManager().decliningActionMirror(me);
+			user.getFriendshipManager().declineRequestMirror(me);
 		}
+		sentFriendshipRequests.remove(user);
 	}
 	
-	@Override
-	public void decliningActionMirror(User request) throws Exception{
-		receivedRequests.remove(request);
+	public void declineRequestMirror(User user) throws Exception{
+		receivedFriendshipRequests.remove(user);
 	}
 
-	public boolean hasFriend(User otherUser) {
-		return acceptedRequests.contains(otherUser);
+	public boolean hasFriend(User user) {
+		return friends.contains(user);
 	}
 	
-	public void removeFriend(User otherUser) {
-		removeAcceptedRequest(otherUser);
+	public void removeFriend(User user) {
+		friends.remove(user);
 	}
 
 	public void breakFriendship(User user) {

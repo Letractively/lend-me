@@ -22,7 +22,7 @@ import com.lendme.entities.User;
  * In fact, it contains most of the Business Logic, and is the access point to User and Profile logic.
  */
 
-public class LendMe {
+public class LendMeFacade {
 
 	private Calendar time;
 	private LendMeRepository repository;
@@ -34,7 +34,7 @@ public class LendMe {
 	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
 	
 	
-	public LendMe() {
+	public LendMeFacade() {
 		time = GregorianCalendar.getInstance();
 		repository = LendMeRepository.getInstance();
 		userModule = new LendMeUserModule();
@@ -146,11 +146,14 @@ public class LendMe {
 	 */
 	public  String getItemAttribute(String itemId, String attribute) throws Exception{
 		
+		if ( repository.getSessions().isEmpty() ){
+			throw new Exception("Não há sessão disponível para obter essas informações.");
+		}
+		
 		String ownerSessionId = repository.searchSessionsByLogin(getItemOwner(itemId).getLogin())
 				.iterator().next().getId();
-		
-		Profile viewerProfile = getUserProfile(ownerSessionId);
-		return itemModule.getItemAttribute(itemId, attribute, ownerSessionId, viewerProfile);
+		Profile viewer = getUserProfile(ownerSessionId);
+		return itemModule.getItemAttribute(viewer, itemId, attribute);
 	}
 
 	/**
@@ -198,7 +201,7 @@ public class LendMe {
 	 * @throws Exception if user doesn't exists
 	 */
 	public  Set<Item> getItems(String sessionId) throws Exception {
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		Profile viewer = getUserProfile(sessionId);
 		return itemModule.getItems(viewer);
 	}
 
@@ -212,9 +215,14 @@ public class LendMe {
 	 * @throws Exception if users involved doesn't exists or solicitor user has no permission to access solicited items
 	 */
 	public  Set<Item> getItems(String observerSessionId, String ownerLogin) throws Exception {
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(observerSessionId));
-		viewer = viewer.viewOtherProfile(repository.getUserByLogin(ownerLogin));
+		Profile viewer = getUserProfile(observerSessionId);
+		viewer = getAnotherProfile(viewer, ownerLogin);
 		return itemModule.getItems(viewer);
+	}
+
+	public Profile getAnotherProfile(Profile viewer, String anotherUser)
+			throws Exception {
+		return userModule.viewProfile(viewer, repository.getUserByLogin(anotherUser));
 	}
 	
 	/**
@@ -290,78 +298,67 @@ public class LendMe {
 		return userModule.getOwnerFriendshipRequests(getUserProfile(sessionId));
 	}
 
-	/**
-	 * Solicitor user sends a message to solicited user.
-	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param senderSessionId
-	 * @param subject
-	 * @param message
-	 * @param receiverLogin
-	 * @param lendingId
-	 * @return
-	 * @throws Exception
-	 */
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
-			
-			User receiver = null;
-			Profile solicitorViewer = null;
-			try {
-				solicitorViewer = userModule.getUserProfile(repository.getSessionByID(senderSessionId));
-				receiver = repository.getUserByLogin(receiverLogin);
-				return communicationModule.sendMessage(solicitorViewer, subject, message, receiver, lendingId);
-			} catch (Exception e) {
-				
-				if (e.getMessage().equals("Login inválido")) {
-					throw new Exception("Destinatário inválido");//"Invalid receiver");
-				}
-				
-				else if (e.getMessage().equals("Usuário inexistente")) {
-					throw new Exception("Destinatário inexistente");//"Inexistent receiver");
-				}
-				
-				else if (e.getMessage().equals("Empréstimo inexistente")) {
-					throw new Exception("Requisição de empréstimo inexistente");
-				}else{
-					throw new Exception(e.getMessage());
-				}
+		
+		Profile senderProfile = getUserProfile(senderSessionId);
+		User sender = null;
+		User receiver = null;
+		try {
+			receiver = repository.getUserByLogin(receiverLogin);
+			sender = senderProfile.viewOtherProfile(receiver).getObserver().getOwner();
+			if (message == null || message.trim().isEmpty()) {
+				throw new Exception("Mensagem inválida");//"Invalid message");
 			}
-
+			
+			if (subject == null || subject.trim().isEmpty()) {
+				throw new Exception("Assunto inválido");//"Invalid subject");
+			}
+			Lending lending = getLendingByLendingId(lendingId);
+			return communicationModule.sendMessage(sender, subject, message, receiver, lending);
+		} catch (Exception e) {
+			
+			if (e.getMessage().equals("Login inválido")) {
+				throw new Exception("Destinatário inválido");//"Invalid receiver");
+			}
+			else if (e.getMessage().equals("Usuário inexistente")) {
+				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
+			}
+			else if (e.getMessage().equals("Identificador do empréstimo é inválido")) {
+				throw new Exception("Identificador da requisição de empréstimo é inválido");
+			}
+			else if (e.getMessage().equals("Empréstimo inexistente") ){
+				throw new Exception("Requisição de empréstimo inexistente");
+			}
+			else
+			{
+				throw new Exception(e.getMessage());
+			}
+		}
 	}
 	
-	/**
-	 * Solicitor user sends message to solicited user.
-	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param senderSessionId
-	 * @param subject
-	 * @param message
-	 * @param receiverLogin
-	 * @return
-	 * @throws Exception
-	 */
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
+		
+		Profile senderProfile = getUserProfile(senderSessionId);
+		User sender = null;
+		User receiver = null;
+		try {
+			receiver = repository.getUserByLogin(receiverLogin);
+			sender = senderProfile.viewOtherProfile(receiver).getObserver().getOwner();
+		} catch (Exception e) {
 			
-			User receiver = null;
-			Profile soliciterViewer = null;
-			try {
-				soliciterViewer = userModule.getUserProfile(repository.getSessionByID(senderSessionId));
-				receiver = repository.getUserByLogin(receiverLogin);
-			} catch (Exception e) {
-				
-				if (e.getMessage().equals("Login inválido")) {
-					throw new Exception("Destinatário inválido");//"Invalid receiver");
-				}
-				
-				else if (e.getMessage().equals("Usuário inexistente")) {
-					throw new Exception("Destinatário inexistente");//"Inexistent receiver");
-				}else{
-					throw new Exception(e.getMessage());
-				}
+			if (e.getMessage().equals("Login inválido")) {
+				throw new Exception("Destinatário inválido");//"Invalid receiver");
 			}
-			return communicationModule.sendMessage(soliciterViewer, subject, message, receiver);
+				
+			else if (e.getMessage().equals("Usuário inexistente")) {
+				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
+			}else{
+				throw new Exception(e.getMessage());
+			}
+		}
+		return communicationModule.sendMessage(sender, subject, message, receiver);
 	}
 	
 	/**
@@ -375,7 +372,8 @@ public class LendMe {
 	 */
 	public  List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
-			return communicationModule.getTopics(userModule.getUserProfile(repository.getSessionByID(sessionId)), topicType);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return communicationModule.getTopics(sessionOwner, topicType);
 	}
 	
 	/**
@@ -389,7 +387,8 @@ public class LendMe {
 	 */
 	public  List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
-			return communicationModule.getTopicMessages(userModule.getUserProfile(repository.getSessionByID(sessionId)), topicId);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return communicationModule.getTopicMessages(sessionOwner, topicId, repository.getUsers());
 	}
 	
 	/**
@@ -401,9 +400,13 @@ public class LendMe {
 	 * @return
 	 * @throws Exception
 	 */
-	public  Collection<Lending> getLendingRecords(String sessionId, String kind) throws Exception{
+	public  Collection<Lending> searchForLendingRecords(String sessionId, String kind) throws Exception{
 		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
 		return itemModule.getLendingRecords(viewer, kind);
+	}
+	
+	public Collection<Lending> searchForLendingRecords(String sessionId) throws Exception{
+		return searchForLendingRecords(sessionId, "todos");
 	}
 	
 	/**
@@ -579,8 +582,9 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  void registerInterestForItem(String sessionId, String itemId) throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		itemModule.registerInterestForItem(viewer, itemId, repository.getUsers());
+		Profile viewer = getUserProfile(sessionId);
+		viewer = userModule.viewProfile(viewer, itemModule.getItemOwner(itemId, repository.getUsers()));
+		itemModule.registerInterestForItem(viewer, itemId);
 	}
 
 	/**
@@ -604,8 +608,8 @@ public class LendMe {
 	 * @throws Exception
 	 */
 	public  String getRanking(String sessionId, String category) throws Exception{
-		Session actualSession = repository.getSessionByID(sessionId);
-		return itemModule.getRanking(category, actualSession, repository.getUsers());
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.getRanking(category, sessionOwner, repository.getUsers());
 	}
 	
 	/**
@@ -619,7 +623,7 @@ public class LendMe {
 	public  String viewProfile(String solicitorSessionId, 
 			String solicitedUserLogin) throws Exception {
 		Profile solicitorViewer = getUserProfile(solicitorSessionId);
-		return userModule.viewProfile(solicitorViewer, repository.getUserByLogin(solicitedUserLogin)).toString();
+		return getAnotherProfile(solicitorViewer, solicitedUserLogin).toString();
 	}
 	
 	/**
@@ -631,44 +635,38 @@ public class LendMe {
 	 */
 	public  Set<Lending> getReceivedItemRequests(String sessionId)
 			throws Exception {
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		return itemModule.getReceivedItemRequests(viewer);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return itemModule.getReceivedItemRequests(sessionOwner);
 	}
 	
 	public  List<ActivityRegistry> getActivityHistory(String solicitorSessionId) throws Exception {
-		Profile viewer = getUserProfile(solicitorSessionId);
-		return communicationModule.getActivityHistory(viewer);
+		User sessionOwner = getUserProfile(solicitorSessionId).getObserver().getOwner();
+		return communicationModule.getActivityHistory(sessionOwner);
 	}
 
 	public List<ActivityRegistry> getJointActivityHistory(
 			String solicitorSessionId) throws Exception {
 		
-		Session session = repository.getSessionByID(solicitorSessionId);
-		return communicationModule.getJointActivityHistory(session);
+		User sessionOwner = getUserProfile(solicitorSessionId).getObserver().getOwner();
+		return communicationModule.getJointActivityHistory(sessionOwner);
 	}
 
 	public String publishItemRequest(String sessionId, String itemName,
 			String itemDescription) throws Exception {
-		Profile viewer = getUserProfile(sessionId);
-		return communicationModule.publishItemRequest(viewer, itemName, itemDescription);
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		return communicationModule.publishItemRequest(sessionOwner, itemName, itemDescription);
 	}
 
 	public void offerItem(String sessionId,
 			String requestPublicationId, String itemId) throws Exception{
-		if ( requestPublicationId == null || requestPublicationId.trim().isEmpty() ){
-			throw new Exception("Identificador da publicação de pedido é inválido");
-		}
-		if ( itemId == null || itemId.trim().isEmpty() ){
-			throw new Exception("Identificador do item é inválido");
-		}
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		communicationModule.offerItem(viewer, requestPublicationId, itemId, repository.getUsers());
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		communicationModule.offerItem(sessionOwner, requestPublicationId, itemId, repository.getUsers());
 	}
 
 	public void republishItemRequest(String sessionId,
 			String requestPublicationId) throws Exception{
-		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
-		communicationModule.republishItemRequest(viewer, requestPublicationId, repository.getUsers());
+		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
+		communicationModule.republishItemRequest(sessionOwner, requestPublicationId, repository.getUsers());
 	}
 
 	public String getUserAttribute(String login, String attribute) throws Exception {

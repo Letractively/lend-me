@@ -16,7 +16,7 @@ import com.lendme.utils.ComparatorOfDateStrategy;
 
 public class LendMeAdapter {
 	
-	private LendMe lendMe = new LendMe();
+	private LendMeFacade lendMe = new LendMeFacade();
 	
 	/*
 	 * Refactoring comment:
@@ -81,7 +81,7 @@ public class LendMeAdapter {
 	 * @param key the value expected for specified attribute
 	 * @param attribute the specified attribute
 	 * @return an array of strings containing the results names and addresses
-	 * @see com.lendme.LendMe#searchUsersByAttributeKey(String, String, String)
+	 * @see com.lendme.LendMeFacade#searchUsersByAttributeKey(String, String, String)
 	 */
 	public String[] searchUsersByAttributeKey(String solicitorSession, String key, String attribute)
 		throws Exception{
@@ -117,7 +117,7 @@ public class LendMeAdapter {
 	 * @param login the id of the session of the solicitor user
 	 * @param attribute the attribute whose value is required
 	 * @return an array of strings containing the results names
-	 * @see com.lendme.LendMe#getUserAttribute(String, String)
+	 * @see com.lendme.LendMeFacade#getUserAttribute(String, String)
 	 */
 	public String getUserAttribute(String login, String attribute)
 		throws Exception{
@@ -126,7 +126,7 @@ public class LendMeAdapter {
 	}
 	
    /** (Non-javadoc)
-	 * @see com.lendme.LendMe#askForFriendship(String)
+	 * @see com.lendme.LendMeFacade#askForFriendship(String)
 	 */
 	public void askForFriendship(String solicitorSession, String solicitedLogin)
 		throws Exception{
@@ -135,7 +135,7 @@ public class LendMeAdapter {
 	}
 
    /** (Non-javadoc)
-	 * @see com.lendme.LendMe#acceptFriendship(String, String)
+	 * @see com.lendme.LendMeFacade#acceptFriendship(String, String)
 	 */
 	public void acceptFriendship(String solicitedSession, String solicitorLogin)
 		throws Exception{
@@ -144,7 +144,7 @@ public class LendMeAdapter {
 	}
 
    /** (Non-javadoc)
-	 * @see com.lendme.LendMe#declineFriendship(String, String)
+	 * @see com.lendme.LendMeFacade#declineFriendship(String, String)
 	 */
 	public void declineFriendship(String solicitedSession, String solicitorLogin)
 		throws Exception{
@@ -153,7 +153,7 @@ public class LendMeAdapter {
 	}
 
    /** (Non-javadoc)
-	 * @see com.lendme.LendMe#breakFriendship(String, String)
+	 * @see com.lendme.LendMeFacade#breakFriendship(String, String)
 	 */
 	public void breakFriendship(String solicitorSession, String solicitedLogin) throws Exception{
 			
@@ -163,7 +163,7 @@ public class LendMeAdapter {
    /** Handles with results from search in System, transforming them in a string array
 	 * @param solicitorSession the id of the session of the solicitor user
 	 * @return an array of strings containing the results logins
-	 * @see com.lendme.LendMe#getFriendshipRequests(String)
+	 * @see com.lendme.LendMeFacade#getFriendshipRequests(String)
 	 */
 	public String[] getFriendshipRequests(String solicitorSession) throws Exception {
 
@@ -180,7 +180,7 @@ public class LendMeAdapter {
    /** Handles with results from search in System, transforming them in a string array
 	 * @param solicitorSession the id of the session of the solicitor user
 	 * @return an array of strings containing the results logins
-	 * @see com.lendme.LendMe#getFriends(String)
+	 * @see com.lendme.LendMeFacade#getFriends(String)
 	 */
 	public String[] getFriends(String solicitorSession)
 		throws Exception{
@@ -198,7 +198,7 @@ public class LendMeAdapter {
    /** Handles with results from search in System, transforming them in a string array
 	 * @param solicitorSession the id of the session of the solicitor user
 	 * @return an array of strings containing the results logins
-	 * @see com.lendme.LendMe#getFriends(String)
+	 * @see com.lendme.LendMeFacade#getFriends(String)
 	 */
 	public String[] getFriends(String solicitorSession, String solicitedLogin)
 		throws Exception{
@@ -214,7 +214,7 @@ public class LendMeAdapter {
 	}
 
    /** (Non-javadoc)
-	 * @see com.lendme.LendMe#hasFriend(String, String)
+	 * @see com.lendme.LendMeFacade#hasFriend(String, String)
 	 */
 	public boolean hasFriend(String solicitorSession, String solicitedLogin)
 		throws Exception{
@@ -224,7 +224,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#sendMessage(String, String, String, String)
+	 * @see com.lendme.LendMeFacade#sendMessage(String, String, String, String)
 	 */
 	public String sendMessage(String senderSession, String subject,
 			String message, String receiverLogin)
@@ -235,7 +235,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#sendMessage(String, String, String, String)
+	 * @see com.lendme.LendMeFacade#sendMessage(String, String, String, String)
 	 */
 	public String sendMessage(String senderSession, String subject,
 			String message, String receiverLogin, String lendingId)
@@ -247,7 +247,7 @@ public class LendMeAdapter {
    /** Handles with results from search in System, transforming them in a string array
 	 * @param solicitorSession the id of the session of the solicitor user
 	 * @return an array of strings containing the results
-	 * @see com.lendme.LendMe#getTopics(String, String)
+	 * @see com.lendme.LendMeFacade#getTopics(String, String)
 	 */
 	public String[] getTopics(String solicitorSession, String topicType) throws Exception{
 		
@@ -264,7 +264,7 @@ public class LendMeAdapter {
    /** Handles with results from search in System, transforming them in a string array
 	 * @param solicitorSession the id of the session of the solicitor user
 	 * @return an array of strings containing the results ids
-	 * @see com.lendme.LendMe#getTopics(String, String)
+	 * @see com.lendme.LendMeFacade#getTopics(String, String)
 	 */
 	public String[] getTopicsWithIds(String solicitorSession, String topicType) throws Exception{
 		
@@ -283,7 +283,7 @@ public class LendMeAdapter {
    /** Handles with results from search in System, transforming them in a string array
 	 * @param solicitorSession the id of the session of the solicitor user
 	 * @return an array of strings containing the results
-	 * @see com.lendme.LendMe#getTopicsMessages(String, String)
+	 * @see com.lendme.LendMeFacade#getTopicsMessages(String, String)
 	 */
 	public String[] getTopicMessages(String solicitorSession, String topicId) throws Exception{
 		
@@ -299,7 +299,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#registerItem(String, String, String, String)
+	 * @see com.lendme.LendMeFacade#registerItem(String, String, String, String)
 	 */	
 	public String registerItem(String creatorSession, String name, String description, String category)
 		throws Exception{
@@ -309,7 +309,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#searchForItem(String, String, String, String, String)
+	 * @see com.lendme.LendMeFacade#searchForItem(String, String, String, String, String)
 	 */	
 	public String[] searchForItems(String solicitorSession, String key, String attribute,
 		String disposition, String criteria) throws Exception{
@@ -325,7 +325,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#searchForItem(String, String, String, String, String)
+	 * @see com.lendme.LendMeFacade#searchForItem(String, String, String, String, String)
 	 */	
 	public String[] searchForItemsWithIds(String solicitorSession, String key, String attribute,
 			String disposition, String criteria) throws Exception{
@@ -341,7 +341,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#getItems(String)
+	 * @see com.lendme.LendMeFacade#getItems(String)
 	 */	
 	public String[] getItems(String solicitorSession) throws Exception{
 		
@@ -357,7 +357,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#getItems(String)
+	 * @see com.lendme.LendMeFacade#getItems(String)
 	 */	
 	public String[] getItemsWithIds(String solicitorSession) throws Exception{
 		
@@ -373,7 +373,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#getItems(String)
+	 * @see com.lendme.LendMeFacade#getItems(String)
 	 */	
 	public String[] getItems(String solicitorSession, String solicitedLogin) throws Exception{
 		
@@ -389,7 +389,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#getItemAttribute(String, String)
+	 * @see com.lendme.LendMeFacade#getItemAttribute(String, String)
 	 */	
 	public String getItemAttribute(String itemId, String attribute)
 		throws Exception{
@@ -399,7 +399,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#deleteItem(String, String)
+	 * @see com.lendme.LendMeFacade#deleteItem(String, String)
 	 */	
 	public void deleteItem(String solicitorSession, String itemId) throws Exception{
 		
@@ -408,7 +408,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#registerInterestForItem(String, String)
+	 * @see com.lendme.LendMeFacade#registerInterestForItem(String, String)
 	 */	
 	public void registerInterestForItem(String solicitorSession, String itemId) throws Exception{
 		
@@ -417,7 +417,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#requestItem(String, String, int)
+	 * @see com.lendme.LendMeFacade#requestItem(String, String, int)
 	 */	
 	public String requestItem(String solicitorSession, String itemId, int requiredDays) throws Exception{
 		
@@ -426,7 +426,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#approveLending(String, String)
+	 * @see com.lendme.LendMeFacade#approveLending(String, String)
 	 */	
 	public String approveLending(String solicitorSession, String requestId) throws Exception{
 		
@@ -435,7 +435,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#denyLending(String, String)
+	 * @see com.lendme.LendMeFacade#denyLending(String, String)
 	 */	
 	public String denyLending(String solicitorSession, String requestId) throws Exception{
 		
@@ -445,7 +445,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#askForReturnOfItem(String, String)
+	 * @see com.lendme.LendMeFacade#askForReturnOfItem(String, String)
 	 */	
 	public String askForReturnOfItem(String solicitorSession, String lendingId) throws Exception{
 		
@@ -454,7 +454,7 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#returnItem(String, String)
+	 * @see com.lendme.LendMeFacade#returnItem(String, String)
 	 */	
 	public String returnItem(String solicitedSession, String lendingId) throws Exception{
 		
@@ -463,7 +463,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#confirmLendingTermination(String, String)
+	 * @see com.lendme.LendMeFacade#confirmLendingTermination(String, String)
 	 */	
 	public String confirmLendingTermination(String solicitorSession, String lendingId) throws Exception{
 		
@@ -472,7 +472,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#denyLendingTermination(String, String)
+	 * @see com.lendme.LendMeFacade#denyLendingTermination(String, String)
 	 */	
 	public String denyLendingTermination(String solicitorSession, String lendingId) throws Exception{
 		
@@ -481,7 +481,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#getReceivedItemRequests(String)
+	 * @see com.lendme.LendMeFacade#getReceivedItemRequests(String)
 	 */	
 	public String[] getReceivedItemRequests(String solicitorSession) throws Exception{
 		
@@ -501,11 +501,11 @@ public class LendMeAdapter {
 
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#getLendingRecords(String, String)
+	 * @see com.lendme.LendMeFacade#searchForLendingRecords(String, String)
 	 */	
 	public String[] getLendingRecords(String solicitorSession, String kind) throws Exception{
 		
-		List<Lending> results = new ArrayList<Lending>(lendMe.getLendingRecords(solicitorSession, kind));
+		List<Lending> results = new ArrayList<Lending>(lendMe.searchForLendingRecords(solicitorSession, kind));
 		String[] handled = new String[results.size()];
 		Iterator<Lending> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -522,11 +522,11 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#getLendingRecords(String, String)
+	 * @see com.lendme.LendMeFacade#searchForLendingRecords(String, String)
 	 */	
 	public String[] getLendingRecordsWithIds(String solicitorSession, String kind) throws Exception{
 		
-		List<Lending> results = new ArrayList<Lending>(lendMe.getLendingRecords(solicitorSession, kind));
+		List<Lending> results = new ArrayList<Lending>(lendMe.searchForLendingRecords(solicitorSession, kind));
 		String[] handled = new String[results.size()];
 		Iterator<Lending> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -544,7 +544,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#getRanking(String, String)
+	 * @see com.lendme.LendMeFacade#getRanking(String, String)
 	 */	
 	public String getRanking(String solicitorSession, String category) throws Exception{
 		

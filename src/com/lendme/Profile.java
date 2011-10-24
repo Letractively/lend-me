@@ -6,12 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.lendme.entities.ActivityRegistry;
 import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
-import com.lendme.entities.Message;
 import com.lendme.entities.Session;
-import com.lendme.entities.Topic;
 import com.lendme.entities.User;
 
 /**
@@ -26,7 +23,7 @@ public class Profile {
 	private User owner;
 	private Set<User> ownerFriends;
 	private Set<Item> ownerItems;
-	private LendMe lendMe = new LendMe();
+	private LendMeFacade lendMe = new LendMeFacade();
 	
 	private Profile(Session observer, User user) throws Exception{
 
@@ -260,7 +257,7 @@ public class Profile {
 		}
 		throw new Exception("Tipo inexistente");//"Inexistent kind of lending");
 	}
-
+	
 	/**
 	 * Observer requests item that belongs to profile owner, if he is allowed to access them.
 	 * @param itemId
@@ -409,7 +406,6 @@ public class Profile {
 			//"Invalid lending identifier");
 		}
 		
-		
 		return me.sendMessage(subject, message, owner, lendingId);
 	}
 	
@@ -426,125 +422,9 @@ public class Profile {
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
 		}
 		
-		if (subject == null || subject.trim().isEmpty()) {
-			throw new Exception("Assunto inválido");//"Invalid subject");
-		}
-		
-		if (message == null || message.trim().isEmpty()) {
-			throw new Exception("Mensagem inválida");//"Invalid message");
-		}
-		
 		return me.sendMessage(subject, message, owner);
 	}
 
-	/**
-	 * Gets observer topics.
-	 * @param topicType
-	 * @return
-	 * @throws Exception
-	 */
-	protected List<Topic> getTopics(String topicType) throws Exception{
-		return observerSession.getOwner().getTopics(topicType);
-	}
-
-	/**
-	 * Gets observer topic messages.
-	 * @param topicId
-	 * @return
-	 * @throws Exception
-	 */
-	protected List<Message> getTopicMessages(String topicId) throws Exception{		
-		if (topicId == null || topicId.trim().isEmpty()) {
-			throw new Exception("Identificador do tópico é inválido");
-			// "Invalid topic identifier");
-		}
-		List<Message> messages = lendMe.getMessagesByTopicId(topicId);
-		Message sampleMessage = messages.iterator().next();
-
-		User me = observerSession.getOwner();
-		
-		if ( !( sampleMessage.getSender().equals(me.getLogin()) 
-				|| sampleMessage.getReceiver().equals(me.getLogin())) ) {
-			throw new Exception("O usuário não tem permissão para ler as mensagens deste tópico");
-		}
-		return messages;
-	}
-
-	/**
-	 * Observer registers interest for item that belongs to the profile owner.
-	 * @param itemId
-	 * @throws Exception
-	 */
-	protected void registerInterestForItem(String itemId) throws Exception{
-
-		if ( itemId == null || itemId.trim().isEmpty() ){
-			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
-		}
-		if ( observerSession.getOwner().getLogin().equals(getOwnerLogin()) ){
-			throw new Exception("O usuário não pode registrar interesse no próprio item");
-		}
-		
-		try{
-			for ( Item item : getOwnerItems() ){
-				if ( item.getID().equals(itemId) ){
-					observerSession.getOwner().registerInterestForItem(item, owner);
-					return;
-				}
-			}
-		}
-		catch (Exception e){
-			if ( e.getMessage().equals("O usuário não tem permissão para visualizar estes itens") ){
-				throw new Exception("O usuário não tem permissão para registrar interesse neste item");
-			}
-			else{
-				throw e;
-			}
-		}
-		throw new Exception("Item inexistente");
-	}
-
-	/**
-	 * Returns item attribute value.
-	 * @param itemId
-	 * @param attribute
-	 * @return
-	 * @throws Exception
-	 */
-	protected String getItemAttribute(String itemId, String attribute) throws Exception{
-		if ( attribute == null || attribute.trim().isEmpty() ){
-			throw new Exception("Atributo inválido");//"Invalid attribute");
-		}
-		if (!(attribute.equals("nome") || attribute.equals("descricao") || attribute.equals("categoria"))){
-			throw new Exception("Atributo inexistente");//"Inexistent attribute");
-		}
-		
-		for ( Item item : getOwnerItems() ){
-			if ( item.getID().equals(itemId) ){
-				if ( attribute.equals("nome") ) {
-					return item.getName();
-				}
-				else if ( attribute.equals("descricao") ) {
-					return item.getDescription();
-				}
-				else {
-					String formattedCategory = item.getCategory().toString();
-					return formattedCategory.substring(0, 1).toUpperCase() 
-							+ formattedCategory.substring(1).toLowerCase();
-				}
-			}
-		}
-		throw new Exception("Item inexistente");
-	}
-	
-	/**
-	 * Returns profile owner received item requests.
-	 * @return
-	 * @throws Exception
-	 */
-	protected Set<Lending> getReceivedItemRequests() throws Exception {
-		return owner.getReceivedItemRequests();
-	}
-	
 	@Override
 	public String toString() {
 		StringBuilder profileSB = new StringBuilder();
@@ -567,28 +447,9 @@ public class Profile {
 		
 		return profileSB.toString();
 	}
-	
-	protected List<ActivityRegistry> getActivityHistory() throws Exception {
-		return owner.getMyActivityHistory();
-	}
 
-	public String publishItemRequest(String itemName, String itemDescription) 
-		throws Exception{
-		return owner.publishItemRequest(itemName, itemDescription);
-	}
-
-	public void offerItem(Lending publishedRequest, String itemId) throws Exception{
-		for ( Item item : owner.getAllItems() ){
-			if ( item.getID().equals(itemId) ){
-				owner.offerItem(publishedRequest, item);
-				return;
-			}
-		}
-		throw new Exception("Item inexistente");
-	}
-
-	public void republishItemRequest(Lending petition) throws Exception {
-		owner.republishItemRequest(petition);
+	public User getOwner() {
+		return owner;
 	}
 	
 }

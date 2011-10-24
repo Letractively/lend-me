@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Set;
 
 import com.lendme.entities.ActivityRegistry;
+import com.lendme.entities.ActivityRegistry.ActivityKind;
+import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
 import com.lendme.entities.Message;
-import com.lendme.entities.Session;
 import com.lendme.entities.Topic;
 import com.lendme.entities.User;
-import com.lendme.entities.ActivityRegistry.ActivityKind;
 
 public class LendMeCommunicationModule {
 	
@@ -43,19 +43,31 @@ public class LendMeCommunicationModule {
 	 * @param subject
 	 * @param message
 	 * @param receiverLogin
-	 * @param lendingId
+	 * @param lendings
 	 * @return
 	 * @throws Exception
 	 */
-//	public  String sendMessage(Session senderSession, String subject, String message, 
-	public  String sendMessage(Profile solicitorViewer, String subject, String message,
-			User receiver, String lendingId) throws Exception {
+	public  String sendMessage(User sender, String subject, String message,
+			User receiver, Lending lending) throws Exception {//String lendingId, Collection<Lending> lendings) throws Exception {
+
+		if ( sender.equals(receiver.getLogin()) ){
+			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
+		}
+		if (message == null || message.trim().isEmpty()) {
+			throw new Exception("Mensagem inválida");//"Invalid message");
+		}
 		
-		
-			solicitorViewer = solicitorViewer.viewOtherProfile(receiver);
-		
-			return solicitorViewer.sendMessage(subject, message, lendingId);
-			
+		if (subject == null || subject.trim().isEmpty()) {
+			throw new Exception("Assunto inválido");//"Invalid subject");
+		}		
+
+		if ( (lending != null) && ( lending.getLender().equals(sender) || lending.getBorrower().equals(sender)  ) ){
+			return sender.sendMessage(subject, message, receiver, lending.getID());
+		}
+		else if ( lending == null ){
+			throw new Exception("Requisição de empréstimo inexistente");
+		}
+		throw new Exception("O usuário não participa deste empréstimo");
 	}
 
 
@@ -70,26 +82,21 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String sendMessage(Profile solicitorViewer, String subject, String message, 
+	public  String sendMessage(User sender, String subject, String message, 
 			User receiver) throws Exception {
 		
-		try {
-		
-			solicitorViewer = solicitorViewer.viewOtherProfile(receiver);
-		
-		} catch (Exception e) {
-			
-			if (e.getMessage().equals("Login inválido")) {
-				throw new Exception("Destinatário inválido");//"Invalid receiver");
-			}
-			
-			else if (e.getMessage().equals("Usuário inexistente")) {
-				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
-			}
-			throw e;
+		if ( sender.equals(receiver.getLogin()) ){
+			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
+		}
+		if (subject == null || subject.trim().isEmpty()) {
+			throw new Exception("Assunto inválido");//"Invalid subject");
 		}
 		
-		return solicitorViewer.sendMessage(subject, message);
+		if (message == null || message.trim().isEmpty()) {
+			throw new Exception("Mensagem inválida");//"Invalid message");
+		}
+		
+		return sender.sendMessage(subject, message, receiver);
 	}
 	
 	
@@ -102,9 +109,9 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  List<Topic> getTopics(Profile solicitorViewer, String topicType)
+	public  List<Topic> getTopics(User reader, String topicType)
 			throws Exception {
-		return solicitorViewer.getTopics(topicType);
+		return reader.getTopics(topicType);
 	}
 	
 	/**
@@ -116,20 +123,42 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  List<Message> getTopicMessages(Profile solicitorViewer, String topicId)
+	public  List<Message> getTopicMessages(User reader, String topicId, Set<User> searchScope)
 			throws Exception {
-		return solicitorViewer.getTopicMessages(topicId);
+		if (topicId == null || topicId.trim().isEmpty()) {
+			throw new Exception("Identificador do tópico é inválido");
+			// "Invalid topic identifier");
+		}
+		List<Message> messages = getMessagesByTopicId(topicId, searchScope);
+		Message sampleMessage = messages.iterator().next();
+		
+		if ( !( sampleMessage.getSender().equals(reader.getLogin()) 
+				|| sampleMessage.getReceiver().equals(reader.getLogin())) ) {
+			throw new Exception("O usuário não tem permissão para ler as mensagens deste tópico");
+		}
+		return messages;
 	}
 	
-	public void offerItem(Profile viewer,
+	public void offerItem(User sessionOwner,
 			String requestPublicationId, String itemId, Set<User> allUsers) throws Exception{
+
+		if ( requestPublicationId == null || requestPublicationId.trim().isEmpty() ){
+			throw new Exception("Identificador da publicação de pedido é inválido");
+		}
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é inválido");
+		}
 		
 		for ( User user : allUsers){
 			for ( Lending publishedRequest : user.getPublishedItemRequests() ){
 				if ( publishedRequest.getID().equals(requestPublicationId) ){
-					Lending petition = publishedRequest;
-					viewer.offerItem(petition, itemId);
-					return;
+					for ( Item item : sessionOwner.getAllItems() ){
+						if ( item.getID().equals(itemId) ){
+							sessionOwner.offerItem(publishedRequest, item);
+							return;
+						}
+					}
+					throw new Exception("Item inexistente");
 				}
 			}
 		}
@@ -138,13 +167,13 @@ public class LendMeCommunicationModule {
 	
 	
 	
-	public void republishItemRequest(Profile viewer,
+	public void republishItemRequest(User sessionOwner,
 			String requestPublicationId, Set<User> allUsers) throws Exception{
 		for ( User user : allUsers){
 			for ( Lending publishedRequest : user.getPublishedItemRequests() ){
 				if ( publishedRequest.getID().equals(requestPublicationId) ){
 					Lending petition = publishedRequest;
-					viewer.republishItemRequest(petition);
+					sessionOwner.republishItemRequest(petition);
 					return;
 				}
 			}
@@ -153,9 +182,8 @@ public class LendMeCommunicationModule {
 
 	}
 
-	public List<ActivityRegistry> getJointActivityHistory(Session session) {
+	public List<ActivityRegistry> getJointActivityHistory(User sessionOwner) {
 
-		User sessionOwner = session.getOwner();
 		List<ActivityRegistry> results = 
 				new ArrayList<ActivityRegistry>(sessionOwner.getMyActivityHistory());
 		
@@ -174,13 +202,13 @@ public class LendMeCommunicationModule {
 		return results;
 	}
 
-	public List<ActivityRegistry> getActivityHistory(Profile viewer) throws Exception{
-		return viewer.getActivityHistory();
+	public List<ActivityRegistry> getActivityHistory(User sessionOwner) throws Exception{
+		return sessionOwner.getMyActivityHistory();
 	}
 
-	public String publishItemRequest(Profile viewer, String itemName,
+	public String publishItemRequest(User sessionOwner, String itemName,
 			String itemDescription) throws Exception{
-		return viewer.publishItemRequest(itemName, itemDescription);
+		return sessionOwner.publishItemRequest(itemName, itemDescription);
 	}
 
 }

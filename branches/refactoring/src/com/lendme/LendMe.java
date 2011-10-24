@@ -392,7 +392,6 @@ public class LendMe {
 	 */
 	public  List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
-
 			return communicationModule.getTopicMessages(userModule.getUserProfile(repository.getSessionByID(sessionId)), topicId);
 	}
 	

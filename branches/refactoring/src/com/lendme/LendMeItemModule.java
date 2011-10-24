@@ -8,12 +8,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.lendme.LendMe.AtributeForSearch;
-import com.lendme.LendMe.CriterionForSearch;
-import com.lendme.LendMe.DispositionForSearch;
+import com.lendme.LendMeFacade.AtributeForSearch;
+import com.lendme.LendMeFacade.CriterionForSearch;
+import com.lendme.LendMeFacade.DispositionForSearch;
 import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
-import com.lendme.entities.Session;
 import com.lendme.entities.User;
 import com.lendme.utils.ComparatorOfItemsStrategy;
 import com.lendme.utils.ComparatorOfRankingStrategy;
@@ -27,9 +26,30 @@ public class LendMeItemModule {
 	 * @return the item attribute value
 	 * @throws Exception if parameters are invalid
 	 */
-	public  String getItemAttribute(String itemId, String attribute, String ownerSessionId,
-			Profile viewerProfile) throws Exception{
-		return viewerProfile.getItemAttribute(itemId, attribute);
+	public  String getItemAttribute(Profile viewer, String itemId, String attribute) throws Exception{
+		if ( attribute == null || attribute.trim().isEmpty() ){
+			throw new Exception("Atributo inválido");//"Invalid attribute");
+		}
+		if (!(attribute.equals("nome") || attribute.equals("descricao") || attribute.equals("categoria"))){
+			throw new Exception("Atributo inexistente");//"Inexistent attribute");
+		}
+		
+		for ( Item item : viewer.getOwnerItems() ){
+			if ( item.getID().equals(itemId) ){
+				if ( attribute.equals("nome") ) {
+					return item.getName();
+				}
+				else if ( attribute.equals("descricao") ) {
+					return item.getDescription();
+				}
+				else {
+					String formattedCategory = item.getCategory().toString();
+					return formattedCategory.substring(0, 1).toUpperCase() 
+							+ formattedCategory.substring(1).toLowerCase();
+				}
+			}
+		}
+		throw new Exception("Item inexistente");
 	}
 	
 	/**
@@ -40,8 +60,8 @@ public class LendMeItemModule {
 	 * @return a set of items
 	 * @throws Exception if user doesn't exists
 	 */
-	public  Set<Item> getItems(Profile viewerProfile) throws Exception {
-		return viewerProfile.getOwnerItems();
+	public  Set<Item> getItems(Profile viewer) throws Exception {
+		return viewer.getOwnerItems();
 	}
 	
 	/**
@@ -352,13 +372,43 @@ public class LendMeItemModule {
 	 * Solicitor registers interest for a specific item.
 	 * 
 	 * <i>This method belongs to the public system interface<i>
+	 * @param itemOwner 
+	 * @param itemId 
+	 * @param items 
 	 * @param sessionId
-	 * @param itemId
 	 * @throws Exception
 	 */
-	public  void registerInterestForItem(Profile viewer, String itemId, Set<User> users) throws Exception{
-		viewer = viewer.viewOtherProfile(getItemOwner(itemId, users));
-		viewer.registerInterestForItem(itemId);
+	public  void registerInterestForItem(Profile viewer, String itemId) throws Exception{
+		if ( itemId == null || itemId.trim().isEmpty() ){
+			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
+		}
+		if ( viewer == null ){
+			throw new Exception("Perfil inválido");
+		}
+		
+		User sessionOwner = viewer.getObserver().getOwner();
+		User itemOwner = viewer.getOwner();		
+		if ( sessionOwner.equals(itemOwner) ){
+			throw new Exception("O usuário não pode registrar interesse no próprio item");
+		}
+		
+		try{
+			for ( Item item : viewer.getOwnerItems() ){
+				if ( item.getID().equals(itemId) ){
+					sessionOwner.registerInterestForItem(item, itemOwner);
+					return;
+				}
+			}
+		}
+		catch (Exception e){
+			if ( e.getMessage().equals("O usuário não tem permissão para visualizar estes itens") ){
+				throw new Exception("O usuário não tem permissão para registrar interesse neste item");
+			}
+			else{
+				throw e;
+			}
+		}
+		throw new Exception("Item inexistente");
 	}
 	
 	/**
@@ -369,17 +419,11 @@ public class LendMeItemModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String getRanking(String category, Session actualSession, Set<User> users) throws Exception{
+	public  String getRanking(String category, User user, Set<User> users) throws Exception{
 		String ranking = "";
 		
-		if(actualSession == null){
+		if(user == null){
 			throw new Exception("Sessão inexistente");
-		}
-		
-		String sessionId = actualSession.getId();
-		
-		if(sessionId == null || sessionId.trim().equals("")){
-			throw new Exception("Sessão inválida");
 		}
 				
 		if(category == null || category.trim().equals("")){
@@ -391,7 +435,6 @@ public class LendMeItemModule {
 		}
 		
 		if(category.equals("amigos")){
-			User user = actualSession.getOwner();
 			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size() + 1]);
 			friendList[user.getFriends().size()] = user;
 			
@@ -420,9 +463,9 @@ public class LendMeItemModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  Set<Lending> getReceivedItemRequests(Profile viewer)
+	public  Set<Lending> getReceivedItemRequests(User sessionOwner)
 			throws Exception {
-		return viewer.getReceivedItemRequests();
+		return sessionOwner.getReceivedItemRequests();
 	}
 	
 	

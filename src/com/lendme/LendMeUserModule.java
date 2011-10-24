@@ -26,29 +26,24 @@ public class LendMeUserModule {
 		return solicitorViewer.getOwnerFriends();
 	}
 
-	public void askForFriendship(Profile solicitorViewer, User solicited) throws Exception{
-		solicitorViewer = solicitorViewer.viewOtherProfile(solicited);
-		solicitorViewer.askForFriendship();
+	public void askForFriendship(User sessionOwner, User otherUser) throws Exception{
+		sessionOwner.requestFriendship(otherUser);
 	}
 
-	public void acceptFriendship(Profile solicitedViewer, User solicitor) throws Exception{
-		solicitedViewer = solicitedViewer.viewOtherProfile(solicitor);
-		solicitedViewer.acceptFriendshipRequest();
+	public void acceptFriendship(User sessionOwner, User otherUser) throws Exception{
+		sessionOwner.acceptFriendshipRequest(otherUser);
 	}
 
-	public void declineFriendship(Profile solicitedViewer, User solicitor) throws Exception{
-		solicitedViewer = solicitedViewer.viewOtherProfile(solicitor);
-		solicitedViewer.declineFriendshipRequest();
+	public void declineFriendship(User sessionOwner, User otherUser) throws Exception{
+		sessionOwner.declineFriendshipRequest(otherUser);
 	}
 
-	public void breakFriendship(Profile solicitorViewer, User user) throws Exception{
-		solicitorViewer = solicitorViewer.viewOtherProfile(user);
-		solicitorViewer.breakFriendship();
+	public void breakFriendship(User sessionOwner, User otherUser) throws Exception{
+		sessionOwner.breakFriendship(otherUser);
 	}
 
-	public boolean hasFriend(Profile solicitorViewer, User user) throws Exception{
-		solicitorViewer = solicitorViewer.viewOtherProfile(user);
-		return solicitorViewer.isFriendOfOwner();
+	public boolean hasFriend(User sessionOwner, User otherUser) throws Exception{
+		return sessionOwner.hasFriend(otherUser);
 	}
 
 	public Set<User> getOwnerFriendshipRequests(Profile solicitorViewer) {

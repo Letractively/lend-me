@@ -3,6 +3,8 @@ package com.lendme.entities;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.lendme.utils.Localizator;
+
 /**
  * @author THE LENDERS
  * User addresses can be of two kinds: a full string with all info in it or a more organized
@@ -46,10 +48,10 @@ public class Address {
 	        	this.address.put(AddressElements.FULL_ADDRESS, fullAddress.toString());
         	}
         	
-//        	Localizator lcz = Localizator.getInstance();
-//        	double[] lat_and_log = lcz.getLatAndLong(this.getFullAddress());
-//        	this.setLatitude(lat_and_log[0]);
-//        	this.setLongitude(lat_and_log[1]);
+        	Localizator lcz = Localizator.getInstance();
+        	double[] lat_and_log = lcz.getLatAndLong(this.getFullAddress());
+        	this.setLatitude(lat_and_log[0]);
+        	this.setLongitude(lat_and_log[1]);
         }
 
 		public String getStreet() {
@@ -103,7 +105,6 @@ public class Address {
 		}
 
 		public void setLatitude(double latitude) {
-			//TODO call method of Localizator
 			this.latitude = latitude;
 		}
 
@@ -112,7 +113,6 @@ public class Address {
 		}
 
 		public void setLongitude(double longitude) {
-			//TODO call method of Localizator
 			this.longitude = longitude;
 		}
 }

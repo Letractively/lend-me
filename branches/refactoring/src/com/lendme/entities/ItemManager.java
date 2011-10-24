@@ -172,9 +172,9 @@ public class ItemManager {
 	 */
 	public String borrowItem(Item item, User borrower, User lender, int days) throws Exception {
 		Lending lendingRequest = new Lending(borrower, lender, item, days);
-		Set<Lending> lenderLendings = lender.getItemManager().getReceivedItemRequests();
+		Set<Lending> lenderLendings = lender.getUserOperationManager().getItemManager().getReceivedItemRequests();
 		lenderLendings.add(lendingRequest);
-		lender.getItemManager().setReceivedItemRequests(lenderLendings);
+		lender.getUserOperationManager().getItemManager().setReceivedItemRequests(lenderLendings);
 		sentItemRequests.add(lendingRequest);
 		return lendingRequest.getID();
 	}
@@ -195,7 +195,7 @@ public class ItemManager {
 				requestAccepted = record;
 				record.setLendingDate();
 				record.getLendingDate().addDays(record.getRequiredDays());
-				borrower.getItemManager().addRequestedItem(item, record.getLender(), days);
+				borrower.getUserOperationManager().getItemManager().addRequestedItem(item, record.getLender(), days);
 			}
 		}
 		if ( requestAccepted != null ){
@@ -263,7 +263,7 @@ public class ItemManager {
 			if (record.getItem().equals(item) && record.getBorrower().equals(borrower) &&
 					record.getRequiredDays() == days ) {
 				requestDenied = record;
-				borrower.getItemManager().removeRequestedItem(item, record.getLender(), days);
+				borrower.getUserOperationManager().getItemManager().removeRequestedItem(item, record.getLender(), days);
 			}
 		}
 		if ( requestDenied != null ){
@@ -320,7 +320,7 @@ public class ItemManager {
 				if ( record.isReturned() ){
 					throw new Exception("Item já devolvido");//"Item already set to be returned);
 				}
-				record.getLender().getItemManager().setReturned(item);
+				record.getLender().getUserOperationManager().getItemManager().setReturned(item);
 				record.setReturned(true);
 				return record.getID();
 			}
@@ -374,7 +374,7 @@ public class ItemManager {
 				if ( !record.isReturned() ){
 					throw new Exception("Devolução do item já foi negada");//"Item returning already denied);
 				}
-				record.getBorrower().getItemManager().setNotReturned(item);
+				record.getBorrower().getUserOperationManager().getItemManager().setNotReturned(item);
 				record.setReturned(false);
 				return;
 			}

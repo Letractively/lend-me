@@ -2,13 +2,13 @@ package com.lendme.utils;
 
 import java.util.Comparator;
 
-import com.lendme.LendMe;
+import com.lendme.LendMeFacade;
 import com.lendme.entities.User;
 import com.lendme.entities.Item;
 
 public class ComparatorOfItemsStrategy implements Comparator<Item>{
 	
-	private LendMe lendMe = new LendMe();
+	private LendMeFacade lendMe = new LendMeFacade();
 
 	@Override
 	public int compare(Item o1, Item o2) {

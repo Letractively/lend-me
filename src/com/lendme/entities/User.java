@@ -94,6 +94,7 @@ public class User implements InterestedOn<Item>{
 		userToString.append(" \tNome: " + this.name + "\n");
 		userToString.append(" \t\tLogin: " + this.login + "\n");
 		userToString.append(" \t\tEndereço: " + this.address + "\n");
+				
 		return userToString.toString();
 	}
 	

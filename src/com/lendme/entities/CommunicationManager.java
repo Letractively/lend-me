@@ -179,7 +179,8 @@ public class CommunicationManager {
 			throw new Exception("Identificador da requisição de empréstimo é inválido");// "Invalid lending identifier"); 
 		}
 		
-		if (me.getLendingByLendingId(lendingId) == null) {
+		Lending record = me.getLendingByLendingId(lendingId);
+		if (record == null) {
 			throw new Exception("Requisição de empréstimo inexistente");
 				// "Inexistent lending");
 		}
@@ -199,7 +200,7 @@ public class CommunicationManager {
 					receiverLogin, isOffTopic, lendingId);
 	}
 
-	public String sendMessage(String subject, String message, User receiver) {
+	public String sendMessage(String subject, String message, User receiver){
 		storeMessage(subject, message, me.getLogin(), receiver.getLogin(),
 				true, "");
 		

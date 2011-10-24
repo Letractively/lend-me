@@ -123,7 +123,7 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	@Override
 	public String toString() {
 		StringBuilder lendingToString = new StringBuilder();
-		
+		lendingToString.append(getID() + "\n \t ");
 		if ( lender != null ) lendingToString.append(lender).toString();
 		if ( item != null ) lendingToString.append(item.toString());
 		lendingToString.append(borrower.toString());

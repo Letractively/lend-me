@@ -29,7 +29,10 @@ public class FriendshipManager {
 		return sentFriendshipRequests;
 	}
 	
-	public void sendRequest(User user) throws Exception{
+	public void sendFriendshipRequest(User user) throws Exception{
+		if ( me.equals(user) ){
+			throw new Exception("Amizade inexistente");//inválida - pedido de amizade para si próprio");//"Invalid friendship");
+		}
 		if ( sentFriendshipRequests.contains(user) ){
 			throw new Exception("Requisição já solicitada");//"The user has already been sent");
 		}
@@ -37,14 +40,17 @@ public class FriendshipManager {
 			throw new Exception("Os usuários já são amigos");//"The users are already friends");
 		}
 		sentFriendshipRequests.add(user);
-		user.getFriendshipManager().receiveRequest(me);
+		user.getFriendshipManager().receiveFriendshipRequest(me);
 	}
 
-	public void receiveRequest(User user) throws Exception{
+	public void receiveFriendshipRequest(User user) throws Exception{
 		receivedFriendshipRequests.add(user);
 	}
 	
-	public void acceptRequest(User user) throws Exception{
+	public void acceptFriendshipRequest(User user) throws Exception{
+		if ( me.equals(user) ){
+			throw new Exception("Amizade inexistente");//inválida - aceitação de amizade para si próprio");//"Invalid friendship");
+		}
 		if ( friends.contains(user) ){
 			throw new Exception("Os usuários já são amigos");//"The users are already friends");
 		}
@@ -61,7 +67,10 @@ public class FriendshipManager {
 		friends.add(user);
 	}
 	
-	public void declineRequest(User user) throws Exception{
+	public void declineFriendshipRequest(User user) throws Exception{
+		if ( me.equals(user) ){
+			throw new Exception("Amizade inexistente");//inválida - negação de amizade para si próprio");//"Invalid friendship");
+		}
 		if ( friends.contains(user) ){
 			throw new Exception("Os usuários já são amigos");//"The users are already friends");
 		}
@@ -78,7 +87,10 @@ public class FriendshipManager {
 		receivedFriendshipRequests.remove(user);
 	}
 
-	public boolean hasFriend(User user) {
+	public boolean hasFriend(User user) throws Exception{
+		if ( me.equals(user) ){
+			throw new Exception("Amizade inválida - consulta para amizade com si próprio");//"Invalid friendship");
+		}
 		return friends.contains(user);
 	}
 	
@@ -86,7 +98,13 @@ public class FriendshipManager {
 		friends.remove(user);
 	}
 
-	public void breakFriendship(User user) {
+	public void breakFriendship(User user) throws Exception{
+		if ( me.equals(user) ){
+			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com si próprio");//"Invalid friendship");
+		}
+		if ( !me.hasFriend(user) ){
+			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com alguem que não é seu amigo");
+		}
 		if (hasFriend(user)) {
 			removeFriend(user);
 			for (Lending record : me.getReceivedItemRequests()) {

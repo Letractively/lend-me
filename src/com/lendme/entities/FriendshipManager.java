@@ -40,7 +40,7 @@ public class FriendshipManager {
 			throw new Exception("Os usuários já são amigos");//"The users are already friends");
 		}
 		sentFriendshipRequests.add(user);
-		user.getFriendshipManager().receiveFriendshipRequest(me);
+		user.getUserOperationManager().getFriendshipManager().receiveFriendshipRequest(me);
 	}
 
 	public void receiveFriendshipRequest(User user) throws Exception{
@@ -57,7 +57,7 @@ public class FriendshipManager {
 		if ( !receivedFriendshipRequests.contains(user) ){
 			throw new Exception("Requisição de amizade inexistente");//Inexistent friendship request");
 		}
-		user.getFriendshipManager().acceptRequestMirror(me);
+		user.getUserOperationManager().getFriendshipManager().acceptRequestMirror(me);
 		receivedFriendshipRequests.remove(user);
 		friends.add(user);
 	}
@@ -78,7 +78,7 @@ public class FriendshipManager {
 			throw new Exception("Requisição de amizade inexistente");//Inexistent friendship request");
 		}
 		else{
-			user.getFriendshipManager().declineRequestMirror(me);
+			user.getUserOperationManager().getFriendshipManager().declineRequestMirror(me);
 		}
 		sentFriendshipRequests.remove(user);
 	}
@@ -117,7 +117,7 @@ public class FriendshipManager {
 			}
 		}
 		
-		FriendshipManager other = user.getFriendshipManager();
+		FriendshipManager other = user.getUserOperationManager().getFriendshipManager();
 		
 		if (other.hasFriend(me)) {
 			other.removeFriend(me);

@@ -3,6 +3,8 @@ package com.lendme.entities;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.lendme.utils.Localizator;
+
 /**
  * @author THE LENDERS
  * User addresses can be of two kinds: a full string with all info in it or a more organized

@@ -383,61 +383,6 @@ public class UserOperationManager {
 	}
 	
 	/**
-	 * Returns true if item this user borrowed was requested back.
-	 * @param item
-	 * @return
-	 */
-	public boolean hasRequestedBack(Item item){
-		for(Lending actual : itemManager.getMyBorrowedItems()){
-			if(actual.getItem().equals(item) && actual.isRequestedBack()){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Returns true if item this user has borrowed was requested back as lending was canceled.
-	 */
-	public boolean hasCancelled(Item item){
-		for(Lending actual : itemManager.getMyBorrowedItems()){
-			if(actual.getItem().equals(item) && actual.isCanceled()){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Returns user items that were requested back.
-	 * @return
-	 */
-	public Set<Item> getRequestedBackItems(){
-		Set<Item> requestedBackItems = new HashSet<Item>();
-		for(Lending actual : itemManager.getMyBorrowedItems()){
-			if(actual.isRequestedBack()){
-				requestedBackItems.add(actual.getItem());
-			}
-		}
-		return requestedBackItems;
-		
-	}
-	
-	/**
-	 * Returns user items which were requested back as their lending was canceled.
-	 * @return
-	 */
-	public Set<Item> getCancelledItems(){
-		Set<Item> canceledItems = new HashSet<Item>();
-		for(Lending actual : itemManager.getMyBorrowedItems()){
-			if(actual.isCanceled()){
-				canceledItems.add(actual.getItem());
-			}
-		}
-		return canceledItems;
-	}
-
-	/**
 	 * User registers interest for item if he is friend of the owner.
 	 * @param item
 	 * @param owner
@@ -526,20 +471,6 @@ public class UserOperationManager {
 		Set<User> toBeReturned = new HashSet<User>();
 		toBeReturned.addAll(friendshipManager.getFriends());
 		return toBeReturned;
-	}
-
-	/**
-	 * Returns true if item was requested by another user.
-	 * @param item
-	 * @return
-	 */
-	public boolean isMyItemRequested(Item item){
-		
-		for(Lending record: itemManager.getReceivedItemRequests()){
-			if(record.getItem().equals(item))
-				return true;
-		}
-		return false;
 	}
 		
 	/**
@@ -679,10 +610,6 @@ public class UserOperationManager {
 		communicationManager.publishItemRegisteredActivity(itemName);
 	}
 
-	public Set<Lending> getSentItemRequests() {
-		return itemManager.getSentItemRequests();
-	}
-
 	public List<ActivityRegistry> getMyActivityHistory() {
 		return communicationManager.getMyActivityHistory();
 	}
@@ -693,5 +620,9 @@ public class UserOperationManager {
 
 	public List<Topic> getTopics(String topicType) throws Exception{
 		return communicationManager.getTopics(topicType);
+	}
+
+	public Set<Lending> getSentItemRequests() {
+		return itemManager.getSentItemRequests();
 	}
 }

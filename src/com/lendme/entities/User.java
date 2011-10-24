@@ -269,61 +269,6 @@ public class User implements InterestedOn<Item>{
 		return userOperationManager.askForReturnOfItem(lendingId, systemDate);
 	}
 	
-//	/**
-//	 * Returns true if item this user borrowed was requested back.
-//	 * @param item
-//	 * @return
-//	 */
-//	public boolean hasRequestedBack(Item item){
-//		for(Lending actual : itemManager.getMyBorrowedItems()){
-//			if(actual.getItem().equals(item) && actual.isRequestedBack()){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//	
-//	/**
-//	 * Returns true if item this user has borrowed was requested back as lending was canceled.
-//	 */
-//	public boolean hasCancelled(Item item){
-//		for(Lending actual : itemManager.getMyBorrowedItems()){
-//			if(actual.getItem().equals(item) && actual.isCanceled()){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//	
-//	/**
-//	 * Returns user items that were requested back.
-//	 * @return
-//	 */
-//	public Set<Item> getRequestedBackItems(){
-//		Set<Item> requestedBackItems = new HashSet<Item>();
-//		for(Lending actual : itemManager.getMyBorrowedItems()){
-//			if(actual.isRequestedBack()){
-//				requestedBackItems.add(actual.getItem());
-//			}
-//		}
-//		return requestedBackItems;
-//		
-//	}
-//	
-//	/**
-//	 * Returns user items which were requested back as their lending was canceled.
-//	 * @return
-//	 */
-//	public Set<Item> getCancelledItems(){
-//		Set<Item> canceledItems = new HashSet<Item>();
-//		for(Lending actual : itemManager.getMyBorrowedItems()){
-//			if(actual.isCanceled()){
-//				canceledItems.add(actual.getItem());
-//			}
-//		}
-//		return canceledItems;
-//	}
-
 	/**
 	 * User registers interest for item if he is friend of the owner.
 	 * @param item
@@ -377,20 +322,6 @@ public class User implements InterestedOn<Item>{
 		return userOperationManager.getFriends();
 	}
 
-//	/**
-//	 * Returns true if item was requested by another user.
-//	 * @param item
-//	 * @return
-//	 */
-//	public boolean isMyItemRequested(Item item){
-//		
-//		for(Lending record: itemManager.getReceivedItemRequests()){
-//			if(record.getItem().equals(item))
-//				return true;
-//		}
-//		return false;
-//	}
-		
 	/**
 	 * User breaks friendship with another user.
 	 * @param user

@@ -20,12 +20,7 @@ public class LendMeAdapter {
 	
 	/*
 	 * Refactoring comment:
-	 * In this class we used the Adapter design pattern........
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
+	 * In this class we used the Adapter design pattern.
 	 */
 
 	/* (non-Javadoc)
@@ -408,7 +403,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#registerInterestForItem(String, String)
+	 * @see com.lendme.LendMe#registerInterestForItem(String, String)
 	 */	
 	public void registerInterestForItem(String solicitorSession, String itemId) throws Exception{
 		
@@ -435,7 +430,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#denyLending(String, String)
+	 * @see com.lendme.LendMe#denyLending(String, String)
 	 */	
 	public String denyLending(String solicitorSession, String requestId) throws Exception{
 		
@@ -598,6 +593,28 @@ public class LendMeAdapter {
 		return handled;
 	}
 
+	public String[] getFriendsPublishedItemRequests(String solicitorSessionId) throws Exception {
+		List<Lending> results = lendMe.getFriendsPublishedItemRequests(solicitorSessionId);
+		String[] handled;
+		
+		if (results.size() == 0) {
+			handled = new String[1];
+			handled[0] = "Não há publicações de pedidos de seus amigos";
+			return handled;
+		}
+		
+		handled = new String[results.size()];
+		Iterator<Lending> iterator = results.iterator();
+		for ( int i=0; i<handled.length; i++ ){
+			Lending currentLending= iterator.next();
+			handled[i] = "Id: " + currentLending.getID() + "\n\t "
+					+ currentLending.getBorrower().getName()+ "\n\t "
+					+ currentLending.getDesiredItemName()+ "\n\t "
+					+ currentLending.getDesiredItemDescription();
+		}
+		return handled;
+	}
+			
 	public String publishItemRequest(String sessionId, String itemName,
 			String itemDescription) throws Exception{
 		return lendMe.publishItemRequest(sessionId, itemName, itemDescription);
@@ -612,5 +629,6 @@ public class LendMeAdapter {
 		throws Exception{
 		lendMe.republishItemRequest(sessionId, requestPublicationId);		
 	}
+	
 	
 }

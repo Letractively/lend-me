@@ -54,5 +54,10 @@ public class LendMeUserModule {
 	public Set<User> getOwnerFriendshipRequests(Profile solicitorViewer) {
 		return solicitorViewer.getOwnerFriendshipRequests();
 	}
+
+	public Object viewProfile(Profile solicitorViewer, User user) throws Exception {
+		solicitorViewer = solicitorViewer.viewOtherProfile(user);
+		return solicitorViewer.toString();
+	}
 	
 }

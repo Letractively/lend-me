@@ -1,16 +1,13 @@
 package com.lendme;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
 import com.lendme.entities.ActivityRegistry;
-import com.lendme.entities.ActivityRegistry.ActivityKind;
 import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
 import com.lendme.entities.Message;
@@ -622,8 +619,7 @@ public class LendMe {
 	public  String viewProfile(String solicitorSessionId, 
 			String solicitedUserLogin) throws Exception {
 		Profile solicitorViewer = getUserProfile(solicitorSessionId);
-		solicitorViewer = solicitorViewer.viewOtherProfile(repository.getUserByLogin(solicitedUserLogin));
-		return solicitorViewer.toString();
+		return userModule.viewProfile(solicitorViewer, repository.getUserByLogin(solicitedUserLogin)).toString();
 	}
 	
 	/**
@@ -641,39 +637,20 @@ public class LendMe {
 	
 	public  List<ActivityRegistry> getActivityHistory(String solicitorSessionId) throws Exception {
 		Profile viewer = getUserProfile(solicitorSessionId);
-		return viewer.getActivityHistory();
+		return communicationModule.getActivityHistory(viewer);
 	}
 
 	public List<ActivityRegistry> getJointActivityHistory(
 			String solicitorSessionId) throws Exception {
 		
 		Session session = repository.getSessionByID(solicitorSessionId);
-		User userOwnerSession = session.getOwner();
-		List<ActivityRegistry> results = 
-				new ArrayList<ActivityRegistry>(userOwnerSession.getMyActivityHistory());
-		
-		
-		for (User actualFriend : userOwnerSession.getFriends()) {
-			for (ActivityRegistry actualAR : actualFriend.getMyActivityHistory()) {
-				if (actualAR.getKind() == ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA 
-						&& actualAR.getDescription().contains(" e " + 
-						userOwnerSession.getName() + " são amigos agora")
-						|| userOwnerSession.getMyActivityHistory().contains(actualAR)) {
-					continue;
-				}
-				results.add(actualAR);
-			}
-		}
-		
-		Collections.sort(results);
-		
-		return results;
+		return communicationModule.getJointActivityHistory(session);
 	}
 
 	public String publishItemRequest(String sessionId, String itemName,
 			String itemDescription) throws Exception {
 		Profile viewer = getUserProfile(sessionId);
-		return viewer.publishItemRequest(itemName, itemDescription);
+		return communicationModule.publishItemRequest(viewer, itemName, itemDescription);
 	}
 
 	public void offerItem(String sessionId,

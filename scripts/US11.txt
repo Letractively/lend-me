@@ -1,0 +1,67 @@
+# User Story 11 - Pesquisa de itens
+
+zerarSistema
+
+# entradas válidas
+
+criarUsuario login="mark" nome="Mark Zuckerberg" endereco="Palo Alto, California"
+criarUsuario login="steve" nome="Steven Paul Jobs" endereco="Palo Alto, California"
+criarUsuario login="bill" nome="William Henry Gates III" endereco="Medina, Washington"
+
+sessaoMark=abrirSessao login="mark"
+sessaoSteve=abrirSessao login="steve"
+sessaoBill=abrirSessao login="bill"
+
+requisitarAmizade idSessao=${sessaoSteve} login="mark"
+requisitarAmizade idSessao=${sessaoBill} login="mark"
+
+aprovarAmizade idSessao=${sessaoMark} login="steve"
+aprovarAmizade idSessao=${sessaoMark} login="bill"
+
+expect "Nenhum item encontrado" pesquisarItem idSessao=${sessaoMark} chave="social" atributo="nome" tipoOrdenacao="crescente" criterioOrdenacao="dataCriacao"
+
+idItem1=cadastrarItem idSessao=${sessaoMark} nome="The Social Network" descricao="Filme sobre a fundação da rede social Facebook" categoria="Filme"
+idItem2=cadastrarItem idSessao=${sessaoSteve} nome="Guia do mochileiro das galáxias" descricao="Série de ficção científica criada por Douglas Adams" categoria="Livro"
+idItem3=cadastrarItem idSessao=${sessaoBill} nome="Final Fantasy XIII" descricao="Décimo terceiro jogo da série produzida pela Square Enix" categoria="Jogo"
+
+expect "Nenhum item encontrado" pesquisarItem idSessao=${sessaoSteve} chave="final" atributo="nome" tipoOrdenacao="crescente" criterioOrdenacao="dataCriacao"
+expect "Nenhum item encontrado" pesquisarItem idSessao=${sessaoBill} chave="guia" atributo="nome" tipoOrdenacao="crescente" criterioOrdenacao="dataCriacao"
+
+expect "The Social Network" pesquisarItem idSessao=${sessaoSteve} chave="social" atributo="nome" tipoOrdenacao="crescente" criterioOrdenacao="dataCriacao"
+expect "Guia do mochileiro das galáxias" pesquisarItem idSessao=${sessaoMark} chave="ficção" atributo="descricao" tipoOrdenacao="crescente" criterioOrdenacao="dataCriacao"
+expect "Final Fantasy XIII" pesquisarItem idSessao=${sessaoMark} chave="jogo" atributo="categoria" tipoOrdenacao="crescente" criterioOrdenacao="dataCriacao"
+
+expect "Guia do mochileiro das galáxias; Final Fantasy XIII" pesquisarItem idSessao=${sessaoMark} chave="série" atributo="descricao" tipoOrdenacao="crescente" criterioOrdenacao="dataCriacao"
+expect "Final Fantasy XIII; Guia do mochileiro das galáxias" pesquisarItem idSessao=${sessaoMark} chave="série" atributo="descricao" tipoOrdenacao="decrescente" criterioOrdenacao="dataCriacao"
+
+idRequisicaoEmprestimo1=requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem2} duracao=7
+idEmprestimo1=aprovarEmprestimo idSessao=${sessaoSteve} idRequisicaoEmprestimo=${idRequisicaoEmprestimo1}
+devolverItem idSessao=${sessaoMark} idEmprestimo=${idEmprestimo1}
+confirmarTerminoEmprestimo idSessao=${sessaoSteve} idEmprestimo=${idEmprestimo1}
+
+expect "Final Fantasy XIII; Guia do mochileiro das galáxias" pesquisarItem idSessao=${sessaoMark} chave="série" atributo="descricao" tipoOrdenacao="crescente" criterioOrdenacao="reputacao"
+expect "Guia do mochileiro das galáxias; Final Fantasy XIII" pesquisarItem idSessao=${sessaoMark} chave="série" atributo="descricao" tipoOrdenacao="decrescente" criterioOrdenacao="reputacao"
+
+# entradas inválidas
+
+expectError "Sessão inválida" pesquisarItem idSessao= chave="xpto" atributo="xpto" tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+expectError "Sessão inválida" pesquisarItem idSessao="" chave="xpto" atributo="xpto" tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+expectError "Sessão inexistente" pesquisarItem idSessao="xpto" chave="xpto" atributo="xpto" tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+
+expectError "Chave inválida" pesquisarItem idSessao=${sessaoMark} chave= atributo="xpto" tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+expectError "Chave inválida" pesquisarItem idSessao=${sessaoMark} chave="" atributo="xpto" tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+
+expectError "Atributo inválido" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo= tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+expectError "Atributo inválido" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo="" tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+expectError "Atributo inexistente" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo="xpto" tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+
+expectError "Tipo inválido de ordenação" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo="nome" tipoOrdenacao= criterioOrdenacao="xpto"
+expectError "Tipo inválido de ordenação" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo="nome" tipoOrdenacao="" criterioOrdenacao="xpto"
+expectError "Tipo de ordenação inexistente" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo="nome" tipoOrdenacao="xpto" criterioOrdenacao="xpto"
+
+expectError "Critério inválido de ordenação" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo="nome" tipoOrdenacao="crescente" criterioOrdenacao=
+expectError "Critério inválido de ordenação" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo="nome" tipoOrdenacao="crescente" criterioOrdenacao=""
+expectError "Critério de ordenação inexistente" pesquisarItem idSessao=${sessaoMark} chave="xpto" atributo="nome" tipoOrdenacao="crescente" criterioOrdenacao="xpto"
+
+encerrarSistema
+quit

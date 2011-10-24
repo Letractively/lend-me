@@ -1,0 +1,26 @@
+# US20 - Melhorar a localização de usuários
+
+zerarSistema
+
+# entradas válidas
+
+criarUsuario login="mark" nome="Mark Zuckerberg" endereco="Palo Alto, California"
+criarUsuario login="steve" nome="Steven Paul Jobs" endereco="Palo Alto, California"
+criarUsuario login="bill" nome="William Henry Gates III" endereco="Medina, Washington"
+criarUsuario login="will" nome="José William Pereira Silva" endereco="Campina Grande, Paraiba"
+
+sessaoMark=abrirSessao login="mark"
+sessaoWill=abrirSessao login="will"
+
+expect "William Henry Gates III - Medina, Washington; José William Pereira Silva - Campina Grande, Paraiba" localizarUsuario idSessao=${sessaoMark} chave="William" atributo="nome"
+expect "Steven Paul Jobs - Palo Alto, California; William Henry Gates III - Medina, Washington; José William Pereira Silva - Campina Grande, Paraiba" localizarUsuario idSessao=${sessaoMark}
+expect "Mark Zuckerberg - Palo Alto, California; Steven Paul Jobs - Palo Alto, California; William Henry Gates III - Medina, Washington" localizarUsuario idSessao=${sessaoWill}
+
+# entradas inválidas
+
+expectError "Sessão inválida" localizarUsuario idSessao= 
+expectError "Sessão inválida" localizarUsuario idSessao=""
+expectError "Sessão inexistente" localizarUsuario idSessao="xpto"
+
+encerrarSistema
+quit

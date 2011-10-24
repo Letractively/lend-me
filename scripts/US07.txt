@@ -1,0 +1,65 @@
+# User Story 07 - Devolução de um item
+
+zerarSistema
+
+# entradas válidas
+
+criarUsuario login="mark" nome="Mark Zuckerberg" endereco="Palo Alto, California"
+criarUsuario login="steve" nome="Steven Paul Jobs" endereco="Palo Alto, California"
+criarUsuario login="bill" nome="William Henry Gates III" endereco="Medina, Washington"
+
+sessaoMark=abrirSessao login="mark"
+sessaoSteve=abrirSessao login="steve"
+sessaoBill=abrirSessao login="bill"
+
+requisitarAmizade idSessao=${sessaoSteve} login="mark"
+requisitarAmizade idSessao=${sessaoBill} login="mark"
+
+aprovarAmizade idSessao=${sessaoMark} login="steve"
+aprovarAmizade idSessao=${sessaoMark} login="bill"
+
+idItem1=cadastrarItem idSessao=${sessaoMark} nome="The Social Network" descricao="Filme sobre a fundação da rede social Facebook" categoria="Filme"
+idItem2=cadastrarItem idSessao=${sessaoSteve} nome="Guia do mochileiro das galáxias" descricao="Serie de ficção científica criada por Douglas Adams" categoria="Livro"
+
+idRequisicaoEmprestimo1=requisitarEmprestimo idSessao=${sessaoSteve} idItem=${idItem1} duracao=7
+idEmprestimo1=aprovarEmprestimo idSessao=${sessaoMark} idRequisicaoEmprestimo=${idRequisicaoEmprestimo1}
+
+devolverItem idSessao=${sessaoSteve} idEmprestimo=${idEmprestimo1}
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoMark} tipo="todos"
+expect "mark-steve:The Social Network:Andamento" getEmprestimos idSessao=${sessaoSteve} tipo="todos"
+
+confirmarTerminoEmprestimo idSessao=${sessaoMark} idEmprestimo=${idEmprestimo1}
+expect "mark-steve:The Social Network:Completado" getEmprestimos idSessao=${sessaoMark} tipo="todos"
+expect "mark-steve:The Social Network:Completado" getEmprestimos idSessao=${sessaoSteve} tipo="todos"
+
+# entradas inválidas
+
+expectError "Sessão inválida" devolverItem idSessao= idEmprestimo="xpto"
+expectError "Sessão inválida" devolverItem idSessao="" idEmprestimo="xpto"
+expectError "Sessão inexistente" devolverItem idSessao="xpto" idEmprestimo="xpto"
+expectError "Identificador do empréstimo é inválido" devolverItem idSessao=${sessaoMark} idEmprestimo=
+expectError "Identificador do empréstimo é inválido" devolverItem idSessao=${sessaoMark} idEmprestimo=""
+expectError "Empréstimo inexistente" devolverItem idSessao=${sessaoMark} idEmprestimo="xpto"
+
+idRequisicaoEmprestimo2=requisitarEmprestimo idSessao=${sessaoMark} idItem=${idItem2} duracao=7
+idEmprestimo2=aprovarEmprestimo idSessao=${sessaoSteve} idRequisicaoEmprestimo=${idRequisicaoEmprestimo2}
+
+expectError "O item só pode ser devolvido pelo usuário beneficiado" devolverItem idSessao=${sessaoSteve} idEmprestimo=${idEmprestimo2}
+expectError "O item só pode ser devolvido pelo usuário beneficiado" devolverItem idSessao=${sessaoBill} idEmprestimo=${idEmprestimo2}
+devolverItem idSessao=${sessaoMark} idEmprestimo=${idEmprestimo2}
+expectError "Item já devolvido" devolverItem idSessao=${sessaoMark} idEmprestimo=${idEmprestimo2}
+
+expectError "Sessão inválida" confirmarTerminoEmprestimo idSessao= idEmprestimo="xpto"
+expectError "Sessão inválida" confirmarTerminoEmprestimo idSessao="" idEmprestimo="xpto"
+expectError "Sessão inexistente" confirmarTerminoEmprestimo idSessao="xpto" idEmprestimo="xpto"
+expectError "Identificador do empréstimo é inválido" confirmarTerminoEmprestimo idSessao=${sessaoSteve} idEmprestimo=
+expectError "Identificador do empréstimo é inválido" confirmarTerminoEmprestimo idSessao=${sessaoSteve} idEmprestimo=""
+expectError "Empréstimo inexistente" confirmarTerminoEmprestimo idSessao=${sessaoSteve} idEmprestimo="xpto"
+
+expectError "O término do empréstimo só pode ser confirmado pelo dono do item" confirmarTerminoEmprestimo idSessao=${sessaoMark} idEmprestimo=${idEmprestimo2}
+expectError "O término do empréstimo só pode ser confirmado pelo dono do item" confirmarTerminoEmprestimo idSessao=${sessaoBill} idEmprestimo=${idEmprestimo2}
+confirmarTerminoEmprestimo idSessao=${sessaoSteve} idEmprestimo=${idEmprestimo2}
+expectError "Término do empréstimo já confirmado" confirmarTerminoEmprestimo idSessao=${sessaoSteve} idEmprestimo=${idEmprestimo2}
+
+encerrarSistema
+quit

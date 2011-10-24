@@ -188,7 +188,6 @@ public class CommunicationManager {
 		storeMessage(subject, message, me.getLogin(), receiver.getLogin(),
 				false, lendingId);
 		
-		//TODO Treat how is it going to deal with the Lending id
 		return receiver.getCommunicationManager().storeMessage(subject, message, me.getLogin(),
 				receiver.getLogin(), false, lendingId);
 	}

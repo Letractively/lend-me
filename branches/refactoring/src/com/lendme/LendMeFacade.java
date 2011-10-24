@@ -311,7 +311,7 @@ public class LendMeFacade {
 		User receiver = null;
 		try {
 			receiver = repository.getUserByLogin(receiverLogin);
-			sender = senderProfile.viewOtherProfile(receiver).getObserver().getOwner();
+			sender = getAnotherProfile(senderProfile, receiverLogin).getObserver().getOwner();
 			if (message == null || message.trim().isEmpty()) {
 				throw new Exception("Mensagem inválida");//"Invalid message");
 			}
@@ -350,7 +350,7 @@ public class LendMeFacade {
 		User receiver = null;
 		try {
 			receiver = repository.getUserByLogin(receiverLogin);
-			sender = senderProfile.viewOtherProfile(receiver).getObserver().getOwner();
+			sender = getAnotherProfile(senderProfile, receiverLogin).getObserver().getOwner();
 		} catch (Exception e) {
 			
 			if (e.getMessage().equals("Login inválido")) {

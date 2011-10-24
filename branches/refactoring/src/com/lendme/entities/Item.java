@@ -11,7 +11,6 @@ public class Item implements Identifiable, Comparable<Item>{
 	
 	private String name;
 	private String description;
-	//private Category category;
 	private String category;
 	private String id;
 	private EventDate creationDate;

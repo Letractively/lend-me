@@ -308,12 +308,12 @@ public class LendMe {
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
 			
-			Session senderSession = null;
 			User receiver = null;
-			
+			Profile solicitorViewer = null;
 			try {
-				senderSession = repository.getSessionByID(senderSessionId);
+				solicitorViewer = userModule.getUserProfile(repository.getSessionByID(senderSessionId));
 				receiver = repository.getUserByLogin(receiverLogin);
+				return communicationModule.sendMessage(solicitorViewer, subject, message, receiver, lendingId);
 			} catch (Exception e) {
 				
 				if (e.getMessage().equals("Login inválido")) {
@@ -325,13 +325,12 @@ public class LendMe {
 				}
 				
 				else if (e.getMessage().equals("Empréstimo inexistente")) {
-					throw new Exception("Requisição de empréstimo inexistente" );
+					throw new Exception("Requisição de empréstimo inexistente");
+				}else{
+					throw new Exception(e.getMessage());
 				}
-				
-				throw e;
 			}
 
-			return communicationModule.sendMessage(senderSession, subject, message, receiver, lendingId);
 	}
 	
 	/**
@@ -348,10 +347,10 @@ public class LendMe {
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
 			
-			Session senderSession = null;
 			User receiver = null;
+			Profile soliciterViewer = null;
 			try {
-				senderSession = repository.getSessionByID(senderSessionId);
+				soliciterViewer = userModule.getUserProfile(repository.getSessionByID(senderSessionId));
 				receiver = repository.getUserByLogin(receiverLogin);
 			} catch (Exception e) {
 				
@@ -365,7 +364,7 @@ public class LendMe {
 					throw new Exception(e.getMessage());
 				}
 			}
-			return communicationModule.sendMessage(senderSession, subject, message, receiver);
+			return communicationModule.sendMessage(soliciterViewer, subject, message, receiver);
 	}
 	
 	/**
@@ -379,7 +378,7 @@ public class LendMe {
 	 */
 	public  List<Topic> getTopics(String sessionId, String topicType)
 			throws Exception {
-			return communicationModule.getTopics(repository.getSessionByID(sessionId), topicType);
+			return communicationModule.getTopics(userModule.getUserProfile(repository.getSessionByID(sessionId)), topicType);
 	}
 	
 	/**
@@ -394,7 +393,7 @@ public class LendMe {
 	public  List<Message> getTopicMessages(String sessionId, String topicId)
 			throws Exception {
 
-			return communicationModule.getTopicMessages(repository.getSessionByID(sessionId), topicId);
+			return communicationModule.getTopicMessages(userModule.getUserProfile(repository.getSessionByID(sessionId)), topicId);
 	}
 	
 	/**
@@ -686,26 +685,14 @@ public class LendMe {
 		if ( itemId == null || itemId.trim().isEmpty() ){
 			throw new Exception("Identificador do item é inválido");
 		}
-		Profile viewer = getUserProfile(sessionId);
-		Lending petition = getPetition(requestPublicationId);
-		viewer.offerItem(petition, itemId);
-	}
-
-	private Lending getPetition(String requestPublicationId) throws Exception{
-		for ( User user : repository.getUsers() ){
-			for ( Lending publishedRequest : user.getPublishedItemRequests() ){
-				if ( publishedRequest.getID().equals(requestPublicationId) ){
-					return publishedRequest;
-				}
-			}
-		}
-		throw new Exception("Publicação de pedido inexistente");
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		communicationModule.offerItem(viewer, requestPublicationId, itemId, repository.getUsers());
 	}
 
 	public void republishItemRequest(String sessionId,
 			String requestPublicationId) throws Exception{
-		Profile viewer = getUserProfile(sessionId);
-		viewer.republishItemRequest(getPetition(requestPublicationId));
+		Profile viewer = userModule.getUserProfile(repository.getSessionByID(sessionId));
+		communicationModule.republishItemRequest(viewer, requestPublicationId, repository.getUsers());
 	}
 
 	public String getUserAttribute(String login, String attribute) throws Exception {

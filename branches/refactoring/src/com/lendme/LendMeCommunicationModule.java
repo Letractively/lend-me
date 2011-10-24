@@ -3,6 +3,7 @@ package com.lendme;
 import java.util.List;
 import java.util.Set;
 
+import com.lendme.entities.Lending;
 import com.lendme.entities.Message;
 import com.lendme.entities.Session;
 import com.lendme.entities.Topic;
@@ -10,10 +11,7 @@ import com.lendme.entities.User;
 
 public class LendMeCommunicationModule {
 	
-	private LendMeUserModule userModule;
-	
 	public LendMeCommunicationModule(){
-		 this.userModule = new LendMeUserModule();
 	}
 	
 	/**
@@ -48,34 +46,15 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String sendMessage(Session senderSession, String subject, String message, 
+//	public  String sendMessage(Session senderSession, String subject, String message, 
+	public  String sendMessage(Profile solicitorViewer, String subject, String message,
 			User receiver, String lendingId) throws Exception {
 		
-		Profile solicitorViewer = null;
-		try {
-			solicitorViewer = userModule.getUserProfile(senderSession);
 		
-			solicitorViewer = solicitorViewer.viewOtherProfile(
-					receiver);
+			solicitorViewer = solicitorViewer.viewOtherProfile(receiver);
 		
 			return solicitorViewer.sendMessage(subject, message, lendingId);
 			
-		} catch (Exception e) {
-			
-			if (e.getMessage().equals("Login inválido")) {
-				throw new Exception("Destinatário inválido");//"Invalid receiver");
-			}
-			
-			else if (e.getMessage().equals("Usuário inexistente")) {
-				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
-			}
-			
-			else if (e.getMessage().equals("Empréstimo inexistente")) {
-				throw new Exception("Requisição de empréstimo inexistente" );
-			}
-			
-			throw e;
-		}
 	}
 
 
@@ -90,13 +69,10 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  String sendMessage(Session senderSession, String subject, String message, 
+	public  String sendMessage(Profile solicitorViewer, String subject, String message, 
 			User receiver) throws Exception {
 		
-		Profile solicitorViewer = null;
 		try {
-			
-			solicitorViewer = userModule.getUserProfile(senderSession);
 		
 			solicitorViewer = solicitorViewer.viewOtherProfile(receiver);
 		
@@ -125,9 +101,8 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  List<Topic> getTopics(Session session, String topicType)
+	public  List<Topic> getTopics(Profile solicitorViewer, String topicType)
 			throws Exception {
-		Profile solicitorViewer = userModule.getUserProfile(session);
 		return solicitorViewer.getTopics(topicType);
 	}
 	
@@ -140,9 +115,41 @@ public class LendMeCommunicationModule {
 	 * @return
 	 * @throws Exception
 	 */
-	public  List<Message> getTopicMessages(Session session, String topicId)
+	public  List<Message> getTopicMessages(Profile solicitorViewer, String topicId)
 			throws Exception {
-		Profile solicitorViewer = userModule.getUserProfile(session);
 		return solicitorViewer.getTopicMessages(topicId);
 	}
+	
+	public void offerItem(Profile viewer,
+			String requestPublicationId, String itemId, Set<User> allUsers) throws Exception{
+		
+		for ( User user : allUsers){
+			for ( Lending publishedRequest : user.getPublishedItemRequests() ){
+				if ( publishedRequest.getID().equals(requestPublicationId) ){
+					Lending petition = publishedRequest;
+					viewer.offerItem(petition, itemId);
+					return;
+				}
+			}
+		}
+		throw new Exception("Publicação de pedido inexistente");
+	}
+	
+	
+	
+	public void republishItemRequest(Profile viewer,
+			String requestPublicationId, Set<User> allUsers) throws Exception{
+		for ( User user : allUsers){
+			for ( Lending publishedRequest : user.getPublishedItemRequests() ){
+				if ( publishedRequest.getID().equals(requestPublicationId) ){
+					Lending petition = publishedRequest;
+					viewer.republishItemRequest(petition);
+					return;
+				}
+			}
+		}
+		throw new Exception("Publicação de pedido inexistente");
+
+	}
+
 }

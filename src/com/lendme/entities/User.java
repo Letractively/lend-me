@@ -20,27 +20,11 @@ public class User implements InterestedOn<Item>{
 	private String login;
 	private String name;
 	private Address address;
-	
-	private FriendshipManager friendshipManager;
-	
-//	private Map<Item,User> itemManager.getMyItems() = new HashMap<Item,User>();
-	
-//	private Set<Lending> myLentItems = new HashSet<Lending>();
-//	private Set<Lending> sentItemRequests = new HashSet<Lending>();
-//	private Set<Lending> receivedItemRequests = new HashSet<Lending>();
-//	private Set<Lending> myBorrowedItems = new HashSet<Lending>();
-//	private Set<Lending> borrowedRegistryHistory = new HashSet<Lending>();
-//	private Set<Lending> lentRegistryHistory = new HashSet<Lending>();
-//	private Set<Lending> lendingDenialRegistryHistory = new HashSet<Lending>();
-//	
-//	
-//	private Set<Lending> publishedItemRequests = new HashSet<Lending>();
-//	private Set<Lending> sentItemDevolutionRequests = new HashSet<Lending>();
-//	private Map<Item, ArrayList<InterestedOn<Item>>> interestedOnMyItems = new HashMap<Item, ArrayList<InterestedOn<Item>>>();
-	
-	private CommunicationManager communicationManager;
 	private EventDate creationDate;
 	private int score;
+	
+	private FriendshipManager friendshipManager;
+	private CommunicationManager communicationManager;
 	private ItemManager itemManager;
 	
 	public User(){}

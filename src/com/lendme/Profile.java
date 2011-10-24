@@ -192,9 +192,6 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected void askForFriendship() throws Exception{
-		if ( observerSession.getOwner().equals(owner) ){
-			throw new Exception("Amizade inexistente");//inválida - pedido de amizade para si próprio");//"Invalid friendship");
-		}
 		observerSession.getOwner().requestFriendship(owner);
 	}
 
@@ -203,9 +200,6 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected void acceptFriendshipRequest() throws Exception{
-		if ( observerSession.getOwner().equals(owner) ){
-			throw new Exception("Amizade inexistente");//inválida - aceitação de amizade para si próprio");//"Invalid friendship");
-		}
 		observerSession.getOwner().acceptFriendshipRequest(owner);
 	}
 
@@ -214,9 +208,6 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected void declineFriendshipRequest() throws Exception{
-		if ( observerSession.getOwner().equals(owner) ){
-			throw new Exception("Amizade inexistente");//inválida - negação de amizade para si próprio");//"Invalid friendship");
-		}
 		observerSession.getOwner().declineFriendshipRequest(owner);
 	}
 
@@ -225,15 +216,7 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected void breakFriendship() throws Exception{
-		if ( observerSession.getOwner().equals(owner) ){
-			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com si próprio");//"Invalid friendship");
-		}
-		User me = observerSession.getOwner();
-		if ( !me.hasFriend(owner) ){
-			throw new Exception("Amizade inexistente");//inválida - rompimento de amizade com alguem que não é seu amigo");
-		}
-		
-		me.breakFriendship(owner);
+		observerSession.getOwner().breakFriendship(owner);
 	}
 	
 	/**
@@ -242,9 +225,6 @@ public class Profile {
 	 * @throws Exception
 	 */
 	protected boolean isFriendOfOwner() throws Exception{
-		if ( observerSession.getOwner().equals(owner) ){
-			throw new Exception("Amizade inválida - consulta para amizade com si próprio");//"Invalid friendship");
-		}
 		return observerSession.getOwner().hasFriend(owner);
 	}
 

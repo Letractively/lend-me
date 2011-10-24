@@ -180,7 +180,7 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public void requestFriendship(User otherUser) throws Exception{
-		friendshipManager.sendRequest(otherUser);
+		friendshipManager.sendFriendshipRequest(otherUser);
 	}
 
 
@@ -190,7 +190,7 @@ public class User implements InterestedOn<Item>{
 	 * @throws Exception
 	 */
 	public void acceptFriendshipRequest(User otherUser) throws Exception{
-		friendshipManager.acceptRequest(otherUser);
+		friendshipManager.acceptFriendshipRequest(otherUser);
 		communicationManager.publishFriendshipAcceptedActivity(otherUser.getName());
 		otherUser.getCommunicationManager().publishFriendshipAcceptedActivity(this.getName());
 	}
@@ -205,7 +205,7 @@ public class User implements InterestedOn<Item>{
 	 * @param otherUser
 	 */
 	public void declineFriendshipRequest(User otherUser) throws Exception{
-		friendshipManager.declineRequest(otherUser);
+		friendshipManager.declineFriendshipRequest(otherUser);
 	}
 		
 	/**
@@ -213,7 +213,7 @@ public class User implements InterestedOn<Item>{
 	 * @param otherUser
 	 * @return
 	 */
-	public boolean hasFriend(User otherUser) {
+	public boolean hasFriend(User otherUser) throws Exception{
 		return friendshipManager.hasFriend(otherUser);
 	}
 
@@ -880,7 +880,7 @@ public class User implements InterestedOn<Item>{
 	 * User breaks friendship with another user.
 	 * @param user
 	 */
-	public void breakFriendship(User user){
+	public void breakFriendship(User user) throws Exception{
 		friendshipManager.breakFriendship(user);
 	}
 	

@@ -6,6 +6,7 @@
 
    <property name="src" value="\${basedir}/src/"  />
    <property name="build" value="\${basedir}/bin/"/>
+   <property name="tests" value="\${basedir}/scripts" />
    <property name="doc" value="\${basedir}/doc"   />
    <property name="jars" value="\${basedir}/jars" />
    <property name="classpath" value="\${basedir}:easyaccept.jar:junit.jar" />

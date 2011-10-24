@@ -1,18 +1,19 @@
 package com.lendme;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.lendme.entities.ActivityRegistry;
 import com.lendme.entities.Lending;
 import com.lendme.entities.Message;
 import com.lendme.entities.Session;
 import com.lendme.entities.Topic;
 import com.lendme.entities.User;
+import com.lendme.entities.ActivityRegistry.ActivityKind;
 
 public class LendMeCommunicationModule {
-	
-	public LendMeCommunicationModule(){
-	}
 	
 	/**
 	 * Returns messages with given topic.
@@ -150,6 +151,36 @@ public class LendMeCommunicationModule {
 		}
 		throw new Exception("Publicação de pedido inexistente");
 
+	}
+
+	public List<ActivityRegistry> getJointActivityHistory(Session session) {
+
+		User sessionOwner = session.getOwner();
+		List<ActivityRegistry> results = 
+				new ArrayList<ActivityRegistry>(sessionOwner.getMyActivityHistory());
+		
+		for (User actualFriend : sessionOwner.getFriends()) {
+			for (ActivityRegistry actualAR : actualFriend.getMyActivityHistory()) {
+				if (actualAR.getKind() == ActivityKind.ADICAO_DE_AMIGO_CONCLUIDA 
+						&& actualAR.getDescription().contains(" e " + 
+						sessionOwner.getName() + " são amigos agora")
+						|| sessionOwner.getMyActivityHistory().contains(actualAR)) {
+					continue;
+				}
+				results.add(actualAR);
+			}
+		}
+		Collections.sort(results);
+		return results;
+	}
+
+	public List<ActivityRegistry> getActivityHistory(Profile viewer) throws Exception{
+		return viewer.getActivityHistory();
+	}
+
+	public String publishItemRequest(Profile viewer, String itemName,
+			String itemDescription) throws Exception{
+		return viewer.publishItemRequest(itemName, itemDescription);
 	}
 
 }

@@ -53,7 +53,7 @@
 
    <target name="jar" depends="init,compila">
      <echo> 5. Stage of jars generations. </echo>
-     <jar destfile="\${jars}/lendMe.jar" basedir="\${build}">
+     <jar destfile="\${jars}/emprestimos2.jar" basedir="\${build}">
        <manifest>
          <attribute name="Main-Class" value="com.lendme.LendMeTextInterface"/>
        </manifest>

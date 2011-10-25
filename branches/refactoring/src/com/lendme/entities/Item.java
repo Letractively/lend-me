@@ -14,9 +14,17 @@ public class Item implements Identifiable, Comparable<Item>{
 	private String category;
 	private String id;
 	private EventDate creationDate;
-	
+	/**
+	 * Construtor default do Item.
+	 */
 	public Item() {}
-	
+	/**
+	 * 
+	 * @param name - Nome do item.
+	 * @param description - Descricao do item.
+	 * @param category - Categoria a qual o item pertecera.
+	 * @throws Exception - Caso o nome, ou a descricao, ou a categoria sejam nulos ou vazios.
+	 */
 	public Item(String name, String description, String category) 
 			throws Exception{
 
@@ -30,38 +38,51 @@ public class Item implements Identifiable, Comparable<Item>{
 			throw new Exception("Categoria inválida");//"Invalid category");
 		}
 		
-//		Category chosenCategory;
-//		try {
-//			chosenCategory = Category.valueOf(category.toUpperCase());
-//		}
-//		catch (IllegalArgumentException e) {
-//			throw new Exception("Categoria inexistente");//"Inexistent category");
-//		}
 		
 		this.name = name;
 		this.description = description;
-//		this.category = chosenCategory;
 		this.category = category;
 		this.id = Integer.toString(((Object) this).hashCode());
 		this.creationDate = new EventDate(String.format(EntitiesConstants.ITEM_REGISTERED_MESSAGE, this.name, this.id));
 	}
 	
+	/**
+	 * Retorna o EventDate correspondente ao momento da criacao do item.
+	 * @return EventDate
+	 */
 	public EventDate getCreationDate() {
 		return creationDate;
 	}
 
+	/**
+	 * Retorna o nome do item.
+	 * @return String - Nome do item.
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Retorna a descricao do item.
+	 * @return String - decricao.
+	 */
 	public String getDescription() {
 		return this.description;
 	}
 
+	/**
+	 * Retorna a categoria do item.
+	 * @return String - categoria.
+	 */
 	public String getCategory() {
 		return this.category;
 	}
 	
+	/**
+	 * Analisa se os ids sao correspondentes.
+	 * @param id
+	 * @return true caso sejam correspondentes, false caso contrario. 
+	 */
 	public boolean idMatches(String id){
 		if ( id == null || id.trim().isEmpty() ){
 			return false;
@@ -108,22 +129,28 @@ public class Item implements Identifiable, Comparable<Item>{
 		return - this.getCreationDate().compareTo(o.getCreationDate());
 	}
 
+	/**
+	 * Configura um nome para o Item.
+	 * @param name - Novo nome.
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Configura uma descricao ou sobre-escreve a anterior.
+	 * @param description - nova descricao.
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * Configura uma descricao ou sobre-escreve a anterior.
+	 * @param category - String categoria.
+	 * @throws Exception - Caso seja nula ou vazia.
+	 */
 	public void setCategory(String category) throws Exception{
-//		Category chosenCategory;
-//		try {
-//			chosenCategory = Category.valueOf(category.toUpperCase());
-//		}
-//		catch (IllegalArgumentException e) {
-//			throw new Exception("Categoria inexistente");//"Inexistent category");
-//		}
 		if(!(category == null) && !(category.trim().isEmpty())){
 			this.category = category;
 		}else{
@@ -131,6 +158,11 @@ public class Item implements Identifiable, Comparable<Item>{
 		}
 	}
 	
+	/**
+	 * Adiciona uma nova categoria.
+	 * @param category String - Nome da categoria.
+	 * @throws Exception - Caso o nome passado seja nulo ou vazio. 
+	 */
 	public void addCategory(String category) throws Exception{
 		if(!(category == null) && !(category.trim().isEmpty())){
 			this.category = this.category + ", " + category;
@@ -139,6 +171,11 @@ public class Item implements Identifiable, Comparable<Item>{
 		}
 	}
 	
+	/**
+	 * Remove uma categoria criada.
+	 * @param category - Nome da categoria.
+	 * @throws Exception - Caso a categoria nao exista.
+	 */
 	public void removeCategory(String category) throws Exception{
 		if(!(category == null) && !(category.trim().isEmpty())){
 			if(!this.category.contains(category)){

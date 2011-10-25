@@ -1,5 +1,9 @@
 package com.lendme.entities;
-
+/**
+ * Esta classe eh resposavel por processar
+ * @author THE LENDERS
+ *
+ */
 public class ActivityRegistry implements Comparable<ActivityRegistry>{
 	
 	public static enum ActivityKind {

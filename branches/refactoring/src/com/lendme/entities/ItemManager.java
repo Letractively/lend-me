@@ -8,7 +8,11 @@ import java.util.Set;
 
 import com.lendme.entities.Lending.LendingStatus;
 
-
+/**
+ * Classe que representa o gerenciador dos itens de um usuario.
+ * @author THE LENDERS
+ *
+ */
 public class ItemManager {
 	
 	private Map<Item,User> myItems = new HashMap<Item,User>();
@@ -25,42 +29,83 @@ public class ItemManager {
 	
 	
 	
+	/**
+	 * Retorna um mapa com os itens do usuario que esta sendo administrado.
+	 * Caso o campo User seja diferente de nulo eh porque o item esta emprestado ao usuario que esta armazenado.
+	 * @return Map<Item, User> - Items.
+	 */
 	public Map<Item, User> getMyItems() {
 		return myItems;
 	}
 
+	/**
+	 * Retorna os itens que foram pedidos emprestados.
+	 * @return Set<Lending> - Conjuto de objetos Lending
+	 */
 	public Set<Lending> getMyLentItems() {
 		return myLentItems;
 	}
 
+	/**
+	 * Retorna o conjunto de Itens que foram requisitados.
+	 * @return Set<Lending> - 
+	 */
 	public Set<Lending> getSentItemRequests() {
 		return sentItemRequests;
 	}
 
+	/**
+	 * Retorna o conjunto de requisicoes recebidas para os itens do usuario administrado.
+	 * @return Set<Lending> - Requisicoes.
+	 */
 	public Set<Lending> getReceivedItemRequests() {
 		return receivedItemRequests;
 	}
 
+	/**
+	 * Retorna o conjunto de itens emprestados.
+	 * @return Set<Lending> - Emprestados.
+	 */
 	public Set<Lending> getMyBorrowedItems() {
 		return myBorrowedItems;
 	}
 
+	/**
+	 * Retorna o historico de emprestimos.
+	 * @return Set<Lending> - Historico.
+	 */
 	public Set<Lending> getLentRegistryHistory() {
 		return lentRegistryHistory;
 	}
 
+	/**
+	 * Retorna historico de itens que foram negados emprestimos.
+	 * @return - Set<Lending> - Negados.
+	 */
 	public Set<Lending> getLendingDenialRegistryHistory() {
 		return lendingDenialRegistryHistory;
 	}
 
+	/**
+	 * Configura novo conjunto de itens.
+	 * @param myItems - novo Conjunto.
+	 */
 	public void setMyItems(Map<Item, User> myItems) {
 		this.myItems = myItems;
 	}
 
+	/**
+	 * Configura novo conjunto de itens emprestados.
+	 * @param myLentItems - novo conjunto.
+	 */
 	public void setMyLentItems(Set<Lending> myLentItems) {
 		this.myLentItems = myLentItems;
 	}
 
+	/**
+	 * Configura novo
+	 * @param sentItemRequests - novo conjunto.
+	 */
 	public void setSentItemRequests(Set<Lending> sentItemRequests) {
 		this.sentItemRequests = sentItemRequests;
 	}

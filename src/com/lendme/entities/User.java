@@ -19,6 +19,12 @@ public class User implements InterestedOn<Item>{
 	
 	public User(){}
 	
+	/**
+	 * @param login
+	 * @param name
+	 * @param address
+	 * @throws Exception
+	 */
 	public User(String login, String name, String... address) throws Exception{
 		
 		if(login == null || login.trim().isEmpty()){
@@ -46,27 +52,56 @@ public class User implements InterestedOn<Item>{
 		this.userOperationManager = new UserOperationManager(this);
 	}
 	
+	/**
+	 * Retorna o login do usuario.
+	 * @return login.
+	 */
 	public String getLogin() {
 		return this.login;
 	}
 
+	/**
+	 * Configura um novo login do usuario.
+	 * @param login
+	 */
 	public void setLogin(String login) {
 		this.login = login;
 	}
 
+	/**
+	 * Configura um novo nome para o usuario.
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Retorna o nome do usuario.
+	 * @return String - nome.
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Configura um novo endereco para o usuario.
+	 * @param street
+	 * @param number
+	 * @param neighborhood
+	 * @param city
+	 * @param state
+	 * @param country
+	 * @param zipCode
+	 */
 	public void setAddress(String street, String number, String neighborhood,
 			String city, String state, String country, String zipCode) {
 		this.address = new Address(street, number, neighborhood, city, state, country, zipCode);
 	}
 
+	/**
+	 * @return
+	 */
 	public Address getAddress() {
 		return address;
 	}

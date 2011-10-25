@@ -87,7 +87,7 @@ public class ItemManager {
 	}
 
 	/**
-	 * Configura novo conjunto de itens.
+	 * Configura novo conjunto de itens.(CUIDADO AO USAR!)
 	 * @param myItems - novo Conjunto.
 	 */
 	public void setMyItems(Map<Item, User> myItems) {
@@ -95,7 +95,7 @@ public class ItemManager {
 	}
 
 	/**
-	 * Configura novo conjunto de itens emprestados.
+	 * Configura novo conjunto de itens emprestados.(CUIDADO AO USAR!)
 	 * @param myLentItems - novo conjunto.
 	 */
 	public void setMyLentItems(Set<Lending> myLentItems) {
@@ -103,60 +103,108 @@ public class ItemManager {
 	}
 
 	/**
-	 * Configura novo
+	 * Configura novo conjunto de Requisicoes de itens enviadas.(CUIDADO AO USAR!)
 	 * @param sentItemRequests - novo conjunto.
 	 */
 	public void setSentItemRequests(Set<Lending> sentItemRequests) {
 		this.sentItemRequests = sentItemRequests;
 	}
 
+	/**
+	 * Configura novo conjunto de itens emprestados.(CUIDADO AO USAR!)
+	 * @param myBorrowedItems - novo conjunto.
+	 */
 	public void setMyBorrowedItems(Set<Lending> myBorrowedItems) {
 		this.myBorrowedItems = myBorrowedItems;
 	}
 
+	/**
+	 * Configura novo conjunto de registro de itens emprestados.(CUIDADO AO USAR!)
+	 * @param borrowedRegistryHistory - novo conjunto.
+	 */
 	public void setBorrowedRegistryHistory(Set<Lending> borrowedRegistryHistory) {
 		this.borrowedRegistryHistory = borrowedRegistryHistory;
 	}
 
+	/**
+	 * Configura novo conjunto de registro de itens pedidos emprestados.(CUIDADO AO USAR!)
+	 * @param lentRegistryHistory - novo conjunto.
+	 */
 	public void setLentRegistryHistory(Set<Lending> lentRegistryHistory) {
 		this.lentRegistryHistory = lentRegistryHistory;
 	}
 
+	/**
+	 * Configura um novo conjunto de registro de itens que nao foram permitidos emprestimo.(CUIDADO AO USAR!)
+	 * @param lendingDenialRegistryHistory - novo conjunto.
+	 */
 	public void setLendingDenialRegistryHistory(
 			Set<Lending> lendingDenialRegistryHistory) {
 		this.lendingDenialRegistryHistory = lendingDenialRegistryHistory;
 	}
 
+	/**
+	 * Configura um novo conjunto de requisicoes de devolucao. (CUIDADO AO USAR!)
+	 * @param sentItemDevolutionRequests - novo conjunto.
+	 */
 	public void setSentItemDevolutionRequests(
 			Set<Lending> sentItemDevolutionRequests) {
 		this.sentItemDevolutionRequests = sentItemDevolutionRequests;
 	}
 
+	/**
+	 * Configura novo conjunto de requisicoes de itens publicadas. (CUIDADO AO USAR!)
+	 * @param publishedItemRequests - novo conjunto.
+	 */
 	public void setPublishedItemRequests(Set<Lending> publishedItemRequests) {
 		this.publishedItemRequests = publishedItemRequests;
 	}
 
+	/**
+	 * Configura novo mapa de interessados nos itens do usuario administrado. (CUIDADO AO USAR!)
+	 * @param interestedOnMyItems - novo mapa.
+	 */
 	public void setInterestedOnMyItems(
 			Map<Item, ArrayList<InterestedOn<Item>>> interestedOnMyItems) {
 		this.interestedOnMyItems = interestedOnMyItems;
 	}
 
+	/**
+	 * Retorna o mapa dos interessados nos itens do usuario que possui o itemManager.
+	 * @return Map - dos interessados nos meus itens.
+	 */
 	public Map<Item, ArrayList<InterestedOn<Item>>> getInterestedOnMyItems() {
 		return interestedOnMyItems;
 	}
 	
+	/**
+	 * Retorna o historico de processos de itens pedidos emprestados.
+	 * @return Set<Lending> - Historico.
+	 */
 	public Set<Lending> getBorrowedRegistryHistory() {
 		return borrowedRegistryHistory;
 	}
 	
+	/**
+	 * Retorna o conjunto de processos de emprestimo que foi requisitada a revolucao.
+	 * @return Set<Lending> - requisicoes.
+	 */
 	public Set<Lending> getSentItemDevolutionRequests() {
 		return sentItemDevolutionRequests;
 	}
 	
+	/**
+	 * Retorna o conjunto de requisicoes de itens que foram publicadas.
+	 * @return Set<Lending> - requisicoes.
+	 */
 	public Set<Lending> getPublishedItemRequests() {
 		return publishedItemRequests;
 	}
 	
+	/**
+	 * Configura um novo conjunto de requisicoes de itens.
+	 * @param receivedItemRequests - novo conjunto.
+	 */
 	public void setReceivedItemRequests(Set<Lending> receivedItemRequests) {
 		this.receivedItemRequests = receivedItemRequests;
 	}
@@ -176,6 +224,11 @@ public class ItemManager {
 		return myNewItem.getID();
 	}
 	
+	/**
+	 * Verifica se a requisicao ja foi enviada.
+	 * @param item - Item a ser verificado.
+	 * @throws Exception - Lanca caso a requisicao ja tenha sido enviada aquele item.
+	 */
 	public void verifyLendingAutenticity(Item item) throws Exception {
 		for ( Lending record : sentItemRequests ){
 			if ( record.getItem().idMatches(item.getID()) ){
@@ -579,6 +632,11 @@ public class ItemManager {
 		return false;
 	}
 	
+	/**
+	 * Verifica se o emprestimo ja foi aprovado.
+	 * @param requestId - Id da requisicao.
+	 * @return - true se ja foi aprovado, false se nao.
+	 */
 	public boolean hasAlreadyApprovedLending(String requestId) {
 		for ( Lending record : myLentItems ){
 			if ( record.getID().equals(requestId) ){
@@ -588,6 +646,11 @@ public class ItemManager {
 		return false;
 	}
 	
+	/**
+	 * Verifica se o emprestimo foi negado.
+	 * @param requestId - Id da requisicao.
+	 * @return - true se ja foi negado, false se nao.
+	 */
 	public boolean wasLendingDenied(String requestId) {
 		for ( Lending record : lendingDenialRegistryHistory ){
 			if ( record.getID().equals(requestId) ){
@@ -597,6 +660,12 @@ public class ItemManager {
 		return false;
 	}
 	
+	/**
+	 * Retorna o Lending correspondete ao id passado como parametro.
+	 * @param requestId
+	 * @return Objeto Lending pedido.
+	 * @throws Exception - caso nao exista.
+	 */
 	public Lending getMyReceivedItemRequestById(String requestId) throws Exception {
 		Lending foundLending = null;
 		for ( Lending record : receivedItemRequests ){
@@ -607,6 +676,13 @@ public class ItemManager {
 		return foundLending;
 	}
 	
+	/**
+	 * Retorna o Lending correspondente ao item e usuario que foi pedido.
+	 * @param item
+	 * @param lender
+	 * @param days
+	 * @return Objeto Lending pedido.
+	 */
 	public Lending getMySentItemRequestByItem(Item item, User lender, int days) {
 		Lending foundLending = null;
 		for ( Lending record : sentItemRequests ){

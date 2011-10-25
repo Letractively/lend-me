@@ -103,6 +103,13 @@ public class LendMeAdapter {
 		return handled;
 	}
 	
+	/**
+	 * Retorna uma String com os nomes de todos os usuários cadastrados
+	 * no sistema ordenados pela distância entre cada um e o usuáio dono 
+	 * do ID da sessão dada. 
+	 * 
+	 */
+
 	public String[] listUsersByDistance(String solicitorSession) throws Exception{
 		
 		List<User> results = new ArrayList<User>(lendMe.listUsersByDistance(solicitorSession));

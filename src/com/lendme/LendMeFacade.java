@@ -29,10 +29,6 @@ public class LendMeFacade {
 	private LendMeItemModule itemModule;
 	private LendMeCommunicationModule  communicationModule; 
 	private LendMeUserModule userModule;
-	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
-	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
-	public static enum CriteriaForSearch {DATACRIACAO, REPUTACAO};
-	
 	
 	public LendMeFacade() {
 		time = GregorianCalendar.getInstance();

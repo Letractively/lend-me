@@ -7,8 +7,15 @@ import java.util.Set;
 import com.lendme.entities.Item;
 import com.lendme.entities.User;
 
+/**
+ * This class implements the OrderedSerach interface, 
+ * providing a search strategy based on the category of the item.
+ */
 public class CategorySearchStrategy implements OrderedSearch {
 
+	/* (non-Javadoc)
+	 * @see com.lendme.utils.OrderedSearch#doSearch(com.lendme.entities.User, java.lang.String)
+	 */
 	@Override
 	public List<Item> doSearch(User searcher, String value) {
 

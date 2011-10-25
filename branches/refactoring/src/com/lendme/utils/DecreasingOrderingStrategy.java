@@ -7,6 +7,10 @@ import com.lendme.entities.Item;
 import com.lendme.utils.Ordering;
 import com.lendme.utils.OrderedSearch;
 
+/**
+ * This class extends the Ordering abstract class, 
+ * providing a decreasing ordering strategy for a query.
+ */
 public class DecreasingOrderingStrategy extends Ordering {
 
 	public DecreasingOrderingStrategy(OrderedSearch previous) {

@@ -334,13 +334,6 @@ public class LendMeAcceptanceTestInterface {
 		return system.askForReturnOfItem(idSessao, idEmprestimo);
 	}
 	
-	/**
-	 * 
-	 * @param idSessao//==================================================
-	 * @param tipo//=============================================================
-	 * @return//==========================================================================================
-	 * @throws Exception
-	 */
 	public String getEmprestimos(String idSessao, String tipo) throws Exception{
 	
 		String[] resultado = system.getLendingRecords(idSessao, tipo);

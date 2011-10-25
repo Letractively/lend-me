@@ -124,10 +124,25 @@ public class LendMeFacade {
 		return repository.registerItem(sessionId, name, description, category);
 	}
 	
+	/**
+	 * Retorna um conjunto de usuários cadastrados no sistema ordenados
+	 * pela distância entre cada um e o usuáio dono 
+	 * do ID da sessão dada. 
+	 * @param sessionId ID da sessão do usuário logado.
+	 */
 	public  List<User> listUsersByDistance(String sessionId) throws Exception{
 		return repository.listUsersByDistance(sessionId);
 	}
 
+	/**
+	 * Pesquisa por todos os usuários cujo atributo pesquisado nele
+	 * possue a chave dada.
+	 * 
+	 * @param sessionId ID da sessão do usuário que fará a pesuisa.
+	 * @param key Os usuários que possuem essa String no atributo informado 
+	 * serão retornados. 
+	 * @param attribute Atributo pelo qual se quer fazer a pesquisa.
+	 */
 	public  Set<User> searchUsersByAttributeKey(String sessionId,
 			String key, String attribute) throws Exception{
 		return repository.searchUsersByAttributeKey(sessionId, key, attribute);

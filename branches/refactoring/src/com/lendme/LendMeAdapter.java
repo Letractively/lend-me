@@ -62,8 +62,10 @@ public class LendMeAdapter {
 		return lendMe.openSession(login);
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.lendme.LendMe#closeSession(String)
+	/**
+	 * Fecha a sessão do usuário, deslogando o mesmo
+	 * do sistema.
+	 * @param sessionId ID da sessão do usuário a ser fechada.
 	 */
 	public void closeSession(String sessionId) throws Exception{
 		
@@ -110,9 +112,7 @@ public class LendMeAdapter {
 	 * Retorna uma String com os nomes de todos os usuários cadastrados
 	 * no sistema ordenados pela distância entre cada um e o usuáio dono 
 	 * do ID da sessão dada. 
-	 * 
 	 */
-
 	public String[] listUsersByDistance(String solicitorSession) throws Exception{
 		
 		List<User> results = new ArrayList<User>(lendMe.listUsersByDistance(solicitorSession));
@@ -143,7 +143,7 @@ public class LendMeAdapter {
 	/**
 	 * Faz a requisição de uma amizade.
 	 * @param idSessao ID da sessão do usuário requisitente da amizade.
-	 * @param login Login do usuáio cuja amizade está sendo solicitada.
+	 * @param login Login do usuário cuja amizade está sendo solicitada.
 	 */
 	public void askForFriendship(String solicitorSession, String solicitedLogin)
 		throws Exception{

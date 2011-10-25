@@ -91,7 +91,11 @@ public class LendMeUserModule {
 		return sessionOwner.hasFriend(otherUser);
 	}
 
-	
+	/**
+	 * 
+	 * @param solicitorViewer
+	 * @return Retorna um Set com o
+	 */
 	public Set<User> getOwnerFriendshipRequests(Viewer solicitorViewer) {
 		return solicitorViewer.getOwnerFriendshipRequests();
 	}

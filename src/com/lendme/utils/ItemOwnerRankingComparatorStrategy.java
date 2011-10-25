@@ -6,7 +6,7 @@ import com.lendme.LendMeFacade;
 import com.lendme.entities.User;
 import com.lendme.entities.Item;
 
-public class ComparatorOfItemsStrategy implements Comparator<Item>{
+public class ItemOwnerRankingComparatorStrategy implements Comparator<Item>{
 	
 	private LendMeFacade lendMe = new LendMeFacade();
 

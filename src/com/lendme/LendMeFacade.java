@@ -31,7 +31,7 @@ public class LendMeFacade {
 	private LendMeUserModule userModule;
 	public static enum AtributeForSearch {DESCRICAO, NOME, ID, CATEGORIA};
 	public static enum DispositionForSearch {CRESCENTE, DECRESCENTE};
-	public static enum CriterionForSearch {DATACRIACAO, REPUTACAO};
+	public static enum CriteriaForSearch {DATACRIACAO, REPUTACAO};
 	
 	
 	public LendMeFacade() {

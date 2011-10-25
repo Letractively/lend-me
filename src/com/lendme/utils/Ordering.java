@@ -1,11 +1,23 @@
 package com.lendme.utils;
 
-public abstract class Ordering<Item> implements SearchAndOrdering<Item> {
+import java.util.List;
 
-	SearchAndOrdering<Item> search;
+import com.lendme.entities.Item;
+import com.lendme.entities.User;
+
+public abstract class Ordering implements OrderedSearch{
+
+	OrderedSearch search;
 	
-	public Ordering(SearchAndOrdering<Item> search){
-		this.search = search;
+	public Ordering(OrderedSearch previous){
+		search = previous;
 	}
 	
+	public List<Item> doSearch(User searcher, String value) {
+		List<Item> result = search.doSearch(searcher, value);
+		return searchOrderVariant(result);
+	}
+	
+	public abstract List<Item> searchOrderVariant(List<Item> result);
+
 }

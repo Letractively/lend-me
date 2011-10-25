@@ -12,7 +12,7 @@ import com.lendme.entities.Lending.LendingStatus;
 import com.lendme.entities.Message;
 import com.lendme.entities.Topic;
 import com.lendme.entities.User;
-import com.lendme.utils.ComparatorOfDateStrategy;
+import com.lendme.utils.UserDateComparatorStrategy;
 
 public class LendMeAdapter {
 	
@@ -83,7 +83,7 @@ public class LendMeAdapter {
 		
 		List<User> results = 
 				new ArrayList<User>(lendMe.searchUsersByAttributeKey(solicitorSession, key, attribute));
-		Collections.sort(results,  new ComparatorOfDateStrategy());
+		Collections.sort(results,  new UserDateComparatorStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -163,7 +163,7 @@ public class LendMeAdapter {
 	public String[] getFriendshipRequests(String solicitorSession) throws Exception {
 
 		List<User> results = new ArrayList<User>(lendMe.getFriendshipRequests(solicitorSession));
-		Collections.sort(results,  new ComparatorOfDateStrategy());
+		Collections.sort(results,  new UserDateComparatorStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -181,7 +181,7 @@ public class LendMeAdapter {
 		throws Exception{
 
 		List<User> results = new ArrayList<User>(lendMe.getFriends(solicitorSession));
-		Collections.sort(results,  new ComparatorOfDateStrategy());
+		Collections.sort(results,  new UserDateComparatorStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
@@ -199,7 +199,7 @@ public class LendMeAdapter {
 		throws Exception{
 
 		List<User> results = new ArrayList<User>(lendMe.getFriends(solicitorSession, solicitedLogin));
-		Collections.sort(results,  new ComparatorOfDateStrategy());
+		Collections.sort(results,  new UserDateComparatorStrategy());
 		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){

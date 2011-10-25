@@ -8,8 +8,8 @@ import java.util.Set;
 
 import com.lendme.entities.Session;
 import com.lendme.entities.User;
-import com.lendme.utils.ComparatorOfAddressStrategy;
-import com.lendme.utils.ComparatorOfDateStrategy;
+import com.lendme.utils.AddressComparatorStrategy;
+import com.lendme.utils.UserDateComparatorStrategy;
 
 public final class LendMeRepository {
 	
@@ -202,7 +202,7 @@ public final class LendMeRepository {
 		
 		List<User> listUsersByDistance = new ArrayList<User>();
 		listUsersByDistance.addAll(getUsers());
-		Collections.sort(listUsersByDistance, new ComparatorOfDateStrategy());
+		Collections.sort(listUsersByDistance, new UserDateComparatorStrategy());
 		
 		User ownerOfSession = getUserBySessionId(sessionId);
 		
@@ -211,7 +211,7 @@ public final class LendMeRepository {
 		}
 		
 		listUsersByDistance.remove(ownerOfSession);
-		Collections.sort(listUsersByDistance, new ComparatorOfAddressStrategy(ownerOfSession.getAddress()));
+		Collections.sort(listUsersByDistance, new AddressComparatorStrategy(ownerOfSession.getAddress()));
 		return listUsersByDistance;
 	}
 

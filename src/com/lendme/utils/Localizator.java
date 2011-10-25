@@ -7,16 +7,9 @@ import java.net.URL;
 import java.net.URLConnection;
 
 
-/*Esta classe provavelmente sera um singleton
- *para evitar o descontrole nas consultas com API do google
-*/
 public class Localizator {
 	
 	private static Localizator localizatorInstace;
-	
-	private Localizator(){
-							
-	}
 	
 	public static Localizator getInstance(){
 		
@@ -60,17 +53,9 @@ public class Localizator {
 			 latAndLog[1] = Double.parseDouble(logStr);
 
 		}catch(Exception e){
-			
 			e.getStackTrace();
-			
 		}
 		
-		
 		return latAndLog;
-		
 	}
-	
-	
-	
-	
 }

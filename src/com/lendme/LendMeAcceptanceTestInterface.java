@@ -487,6 +487,10 @@ public class LendMeAcceptanceTestInterface {
 		return formatarASaida(system.getActivityHistory(idSessao));
 	}
 	
+	/**
+	 * @return Retorna uma String com o histórico de atividades 
+	 * de todos os amigos do usuário cujo ID da sessão foi dado.
+	 */
 	public String historicoAtividadesConjunto(String idSessao) throws Exception{
 		return formatarASaida(system.getJointActivityHistory(idSessao));
 	}
@@ -503,14 +507,25 @@ public class LendMeAcceptanceTestInterface {
 		return resultadoFormatado.toString();
 	}
 	
-	
+	/**
+	 * Publica o Pedido de um item. 	
+	 * @param idSessao ID da sessão do usuário que deseja publicar 
+	 * o pedido de um item.
+	 * @param nomeItem Nome do item cujo pedido será publicado.
+	 * @param descricaoItem Descrição do item cujo pedido será publicado. 
+	 */
 	public String publicarPedido(String idSessao, String nomeItem, String descricaoItem) throws Exception{
 
 		return system.publishItemRequest(idSessao, nomeItem, descricaoItem);
-		
 	}
 	
 	
+	/**
+	 * Oferece um item .
+	 * @param idSessao ID da sessão do usuário que deseja oferecer o item.
+	 * @param idPublicacaoPedido
+	 * @param idItem ID do item que será oferecido. 
+	 */
 	public void oferecerItem(String idSessao, String idPublicacaoPedido, String idItem)
 		throws Exception{
 		
@@ -519,10 +534,14 @@ public class LendMeAcceptanceTestInterface {
 	}
 	
 	
+	/**
+	 * Republica o pedido de um item.
+	 * @param idSessao idSessao ID da sessão do usuário que deseja oferecer o item.
+	 * @param idPublicacaoPedido
+	 */
 	public void rePublicarPedido(String idSessao, String idPublicacaoPedido) throws Exception{
 		
 		system.republishItemRequest(idSessao, idPublicacaoPedido);
-		
 	}
 	
 }

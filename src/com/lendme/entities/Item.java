@@ -14,10 +14,7 @@ public class Item implements Identifiable, Comparable<Item>{
 	private String category;
 	private String id;
 	private EventDate creationDate;
-	/**
-	 * Construtor default do Item.
-	 */
-	public Item() {}
+
 	/**
 	 * 
 	 * @param name - Nome do item.
@@ -129,35 +126,6 @@ public class Item implements Identifiable, Comparable<Item>{
 		return - this.getCreationDate().compareTo(o.getCreationDate());
 	}
 
-	/**
-	 * Configura um nome para o Item.
-	 * @param name - Novo nome.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * Configura uma descricao ou sobre-escreve a anterior.
-	 * @param description - nova descricao.
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
-	 * Configura uma descricao ou sobre-escreve a anterior.
-	 * @param category - String categoria.
-	 * @throws Exception - Caso seja nula ou vazia.
-	 */
-	public void setCategory(String category) throws Exception{
-		if(!(category == null) && !(category.trim().isEmpty())){
-			this.category = category;
-		}else{
-			throw new Exception("Categoria inválida.");
-		}
-	}
-	
 	/**
 	 * Adiciona uma nova categoria.
 	 * @param category String - Nome da categoria.

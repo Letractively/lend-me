@@ -209,8 +209,7 @@ public class LendMeCommunicationModule {
 		return sessionOwner.publishItemRequest(itemName, itemDescription);
 	}
 	
-	public List<Lending> getFriendsPublishedItemRequests(String solicitorSessionId,
-			Set<User> friends) throws Exception {
+	public List<Lending> getFriendsPublishedItemRequests(Set<User> friends) throws Exception {
 		List<Lending> results = new ArrayList<Lending>();
 		
 		for (User actualFriend : friends) {

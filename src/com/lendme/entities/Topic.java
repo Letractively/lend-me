@@ -46,14 +46,6 @@ public class Topic implements Identifiable, Comparable<Topic> {
 	}
 
 	/**
-	 * Configura um novo titulo para o topico.
-	 * @param subject - novo titulo.
-	 */
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-	
-	/**
 	 * Adiciona uma mensagem no topico.
 	 * @param subject - titulo da mensagem.
 	 * @param message - corpo da mensagem.

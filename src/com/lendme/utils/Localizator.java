@@ -7,10 +7,20 @@ import java.net.URL;
 import java.net.URLConnection;
 
 
+/**
+ * This class is a Singleton. It is used
+ * to get the latitude and longitude of a user's address.
+ *
+ */
 public class Localizator {
 	
 	private static Localizator localizatorInstace;
 	
+	/**
+	 * As Localizator is a singleton, it must return 
+	 * a single instance of the object.
+	 * @return the unique instance of the Localizator in the system
+	 */
 	public static Localizator getInstance(){
 		
 		if(localizatorInstace == null)
@@ -19,6 +29,12 @@ public class Localizator {
 		    return localizatorInstace;
 	}
 	
+	/**
+	 * This method communicates with GoogleMaps API sending a URL
+	 * request in order to get the geographic coordinates of the given address
+	 * @param string the string representation of the requested address
+	 * @return the latitude and longitude of an address 
+	 */
 	public double[] getLatAndLong(String string) {
 		
 		double[] latAndLog = {0.0,0.0};

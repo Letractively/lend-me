@@ -74,9 +74,9 @@ public class LendMeAdapter {
 	
 	/**
 	 * Cadastra um usuário no sistema.
-	 * @param String que representa o login do usuáio a ser cadastrado.
-	 * @param String que representa o nome do usuário a ser cadastrado.
-	 * @param endereco String que representa o endereço do usuário
+	 * @param login String que representa o login do usuáio a ser cadastrado.
+	 * @param name String que representa o nome do usuário a ser cadastrado.
+	 * @param address endereco String que representa o endereço do usuário
 	 * a ser cadastrado.
 	 *
 	 */
@@ -88,10 +88,10 @@ public class LendMeAdapter {
 	
    /** Handles with results from search in System, transforming them in a string array.
 	 * @param solicitorSession the id of the session of the solicitor
-	 * @param key the value expected for specified attribute
+	 * @param key the value pected for specified attribute
 	 * @param attribute the specified attribute
 	 * @return an array of strings containing the results names and addresses
-	 * @see com.lendme.LendMeFacade#searchUsersByAttributeKey(String, String, String)
+	 * @see com.lendme.LendMFacade#searchUsersByAttributeKey(String, String, String)
 	 */
 	public String[] searchUsersByAttributeKey(String solicitorSession, String key, String attribute)
 		throws Exception{
@@ -142,8 +142,8 @@ public class LendMeAdapter {
 	
 	/**
 	 * Faz a requisição de uma amizade.
-	 * @param idSessao ID da sessão do usuário requisitente da amizade.
-	 * @param login Login do usuário cuja amizade está sendo solicitada.
+	 * @param solicitorSession ID da sessão do usuário requisitente da amizade.
+	 * @param solicitedLogin Login do usuário cuja amizade está sendo solicitada.
 	 */
 	public void askForFriendship(String solicitorSession, String solicitedLogin)
 		throws Exception{
@@ -154,8 +154,8 @@ public class LendMeAdapter {
 	/**
 	 *Aprova (aceita) uma amizade requisitada pelo usuário cujo
 	 *login foi informado ao usuário cujo ID da Sessão foi passsado como parâmetro.  
-	 * @param idSessao ID da sessão do usuário.
-	 * @param login Login do usuário requisitante da amizade.
+	 * @param solicitedSession ID da sessão do usuário.
+	 * @param solicitorLogin Login do usuário requisitante da amizade.
 	 */
 	public void acceptFriendship(String solicitedSession, String solicitorLogin)
 		throws Exception{
@@ -165,10 +165,9 @@ public class LendMeAdapter {
 
 	/**
 	 * Nega um pedido de amizade.
-	 * @param idSessao ID da sessão do usuário que negará a amizade.
-	 * @param login Login do usuário cuja solicitação de amaizade será negada.
+	 * @param solicitedSession ID da sessão do usuário que negará a amizade.
+	 * @param solicitorLogin Login do usuário cuja solicitação de amaizade será negada.
 	 */
-
 	public void declineFriendship(String solicitedSession, String solicitorLogin)
 		throws Exception{
 		
@@ -239,9 +238,9 @@ public class LendMeAdapter {
 	}
 	
 	/**
-	 * @param idSessao ID da sessão do usuário que verificará se 
+	 * @param solicitorSession ID da sessão do usuário que verificará se 
 	 * o outro usuário é seu amigo.
-	 * @param login Login do usuário cuja amizade quer ser identificada.
+	 * @param solicitedLogin Login do usuário cuja amizade quer ser identificada.
 	 * @return Retorna true se ambos os usuários são amigos e false caso contrário.
 	 * @throws Exception
 	 */
@@ -254,10 +253,10 @@ public class LendMeAdapter {
 	/**
 	 * Usuário dono do ID da sessão dada envia uma menssagem para o usuário 
 	 * cujo login é igual a String destinatário.
-	 * @param idSessao ID da sessão do usuário que enviará a menssagem.
-	 * @param destinatario Login do usuário que receberá a menssagem.
-	 * @param assunto Assunto da menssagem.
-	 * @param mensagem Eh o texto da menssagem.
+	 * @param senderSession ID da sessão do usuário que enviará a menssagem.
+	 * @param receiverLogin Login do usuário que receberá a menssagem.
+	 * @param subject Assunto da menssagem.
+	 * @param message Eh o texto da menssagem.
 	 * @return Retorna o ID do tópico da menssagem.
 	 */
 	public String sendMessage(String senderSession, String subject,
@@ -270,11 +269,11 @@ public class LendMeAdapter {
 	/**
 	 * Usuário dono do ID da sessão dada envia uma menssagem para o usuário 
 	 * cujo login é igual a String destinatário.
-	 * @param idSessao ID da sessão do usuário que enviará a menssagem.
-	 * @param destinatario Login do usuário que receberá a menssagem.
-	 * @param assunto Assunto da menssagem.
-	 * @param mensagem Eh o texto da menssagem.
-	 * @param idRequisicaoEmprestimo ID da requisição do emprestimo.
+	 * @param senderSession ID da sessão do usuário que enviará a menssagem.
+	 * @param receiverLogin Login do usuário que receberá a menssagem.
+	 * @param subject Assunto da menssagem.
+	 * @param message Eh o texto da menssagem.
+	 * @param lendingId ID da requisição do emprestimo.
 	 * @return Retorna o ID do tópico da menssagem.
 	 * @throws Exception
 	 */
@@ -340,12 +339,12 @@ public class LendMeAdapter {
 
 	/**
 	 * Cadastra um Item em um usuário.
-	 * @param idSessao String que representa o ID da sessão
+	 * @param creatorSession String que representa o ID da sessão
 	 * do usuário em que se quer cadastrar o item. 
-	 * @param nome Nome do item que se quer cadastrar.
-	 * @param descricao String que representa uma pequeno
+	 * @param name Nome do item que se quer cadastrar.
+	 * @param description String que representa uma pequeno
 	 * comentario sobre o Item.
-	 * @param categoria Categora a que o Item está associado.
+	 * @param category Categora a que o Item está associado.
 	 * O item pode ter mais de uma categoria.
 	 * @return Retorna uma String que representa o ID do Item cadastrado
 	 */	
@@ -357,12 +356,12 @@ public class LendMeAdapter {
 
 	/**
 	 * 
-	 * @param idSessao ID da sessão do usuário que deseja fazer a pesquisa.
-	 * @param chave String que será pesquisada nos itens.
-	 * @param atributo atributo em que a chava será pesquisada.
+	 * @param solicitorSession ID da sessão do usuário que deseja fazer a pesquisa.
+	 * @param key String que será pesquisada nos itens.
+	 * @param attribute atributo em que a chava será pesquisada.
 	 * Atributos suportados: "DESCRICAO", "CATEGORIA", "ID" e "NOME".
-	 * @param tipoDeOrdenacao Tipos de ordenação suportados: "CRESCENTE" E "DECRESCENTE";
-	 * @param criterioDeOrdenacao Criterios suportados: "REPUTACAO" e "DATACRIACAO".
+	 * @param disposition Tipos de ordenação suportados: "CRESCENTE" E "DECRESCENTE";
+	 * @param criteria Criterios suportados: "REPUTACAO" e "DATACRIACAO".
 	 * @return Retorna uma String com o nome de todos os itens encontrados na pesquisa.
 	 */
 	public String[] searchForItems(String solicitorSession, String key, String attribute,
@@ -442,8 +441,8 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * @param idItem ID do Item.
-	 * @param atributo Tipo de atributo do Item. 
+	 * @param itemId ID do Item.
+	 * @param attribute Tipo de atributo do Item. 
 	 * Os únicos atributas aceitos são: "nome", "descricao" e "categoria".
 	 * @return Retorna uma String que representa o valor do atributo
 	 * que foi pesquisado no item identificado pelo ID. 
@@ -457,20 +456,15 @@ public class LendMeAdapter {
 	/**
 	 *Deleta um item do conjunto de itens do usuário dono do ID da sessão 
 	 *informada.  
-	 * @param idSessao ID da sessão do usuário.
-	 * @param idItem ID do Item a ser excluído.
+	 * @param solicitorSession ID da sessão do usuário.
+	 * @param itemId ID do Item a ser excluído.
 	 */
 	public void deleteItem(String solicitorSession, String itemId) throws Exception{
 		
 		lendMe.deleteItem(solicitorSession, itemId);
 	}
 	
-	/**
-	 * Simula a passagem dos dias no sistema.
-	 * @param dias Número de dias que se passaram.
-	 * @return Retorna o dia atual do sistema após
-	 * o adiantamento do número de dias. 
-	 */
+
 	public void registerInterestForItem(String solicitorSession, String itemId) throws Exception{
 		
 		lendMe.registerInterestForItem(solicitorSession, itemId);
@@ -478,9 +472,10 @@ public class LendMeAdapter {
 
 	/**
 	 * Requisita o empréstimo de um item.
-	 * @param idSessao ID da sessão do usuário requisitante.
+	 * @param solicitorSession ID da sessão do usuário requisitante.
+	 * @param itemId ID do intem que será requisitado.
+	 * @param requiredDays Períodio estimado de duração do empréstimo.
 	 * @param idItem Login do usuário cujo item será requisitado. 
-	 * @param duracao Períodio estimado de duração do empréstimo. 
 	 * @return String que representa o ID da requisição.
 	 */
 	public String requestItem(String solicitorSession, String itemId, int requiredDays) throws Exception{
@@ -489,9 +484,12 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#approveLending(String, String)
-	 */	
+	 * Aprova um empréstimo que foi feito ao usuário cujo ID da sessão foi 
+	 * informado como parâmetro.
+	 * @param solicitorSession ID da sessão do usuário.
+	 * @param requestId ID da requisição do empréstimo.
+	 * @return Retorna o ID do empréstimo que foi aprovado.
+	 */
 	public String approveLending(String solicitorSession, String requestId) throws Exception{
 		
 		return lendMe.approveLending(solicitorSession, requestId);
@@ -508,9 +506,12 @@ public class LendMeAdapter {
 	
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#askForReturnOfItem(String, String)
-	 */	
+	 * Usuário dono do ID da sessão dado requisita a devolução
+	 * de um item que pediu emprestado.
+	 * @param solicitorSession ID da sessão do usuário.
+	 * @param lendingId ID do empréstimo cuja devolução está sendo
+	 * requisitada. 
+	 */
 	public String askForReturnOfItem(String solicitorSession, String lendingId) throws Exception{
 		
 		return lendMe.askForReturnOfItem(solicitorSession, lendingId);
@@ -520,11 +521,10 @@ public class LendMeAdapter {
 	 * Devolve um item que o usuário cujo ID da sessão foi dado 
 	 * pegou emprestado.
 	 * 
-	 * @param idSessao ID da sessão do usuário logado no sistema.
-	 * @param idEmprestimo ID do empréstimo.
-	 * @return Retorna o ID do emprestimo q foi devolvido. 
+	 * @param solicitedSession ID da sessão do usuário logado no sistema.
+	 * @param lendingId ID do empréstimo.
+	 * @return Retorna o ID do emprestimo que foi devolvido. 
 	 */
-
 	public String returnItem(String solicitedSession, String lendingId) throws Exception{
 		
 		return lendMe.returnItem(solicitedSession, lendingId);
@@ -541,11 +541,10 @@ public class LendMeAdapter {
 	/**
 	 * Usuário dono do ID da sessão dada nega
 	 * o término de um empréstimo que foi solicitado. 
-	 * @param idSessao
-	 * @param idEmprestimo ID do empréstimo que foi requisitada uma confirmação 
+	 * @param solicitorSession ID da sessão do usuário
+	 * @param lendingId ID do empréstimo que foi requisitada uma confirmação 
 	 * de termino de emprestimo.
 	 */
-
 	public String denyLendingTermination(String solicitorSession, String lendingId) throws Exception{
 		
 		return lendMe.denyLendingTermination(solicitorSession, lendingId);
@@ -618,7 +617,7 @@ public class LendMeAdapter {
 	 * 
 	 * @param idSession ID da sessão do usuário que deseja visualisar 
 	 * o ranking.
-	 * @param categoria Categoria que será usada como critério de ranqueamento.
+	 * @param category Categoria que será usada como critério de ranqueamento.
 	 * @return Retorna uma String com o nome de todos os usuários
 	 * ranqueados. 
 	 */
@@ -657,6 +656,13 @@ public class LendMeAdapter {
 		return handled;
 	}
 
+	/**
+	 * 
+	 * @param solicitorSessionId ID da sassão do usuário que deseja 
+	 * ver o histórico das atividades dos seu amigos.
+	 * @return Retorna um array contendo o histórico de todos os
+	 * amigos do usuário cujo ID da sessão foi passado como parâmetro. 
+	 */
 	public String[] getJointActivityHistory(String solicitorSessionId) throws Exception {
 		List<ActivityRegistry> results = lendMe.getJointActivityHistory(
 				solicitorSessionId);
@@ -701,10 +707,10 @@ public class LendMeAdapter {
 			
 	/**
 	 * Publica o Pedido de um item. 	
-	 * @param idSessao ID da sessão do usuário que deseja publicar 
+	 * @param sessionId ID da sessão do usuário que deseja publicar 
 	 * o pedido de um item.
-	 * @param nomeItem Nome do item cujo pedido será publicado.
-	 * @param descricaoItem Descrição do item cujo pedido será publicado. 
+	 * @param itemName Nome do item cujo pedido será publicado.
+	 * @param itemDescription Descrição do item cujo pedido será publicado. 
 	 */
 	public String publishItemRequest(String sessionId, String itemName,
 			String itemDescription) throws Exception{
@@ -713,9 +719,9 @@ public class LendMeAdapter {
 
 	/**
 	 * Oferece um item .
-	 * @param idSessao ID da sessão do usuário que deseja oferecer o item.
-	 * @param idPublicacaoPedido
-	 * @param idItem ID do item que será oferecido. 
+	 * @param sessionId ID da sessão do usuário que deseja oferecer o item.
+	 * @param requestPublicationId 
+	 * @param itemId ID do item que será oferecido. 
 	 */
 	public void offerItem(String sessionId, String requestPublicationId,
 			String itemId) throws Exception{
@@ -724,8 +730,8 @@ public class LendMeAdapter {
 
 	/**
 	 * Republica o pedido de um item.
-	 * @param idSessao idSessao ID da sessão do usuário que deseja oferecer o item.
-	 * @param idPublicacaoPedido
+	 * @param sessionId idSessao ID da sessão do usuário que deseja oferecer o item.
+	 * @param requestPublicationId
 	 */
 	public void republishItemRequest(String sessionId, String requestPublicationId) 
 		throws Exception{

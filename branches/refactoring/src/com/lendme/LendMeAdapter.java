@@ -438,9 +438,12 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#getItems(String)
-	 */	
+	 * 
+	 * @param solicitorSession ID da sessão do usuário que visualizará os amigos 
+	 * do usuário solicitado.
+	 * @param solicitedLogin Login do usuário solicitado.
+	 * @return Retorna um array com o nome de todos os itens do usuário solicitado.
+	 */
 	public String[] getItems(String solicitorSession, String solicitedLogin) throws Exception{
 		
 		List<Item> results = new ArrayList<Item>(lendMe.getItems(solicitorSession, solicitedLogin));
@@ -509,9 +512,13 @@ public class LendMeAdapter {
 	}
 	
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#denyLending(String, String)
-	 */	
+	 * Nega uma requisição de empréstimo de item.
+	 * @param solicitorSession ID da sessão do usuário que negará 
+	 * a requisição de empréstimo.
+	 * @param requestId Id da requisição de empréstimo.
+	 * @return Retorna o ID da requisição de empréstimo negada.
+	 * @throws Exception
+	 */
 	public String denyLending(String solicitorSession, String requestId) throws Exception{
 		
 		return lendMe.denyLending(solicitorSession, requestId);
@@ -563,10 +570,14 @@ public class LendMeAdapter {
 		return lendMe.denyLendingTermination(solicitorSession, lendingId);
 	}
 	
+
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#getReceivedItemRequests(String)
-	 */	
+	 * r
+	 * @param solicitorSession ID da sessão do usuário solicitado.
+	 * @return Retorna um array de String com todas reequisições de
+	 * itens do usuário solicitado. 
+	 * @throws Exception
+	 */
 	public String[] getReceivedItemRequests(String solicitorSession) throws Exception{
 		
 		List<Lending> results = new ArrayList<Lending>(lendMe.getReceivedItemRequests(
@@ -696,6 +707,13 @@ public class LendMeAdapter {
 		return handled;
 	}
 
+	/**
+	 * 
+	 * @param solicitorSessionId ID da sessão do usuário solicitado.
+	 * @return Retorna um array com todas as publicações de requisição
+	 * de itens feitas pelos amigos do usuário solicitado.
+	 * @throws Exception
+	 */
 	public String[] getFriendsPublishedItemRequests(String solicitorSessionId) throws Exception {
 		List<Lending> results = lendMe.getFriendsPublishedItemRequests(solicitorSessionId);
 		String[] handled;

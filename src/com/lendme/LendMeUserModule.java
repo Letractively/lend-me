@@ -17,6 +17,13 @@ public class LendMeUserModule {
 		return Viewer.getUserProfile(session, session.getOwner());
 	}
 
+	/**
+	 * Returns the friends of user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @return a set of friends
+	 * @throws Exception if user doesn't exists
+	 */
 	public Set<User> getFriends(Viewer viewer) throws Exception {
 		return viewer.getOwnerFriends();
 	}
@@ -47,18 +54,44 @@ public class LendMeUserModule {
 		sessionOwner.acceptFriendshipRequest(otherUser);
 	}
 
+	/**
+	 * Nega um pedido de amizade.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionOwner usuário que negará uma maizade.
+	 * @param otherUser Usuário cuja solicitação de amizade será negada.
+	 * @throws Exception if users involved doesn't exists or if solicited user already declined request
+	 */
 	public void declineFriendship(User sessionOwner, User otherUser) throws Exception{
 		sessionOwner.declineFriendshipRequest(otherUser);
 	}
 
+	/**
+	 * Solicitor user breaks friendship with solicited user.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionOwner the solicitor
+	 * @param otherUser the solicited user
+	 * @throws Exception if users involved doesn't exists
+	 */
 	public void breakFriendship(User sessionOwner, User otherUser) throws Exception{
 		sessionOwner.breakFriendship(otherUser);
 	}
 
+	/**
+	 * Returns true if both users are friends.
+	 * 
+	 * <i>This method belongs to the public system interface<i>
+	 * @param sessionOwner the solicitor.
+	 * @param otherUser the solicited user.
+	 * @return true if users involved are friends
+	 * @throws Exception if users involved doesn't exists or are not friends
+	 */
 	public boolean hasFriend(User sessionOwner, User otherUser) throws Exception{
 		return sessionOwner.hasFriend(otherUser);
 	}
 
+	
 	public Set<User> getOwnerFriendshipRequests(Viewer solicitorViewer) {
 		return solicitorViewer.getOwnerFriendshipRequests();
 	}

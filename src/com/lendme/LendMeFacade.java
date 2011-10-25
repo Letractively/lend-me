@@ -303,17 +303,24 @@ public class LendMeFacade {
 	}
 
 	/**
-	 * Gets the user friendship requests.
-	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param sessionId
-	 * @return
-	 * @throws Exception
+	 * @param sessionId  ID da sessão.
+	 * @return Retorna um Set com todos os usuários
+	 * que o usuário cujo ID da sessão foi dado requisitou amizade. 
 	 */
 	public  Set<User> getFriendshipRequests(String sessionId) throws Exception{
 		return userModule.getOwnerFriendshipRequests(getUserProfile(sessionId));
 	}
 
+	/**
+	 * Permite o envio de uma menssagem entre dois usuários.
+	 * @param senderSessionId ID da sessão do usuário que vai
+	 * enviar uma menssagem.
+	 * @param subject Assunto da menssagem.
+	 * @param message Corpo da menssagem.
+	 * @param receiverLogin Login do usuário qu ereceberá a menssagem.
+	 * @param lendingId ID da requisição de um pedido de um Item.
+	 * @return 
+	 */
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin, String lendingId) throws Exception {
 		
@@ -353,6 +360,16 @@ public class LendMeFacade {
 		}
 	}
 	
+	
+	/**
+	 * Permite o envio de uma menssagem entre dois usuários.
+	 * 
+	 * @param senderSessionId ID da sessão do usuário que enviará a menssagem.
+	 * @param subject Assunto da menssagem.
+	 * @param message Corpo da menssagem.
+	 * @param receiverLogin Login do usuário que receberá a menssagem.
+	 * @return 
+	 */
 	public  String sendMessage(String senderSessionId, String subject, String message, 
 			String receiverLogin) throws Exception {
 		
@@ -443,13 +460,11 @@ public class LendMeFacade {
 	}
 	
 	/**
-	 * Solicited user allows lending of item.
-	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param sessionId
-	 * @param requestId
-	 * @return
-	 * @throws Exception
+	 * Aprova um empréstimo que foi feito ao usuário cujo ID da sessão foi 
+	 * informado como parâmetro.
+	 * @param sessionId ID da sessão do usuário.
+	 * @param requestId ID da requisição do empréstimo.
+	 * @return Retorna o ID do empréstimo que foi aprovado.
 	 */
 	public  String approveLending(String sessionId, String requestId)  throws Exception{
 		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
@@ -471,13 +486,12 @@ public class LendMeFacade {
 	}
 	
 	/**
-	 * Solicitor user returns item back.
+	 * Devolve um item que o usuário cujo ID da sessão foi dado 
+	 * pegou emprestado.
 	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param sessionId
-	 * @param requestId
-	 * @return
-	 * @throws Exception
+	 * @param sessionId ID da sessão do usuário logado no sistema.
+	 * @return Retorna o ID do emprestimo que foi devolvido. 
+	 * @param lendingId ID do empréstimo.
 	 */
 	public  String returnItem(String sessionId, String lendingId) throws Exception{
 		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
@@ -485,13 +499,7 @@ public class LendMeFacade {
 	}
 	
 	/**
-	 * Lender confirms returning of item.
-	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param sessionId
-	 * @param lendingId
-	 * @return
-	 * @throws Exception
+	 * Confirma o termino de um emprestimo feito pelo usupario dono do ID da sessão dada.
 	 */
 	public  String confirmLendingTermination(String sessionId,
 			String lendingId) throws Exception{
@@ -500,14 +508,14 @@ public class LendMeFacade {
 	}
 
 	/**
-	 * Lender denies returning of lending.
-	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param sessionId
-	 * @param lendingId
-	 * @return
-	 * @throws Exception
+	 * Usuário dono do ID da sessão dada nega
+	 * o término de um empréstimo que foi solicitado.
+	 *  
+	 * @param sessionId ID da sessão do usuário
+	 * @param lendingId ID do empréstimo que foi requisitada uma confirmação 
+	 * de termino de emprestimo.
 	 */
+
 	public  String denyLendingTermination(String sessionId,
 			String lendingId) throws Exception{
 		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
@@ -515,13 +523,11 @@ public class LendMeFacade {
 	}
 	
 	/**
-	 * Lender asks his item back.
-	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param sessionId
-	 * @param lendingId
-	 * @return
-	 * @throws Exception
+	 * Usuário dono do ID da sessão dado requisita a devolução
+	 * de um item que pediu emprestado.
+	 * @param sessionId ID da sessão do usuário.
+	 * @param lendingId ID do empréstimo cuja devolução está sendo
+	 * requisitada. 
 	 */
 	public  String askForReturnOfItem(String sessionId,
 			String lendingId) throws Exception{
@@ -618,12 +624,12 @@ public class LendMeFacade {
 	}
 	
 	/**
-	 * Get system user ranking.
 	 * 
-	 * @param sessionId
-	 * @param category
-	 * @return
-	 * @throws Exception
+	 * @param sessionId ID da sessão do usuário que deseja visualisar 
+	 * o ranking.
+	 * @param category Categoria que será usada como critério de ranqueamento.
+	 * @return Retorna uma String com o nome de todos os usuários
+	 * ranqueados. 
 	 */
 	public  String getRanking(String sessionId, String category) throws Exception{
 		User sessionOwner = getUserProfile(sessionId).getObserver().getOwner();
@@ -657,6 +663,9 @@ public class LendMeFacade {
 		return itemModule.getReceivedItemRequests(sessionOwner);
 	}
 	
+	/**
+	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
+	 */
 	public  List<ActivityRegistry> getActivityHistory(String solicitorSessionId) throws Exception {
 		User sessionOwner = getUserProfile(solicitorSessionId).getObserver().getOwner();
 		return communicationModule.getActivityHistory(sessionOwner);

@@ -3,23 +3,26 @@ package com.lendme;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import com.lendme.LendMeFacade.AtributeForSearch;
-import com.lendme.LendMeFacade.CriterionForSearch;
+import com.lendme.LendMeFacade.CriteriaForSearch;
 import com.lendme.LendMeFacade.DispositionForSearch;
 import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
 import com.lendme.entities.User;
-import com.lendme.utils.ComparatorOfItemsStrategy;
-import com.lendme.utils.ComparatorOfRankingStrategy;
+import com.lendme.utils.CategorySearchStrategy;
 import com.lendme.utils.CreationDateOrderingStrategy;
+import com.lendme.utils.DecreasingOrderingStrategy;
+import com.lendme.utils.DescriptionSearchStrategy;
+import com.lendme.utils.IDSearchStrategy;
 import com.lendme.utils.IncreasingOrderingStrategy;
 import com.lendme.utils.NameSearchStrategy;
-import com.lendme.utils.SearchAndOrdering;
+import com.lendme.utils.UserRankingComparatorStrategy;
+import com.lendme.utils.ReputationOrderingStrategy;
+import com.lendme.utils.OrderedSearch;
 
 public class LendMeItemModule {
 	
@@ -316,9 +319,9 @@ public class LendMeItemModule {
 	 */
 	public  List<Item> searchForItem(User ownerUser, String key, String attribute,
 			String disposal ,String criteria) throws Exception{
-		List<Item> results = new ArrayList<Item>();
+
 		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
-		CriterionForSearch criterionAux = CriterionForSearch.DATACRIACAO;
+		CriteriaForSearch criteriaAux = CriteriaForSearch.DATACRIACAO;
 		
 		if(key == null || key.trim().isEmpty()){
 			throw new Exception("Chave inválida");//"invalid key"
@@ -338,7 +341,7 @@ public class LendMeItemModule {
 		if(criteria == null || criteria.trim().isEmpty()){
 			throw new Exception("Critério inválido de ordenação");
 		}
-		if(!Arrays.toString(CriterionForSearch.values()).toLowerCase().contains(criteria.toLowerCase())){
+		if(!Arrays.toString(CriteriaForSearch.values()).toLowerCase().contains(criteria.toLowerCase())){
 			throw new Exception("Critério de ordenação inexistente");
 		}
 		
@@ -347,85 +350,54 @@ public class LendMeItemModule {
 				atributeAux = actual;
 		}
 		
-		for(CriterionForSearch actual : CriterionForSearch.values()){
+		for(CriteriaForSearch actual : CriteriaForSearch.values()){
 			if(actual.toString().toLowerCase().contains(criteria.toLowerCase()))
-				criterionAux = actual;
+				criteriaAux = actual;
 		}
 
-		
-		switch(atributeAux){
-	
-		case DESCRICAO:{
-			for(User actualFriend : ownerUser.getFriends()){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getDescription().toUpperCase().contains(key.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
-			 break;
+		OrderedSearch query;
+		switch (atributeAux) {
+		case DESCRICAO: {
+			query = new DescriptionSearchStrategy();
+			break;
 		}
-		
-		case NOME:{
-			for(User actualFriend : ownerUser.getFriends()){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getName().toUpperCase().contains(key.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
-			 break;
+		case NOME: {
+			query = new NameSearchStrategy();
+			break;
 		}
-		
 		case ID: {
-			for(User actualFriend : ownerUser.getFriends()){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getID().toUpperCase().contains(key.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
-			 break;
+			query = new IDSearchStrategy();
+			break;
 		}
-		
 		case CATEGORIA: {
-			Set<User> searchScope = ownerUser.getFriends();
-			searchScope.add(ownerUser);
-			for(User actualFriend : searchScope){
-				for(Item itemOfMyFriend : actualFriend.getAllItems()){
-					if(itemOfMyFriend.getCategory().toUpperCase().contains(key.toUpperCase()))
-						results.add(itemOfMyFriend);
-				}
-			}
-			 break;
+			query = new CategorySearchStrategy();
+			break;
+		}
+		default: {
+			throw new Exception("Atributo  inválido");
+		}
+		}
+
+		switch (criteriaAux) {
+		case DATACRIACAO: {
+			query = new CreationDateOrderingStrategy(query);
+			break;
+		}
+		case REPUTACAO: {
+			query = new ReputationOrderingStrategy(query);
+			break;
+		}
+		default:
+			return query.doSearch(ownerUser, key);
 		}
 		
-		default:	throw new Exception("Atributo  inválido");
-	}
-
-		switch (criterionAux) {
-
-		case DATACRIACAO: {
-			Collections.sort(results);
-			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposal.toLowerCase())) {
-				return results;
-
-			} else {
-				Collections.reverse(results);
-				return results;
-
-			}
-		}
-
-		case REPUTACAO: {
-			Collections.sort(results, new ComparatorOfItemsStrategy());
-			if (DispositionForSearch.CRESCENTE.toString().toLowerCase().contains(disposal.toLowerCase())) {
-				return results;
-			} else {
-				Collections.reverse(results);
-				return results;
-			}
-		}
-
-		default:
-			return results;
+		if (DispositionForSearch.CRESCENTE.toString().toLowerCase()
+				.contains(disposal.toLowerCase())) {
+			query = new IncreasingOrderingStrategy(query);
+			return query.doSearch(ownerUser, key);
+		} else {
+			query = new DecreasingOrderingStrategy(query);
+			return query.doSearch(ownerUser, key);
 		}
 		
 	}
@@ -500,7 +472,7 @@ public class LendMeItemModule {
 			User[] friendList = user.getFriends().toArray(new User[user.getFriends().size() + 1]);
 			friendList[user.getFriends().size()] = user;
 			
-			Arrays.sort(friendList, new ComparatorOfRankingStrategy());
+			Arrays.sort(friendList, new UserRankingComparatorStrategy());
 			for(User current : friendList){
 				ranking = current.getLogin() + "; " + ranking;
 			}
@@ -508,7 +480,7 @@ public class LendMeItemModule {
 		if(category.equals("global")){
 			User[] usersList = users.toArray(new User[users.size()]);
 			
-			Arrays.sort(usersList, new ComparatorOfRankingStrategy());
+			Arrays.sort(usersList, new UserRankingComparatorStrategy());
 			for(User current : usersList){
 				ranking = current.getLogin() + "; " + ranking;
 			}

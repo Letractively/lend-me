@@ -4,11 +4,11 @@ import java.util.Comparator;
 
 import com.lendme.entities.User;
 
-public class ComparatorOfDateStrategy implements Comparator<User>{
+public class UserDateComparatorStrategy implements Comparator<User> {
 
 	@Override
 	public int compare(User arg0, User arg1) {
-		return  - arg0.getCreationDate().compareTo(arg1.getCreationDate());
+		return arg1.getCreationDate().compareTo(arg0.getCreationDate());
 	}
 
 }

@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import com.lendme.entities.User;
 
-public class ComparatorOfRankingStrategy implements Comparator<User>{
+public class UserRankingComparatorStrategy implements Comparator<User>{
 
 	@Override
 	public int compare(User o1, User o2) {

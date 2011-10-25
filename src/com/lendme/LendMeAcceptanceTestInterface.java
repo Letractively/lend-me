@@ -1,7 +1,5 @@
 package com.lendme;
 
-import com.lendme.LendMeItemModule.SearchAtribute;
-import com.lendme.LendMeItemModule.SearchCriteria;
 
 
 public class LendMeAcceptanceTestInterface {

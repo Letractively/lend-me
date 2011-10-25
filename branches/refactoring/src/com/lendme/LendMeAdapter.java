@@ -18,13 +18,10 @@ public class LendMeAdapter {
 	
 	private LendMeFacade lendMe = new LendMeFacade();
 	
-	/*
-	 * Refactoring comment:
-	 * In this class we used the Adapter design pattern.
-	 */
 
-	/* (non-Javadoc)
-	 * @see com.lendme.LendMe#resetSystem()
+	/**
+	 * Apaga todos os dados do sistema, como
+	 * usuários, itens, categorias...
 	 */
 	public void resetSystem(){
 		lendMe.resetSystem();
@@ -46,8 +43,16 @@ public class LendMeAdapter {
 		return lendMe.someDaysPassed(amount);
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.lendme.LendMe#openSession(String)
+	/**
+	 * Abre a sessão do usuário cujo login é
+	 * passado como parâmetro, sua sessão informa ao
+	 * sistema que ele está logado e permite que ele
+	 * navegue pelos perfis de outros usuários
+	 * cadastrados no Lend-me.
+	 * @param login Login do usuário cuja sessão se deseja abrir.
+	 * @return Retorna um String que representa o ID da Sessão do
+	 * usuário.   
+	 * 
 	 */
 	public String openSession(String login) throws Exception{
 		
@@ -62,8 +67,13 @@ public class LendMeAdapter {
 		lendMe.closeSession(sessionId);
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.lendme.LendMe#registerUser(String, String, String...)
+	/**
+	 * Cadastra um usuário no sistema.
+	 * @param String que representa o login do usuáio a ser cadastrado.
+	 * @param String que representa o nome do usuário a ser cadastrado.
+	 * @param endereco String que representa o endereço do usuário
+	 * a ser cadastrado.
+	 *
 	 */
 	public String registerUser(String login, String name, String... address)
 		throws Exception{
@@ -120,8 +130,10 @@ public class LendMeAdapter {
 		return lendMe.getUserAttribute(login, attribute);
 	}
 	
-   /** (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#askForFriendship(String)
+	/**
+	 * Faz a requisição de uma amizade.
+	 * @param idSessao ID da sessão do usuário requisitente da amizade.
+	 * @param login Login do usuáio cuja amizade está sendo solicitada.
 	 */
 	public void askForFriendship(String solicitorSession, String solicitedLogin)
 		throws Exception{
@@ -129,8 +141,11 @@ public class LendMeAdapter {
 		lendMe.askForFriendship(solicitorSession, solicitedLogin);
 	}
 
-   /** (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#acceptFriendship(String, String)
+	/**
+	 *Aprova (aceita) uma amizade requisitada pelo usuário cujo
+	 *login foi informado ao usuário cujo ID da Sessão foi passsado como parâmetro.  
+	 * @param idSessao ID da sessão do usuário.
+	 * @param login Login do usuário requisitante da amizade.
 	 */
 	public void acceptFriendship(String solicitedSession, String solicitorLogin)
 		throws Exception{
@@ -138,17 +153,22 @@ public class LendMeAdapter {
 			lendMe.acceptFriendship(solicitedSession, solicitorLogin);
 	}
 
-   /** (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#declineFriendship(String, String)
+	/**
+	 * Nega um pedido de amizade.
+	 * @param idSessao ID da sessão do usuário que negará a amizade.
+	 * @param login Login do usuário cuja solicitação de amaizade será negada.
 	 */
+
 	public void declineFriendship(String solicitedSession, String solicitorLogin)
 		throws Exception{
 		
 		lendMe.declineFriendship(solicitedSession, solicitorLogin);
 	}
 
-   /** (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#breakFriendship(String, String)
+	/**
+	 * Desfaz uma amizade entre dois usuários.
+	 * @param idSessao ID da sessão do usuário que desfará a amizade.
+	 * @param login Login do usuário cuja amizade vai ser desfeita.
 	 */
 	public void breakFriendship(String solicitorSession, String solicitedLogin) throws Exception{
 			
@@ -207,9 +227,13 @@ public class LendMeAdapter {
 		}
 		return handled;
 	}
-
-   /** (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#hasFriend(String, String)
+	
+	/**
+	 * @param idSessao ID da sessão do usuário que verificará se 
+	 * o outro usuário é seu amigo.
+	 * @param login Login do usuário cuja amizade quer ser identificada.
+	 * @return Retorna true se ambos os usuários são amigos e false caso contrário.
+	 * @throws Exception
 	 */
 	public boolean hasFriend(String solicitorSession, String solicitedLogin)
 		throws Exception{
@@ -293,8 +317,15 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#registerItem(String, String, String, String)
+	 * Cadastra um Item em um usuário.
+	 * @param idSessao String que representa o ID da sessão
+	 * do usuário em que se quer cadastrar o item. 
+	 * @param nome Nome do item que se quer cadastrar.
+	 * @param descricao String que representa uma pequeno
+	 * comentario sobre o Item.
+	 * @param categoria Categora a que o Item está associado.
+	 * O item pode ter mais de uma categoria.
+	 * @return Retorna uma String que representa o ID do Item cadastrado
 	 */	
 	public String registerItem(String creatorSession, String name, String description, String category)
 		throws Exception{
@@ -383,8 +414,11 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#getItemAttribute(String, String)
+	 * @param idItem ID do Item.
+	 * @param atributo Tipo de atributo do Item. 
+	 * Os únicos atributas aceitos são: "nome", "descricao" e "categoria".
+	 * @return Retorna uma String que representa o valor do atributo
+	 * que foi pesquisado no item identificado pelo ID. 
 	 */	
 	public String getItemAttribute(String itemId, String attribute)
 		throws Exception{
@@ -411,9 +445,12 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#requestItem(String, String, int)
-	 */	
+	 * Requisita o empréstimo de um item.
+	 * @param idSessao ID da sessão do usuário requisitante.
+	 * @param idItem Login do usuário cujo item será requisitado. 
+	 * @param duracao Períodio estimado de duração do empréstimo. 
+	 * @return String que representa o ID da requisição.
+	 */
 	public String requestItem(String solicitorSession, String itemId, int requiredDays) throws Exception{
 		
 		return lendMe.requestItem(solicitorSession, itemId, requiredDays);

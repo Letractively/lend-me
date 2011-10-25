@@ -25,7 +25,7 @@ public class LendMeAcceptanceTestInterface {
 	 * Abre a sessão do usuário cujo login é
 	 * passado como parâmetro, sua sessão informa ao
 	 * sistema que ele está logado e permite que ele
-	 * navegue pelos perfis de outros usuários do
+	 * navegue pelos perfis de outros usuários
 	 * cadastrados no Lend-me.
 	 * @param login Login do usuário cuja sessão se deseja abrir.
 	 * @return Retorna um String que representa o ID da Sessão do

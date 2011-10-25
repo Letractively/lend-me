@@ -7,9 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.lendme.LendMeFacade.AtributeForSearch;
-import com.lendme.LendMeFacade.CriteriaForSearch;
-import com.lendme.LendMeFacade.DispositionForSearch;
 import com.lendme.entities.Item;
 import com.lendme.entities.Lending;
 import com.lendme.entities.User;
@@ -20,11 +17,15 @@ import com.lendme.utils.DescriptionSearchStrategy;
 import com.lendme.utils.IDSearchStrategy;
 import com.lendme.utils.IncreasingOrderingStrategy;
 import com.lendme.utils.NameSearchStrategy;
-import com.lendme.utils.UserRankingComparatorStrategy;
-import com.lendme.utils.ReputationOrderingStrategy;
 import com.lendme.utils.OrderedSearch;
+import com.lendme.utils.ReputationOrderingStrategy;
+import com.lendme.utils.UserRankingComparatorStrategy;
 
 public class LendMeItemModule {
+	
+	public static enum SearchAtribute {DESCRICAO, NOME, ID, CATEGORIA};
+	public static enum SearchDisposal {CRESCENTE, DECRESCENTE};
+	public static enum SearchCriteria {DATACRIACAO, REPUTACAO};
 	
 	/**
 	 * Returns some item attribute.
@@ -320,8 +321,8 @@ public class LendMeItemModule {
 	public  List<Item> searchForItem(User ownerUser, String key, String attribute,
 			String disposal ,String criteria) throws Exception{
 
-		AtributeForSearch atributeAux = AtributeForSearch.DESCRICAO;
-		CriteriaForSearch criteriaAux = CriteriaForSearch.DATACRIACAO;
+		SearchAtribute atributeAux = SearchAtribute.DESCRICAO;
+		SearchCriteria criteriaAux = SearchCriteria.DATACRIACAO;
 		
 		if(key == null || key.trim().isEmpty()){
 			throw new Exception("Chave inválida");//"invalid key"
@@ -329,28 +330,28 @@ public class LendMeItemModule {
 		if(attribute == null || attribute.trim().isEmpty()){
 			throw new Exception("Atributo inválido");
 		}
-		if(!Arrays.toString(AtributeForSearch.values()).toLowerCase().contains(attribute.toLowerCase())){
+		if(!Arrays.toString(SearchAtribute.values()).toLowerCase().contains(attribute.toLowerCase())){
 			throw new Exception("Atributo inexistente");
 		}
 		if(disposal == null || disposal.trim().isEmpty()){
 			throw new Exception("Tipo inválido de ordenação");
 		}
-		if(!Arrays.toString(DispositionForSearch.values()).toLowerCase().contains(disposal.toLowerCase())){
+		if(!Arrays.toString(SearchDisposal.values()).toLowerCase().contains(disposal.toLowerCase())){
 			throw new Exception("Tipo de ordenação inexistente");
 		}
 		if(criteria == null || criteria.trim().isEmpty()){
 			throw new Exception("Critério inválido de ordenação");
 		}
-		if(!Arrays.toString(CriteriaForSearch.values()).toLowerCase().contains(criteria.toLowerCase())){
+		if(!Arrays.toString(SearchCriteria.values()).toLowerCase().contains(criteria.toLowerCase())){
 			throw new Exception("Critério de ordenação inexistente");
 		}
 		
-		for(AtributeForSearch actual : AtributeForSearch.values()){
+		for(SearchAtribute actual : SearchAtribute.values()){
 			if(actual.toString().toLowerCase().contains(attribute.toLowerCase()))
 				atributeAux = actual;
 		}
 		
-		for(CriteriaForSearch actual : CriteriaForSearch.values()){
+		for(SearchCriteria actual : SearchCriteria.values()){
 			if(actual.toString().toLowerCase().contains(criteria.toLowerCase()))
 				criteriaAux = actual;
 		}
@@ -391,7 +392,7 @@ public class LendMeItemModule {
 			return query.doSearch(ownerUser, key);
 		}
 		
-		if (DispositionForSearch.CRESCENTE.toString().toLowerCase()
+		if (SearchDisposal.CRESCENTE.toString().toLowerCase()
 				.contains(disposal.toLowerCase())) {
 			query = new IncreasingOrderingStrategy(query);
 			return query.doSearch(ownerUser, key);

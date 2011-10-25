@@ -1,5 +1,9 @@
 package com.lendme.entities;
-
+/**
+ * Classe feita apenas para guardar constantes utilizadas e para evitar palavras e numeros magicos.
+ * @author THE LENDERS
+ *
+ */
 public class EntitiesConstants {
 	
 	public static final String OFF_TOPIC = "off-topic";

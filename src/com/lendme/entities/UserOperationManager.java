@@ -542,10 +542,17 @@ public class UserOperationManager {
 		itemManager.getMyItems().remove(toBeRemoved);
 	}
 
+	/**
+	 * Retorna a reputacao do usuario administrado por esse gereciador.
+	 * @return - reputacao.
+	 */
 	public int getReputation() {
 		return itemManager.getMyLentItems().size() + itemManager.getLentRegistryHistory().size();
 	}
 
+	/**
+	 * @return
+	 */
 	public Set<Lending> getReceivedItemRequests() {
 		return itemManager.getReceivedItemRequests();
 	}

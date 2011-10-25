@@ -67,16 +67,6 @@ public class Message implements Comparable<Message> {
 		return subject;
 	}
 
-
-	/**
-	 * Configura um novo titulo para a mensagem.
-	 * @param subject - novo titulo.
-	 */
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
-
 	/**
 	 * Retorna o corpo da mensagem.
 	 * @return - corpo da mensagem.
@@ -85,7 +75,6 @@ public class Message implements Comparable<Message> {
 		return message;
 	}
 
-
 	/**
 	 * Configura novo corpo para a mensagem.
 	 * @param message - novo corpo.
@@ -93,7 +82,6 @@ public class Message implements Comparable<Message> {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
 
 	/**
 	 * Retorna o login de quem esta enviando a mensagem.
@@ -104,28 +92,12 @@ public class Message implements Comparable<Message> {
 	}
 
 	/**
-	 * Configura o login de quem esta enviando a mensagem.
-	 * @param login.
-	 */
-	public void setSender(String sender) {
-		this.sender = sender;
-	}
-	/**
 	 * Retorna o login de quem esta recebendo a mensagem.
 	 * @return String - login.
 	 */
 	public String getReceiver() {
 		return receiver;
 	}
-
-	/**
-	 * Configura o login de quem esta recebendo a mensagem.
-	 * @param login.
-	 */
-	public void setReceiver(String receiver) {
-		this.receiver = receiver;
-	}
-
 
 	/**
 	 * Retorna se a mensagem eh ou nao offtopic.
@@ -136,14 +108,6 @@ public class Message implements Comparable<Message> {
 	}
 
 
-	/**
-	 * Configura se a mensagem vai ser offtopic ou nao.
-	 * @param isOffTopic
-	 */
-	public void setOffTopic(boolean isOffTopic) {
-		this.isOffTopic = isOffTopic;
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

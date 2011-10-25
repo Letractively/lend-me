@@ -17,8 +17,6 @@ public class User implements InterestedOn<Item>{
 	private EventDate creationDate;
 	private UserOperationManager userOperationManager;
 	
-	public User(){}
-	
 	/**
 	 * @param login
 	 * @param name

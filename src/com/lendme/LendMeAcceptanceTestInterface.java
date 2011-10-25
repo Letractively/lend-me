@@ -1,5 +1,8 @@
 package com.lendme;
 
+import com.lendme.LendMeItemModule.SearchAtribute;
+import com.lendme.LendMeItemModule.SearchCriteria;
+
 
 public class LendMeAcceptanceTestInterface {
 	
@@ -260,9 +263,9 @@ public class LendMeAcceptanceTestInterface {
 	
 	/**
 	 * 
-	 * @param idSessao
-	 * @return
-	 * @throws Exception
+	 * @param idSessao  ID da sessão.
+	 * @return Retorna uma String com o nome de todos os
+	 * usuário que o usuário cujo ID da sessão foi dada requisitou amizade. 
 	 */
 	public String getRequisicoesDeAmizade(String idSessao) throws Exception{
 
@@ -274,30 +277,70 @@ public class LendMeAcceptanceTestInterface {
 		return formatarASaida(resultado);
 	}
 	
+	/**
+	 * Aprova um empréstimo que foi feito ao usuário cujo ID da sessão foi 
+	 * informado como parâmetro.
+	 * @param idSessao ID da sessão do usuário.
+	 * @param idRequisicaoEmprestimo ID da requisição do empréstimo.
+	 * @return Retorna o ID do empréstimo que foi aprovado.
+	 */
 	public String aprovarEmprestimo(String idSessao, String idRequisicaoEmprestimo) throws Exception{
 		
 			return system.approveLending(idSessao, idRequisicaoEmprestimo);
 	}
 	
+	/**
+	 * Devolve um item que o usuário cujo ID da sessão foi dado 
+	 * pegou emprestado.
+	 * 
+	 * @param idSessao ID da sessão do usuário logado no sistema.
+	 * @param idEmprestimo ID do empréstimo.
+	 * @return Retorna o ID do emprestimo q foi devolvido. 
+	 */
 	public String devolverItem(String idSessao, String idEmprestimo) throws Exception{
 		
 		return system.returnItem(idSessao, idEmprestimo);
 	}
 	
+	/**
+	 * Confirma o termino de um emprestimo feito pelo usupario dono do ID da sessão dada.
+	 */
 	public String confirmarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
 		
 		return system.confirmLendingTermination(idSessao, idEmprestimo);
 	}
 	
+	/**
+	 * Usuário dono do ID da sessão dada nega
+	 * o término de um empréstimo que foi solicitado. 
+	 * @param idSessao
+	 * @param idEmprestimo ID do empréstimo que foi requisitada uma confirmação 
+	 * de termino de emprestimo.
+	 */
 	public String negarTerminoEmprestimo(String idSessao, String idEmprestimo) throws Exception{
 		
 		return system.denyLendingTermination(idSessao, idEmprestimo);
 	}
 
+	
+	/**
+	 * Usuário dono do ID da sessão dado requisita a devolução
+	 * de um item que pediu emprestado.
+	 * @param idSessao ID da sessão do usuário.
+	 * @param idEmprestimo ID do empréstimo cuja devolução está sendo
+	 * requisitada. 
+	 */
 	public String requisitarDevolucao(String idSessao, String idEmprestimo) throws Exception{
 		return system.askForReturnOfItem(idSessao, idEmprestimo);
 	}
 	
+	/**
+	 * 
+	 * @param idSessao//==================================================
+	 * @param tipo//=============================================================
+	 * @return//==========================================================================================
+	 * @throws Exception
+	 */
 	public String getEmprestimos(String idSessao, String tipo) throws Exception{
 	
 		String[] resultado = system.getLendingRecords(idSessao, tipo);
@@ -307,12 +350,32 @@ public class LendMeAcceptanceTestInterface {
 		return formatarASaida(resultado);
 	}
 	
+	/**
+	 * Usuário dono do ID da sessão dada envia uma menssagem para o usuário 
+	 * cujo login é igual a String destinatário.
+	 * @param idSessao ID da sessão do usuário que enviará a menssagem.
+	 * @param destinatario Login do usuário que receberá a menssagem.
+	 * @param assunto Assunto da menssagem.
+	 * @param mensagem Eh o texto da menssagem.
+	 * @return Retorna o ID do tópico da menssagem.
+	 */
 	public String enviarMensagem(String idSessao, String destinatario, 
 			String assunto, String mensagem) throws Exception {
 			
 		return system.sendMessage(idSessao, assunto, mensagem, destinatario);
 	}
 	
+	/**
+	 * Usuário dono do ID da sessão dada envia uma menssagem para o usuário 
+	 * cujo login é igual a String destinatário.
+	 * @param idSessao ID da sessão do usuário que enviará a menssagem.
+	 * @param destinatario Login do usuário que receberá a menssagem.
+	 * @param assunto Assunto da menssagem.
+	 * @param mensagem Eh o texto da menssagem.
+	 * @param idRequisicaoEmprestimo ID da requisição do emprestimo.
+	 * @return Retorna o ID do tópico da menssagem.
+	 * @throws Exception
+	 */
 	public String enviarMensagem(String idSessao, String destinatario, 
 			String assunto, String mensagem, String idRequisicaoEmprestimo) 
 					throws Exception {
@@ -321,6 +384,13 @@ public class LendMeAcceptanceTestInterface {
 				idRequisicaoEmprestimo);
 	}
 	
+	/**
+	 * 
+	 * @param idSessao ID da sessão do usuário que está logado no sistema.
+	 * @param tipo Tipo do tópico que será pesquisado.
+	 * Os tipos disponíveis são: "negociacao", "offtopic" e "todos".
+	 * @return Retorna uma String com o nome de todos os tópicos do tipo dado.
+	 */
 	public String lerTopicos(String idSessao, String tipo) throws Exception {
 		
 		String[] resultado = system.getTopics(idSessao, tipo);
@@ -329,18 +399,43 @@ public class LendMeAcceptanceTestInterface {
 		}
 		return formatarASaida(resultado);
 	}
-	
+
+	/**
+	 * 
+	 * @param idSessao ID da sessão do usuário logado que deseja 
+	 * ver as menssagens do tópico.
+	 * @param idTopico ID to tópico cujas menssagens serão visualizadas.
+	 * @return Retorna uma String com todas as 
+	 * menssagens do tópico cujo ID foi dado como parâmetro.
+	 */
 	public String lerMensagens(String idSessao, String idTopico) throws Exception {
 		
 		String[] resultado = system.getTopicMessages(idSessao, idTopico);
 		return formatarASaida(resultado);
 	}
 	
+	/**
+	 *Deleta um item do conjunto de itens do usuário dono do ID da sessão 
+	 *informada.  
+	 * @param idSessao ID da sessão do usuário.
+	 * @param idItem ID do Item a ser excluído.
+	 */
 	public void apagarItem(String idSessao, String idItem) throws Exception{
 		
 		system.deleteItem(idSessao, idItem);
 	}
+
 	
+	/**
+	 * 
+	 * @param idSessao ID da sessão do usuário que deseja fazer a pesquisa.
+	 * @param chave String que será pesquisada nos itens.
+	 * @param atributo atributo em que a chava será pesquisada.
+	 * Atributos suportados: "DESCRICAO", "CATEGORIA", "ID" e "NOME".
+	 * @param tipoDeOrdenacao Tipos de ordenação suportados: "CRESCENTE" E "DECRESCENTE";
+	 * @param criterioDeOrdenacao Criterios suportados: "REPUTACAO" e "DATACRIACAO".
+	 * @return Retorna uma String com o nome de todos os itens encontrados na pesquisa.
+	 */
 	public String pesquisarItem(String idSessao, String chave, String atributo, String tipoDeOrdenacao, String criterioDeOrdenacao) throws Exception{
 		
 		String[] resultado = system.searchForItems(idSessao, chave, atributo, tipoDeOrdenacao, criterioDeOrdenacao);
@@ -351,21 +446,43 @@ public class LendMeAcceptanceTestInterface {
 		
 	}
 
+	/**
+	 * Simula a passagem dos dias no sistema.
+	 * @param dias Número de dias que se passaram.
+	 * @return Retorna o dia atual do sistema após
+	 * o adiantamento do número de dias. 
+	 */
 	public String adicionarDias(int dias){
 		
 		return system.someDaysPassed(dias);
 	}
-	
+
+	/**
+	 * Registra o interesse do usuário por um item.
+	 * @param idSessao ID da sessão do usuário que deseja registrar o interesse.
+	 * @param idItem ID do item em que o usuário está interessado.
+	 */
 	public void registrarInteresse( String idSessao, String idItem ) throws Exception{
 		
 		system.registerInterestForItem(idSessao, idItem);
 	}
 	
+	/**
+	 * 
+	 * @param idSession ID da sessão do usuário que deseja visualisar 
+	 * o ranking.
+	 * @param categoria Categoria que será usada como critério de ranqueamento.
+	 * @return Retorna uma String com o nome de todos os usuários
+	 * ranqueados. 
+	 */
 	public String getRanking(String idSession, String categoria) throws Exception{
 		
 		return system.getRanking(idSession, categoria);
 	}
 	
+	/**
+	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
+	 */
 	public String historicoAtividades(String idSessao) throws Exception{
 		return formatarASaida(system.getActivityHistory(idSessao));
 	}
@@ -386,11 +503,13 @@ public class LendMeAcceptanceTestInterface {
 		return resultadoFormatado.toString();
 	}
 	
+	
 	public String publicarPedido(String idSessao, String nomeItem, String descricaoItem) throws Exception{
 
 		return system.publishItemRequest(idSessao, nomeItem, descricaoItem);
 		
 	}
+	
 	
 	public void oferecerItem(String idSessao, String idPublicacaoPedido, String idItem)
 		throws Exception{
@@ -398,6 +517,7 @@ public class LendMeAcceptanceTestInterface {
 		system.offerItem(idSessao, idPublicacaoPedido, idItem);
 		
 	}
+	
 	
 	public void rePublicarPedido(String idSessao, String idPublicacaoPedido) throws Exception{
 		

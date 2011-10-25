@@ -355,7 +355,7 @@ public class LendMeItemModule {
 			if(actual.toString().toLowerCase().contains(criteria.toLowerCase()))
 				criteriaAux = actual;
 		}
-
+		
 		OrderedSearch query;
 		switch (atributeAux) {
 		case DESCRICAO: {

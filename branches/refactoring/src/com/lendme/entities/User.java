@@ -281,13 +281,13 @@ public class User implements InterestedOn<Item>{
 	}
 	
 	/**
-	 * User sends a negotiation message to another user.
-	 * @param subject
-	 * @param message
-	 * @param receiver
-	 * @param lendingId
-	 * @return
-	 * @throws Exception
+	 * Permite o envio de uma menssagem entre dois usuários.
+	 * 
+	 * @param subject Assunto da menssagem.
+	 * @param message Corpo da menssagem.
+	 * @param receiver Usuário que receberá a menssagem.
+	 * @param lendingId ID da requisição de um pedido de um Item.
+	 * @return 
 	 */
 	public String sendMessage(String subject, String message, User receiver,
 			String lendingId) throws Exception {

@@ -194,6 +194,11 @@ public final class LendMeRepository {
 		throw new Exception("Usuário inexistente");//"User does not exist");
 	}
 
+	/**
+	 * Retorna um List<User> com todos os usuários cadastrados
+	 * no sistema ordenados pela distância entre cada um e o usuário dono 
+	 * do ID da sessão dada. 
+	 */
 	public List<User> listUsersByDistance(String sessionId) throws Exception{
 		if(sessionId == null || sessionId.trim().equals("")){
 			throw new Exception("Sessão inválida");
@@ -214,6 +219,16 @@ public final class LendMeRepository {
 		Collections.sort(listUsersByDistance, new AddressComparatorStrategy(ownerOfSession.getAddress()));
 		return listUsersByDistance;
 	}
+
+	/**
+	 * Pesquisa por todos os usuários cujo atributo pesquisado nele
+	 * possue a chave dada.
+	 * 
+	 * @param sessionId ID da sessão do usuário que fará a pesuisa.
+	 * @param key Os usuários que possuem essa String no atributo informado 
+	 * serão retornados. 
+	 * @param attribute Atributo pelo qual se quer fazer a pesquisa.
+	 */
 
 	public Set<User> searchUsersByAttributeKey(String sessionId, String key,
 			String attribute) throws Exception{

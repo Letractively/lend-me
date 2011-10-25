@@ -27,8 +27,9 @@ public class LendMeAdapter {
 		lendMe.resetSystem();
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.lendme.LendMe#getSystemDate()
+	/**
+	 * @return Retorna uma String informando a data atual do
+	 * sistema.
 	 */
 	public String getSystemDate(){
 		
@@ -362,7 +363,7 @@ public class LendMeAdapter {
 	 * Atributos suportados: "DESCRICAO", "CATEGORIA", "ID" e "NOME".
 	 * @param disposition Tipos de ordenação suportados: "CRESCENTE" E "DECRESCENTE";
 	 * @param criteria Criterios suportados: "REPUTACAO" e "DATACRIACAO".
-	 * @return Retorna uma String com o nome de todos os itens encontrados na pesquisa.
+	 * @return Retorna um array com o nome de todos os itens encontrados na pesquisa.
 	 */
 	public String[] searchForItems(String solicitorSession, String key, String attribute,
 		String disposition, String criteria) throws Exception{
@@ -377,9 +378,15 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#searchForItem(String, String, String, String, String)
-	 */	
+	 * 
+	 * @param solicitorSession ID da sessão do usuário que deseja fazer a pesquisa.
+	 * @param key String que será pesquisada nos itens.
+	 * @param attribute atributo em que a chava será pesquisada.
+	 * Atributos suportados: "DESCRICAO", "CATEGORIA", "ID" e "NOME".
+	 * @param disposition Tipos de ordenação suportados: "CRESCENTE" E "DECRESCENTE";
+	 * @param criteria Criterios suportados: "REPUTACAO" e "DATACRIACAO".
+	 * @return Retorna uma String com o nome de todos os itens encontrados na pesquisa.
+	 */
 	public String[] searchForItemsWithIds(String solicitorSession, String key, String attribute,
 			String disposition, String criteria) throws Exception{
 			
@@ -393,9 +400,12 @@ public class LendMeAdapter {
 		}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#getItems(String)
-	 */	
+	 * 
+	 * @param solicitorSession ID da sessão do usuário solicitante.
+	 * @return Retorna um array contendo o nome de todos os itens 
+	 * do usuário solicitante.
+	 * @throws Exception
+	 */
 	public String[] getItems(String solicitorSession) throws Exception{
 		
 		List<Item> results = new ArrayList<Item>(lendMe.getItems(solicitorSession));
@@ -409,8 +419,11 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#getItems(String)
+	 * 
+	 * @param solicitorSession ID da sessão do usuário solicitante.
+	 * @return Retorna um array contendo o nome de todos os itens 
+	 * do usuário solicitante.
+	 * @throws Exception
 	 */	
 	public String[] getItemsWithIds(String solicitorSession) throws Exception{
 		
@@ -615,7 +628,7 @@ public class LendMeAdapter {
 	
 	/**
 	 * 
-	 * @param idSession ID da sessão do usuário que deseja visualisar 
+	 * @param solicitorSession ID da sessão do usuário que deseja visualisar 
 	 * o ranking.
 	 * @param category Categoria que será usada como critério de ranqueamento.
 	 * @return Retorna uma String com o nome de todos os usuários

@@ -106,8 +106,8 @@ public class LendMeAcceptanceTestInterface {
 	}
 	
 	/**
-	 *Aprova (aceita) uma amizade requisitada pelo usuário cujo
-	 *login foi informado ao usuário cujo ID da Sessão foi passsado como parâmetro.  
+	 * O usuário cujo ID da Sessão foi passsado como parâmetro aprova (aceita) 
+	 * uma amizade requisitada pelo usuário cujo login foi informado.  
 	 * @param idSessao ID da sessão do usuário.
 	 * @param login Login do usuário requisitante da amizade.
 	 */
@@ -129,7 +129,7 @@ public class LendMeAcceptanceTestInterface {
 	/**
 	 * Desfaz uma amizade entre dois usuários.
 	 * @param idSessao ID da sessão do usuário que desfará a amizade.
-	 * @param login Login do usuário cuja amizade vai ser desfeita.
+	 * @param login Login do usuário cuja amizade será desfeita.
 	 */
 	public void desfazerAmizade(String idSessao, String login) throws Exception{
 		
@@ -151,7 +151,7 @@ public class LendMeAcceptanceTestInterface {
 	/**
 	 * 
 	 * @param idSessao ID da sessão do usuário cujos amigos 
-	 * serão retornados
+	 * serão retornados.
 	 * @return Retorna uma String com o toString() de todos os amigos
 	 * do usuário separados por ponto e vírgula.
 	 */
@@ -197,7 +197,7 @@ public class LendMeAcceptanceTestInterface {
 	}
 
 	/**
-	 * Retorna para o usuário cujo ID da sessão foi dqado como parâmetro
+	 * Retorna para o usuário cujo ID da sessão foi dado como parâmetro
 	 * uma String com o nome de todos os itens do usuário cujo login foi informado. 
 	 * @param idSessao ID da sessão do usuário.
 	 * @param login Login da sessão do usuário.
@@ -246,7 +246,7 @@ public class LendMeAcceptanceTestInterface {
 	
 	/**
 	 * Retorna uma String com os nomes de todos os usuários cadastrados
-	 * no sistema ordenados pela distância entre cada um e o usuáio dono 
+	 * no sistema ordenados pela distância entre cada um e o usuário dono 
 	 * do ID da sessão dada. 
 	 * @param idSessao ID da sessão do usuário logado.
 	 */

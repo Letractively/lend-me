@@ -279,11 +279,11 @@ public class UserOperationManager {
 	}
 	
 	/**
-	 * User sends a message to another user.
-	 * @param subject
-	 * @param message
-	 * @param receiver
-	 * @return
+	 * Permite o envio de uma menssagem entre dois usuários.
+	 * @param subject assunto da menssagem.
+	 * @param message Corpo da menssagem.
+	 * @param receiver Usuário qu ereceberá a menssagem.
+	 * @return retorna o ID do tópico criado para essa menssagem.
 	 * @throws Exception
 	 */
 	public String sendMessage(String subject, String message, User receiver) 
@@ -292,13 +292,13 @@ public class UserOperationManager {
 	}
 	
 	/**
-	 * User sends a negotiation message to another user.
-	 * @param subject
-	 * @param message
-	 * @param receiver
-	 * @param lendingId
-	 * @return
-	 * @throws Exception
+	 * Permite o envio de uma menssagem entre dois usuários.
+	 * 
+	 * @param subject Assunto da menssagem.
+	 * @param message Corpo da menssagem.
+	 * @param receiver Usuário que receberá a menssagem.
+	 * @param lendingId ID da requisição de um pedido de um Item.
+	 * @return retorna o ID do tópico criado para essa menssagem.
 	 */
 	public String sendMessage(String subject, String message, User receiver,
 			String lendingId) throws Exception {

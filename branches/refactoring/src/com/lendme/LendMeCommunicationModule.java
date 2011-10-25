@@ -36,17 +36,15 @@ public class LendMeCommunicationModule {
 	}
 	
 	/**
-	 * Solicitor user sends a message to solicited user.
-	 * 
-	 * <i>This method belongs to the public system interface<i>
-	 * @param senderSessionId
-	 * @param subject
-	 * @param message
-	 * @param receiverLogin
-	 * @param lendings
-	 * @return
-	 * @throws Exception
-	 */
+	 * Permite o envio de uma menssagem entre dois usuários.
+	 * @param sender Usuário que vai
+	 * enviar uma menssagem.
+	 * @param subject Assunto da menssagem.
+	 * @param message Corpo da menssagem.
+	 * @param receiver Usuário que receberá a menssagem.
+	 * @param lending requisição de um pedido de um Item.
+	 * @return 
+	 */	
 	public  String sendMessage(User sender, String subject, String message,
 			User receiver, Lending lending) throws Exception {//String lendingId, Collection<Lending> lendings) throws Exception {
 

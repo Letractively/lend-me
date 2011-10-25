@@ -492,27 +492,35 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#returnItem(String, String)
-	 */	
+	 * Devolve um item que o usuário cujo ID da sessão foi dado 
+	 * pegou emprestado.
+	 * 
+	 * @param idSessao ID da sessão do usuário logado no sistema.
+	 * @param idEmprestimo ID do empréstimo.
+	 * @return Retorna o ID do emprestimo q foi devolvido. 
+	 */
+
 	public String returnItem(String solicitedSession, String lendingId) throws Exception{
 		
 		return lendMe.returnItem(solicitedSession, lendingId);
 	}
 	
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#confirmLendingTermination(String, String)
-	 */	
+	 * Confirma o termino de um emprestimo feito pelo usupario dono do ID da sessão dada.
+	 */
 	public String confirmLendingTermination(String solicitorSession, String lendingId) throws Exception{
 		
 		return lendMe.confirmLendingTermination(solicitorSession, lendingId);
 	}
 	
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#denyLendingTermination(String, String)
-	 */	
+	 * Usuário dono do ID da sessão dada nega
+	 * o término de um empréstimo que foi solicitado. 
+	 * @param idSessao
+	 * @param idEmprestimo ID do empréstimo que foi requisitada uma confirmação 
+	 * de termino de emprestimo.
+	 */
+
 	public String denyLendingTermination(String solicitorSession, String lendingId) throws Exception{
 		
 		return lendMe.denyLendingTermination(solicitorSession, lendingId);

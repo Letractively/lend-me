@@ -100,16 +100,25 @@ public class User implements InterestedOn<Item>{
 	}
 
 	/**
-	 * @return
+	 * Retorna o endereco do usuario.
+	 * @return endereco.
 	 */
 	public Address getAddress() {
 		return address;
 	}
 	
+	/**
+	 * Retorna o OperationManager do usuario.
+	 * @return manager.
+	 */
 	public UserOperationManager getUserOperationManager() {
 		return userOperationManager;
 	}
 	
+	/**
+	 * Retorna o score do usuario.
+	 * @return score.
+	 */
 	public int getScore() {
 		return userOperationManager.getScore();
 	}
@@ -123,6 +132,9 @@ public class User implements InterestedOn<Item>{
 		return this.name.toUpperCase().contains(toBeMatched.toUpperCase());
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString(){
 		StringBuilder userToString = new StringBuilder();
@@ -133,11 +145,17 @@ public class User implements InterestedOn<Item>{
 		return userToString.toString();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode(){
 		return this.login.hashCode();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof User) ){
@@ -181,6 +199,10 @@ public class User implements InterestedOn<Item>{
 	}
 
 	
+	/**
+	 * Retorna o gereciador de comunicacao(mensagens) do usuario.
+	 * @return gereciador.
+	 */
 	public CommunicationManager getCommunicationManager() {
 		return userOperationManager.getCommunicationManager();
 	}
@@ -281,13 +303,13 @@ public class User implements InterestedOn<Item>{
 	}
 	
 	/**
-	 * Permite o envio de uma menssagem entre dois usuários.
-	 * 
-	 * @param subject Assunto da menssagem.
-	 * @param message Corpo da menssagem.
-	 * @param receiver Usuário que receberá a menssagem.
-	 * @param lendingId ID da requisição de um pedido de um Item.
-	 * @return 
+	 * User sends a negotiation message to another user.
+	 * @param subject
+	 * @param message
+	 * @param receiver
+	 * @param lendingId
+	 * @return
+	 * @throws Exception
 	 */
 	public String sendMessage(String subject, String message, User receiver,
 			String lendingId) throws Exception {
@@ -376,6 +398,9 @@ public class User implements InterestedOn<Item>{
 		return userOperationManager.getLendingByRequestId(requestId);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.lendme.entities.InterestedOn#warnInterestedThatTargetIsAvailable(java.lang.Object, com.lendme.entities.InterestedOn)
+	 */
 	@Override
 	public void warnInterestedThatTargetIsAvailable(Item target,
 			InterestedOn<Item> interested) throws Exception{
@@ -392,10 +417,18 @@ public class User implements InterestedOn<Item>{
 		return userOperationManager.getLendingByLendingId(lendingId);
 	}	
 	
+	/**
+	 * Retorna o momento da criacao do usuario.
+	 * @return EventDate - momento.
+	 */
 	public EventDate getCreationDate() {
 		return creationDate;
 	}
 
+	/**
+	 * Retorna o conjunto de requisicoes de amizade feitas ao usuario.
+	 * @return conjunto de requisicoes.
+	 */
 	public Set<User> getReceivedFriendshipRequests() {
 		return userOperationManager.getReceivedFriendshipRequests();
 	}
@@ -410,42 +443,87 @@ public class User implements InterestedOn<Item>{
 		userOperationManager.deleteMyItem(itemId);
 	}
 
+	/**
+	 * Retorna a reputacao.
+	 * @return reputacao.
+	 */
 	public int getReputation() {
 		return userOperationManager.getReputation();
 	}
 
+	/**
+	 * @see UserOperationManager.getReceivedItemRequests
+	 * @return
+	 */
 	public Set<Lending> getReceivedItemRequests() {
 		return userOperationManager.getReceivedItemRequests();
 	}
-	
+	/**
+	 * @see UserOperationManager.publishItemRequest
+	 * @param itemName
+	 * @param itemDescription
+	 * @return
+	 * @throws Exception
+	 */
 	public String publishItemRequest(String itemName, String itemDescription) throws Exception{
 		return userOperationManager.publishItemRequest(itemName, itemDescription);
 	}
-	
+	/**
+	 * @see UserOperationManager.getPublishedItemRequests
+	 * @return
+	 */
 	public Set<Lending> getPublishedItemRequests(){
 		return userOperationManager.getPublishedItemRequests();
 	}
-
+	/**
+	 * @see UserOperationManager.offerItem
+	 * @param publishedRequest
+	 * @param item
+	 * @throws Exception
+	 */
 	public void offerItem(Lending publishedRequest, Item item) throws Exception{
 		userOperationManager.offerItem(publishedRequest, item);		
 	}
-	
+	/**
+	 * @see UserOperationManager.republishItemRequest
+	 * @param petition
+	 * @throws Exception
+	 */
 	public void republishItemRequest(Lending petition) throws Exception{
 		userOperationManager.republishItemRequest(petition);
 	}
-
+	/**
+	 * @see UserOperationManager.getSentItemRequests
+	 * @return
+	 */
 	public Set<Lending> getSentItemRequests() {
 		return userOperationManager.getSentItemRequests();
 	}
 
+	/**
+	 * @see UserOperationManager.getMyActivityHistory
+	 * @return
+	 */
 	public List<ActivityRegistry> getMyActivityHistory() {
 		return userOperationManager.getMyActivityHistory();
 	}
 
+	/**
+	 * @see UserOperationManager.getMessagesByTopicId
+	 * @param topicId
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Message> getMessagesByTopicId(String topicId) throws Exception{
 		return userOperationManager.getMessagesByTopicId(topicId);
 	}
 
+	/**
+	 * @see UserOperationManager.getTopics
+	 * @param topicType
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Topic> getTopics(String topicType) throws Exception{
 		return userOperationManager.getTopics(topicType);
 	}

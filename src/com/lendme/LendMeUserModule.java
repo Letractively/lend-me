@@ -26,9 +26,22 @@ public class LendMeUserModule {
 		return solicitorViewer.getOwnerFriends();
 	}
 
+	/**
+	 * Faz a requisição de uma amizade.
+	 * @param sessionOwner Sessão do usuário requisitente da amizade.
+	 * @param otherUser usuário cuja amizade está sendo solicitada.
+	 */
+
 	public void askForFriendship(User sessionOwner, User otherUser) throws Exception{
 		sessionOwner.requestFriendship(otherUser);
 	}
+
+	/**
+	 *Aprova (aceita) uma amizade requisitada pelo usuário  passado como parâmetroID da Sessão
+	 * foi passsado como parâmetro pelo usuário logado no sisteme(sessionOwner).  
+	 * @param sessionOwner Usuário logado no sistema.
+	 * @param otherUser Usuário requisitante da amizade.
+	 */
 
 	public void acceptFriendship(User sessionOwner, User otherUser) throws Exception{
 		sessionOwner.acceptFriendshipRequest(otherUser);

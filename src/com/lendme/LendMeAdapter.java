@@ -35,8 +35,11 @@ public class LendMeAdapter {
 		return lendMe.getSystemDate().toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.lendme.LendMe#someDaysPassed(int)
+	/**
+	 * Simula a passagem dos dias no sistema.
+	 * @param dias Número de dias que se passaram.
+	 * @return Retorna o dia atual do sistema após
+	 * o adiantamento do número de dias. 
 	 */
 	public String someDaysPassed(int amount){
 		
@@ -249,8 +252,13 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#sendMessage(String, String, String, String)
+	 * Usuário dono do ID da sessão dada envia uma menssagem para o usuário 
+	 * cujo login é igual a String destinatário.
+	 * @param idSessao ID da sessão do usuário que enviará a menssagem.
+	 * @param destinatario Login do usuário que receberá a menssagem.
+	 * @param assunto Assunto da menssagem.
+	 * @param mensagem Eh o texto da menssagem.
+	 * @return Retorna o ID do tópico da menssagem.
 	 */
 	public String sendMessage(String senderSession, String subject,
 			String message, String receiverLogin)
@@ -260,8 +268,15 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#sendMessage(String, String, String, String)
+	 * Usuário dono do ID da sessão dada envia uma menssagem para o usuário 
+	 * cujo login é igual a String destinatário.
+	 * @param idSessao ID da sessão do usuário que enviará a menssagem.
+	 * @param destinatario Login do usuário que receberá a menssagem.
+	 * @param assunto Assunto da menssagem.
+	 * @param mensagem Eh o texto da menssagem.
+	 * @param idRequisicaoEmprestimo ID da requisição do emprestimo.
+	 * @return Retorna o ID do tópico da menssagem.
+	 * @throws Exception
 	 */
 	public String sendMessage(String senderSession, String subject,
 			String message, String receiverLogin, String lendingId)
@@ -341,9 +356,15 @@ public class LendMeAdapter {
 	}
 
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#searchForItem(String, String, String, String, String)
-	 */	
+	 * 
+	 * @param idSessao ID da sessão do usuário que deseja fazer a pesquisa.
+	 * @param chave String que será pesquisada nos itens.
+	 * @param atributo atributo em que a chava será pesquisada.
+	 * Atributos suportados: "DESCRICAO", "CATEGORIA", "ID" e "NOME".
+	 * @param tipoDeOrdenacao Tipos de ordenação suportados: "CRESCENTE" E "DECRESCENTE";
+	 * @param criterioDeOrdenacao Criterios suportados: "REPUTACAO" e "DATACRIACAO".
+	 * @return Retorna uma String com o nome de todos os itens encontrados na pesquisa.
+	 */
 	public String[] searchForItems(String solicitorSession, String key, String attribute,
 		String disposition, String criteria) throws Exception{
 		
@@ -434,18 +455,22 @@ public class LendMeAdapter {
 	}
 	
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#deleteItem(String, String)
-	 */	
+	 *Deleta um item do conjunto de itens do usuário dono do ID da sessão 
+	 *informada.  
+	 * @param idSessao ID da sessão do usuário.
+	 * @param idItem ID do Item a ser excluído.
+	 */
 	public void deleteItem(String solicitorSession, String itemId) throws Exception{
 		
 		lendMe.deleteItem(solicitorSession, itemId);
 	}
 	
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMe#registerInterestForItem(String, String)
-	 */	
+	 * Simula a passagem dos dias no sistema.
+	 * @param dias Número de dias que se passaram.
+	 * @return Retorna o dia atual do sistema após
+	 * o adiantamento do número de dias. 
+	 */
 	public void registerInterestForItem(String solicitorSession, String itemId) throws Exception{
 		
 		lendMe.registerInterestForItem(solicitorSession, itemId);
@@ -590,9 +615,13 @@ public class LendMeAdapter {
 	}
 	
 	/**
-	 * (Non-javadoc)
-	 * @see com.lendme.LendMeFacade#getRanking(String, String)
-	 */	
+	 * 
+	 * @param idSession ID da sessão do usuário que deseja visualisar 
+	 * o ranking.
+	 * @param categoria Categoria que será usada como critério de ranqueamento.
+	 * @return Retorna uma String com o nome de todos os usuários
+	 * ranqueados. 
+	 */
 	public String getRanking(String solicitorSession, String category) throws Exception{
 		
 		return lendMe.getRanking(solicitorSession, category);
@@ -604,6 +633,9 @@ public class LendMeAdapter {
 		return lendMe.viewProfile(solicitorSessionId, solicitedUserLogin);
 	}
 	
+	/**
+	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
+	 */
 	public String[] getActivityHistory(String solicitorSessionId) throws Exception {
 		
 		List<ActivityRegistry> results = lendMe.getActivityHistory(
@@ -667,16 +699,34 @@ public class LendMeAdapter {
 		return handled;
 	}
 			
+	/**
+	 * Publica o Pedido de um item. 	
+	 * @param idSessao ID da sessão do usuário que deseja publicar 
+	 * o pedido de um item.
+	 * @param nomeItem Nome do item cujo pedido será publicado.
+	 * @param descricaoItem Descrição do item cujo pedido será publicado. 
+	 */
 	public String publishItemRequest(String sessionId, String itemName,
 			String itemDescription) throws Exception{
 		return lendMe.publishItemRequest(sessionId, itemName, itemDescription);
 	}
 
+	/**
+	 * Oferece um item .
+	 * @param idSessao ID da sessão do usuário que deseja oferecer o item.
+	 * @param idPublicacaoPedido
+	 * @param idItem ID do item que será oferecido. 
+	 */
 	public void offerItem(String sessionId, String requestPublicationId,
 			String itemId) throws Exception{
 		lendMe.offerItem(sessionId, requestPublicationId, itemId);
 	}
 
+	/**
+	 * Republica o pedido de um item.
+	 * @param idSessao idSessao ID da sessão do usuário que deseja oferecer o item.
+	 * @param idPublicacaoPedido
+	 */
 	public void republishItemRequest(String sessionId, String requestPublicationId) 
 		throws Exception{
 		lendMe.republishItemRequest(sessionId, requestPublicationId);		

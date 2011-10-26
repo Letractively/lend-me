@@ -747,7 +747,8 @@ public class LendMeTextInterface {
 	}
 		
 	private static String logo() {
-		return   "\t  _       _ _ _   __     _    _ _ _        _       _   _ _ _  " +
+		String logo =
+			     "\t  _       _ _ _   __     _    _ _ _        _       _   _ _ _  " +
 			   "\n\t | |     | |_|_| |  |   | |  |     |      | |     | | | |_|_|" +
 			   "\n\t | |     | |     | | |  | |  |  __  |     |  |   |  | | |    " +
 			   "\n\t | |     | |_ _  | || | | |  | |  |  | __ | | |_| | | | |_ _ " +
@@ -755,6 +756,8 @@ public class LendMeTextInterface {
 			   "\n\t | |     | |     | |  | | |  | |__|  |    | |     | | | |    " +
 			   "\n\t | |_ _  | |_ _  | |   |  |  |      |     | |     | | | |_ _ " +
 			   "\n\t |_|_|_| |_|_|_| |_|    |_|  |_ _ _|      |_|     |_| |_|_|_|\n";
+		String systemInfo = "\t"+lendMeAdapter.getSessionInfo(currentUserSessionId);
+		return logo + preStepsSeparator() + systemInfo;
 	}
 	
 	private static String preStepsSeparator(){

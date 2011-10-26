@@ -3,7 +3,6 @@ package com.lendme;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -24,14 +23,14 @@ import com.lendme.entities.User;
 
 public class LendMeFacade {
 
-	private Calendar time;
+	private TimeMonitor time;
 	private LendMeRepository repository;
 	private LendMeItemModule itemModule;
 	private LendMeCommunicationModule  communicationModule; 
 	private LendMeUserModule userModule;
 	
 	public LendMeFacade() {
-		time = GregorianCalendar.getInstance();
+		time = TimeMonitor.getInstance();
 		repository = LendMeRepository.getInstance();
 		userModule = new LendMeUserModule();
 		itemModule = new LendMeItemModule();
@@ -46,7 +45,7 @@ public class LendMeFacade {
 	 */
 	public void resetSystem(){
 		repository.resetRepository();
-		time = GregorianCalendar.getInstance();
+		time = TimeMonitor.getInstance();
 	}
 	
 	/**
@@ -79,7 +78,7 @@ public class LendMeFacade {
 	 * @return the string representing the new system time
 	 */
 	public String someDaysPassed(int amount){
-		time.add(Calendar.DAY_OF_MONTH, amount+1);
+		time.addTime(Calendar.DAY_OF_MONTH, amount+1);
 		return time.getTime().toString();
 	}
 	
@@ -703,6 +702,21 @@ public class LendMeFacade {
 	public List<Lending> getFriendsPublishedItemRequests(String solicitorSessionId) throws Exception {
 		Viewer viewer = userModule.getUserProfile(repository.getSessionByID(solicitorSessionId));
 		return communicationModule.getFriendsPublishedItemRequests(userModule.getFriends(viewer)); 
+	}
+
+	public void closeSystem() {
+		time.stop();
+	}
+
+	public String getSessionInfo(String currentUserSessionId) {
+		if ( currentUserSessionId == null || currentUserSessionId.trim().isEmpty() ){
+			return "Nenhum usuario logado - Data: "+getSystemDate();
+		}
+		StringBuilder info = new StringBuilder();
+		info.append("Login: "+repository.getUserBySessionId(currentUserSessionId).getLogin());
+		info.append(" - ");
+		info.append("Data: "+getSystemDate());
+		return new String(info);
 	}
 	
 }

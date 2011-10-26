@@ -17,6 +17,8 @@ public class LendMeAcceptanceTestInterface {
 	
 	public void encerrarSistema(){
 		
+		system.closeSystem();
+		
 	}
 	
 	/**

@@ -768,6 +768,13 @@ public class LendMeAdapter {
 		throws Exception{
 		lendMe.republishItemRequest(sessionId, requestPublicationId);		
 	}
-	
+
+	public void closeSystem() {
+		lendMe.closeSystem();
+	}
+
+	public String getSessionInfo(String currentUserSessionId) {
+		return lendMe.getSessionInfo(currentUserSessionId);
+	}
 	
 }

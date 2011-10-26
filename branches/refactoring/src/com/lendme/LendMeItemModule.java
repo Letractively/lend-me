@@ -320,7 +320,7 @@ public class LendMeItemModule {
 	 */
 	public  List<Item> searchForItem(User ownerUser, String key, String attribute,
 			String disposal ,String criteria) throws Exception{
-
+		
 		SearchAtribute atributeAux = SearchAtribute.DESCRICAO;
 		SearchCriteria criteriaAux = SearchCriteria.DATACRIACAO;
 		

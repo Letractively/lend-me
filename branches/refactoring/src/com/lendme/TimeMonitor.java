@@ -8,34 +8,34 @@ import java.util.TimerTask;
 
 public class TimeMonitor extends TimerTask{
 
-	private Calendar calendar;
-	private static TimeMonitor timeMonitor;
-	private static Timer starter;
+	private Calendar timeCalendar;
+	private static Timer timeMonitor;
+	private static TimeMonitor hook;
 	
 	private TimeMonitor(){
-		calendar = GregorianCalendar.getInstance();
-		if ( starter != null ){
-			starter.cancel();
+		timeCalendar = GregorianCalendar.getInstance();
+		if ( timeMonitor != null ){
+			timeMonitor.cancel();
 		}
 		else{
-			starter = new Timer();
+			timeMonitor = new Timer();
 		}
-		starter.scheduleAtFixedRate(this, 0, 60*1000);
+		timeMonitor.scheduleAtFixedRate(this, 0, 60*1000);
 	}
 	
 	public static TimeMonitor getInstance() {
-		if ( timeMonitor == null ){
-			timeMonitor = new TimeMonitor();
+		if ( hook == null ){
+			hook = new TimeMonitor();
 		}
-		return timeMonitor;
+		return hook;
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return timeCalendar.getTime();
 	}
 
 	public void addTime(int fieldIdentifier, int amount) {
-		calendar.add(fieldIdentifier, amount);
+		timeCalendar.add(fieldIdentifier, amount);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class TimeMonitor extends TimerTask{
 	}
 	
 	public void stop() {
-		starter.cancel();
+		timeMonitor.cancel();
 	}
 
 }

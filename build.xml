@@ -6,6 +6,7 @@
 
    <property name="src" value="\${basedir}/src/"  />
    <property name="build" value="\${basedir}/bin/"/>
+   <property name="tests" value="\${basedir}/scripts" />
    <property name="doc" value="\${basedir}/doc"   />
    <property name="jars" value="\${basedir}/jars" />
    <property name="classpath" value="\${basedir}:easyaccept.jar:junit.jar" />
@@ -52,7 +53,7 @@
 
    <target name="jar" depends="init,compila">
      <echo> 5. Stage of jars generations. </echo>
-     <jar destfile="\${jars}/lendMe.jar" basedir="\${build}">
+     <jar destfile="\${jars}/emprestimos2.jar" basedir="\${build}">
        <manifest>
          <attribute name="Main-Class" value="com.lendme.LendMeTextInterface"/>
        </manifest>

@@ -17,8 +17,11 @@ public final class LendMeRepository {
 	private Set<Session> sessions = new HashSet<Session>();
 	private Set<String> sessionsHystory = new HashSet<String>();
 	private static LendMeRepository repository;
+	private AuthenticationClient authClient;
 	
-	private LendMeRepository() {}
+	private LendMeRepository() {
+		authClient = new FacebookClient();
+	}
 	
 	public static LendMeRepository getInstance() {
 		if (repository == null) {
@@ -152,7 +155,7 @@ public final class LendMeRepository {
 	 * @throws Exception if session doesn't exists
 	 */
 	public  Session getSessionByID(String id) throws Exception{
-		if ( id == null || id.trim().isEmpty() ){
+		if ( id == null || id.trim().length() == 0 ){
 			throw new Exception("Sessão inválida");//"Invalid session");
 		}
 		for(Session actualSession : sessions){
@@ -164,7 +167,7 @@ public final class LendMeRepository {
 	}
 	
 	public boolean userExists(String login) throws Exception {
-		if (login == null || login.trim().isEmpty()){
+		if (login == null || login.trim().length() == 0){
 			throw new Exception("Login inválido");//"Invalid login");
 		}
 		
@@ -183,7 +186,7 @@ public final class LendMeRepository {
 	 * @throws Exception if login is invalid or user with given login doesn't exists
 	 */
 	public User getUserByLogin(String login) throws Exception{
-		if ( login == null || login.trim().isEmpty() ){
+		if ( login == null || login.trim().length() == 0 ){
 			throw new Exception("Login inválido");//"Invalid login");
 		}
 		for(User actualUser : users){
@@ -232,13 +235,13 @@ public final class LendMeRepository {
 
 	public Set<User> searchUsersByAttributeKey(String sessionId, String key,
 			String attribute) throws Exception{
-		if ( attribute == null || attribute.trim().isEmpty() ){
+		if ( attribute == null || attribute.trim().length() == 0 ){
 			throw new Exception("Atributo inválido");//"Invalid attribute");
 		}
 		if (!(attribute.equals("nome") || attribute.trim().equals("login") || attribute.trim().equals("endereco"))){
 			throw new Exception("Atributo inexistente");//"Inexistent attribute");
 		}
-		if ( key == null || key.trim().isEmpty() ){
+		if ( key == null || key.trim().length() == 0 ){
 			throw new Exception("Palavra-chave inválida");//"Invalid search key");
 		}
 		
@@ -269,7 +272,7 @@ public final class LendMeRepository {
 	public String getUserAttribute(User user, String attribute)
 			throws Exception {
 
-		if (attribute == null || attribute.trim().isEmpty()) {
+		if (attribute == null || attribute.trim().length() == 0) {
 			throw new Exception("Atributo inválido");// "Invalid attribute");
 		}
 		if (!(attribute.equals("nome") || attribute.equals("endereco") || attribute
@@ -290,6 +293,14 @@ public final class LendMeRepository {
 	public  String getUserAttribute(String login, String attribute)
 	throws Exception{
 		return getUserAttribute(repository.getUserByLogin(login), attribute);
+	}
+
+	public String login() {
+		return authClient.login();
+	}
+
+	public String authenticate(String token) {
+		return authClient.authenticate(token);
 	}
 	
 }

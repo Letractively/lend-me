@@ -252,7 +252,7 @@ public class ItemManager {
 	 * @throws Exception
 	 */
 	public String denyLending(String requestId) throws Exception{
-		if ( requestId == null || requestId.trim().isEmpty() ){
+		if ( requestId == null || requestId.trim().length() == 0 ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
 		}
 		Lending foundLending = getMyReceivedItemRequestById(requestId); 
@@ -315,7 +315,7 @@ public class ItemManager {
 	 * @throws Exception
 	 */
 	public String approveItemReturning(String lendingId) throws Exception{
-		if ( lendingId == null || lendingId.trim().isEmpty() ){
+		if ( lendingId == null || lendingId.trim().length() == 0 ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
 		}
 		for ( Lending record : myBorrowedItems ){
@@ -363,7 +363,7 @@ public class ItemManager {
 	 * @throws Exception
 	 */
 	public String denyLendingTermination(String lendingId) throws Exception{
-		if ( lendingId == null || lendingId.trim().isEmpty() ){
+		if ( lendingId == null || lendingId.trim().length() == 0 ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending identifier is invalid");
 		}
 		for ( Lending record : lentRegistryHistory ){
@@ -445,7 +445,7 @@ public class ItemManager {
 	 * @throws Exception
 	 */
 	public Lending getLendingByRequestId(String requestId) throws Exception{
-		if ( requestId == null || requestId.trim().isEmpty() ){
+		if ( requestId == null || requestId.trim().length() == 0 ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
 		}
 		for (Lending record : getReceivedItemRequests()){
@@ -493,7 +493,7 @@ public class ItemManager {
 	 * @throws Exception
 	 */
 	public Lending getLendingByLendingId(String lendingId) throws Exception{
-		if ( lendingId == null || lendingId.trim().isEmpty() ){
+		if ( lendingId == null || lendingId.trim().length() == 0 ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
 		}
 		for (Lending record : getReceivedItemRequests()){

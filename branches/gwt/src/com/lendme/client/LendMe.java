@@ -102,5 +102,9 @@ public interface LendMe extends RemoteService{
 	public void republishItemRequest(String sessionId, String requestPublicationId) throws Exception;
 	
 	public String getSessionInfo(String currentUserSessionId);
+
+	public String login();
+	
+	public String authenticate(String token);
 	
 }

@@ -25,13 +25,13 @@ public class Item implements Identifiable, Comparable<Item>{
 	public Item(String name, String description, String category) 
 			throws Exception{
 
-		if ( name == null || name.trim().isEmpty() ){
+		if ( name == null || name.trim().length() == 0 ){
 			throw new Exception("Nome inválido");//"Invalid name");
 		}
-		if ( description == null || description.trim().isEmpty() ){
+		if ( description == null || description.trim().length() == 0 ){
 			throw new Exception("Descrição inválida");//"Invalid description");
 		}
-		if ( category == null || category.trim().isEmpty() ){
+		if ( category == null || category.trim().length() == 0 ){
 			throw new Exception("Categoria inválida");//"Invalid category");
 		}
 		
@@ -81,7 +81,7 @@ public class Item implements Identifiable, Comparable<Item>{
 	 * @return true caso sejam correspondentes, false caso contrario. 
 	 */
 	public boolean idMatches(String id){
-		if ( id == null || id.trim().isEmpty() ){
+		if ( id == null || id.trim().length() == 0 ){
 			return false;
 		}
 		id = id.trim();
@@ -132,7 +132,7 @@ public class Item implements Identifiable, Comparable<Item>{
 	 * @throws Exception - Caso o nome passado seja nulo ou vazio. 
 	 */
 	public void addCategory(String category) throws Exception{
-		if(!(category == null) && !(category.trim().isEmpty())){
+		if(!(category == null) && !(category.trim().length() == 0)){
 			this.category = this.category + ", " + category;
 		}else{
 			throw new Exception("Categoria inválida.");
@@ -145,7 +145,7 @@ public class Item implements Identifiable, Comparable<Item>{
 	 * @throws Exception - Caso a categoria nao exista.
 	 */
 	public void removeCategory(String category) throws Exception{
-		if(!(category == null) && !(category.trim().isEmpty())){
+		if(!(category == null) && !(category.trim().length() == 0)){
 			if(!this.category.contains(category)){
 				throw new Exception("Categoria inexistente.");
 			}else{

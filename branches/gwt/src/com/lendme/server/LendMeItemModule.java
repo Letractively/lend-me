@@ -35,7 +35,7 @@ public class LendMeItemModule {
 	 * @throws Exception if parameters are invalid
 	 */
 	public  String getItemAttribute(Viewer viewer, String itemId, String attribute) throws Exception{
-		if ( attribute == null || attribute.trim().isEmpty() ){
+		if ( attribute == null || attribute.trim().length() == 0 ){
 			throw new Exception("Atributo inválido");//"Invalid attribute");
 		}
 		if (!(attribute.equals("nome") || attribute.equals("descricao") || attribute.equals("categoria"))){
@@ -82,7 +82,7 @@ public class LendMeItemModule {
 	 * @throws Exception
 	 */
 	public  Collection<Lending> getLendingRecords(User sessionOwner, String kind) throws Exception{
-		if ( kind == null || kind.trim().isEmpty() ){
+		if ( kind == null || kind.trim().length() == 0 ){
 			throw new Exception("Tipo inválido");//"Invalid kind of lending");
 		}
 		if ( kind.equals("emprestador") ){
@@ -120,7 +120,7 @@ public class LendMeItemModule {
 	 */
 	public  String requestItem(Viewer viewer, String itemId, int requiredDays, Set<User> users) throws Exception {
 
-		if ( itemId == null || itemId.trim().isEmpty() ){
+		if ( itemId == null || itemId.trim().length() == 0 ){
 			throw new Exception("Identificador do item é invalido");//"Invalid item identifier");
 		}
 		try{
@@ -149,7 +149,7 @@ public class LendMeItemModule {
 	 * @throws Exception
 	 */
 	public User getItemOwner(String itemId, Set<User> users) throws Exception{
-		if ( itemId == null || itemId.trim().isEmpty() ){
+		if ( itemId == null || itemId.trim().length() == 0 ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}
 		for ( User user : users){
@@ -324,22 +324,22 @@ public class LendMeItemModule {
 		SearchAtribute atributeAux = SearchAtribute.DESCRICAO;
 		SearchCriteria criteriaAux = SearchCriteria.DATACRIACAO;
 		
-		if(key == null || key.trim().isEmpty()){
+		if(key == null || key.trim().length() == 0){
 			throw new Exception("Chave inválida");//"invalid key"
 		}
-		if(attribute == null || attribute.trim().isEmpty()){
+		if(attribute == null || attribute.trim().length() == 0){
 			throw new Exception("Atributo inválido");
 		}
 		if(!Arrays.toString(SearchAtribute.values()).toLowerCase().contains(attribute.toLowerCase())){
 			throw new Exception("Atributo inexistente");
 		}
-		if(disposal == null || disposal.trim().isEmpty()){
+		if(disposal == null || disposal.trim().length() == 0){
 			throw new Exception("Tipo inválido de ordenação");
 		}
 		if(!Arrays.toString(SearchDisposal.values()).toLowerCase().contains(disposal.toLowerCase())){
 			throw new Exception("Tipo de ordenação inexistente");
 		}
-		if(criteria == null || criteria.trim().isEmpty()){
+		if(criteria == null || criteria.trim().length() == 0){
 			throw new Exception("Critério inválido de ordenação");
 		}
 		if(!Arrays.toString(SearchCriteria.values()).toLowerCase().contains(criteria.toLowerCase())){
@@ -414,7 +414,7 @@ public class LendMeItemModule {
 	 * @throws Exception
 	 */
 	public  void registerInterestForItem(Viewer viewer, String itemId) throws Exception{
-		if ( itemId == null || itemId.trim().isEmpty() ){
+		if ( itemId == null || itemId.trim().length() == 0 ){
 			throw new Exception("Identificador do item é inválido");//"Invalid item identifier");
 		}
 		if ( viewer == null ){

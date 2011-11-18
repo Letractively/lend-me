@@ -36,14 +36,14 @@ public class Viewer {
 		if ( user.getAllItems() == null ){
 			throw new Exception("Itens do observado invÃ¡lidos");//"Invalid profile owner user items");
 		}
-		if ( user.getName() == null || user.getName().trim().isEmpty() ){
+		if ( user.getName() == null || user.getName().trim().length() == 0 ){
 			throw new Exception("Nome do observado invÃ¡lido");//"Invalid profile owner user name");
 		}
-		if ( user.getLogin() == null || user.getLogin().trim().isEmpty() ){
+		if ( user.getLogin() == null || user.getLogin().trim().length() == 0 ){
 			throw new Exception("Login do observado invÃ¡lido");//"Invalid profile owner user login");
 		}
 		if ( user.getAddress() == null || user.getAddress().getFullAddress() == null 
-				|| user.getAddress().getFullAddress().trim().isEmpty() ){
+				|| user.getAddress().getFullAddress().trim().length() == 0 ){
 			throw new Exception("EndereÃ§o do observado invÃ¡lido");//"Invalid profile owner user address");
 		}
 		

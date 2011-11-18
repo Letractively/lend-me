@@ -25,11 +25,11 @@ public class User implements InterestedOn<Item>{
 	 */
 	public User(String login, String name, String... address) throws Exception{
 		
-		if(login == null || login.trim().isEmpty()){
+		if(login == null || login.trim().length() == 0){
 			throw new Exception("Login inválido");//"Invalid login");
 		}
 		
-		if( name == null || name.trim().isEmpty()){
+		if( name == null || name.trim().length() == 0){
 			throw new Exception("Nome inválido");//"Invalid name");
 		}
 		

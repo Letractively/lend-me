@@ -1,6 +1,5 @@
 package com.lendme.server;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +22,7 @@ import com.lendme.server.entities.User;
 
 public class LendMeFacade {
 
-	private TimeMonitor time;
+//	private TimeMonitor time;
 	private LendMeRepository repository;
 	private LendMeItemModule itemModule;
 	private LendMeCommunicationModule  communicationModule; 
@@ -45,7 +44,7 @@ public class LendMeFacade {
 	 */
 	public void resetSystem(){
 		repository.resetRepository();
-		time = TimeMonitor.getInstance();
+//		time = TimeMonitor.getInstance();
 	}
 	
 	/**
@@ -67,7 +66,8 @@ public class LendMeFacade {
 	 * @return the system time
 	 */
 	public Date getSystemDate() {
-		return time.getTime();
+//		return time.getTime();
+		return null;
 	}
 	
 	/**
@@ -78,8 +78,9 @@ public class LendMeFacade {
 	 * @return the string representing the new system time
 	 */
 	public String someDaysPassed(int amount){
-		time.addTime(Calendar.DAY_OF_MONTH, amount+1);
-		return time.getTime().toString();
+//		time.addTime(Calendar.DAY_OF_MONTH, amount+1);
+//		return time.getTime().toString();
+		return null;
 	}
 	
 	/**
@@ -329,11 +330,11 @@ public class LendMeFacade {
 		try {
 			receiver = repository.getUserByLogin(receiverLogin);
 			sender = getAnotherProfile(senderProfile, receiverLogin).getObserver().getOwner();
-			if (message == null || message.trim().isEmpty()) {
+			if (message == null || message.trim().length() == 0) {
 				throw new Exception("Mensagem inválida");//"Invalid message");
 			}
 			
-			if (subject == null || subject.trim().isEmpty()) {
+			if (subject == null || subject.trim().length() == 0) {
 				throw new Exception("Assunto inválido");//"Invalid subject");
 			}
 			Lending lending = getLendingByLendingId(lendingId);
@@ -705,11 +706,12 @@ public class LendMeFacade {
 	}
 
 	public void closeSystem() {
-		time.stop();
+//		time.stop();
+		return;
 	}
 
 	public String getSessionInfo(String currentUserSessionId) {
-		if ( currentUserSessionId == null || currentUserSessionId.trim().isEmpty() ){
+		if ( currentUserSessionId == null || currentUserSessionId.trim().length() == 0 ){
 			return "Nenhum usuario logado - Data: "+getSystemDate();
 		}
 		StringBuilder info = new StringBuilder();
@@ -717,6 +719,14 @@ public class LendMeFacade {
 		info.append(" - ");
 		info.append("Data: "+getSystemDate());
 		return new String(info);
+	}
+
+	public String login() {
+		return repository.login();
+	}
+
+	public String authenticate(String token) {
+		return repository.authenticate(token);
 	}
 	
 }

@@ -779,5 +779,15 @@ public class LendMeImpl extends RemoteServiceServlet implements LendMe {
 	public String getSessionInfo(String currentUserSessionId) {
 		return lendMe.getSessionInfo(currentUserSessionId);
 	}
+
+	@Override
+	public String login() {
+		return lendMe.login();
+	}
+
+	@Override
+	public String authenticate(String token) {
+		return lendMe.authenticate(token);
+	}
 	
 }

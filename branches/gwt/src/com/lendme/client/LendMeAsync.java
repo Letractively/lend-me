@@ -143,4 +143,8 @@ public interface LendMeAsync {
 
 	void getSessionInfo(String currentUserSessionId,
 			AsyncCallback<String> callback);
+
+	void login(AsyncCallback<String> callback);
+
+	void authenticate(String token, AsyncCallback<String> callback);
 }

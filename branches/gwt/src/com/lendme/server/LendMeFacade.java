@@ -30,7 +30,7 @@ public class LendMeFacade {
 	private LendMeUserModule userModule;
 	
 	public LendMeFacade() {
-		time = TimeMonitor.getInstance();
+		//time = TimeMonitor.getInstance();
 		repository = LendMeRepository.getInstance();
 		userModule = new LendMeUserModule();
 		itemModule = new LendMeItemModule();

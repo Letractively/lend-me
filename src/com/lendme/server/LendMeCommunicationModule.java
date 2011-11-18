@@ -51,11 +51,11 @@ public class LendMeCommunicationModule {
 		if ( sender.equals(receiver.getLogin()) ){
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
 		}
-		if (message == null || message.trim().isEmpty()) {
+		if (message == null || message.trim().length() == 0) {
 			throw new Exception("Mensagem inválida");//"Invalid message");
 		}
 		
-		if (subject == null || subject.trim().isEmpty()) {
+		if (subject == null || subject.trim().length() == 0) {
 			throw new Exception("Assunto inválido");//"Invalid subject");
 		}		
 
@@ -86,11 +86,11 @@ public class LendMeCommunicationModule {
 		if ( sender.equals(receiver.getLogin()) ){
 			throw new Exception("Usuário não pode mandar mensagem para si mesmo");//"User cannot send messages to himself");
 		}
-		if (subject == null || subject.trim().isEmpty()) {
+		if (subject == null || subject.trim().length() == 0) {
 			throw new Exception("Assunto inválido");//"Invalid subject");
 		}
 		
-		if (message == null || message.trim().isEmpty()) {
+		if (message == null || message.trim().length() == 0) {
 			throw new Exception("Mensagem inválida");//"Invalid message");
 		}
 		
@@ -123,7 +123,7 @@ public class LendMeCommunicationModule {
 	 */
 	public  List<Message> getTopicMessages(User reader, String topicId, Set<User> searchScope)
 			throws Exception {
-		if (topicId == null || topicId.trim().isEmpty()) {
+		if (topicId == null || topicId.trim().length() == 0) {
 			throw new Exception("Identificador do tópico é inválido");
 			// "Invalid topic identifier");
 		}
@@ -140,10 +140,10 @@ public class LendMeCommunicationModule {
 	public void offerItem(User sessionOwner,
 			String requestPublicationId, String itemId, Set<User> allUsers) throws Exception{
 
-		if ( requestPublicationId == null || requestPublicationId.trim().isEmpty() ){
+		if ( requestPublicationId == null || requestPublicationId.trim().length() == 0 ){
 			throw new Exception("Identificador da publicação de pedido é inválido");
 		}
-		if ( itemId == null || itemId.trim().isEmpty() ){
+		if ( itemId == null || itemId.trim().length() == 0 ){
 			throw new Exception("Identificador do item é inválido");
 		}
 		

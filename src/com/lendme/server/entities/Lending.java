@@ -55,10 +55,10 @@ public class Lending implements Identifiable, Comparable<Lending> {
 	 * @throws Exception
 	 */
 	public Lending(User borrower, String desiredItemName, String desiredItemDescription) throws Exception{
-		if ( desiredItemName == null || desiredItemName.trim().isEmpty() ){
+		if ( desiredItemName == null || desiredItemName.trim().length() == 0 ){
 			throw new Exception("Nome inválido");
 		}
-		if ( desiredItemDescription == null || desiredItemDescription.trim().isEmpty() ){
+		if ( desiredItemDescription == null || desiredItemDescription.trim().length() == 0 ){
 			throw new Exception("Descrição inválida");
 		}
 		this.borrower = borrower;

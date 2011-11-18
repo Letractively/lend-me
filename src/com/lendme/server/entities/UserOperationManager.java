@@ -145,7 +145,7 @@ public class UserOperationManager {
 	 * @throws Exception
 	 */
 	public String approveLending(String requestId) throws Exception{
-		if ( requestId == null || requestId.trim().isEmpty() ){
+		if ( requestId == null || requestId.trim().length() == 0 ){
 			throw new Exception("Identificador da requisição de empréstimo é inválido");//"Lending request identifier invalid");
 		}
 		
@@ -193,7 +193,7 @@ public class UserOperationManager {
 	 * @throws Exception
 	 */
 	public String confirmLendingTermination(String lendingId) throws Exception{
-		if ( lendingId == null || lendingId.trim().isEmpty() ){
+		if ( lendingId == null || lendingId.trim().length() == 0 ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending identifier is invalid");
 		}
 		for ( Lending record : itemManager.getMyLentItems() ){
@@ -316,7 +316,7 @@ public class UserOperationManager {
 		if ( systemDate == null ){
 			throw new Exception("Data inválida");
 		}
-		if ( lendingId == null || lendingId.trim().isEmpty() ){
+		if ( lendingId == null || lendingId.trim().length() == 0 ){
 			throw new Exception("Identificador do empréstimo é inválido");//"Lending request identifier invalid");
 		}
 		for ( Lending record : itemManager.getLentRegistryHistory()){
@@ -509,7 +509,7 @@ public class UserOperationManager {
 		
 		Item toBeRemoved = null;
 		
-		if(itemId == null || itemId.trim().isEmpty()){
+		if(itemId == null || itemId.trim().length() == 0){
 			throw new Exception("Identificador do item é inválido");
 		}
 		

@@ -719,7 +719,7 @@ public class LendMeTextInterface {
 				if ( input.equals("voltar") ){
 					throw new Exception("Cancelado pelo usuário");
 				}
-				else if ( input.trim().isEmpty() ){
+				else if ( input.trim().length() == 0 ){
 					return " ";
 				}
 			}
@@ -737,7 +737,7 @@ public class LendMeTextInterface {
 		
 		scanner = new Scanner( System.in );
 		
-		if ( input.trim().isEmpty() ){
+		if ( input.trim().length() == 0 ){
 			System.out.println("\n \t <Voce deve inserir alguma entrada!>");
 			return false;
 		}
@@ -780,7 +780,7 @@ public class LendMeTextInterface {
 
 		String chosenString = scanner.nextLine(); 
 		
-		if (chosenString.isEmpty()){
+		if (chosenString.trim().length() == 0){
 			System.out.println("\n \t <Voce deve inserir alguma entrada!>\n");
 			return chooseOption(message, maximum);
 		}

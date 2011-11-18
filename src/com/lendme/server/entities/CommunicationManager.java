@@ -92,7 +92,7 @@ public class CommunicationManager {
 	}
 
 	private Topic getTopicById(Set<Topic> topicSet, String topicId) throws Exception{
-		if ( topicId == null || topicId.trim().isEmpty() ){
+		if ( topicId == null || topicId.trim().length() == 0 ){
 			throw new Exception("Identificador do tópico é inválido");
 		}
 		for (Topic topic : topicSet) {
@@ -121,7 +121,7 @@ public class CommunicationManager {
 	 */
 	public List<Topic> getTopics(String topicType) throws Exception {
 		
-		if (topicType == null || topicType.trim().isEmpty()) {
+		if (topicType == null || topicType.trim().length() == 0) {
 			throw new Exception("Tipo inválido");//"Invalid type");
 		}
 		
@@ -251,7 +251,7 @@ public class CommunicationManager {
 	 */
 	public String sendMessage(String subject, String message, User receiver,
 			String lendingId) throws Exception{
-		if ( lendingId == null || lendingId.trim().isEmpty()) {
+		if ( lendingId == null || lendingId.trim().length() == 0) {
 			throw new Exception("Identificador da requisição de empréstimo é inválido");// "Invalid lending identifier"); 
 		}
 		

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.lendme.client.LendMe;
 import com.lendme.server.entities.ActivityRegistry;
 import com.lendme.server.entities.Item;
@@ -15,7 +16,8 @@ import com.lendme.server.entities.Topic;
 import com.lendme.server.entities.User;
 import com.lendme.server.utils.UserDateComparatorStrategy;
 
-public class LendMeImpl implements LendMe {
+@SuppressWarnings("serial")
+public class LendMeImpl extends RemoteServiceServlet implements LendMe {
 	
 	private LendMeFacade lendMe = new LendMeFacade();
 	

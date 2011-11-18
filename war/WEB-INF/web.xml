@@ -6,6 +6,15 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
 
   <!-- Servlets -->
+  <servlet>
+    <servlet-name>facadeServlet</servlet-name>
+    <servlet-class>com.lendme.server.LendMeImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>facadeServlet</servlet-name>
+    <url-pattern>/lend_me/facade</url-pattern>
+  </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>

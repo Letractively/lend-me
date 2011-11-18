@@ -1,7 +1,9 @@
 package com.lendme.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+@RemoteServiceRelativePath("facade")
 public interface LendMe extends RemoteService{
 
 	public String openSession(String login) throws Exception;

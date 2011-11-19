@@ -7,8 +7,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
- * Displays links on the left siden on the HomeView page
- * @author ola
+ * Displays links on the left side on the HomeView page
  */
 public class HomeSideBarPanel extends Composite {
     
@@ -16,10 +15,11 @@ public class HomeSideBarPanel extends Composite {
     
     public HomeSideBarPanel () {
         linkPanel.getElement().setId("SideBarPanel");
-        linkPanel.add ( new HTML ( "<h3>Methods</h3>" ) );
-        linkPanel.add( new Hyperlink ( "Stream Publish", "example/stream.publish" ) );
-        linkPanel.add ( new Hyperlink ( "Friends", "example/friends" ) );
-        linkPanel.add ( new Hyperlink ( "FqlQuery", "example/fql.query" ));
+        linkPanel.add ( new HTML ( "<h3>Opcoes</h3>" ) );
+        linkPanel.add( new Hyperlink( "Amigos", "options/friends"));
+        linkPanel.add( new Hyperlink( "Items", "options/items"));
+        linkPanel.add( new Hyperlink( "Mensagens", "options/messages"));
+        linkPanel.add( new Hyperlink( "Historico", "options/history"));
         initWidget ( linkPanel );
     }
 

@@ -12,5 +12,7 @@ public interface AppImageBundle extends ClientBundle {
     @Source ( "logo.png" )
     ImageResource logo ();
     
+    @Source ( "topMenu.png" )
+    ImageResource topMenu();
 
 }

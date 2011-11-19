@@ -22,6 +22,7 @@ public final class LendMeRepository {
 		if (repository == null) {
 			repository = new LendMeRepository();
 		}
+		
 		return repository;
 	}
 	

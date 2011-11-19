@@ -720,5 +720,17 @@ public class LendMeFacade {
 		info.append("Data: "+getSystemDate());
 		return new String(info);
 	}
+	
+	public String peformBasicUserOperationsSet() throws Exception {
+		repository.registerUser("admin","Administrador do Sistema", "Rua Montevideo", "33", "Monte Santo", "CG",
+				"PB", "BR", "58102000");
+		
+		String firstUserSessionId = repository.openSession("admin");
+		repository.registerItem(firstUserSessionId, "Coisa", "Esse é o meu primeiro item", "coisa");
+		
+		return firstUserSessionId;
+		
+		
+	}
 
 }

@@ -144,4 +144,5 @@ public interface LendMeAsync {
 	void getSessionInfo(String currentUserSessionId,
 			AsyncCallback<String> callback);
 
+	void LogInWithAdminUser(AsyncCallback<String> callback);
 }

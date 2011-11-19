@@ -7,6 +7,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -29,11 +30,15 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 
 	private FBCore fbCore = GWT.create(FBCore.class);
 	private FBEvent fbEvent = GWT.create(FBEvent.class);
-
+	private LendMeAsync lendMeService = GWT.create(LendMe.class);
+	
 	private boolean status = true;
 	private boolean xfbml = true;
 	private boolean cookie = true;
-
+	
+	// The sessionId which will be generated when the user logs in
+	private String currentSessionId = "";
+	
 	/**
 	 * This is the entry point method.
 	 */
@@ -61,6 +66,18 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 		class SessionChangeCallback extends Callback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
 				// Make sure cookie is set so we can use the non async method
+				lendMeService.LogInWithAdminUser(new AsyncCallback<String>() {
+					
+					@Override
+					public void onSuccess(String result) {
+						currentSessionId = result;
+					}
+					
+					public void onFailure(Throwable caught) {
+						currentSessionId = "";
+						//TODO Show error message
+					}
+				});
 				renderHomeView ();
 			}
 		}

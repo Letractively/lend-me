@@ -5,7 +5,7 @@
          version="2.5"
          xmlns="http://java.sun.com/xml/ns/javaee">  
   
-    <!-- Servlets 
+<!-- Servlets -->
   <servlet>
     <servlet-name>facadeServlet</servlet-name>
     <servlet-class>com.lendme.server.LendMeImpl</servlet-class>
@@ -13,9 +13,8 @@
   
   <servlet-mapping>
     <servlet-name>facadeServlet</servlet-name>
-    <url-pattern>/lend_me_gwtfb/facade</url-pattern>
+    <url-pattern>/gwtfb/facade</url-pattern>
   </servlet-mapping>
-  -->
   
   <!-- Default page to serve -->
   <welcome-file-list>

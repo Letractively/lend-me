@@ -1,5 +1,7 @@
 package com.lendme.client;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -28,9 +30,9 @@ public interface LendMe extends RemoteService{
 	
 	public String[] getFriendshipRequests(String solicitorSession) throws Exception;
 	
-	public String[] getFriends(String solicitorSession)	throws Exception;
+	public Map<String, String[]> getFriends(String solicitorSession) throws Exception;
 	
-	public String[] getFriends(String solicitorSession, String solicitedLogin) throws Exception;
+	public Map<String, String[]> getFriends(String solicitorSession, String solicitedLogin) throws Exception;
 	
 	public boolean hasFriend(String solicitorSession, String solicitedLogin) throws Exception;
 	

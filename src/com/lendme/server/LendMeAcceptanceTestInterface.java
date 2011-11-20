@@ -1,5 +1,7 @@
 package com.lendme.server;
 
+import java.util.Map;
+
 
 public class LendMeAcceptanceTestInterface {
 	
@@ -158,11 +160,11 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String getAmigos(String idSessao) throws Exception{
 
-		String[] resultado = system.getFriends(idSessao);
-		if ( resultado.length == 0 ){
+		Map<String, String[]> resultado = system.getFriends(idSessao);
+		if ( resultado.isEmpty() ){
 			return "O usuário não possui amigos";
 		}
-		return formatarASaida(resultado);
+		return formatarASaida((String[])resultado.keySet().toArray());
 	}
 	
 	
@@ -175,11 +177,11 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String getAmigos(String idSessao, String login) throws Exception{
 
-		String[] resultado = system.getFriends(idSessao, login);
-		if ( resultado.length == 0 ){
+		Map<String, String[]> resultado = system.getFriends(idSessao, login);
+		if ( resultado.isEmpty() ){
 			return "O usuário não possui amigos";
 		}
-		return formatarASaida(resultado);
+		return formatarASaida((String[])resultado.keySet().toArray());
 	}
 	
 	

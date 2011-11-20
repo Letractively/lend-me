@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.lendme.client.LendMe;
@@ -205,40 +207,64 @@ public class LendMeImpl extends RemoteServiceServlet implements LendMe {
 		return handled;
 	}
 
-   /** Handles with results from search in System, transforming them in a string array
-	 * @param solicitorSession the id of the session of the solicitor user
-	 * @return an array of strings containing the results logins
-	 * @see com.lendme.LendMeFacade#getFriends(String)
-	 */
-	public String[] getFriends(String solicitorSession)
-		throws Exception{
+	 /** Handles with results from search in System, transforming them in a string array
+		 * @param solicitorSession the id of the session of the solicitor user
+		 * @return an array of strings containing the results logins
+		 * @see com.lendme.LendMeFacade#getFriends(String)
+		 */
+		public Map<String, String[]> getFriends(String solicitorSession)
+			throws Exception{
 
-		List<User> results = new ArrayList<User>(lendMe.getFriends(solicitorSession));
-		Collections.sort(results,  new UserDateComparatorStrategy());
-		String[] handled = new String[results.size()];
-		Iterator<User> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getLogin();
+			Map<String, String[]> mapFriends = new TreeMap<String, String[]>();
+			List<User> results = new ArrayList<User>(lendMe.getFriends(solicitorSession));
+			Collections.sort(results,  new UserDateComparatorStrategy());
+			Iterator<User> iterator = results.iterator();
+			String[] atributtes;
+
+			while(iterator.hasNext()){
+				
+				User next = iterator.next();
+				
+				atributtes = new String[3];
+				atributtes[0] = next.getName();
+				atributtes[1] = Integer.toString(next.getScore());
+				atributtes[2] = next.getAddress().getFullAddress();
+							
+				mapFriends.put(next.getLogin(), atributtes);
+			}
+			
+			return mapFriends;
 		}
-		return handled;
-	}
 	
    /** Handles with results from search in System, transforming them in a string array
 	 * @param solicitorSession the id of the session of the solicitor user
 	 * @return an array of strings containing the results logins
 	 * @see com.lendme.LendMeFacade#getFriends(String)
 	 */
-	public String[] getFriends(String solicitorSession, String solicitedLogin)
+	public Map<String, String[]> getFriends(String solicitorSession, String solicitedLogin)
 		throws Exception{
 
+		Map<String, String[]> mapFriends = new TreeMap<String, String[]>();
 		List<User> results = new ArrayList<User>(lendMe.getFriends(solicitorSession, solicitedLogin));
 		Collections.sort(results,  new UserDateComparatorStrategy());
-		String[] handled = new String[results.size()];
+		
 		Iterator<User> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getLogin();
+		String[] atributtes;
+		
+		while(iterator.hasNext()){
+
+			User next = iterator.next();
+			
+			atributtes = new String[3];
+			atributtes[0] = next.getName();
+			atributtes[1] = Integer.toString(next.getScore());
+			atributtes[2] = next.getAddress().getFullAddress();
+						
+			mapFriends.put(next.getLogin(), atributtes);
+			
 		}
-		return handled;
+		
+		return mapFriends;
 	}
 	
 	/**

@@ -578,7 +578,7 @@ public class LendMeTextInterface {
 	
 	private static void breakFriendship() throws Exception {
 		System.out.println(listObjectsInArray("Amigos atuais", 
-				lendMeAdapter.getFriends(currentUserSessionId)));
+				lendMeAdapter.getFriends(currentUserSessionId).keySet().toArray()));
 		
 		lendMeAdapter.breakFriendship(currentUserSessionId, returnCorrectString(
 				"\n \tInforme o login do usuário: "));

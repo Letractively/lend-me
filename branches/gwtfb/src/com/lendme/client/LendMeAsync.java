@@ -1,5 +1,7 @@
 package com.lendme.client;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface LendMeAsync {
@@ -35,10 +37,10 @@ public interface LendMeAsync {
 	void getFriendshipRequests(String solicitorSession,
 			AsyncCallback<String[]> callback);
 
-	void getFriends(String solicitorSession, AsyncCallback<String[]> callback);
+	void getFriends(String solicitorSession, AsyncCallback<Map<String, String[]>> callback);
 
 	void getFriends(String solicitorSession, String solicitedLogin,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String, String[]>> callback);
 
 	void hasFriend(String solicitorSession, String solicitedLogin,
 			AsyncCallback<Boolean> callback);

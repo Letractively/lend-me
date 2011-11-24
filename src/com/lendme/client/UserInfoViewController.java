@@ -26,7 +26,7 @@ public class UserInfoViewController extends Composite {
 	 */
 	private void renderMe ( JavaScriptObject response ) {
 		JSOModel jso = response.cast();
-		welcomeHtml.setHTML ( "<h3> Ola,  " + jso.get ( "name" ) + "</h3>! Finque sua bandeira o quanto antes!"  );
+		welcomeHtml.setHTML ( "<h3> Ola,  " + jso.get ( "name" ) + "</h3>! Voce estah logado! LendMe ainda esta sendo desenvolvido."  );
 	}
 
 	/**

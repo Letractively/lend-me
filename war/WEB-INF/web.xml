@@ -18,12 +18,12 @@
   
   <servlet-mapping>
     <servlet-name>facadeServlet</servlet-name>
-    <url-pattern>/gwtfb/facade</url-pattern>
+    <url-pattern>/lendme/facade</url-pattern>
   </servlet-mapping>
   
   <servlet-mapping>
   	<servlet-name>fbUserInfoReader</servlet-name>
-  	<url-pattern>/gwtfb/fbreader/*</url-pattern>
+  	<url-pattern>/lendme/fbreader/*</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

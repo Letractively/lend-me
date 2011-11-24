@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class UserViwer extends AbsolutePanel{
+public class UserViewer extends AbsolutePanel{
 	
 	private final LendMeAsync lendme = GWT.create(LendMe.class);
 	private final String defaultImage = "http://icons.iconarchive.com/icons/fasticon/fast-icon-users/128/user-icon.png";
@@ -21,7 +21,7 @@ public class UserViwer extends AbsolutePanel{
 	private int lastX = 30;
 	private int lastY = 50;
 	
-	public UserViwer() {
+	public UserViewer(String solicitorSession) {
 				
 		scrollPanel = new ScrollPanel();
 		this.add(scrollPanel, 10, 28);
@@ -42,8 +42,6 @@ public class UserViwer extends AbsolutePanel{
 		errorLabel.setStyleName("alert");
 		absolutePanel.add(errorLabel, 3, 0);
 		errorLabel.setVisible(false);
-		
-		String solicitorSession = "12345";//Numero louco de sessao!
 		
 		lendme.getFriends(solicitorSession, new AsyncCallback<Map<String,String[]>>() {
 			

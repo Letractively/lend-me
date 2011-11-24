@@ -30,9 +30,6 @@ public class LendMeUsersRepresentation extends PopupPanel {
 	private final Label addressLabel;
 	private final Label reputationLabel;
 	
-	/**
-	 * @wbp.parser.constructor
-	 */
 	public LendMeUsersRepresentation() {
 		super(true);
 		
@@ -103,18 +100,11 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		focusPanel.setSize("230px", "113px");
 		
 	}
-	/**
-	 * The constructor exists for facilit the manipulation os representations.
-	 * @param imgPath
-	 * @param login
-	 * @param name
-	 * @param address
-	 * @param reputation
-	 */
+
 	public LendMeUsersRepresentation(String imgPath, String login, String name, String address, String reputation){
 		this();
 		
-		setuserInfo(imgPath, login, name, address, reputation);
+		setUserInfo(imgPath, login, name, address, reputation);
 		
 		if(userInfo[LOGIN].length() >= 21) loginLabel.setText(userInfo[LOGIN].substring(0, 16)+"...");
 		else loginLabel.setText(userInfo[LOGIN]);
@@ -134,7 +124,7 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		
 	}
 	
-	public void setuserInfo(String imgPath, String login, String name, String address, String reputation){
+	public void setUserInfo(String imgPath, String login, String name, String address, String reputation){
 		
 		userInfo[IMG_PATH] = imgPath;
 		userInfo[LOGIN] = login;

@@ -23,11 +23,11 @@ public class LinksPanel extends Composite {
 		sourceCodeLink.setTarget("blank");
 
 		leftSide.add ( new Hyperlink ( "Home" , "home" ) );
-		leftSide.add ( new Anchor("Facebook", true, "http://www.facebook.com/apps/application.php?id=246859665375002&sk=app_246859665375002"));
+		leftSide.add ( new Anchor("Facebook", true, "http://www.facebook.com/apps/application.php?id="+ApplicationConstants.APP_ID+"&sk="+ApplicationConstants.APP_ID));
 		leftSide.add( sourceCodeLink );
 		links.add( leftSide, DockPanel.WEST );
 
-		logoutSide.add(	new HTML("<div style='text-align: center;'> <fb:login-button autologoutlink='true' scope='read_stream' /> </div>" ));
+		logoutSide.add(	new HTML("<div style='text-align: center;'> <fb:login-button autologoutlink='true' /> </div>" ));
 		links.add(logoutSide, DockPanel.EAST);
 		initWidget ( links );
 	}

@@ -11,9 +11,19 @@
     <servlet-class>com.lendme.server.LendMeImpl</servlet-class>
   </servlet>
   
+  <servlet>
+  	<servlet-name>fbUserInfoReader</servlet-name>
+  	<servlet-class>com.lendme.server.servlets.FBUserInfoReader</servlet-class>
+  </servlet>
+  
   <servlet-mapping>
     <servlet-name>facadeServlet</servlet-name>
     <url-pattern>/gwtfb/facade</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>fbUserInfoReader</servlet-name>
+  	<url-pattern>/gwtfb/fbreader/*</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

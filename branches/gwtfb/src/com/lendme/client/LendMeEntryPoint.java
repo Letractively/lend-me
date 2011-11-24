@@ -18,10 +18,7 @@ import com.lendme.fbsdk.FBCore;
 import com.lendme.fbsdk.FBEvent;
 import com.lendme.fbsdk.FBXfbml;
 
-public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
-
-	public static String APPID = "246859665375002";
-	public static String SECRET = "5c2b3a54bf76700d23c1bbc532ba4bc0";
+public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String>  {
 
 	private DockPanel mainPanel = new DockPanel ();
 	private SimplePanel mainView = new SimplePanel ();
@@ -38,7 +35,7 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 
 	// The sessionId which will be generated when the user logs in
 	private String currentSessionId = "";
-	private String accessToken = "";
+//	private String accessToken = "";
 
 	/**
 	 * This is the entry point method.
@@ -47,7 +44,7 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 
 		History.addValueChangeHandler ( this );
 
-		accessToken = fbCore.init(APPID, SECRET, status, cookie, xfbml).replace("access_token=", "");
+		fbCore.init(ApplicationConstants.APP_ID, ApplicationConstants.APP_SECRET, status, cookie, xfbml).replace("access_token=", "");
 
 		RootPanel root = RootPanel.get();
 		root.getElement().setId ( "TheApp" );
@@ -128,7 +125,7 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 			}
 
 			if ( option.startsWith("friends") ){
-				mainView.setWidget(new TemporaryWidget("AMIGOS"));
+				mainView.setWidget(new UserViewer(currentSessionId));
 				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
 			}
 			else if ( option.startsWith("items") ){
@@ -166,7 +163,7 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 	 * Render GUI when not logged in
 	 */
 	private void renderWhenNotLoggedIn () {
-		mainView.setWidget ( new FrontpageViewController (APPID) );
+		mainView.setWidget ( new FrontpageViewController (ApplicationConstants.APP_ID) );
 		topLinksPanel.setLogoutButtonVisible(false);
 		FBXfbml.parse();
 	}
@@ -189,7 +186,7 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 	private void renderRegistrationView() {
 		leftSideBarView.clear();
 
-		mainView.setWidget ( new RegistrationViewController (APPID) );
+		mainView.setWidget ( new RegistrationViewController() );
 		topLinksPanel.setLogoutButtonVisible(false);
 		FBXfbml.parse();
 	}

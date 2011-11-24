@@ -68,6 +68,19 @@ public final class LendMeRepository {
 		}
 	}
 	
+	public String openSession(String login, String name, String address) throws Exception {
+		if (userExists(login)) {
+			Session session = new Session(getUserByLogin(login));
+			sessions.add(session);
+			return session.getId();
+		} else {
+			registerUser(login, name, address);
+			Session session = new Session(getUserByLogin(login));
+			sessions.add(session);
+			return session.getId();
+		}
+	}
+	
 	/**
 	 * Closes the specified session.
 	 * 

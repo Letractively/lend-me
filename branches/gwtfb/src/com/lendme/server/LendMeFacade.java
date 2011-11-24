@@ -52,11 +52,16 @@ public class LendMeFacade {
 	 * 
 	 * <i>This method belongs to the public system interface </i>
 	 * @param login the user login
+	 * @param name 
 	 * @return the session id
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
 	public String openSession(String login) throws Exception {
 		return repository.openSession(login);
+	}
+	
+	public String openSession(String login, String name, String address) throws Exception {
+		return repository.openSession(login, name, address);
 	}
 	
 	/**
@@ -710,27 +715,18 @@ public class LendMeFacade {
 		return;
 	}
 
-	public String getSessionInfo(String currentUserSessionId) {
+	public String getSessionInfo(String currentUserSessionId) throws Exception {
 		if ( currentUserSessionId == null || currentUserSessionId.trim().length() == 0 ){
 			return "Nenhum usuario logado - Data: "+getSystemDate();
 		}
 		StringBuilder info = new StringBuilder();
-		info.append("Login: "+repository.getUserBySessionId(currentUserSessionId).getLogin());
-		info.append(" - ");
-		info.append("Data: "+getSystemDate());
+		String login = repository.getUserBySessionId(currentUserSessionId).getLogin();
+		info.append("Login: "+login);
+		info.append("\nNome: "+repository.getUserAttribute(login, "nome"));
+		info.append("\nEndereco: "+repository.getUserAttribute(login, "endereco"));
+		info.append("\n - ");
+		info.append("\nData: "+getSystemDate());
 		return new String(info);
 	}
 	
-	public String peformBasicUserOperationsSet() throws Exception {
-		repository.registerUser("admin","Administrador do Sistema", "Rua Montevideo", "33", "Monte Santo", "CG",
-				"PB", "BR", "58102000");
-		
-		String firstUserSessionId = repository.openSession("admin");
-		repository.registerItem(firstUserSessionId, "Coisa", "Esse é o meu primeiro item", "coisa");
-		
-		return firstUserSessionId;
-		
-		
-	}
-
 }

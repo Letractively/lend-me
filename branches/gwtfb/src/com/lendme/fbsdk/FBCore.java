@@ -6,7 +6,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * Class that wraps facebook Javascript SDK
  * 
- * @author ola the wrapper
  */
 public class FBCore {
 
@@ -14,15 +13,50 @@ public class FBCore {
 	 * Wrapper method
 	 * @see http://developers.facebook.com/docs/reference/javascript/FB.init
 	 */
-	public native void init (String appId, boolean status, boolean cookie, boolean xfbml) /*-{
+	public native String init (String appId, String appSecret, boolean status, boolean cookie, boolean xfbml) /*-{
 		$wnd.FB.init({
 			'appId': appId, 
 			'status': status,
 			'cookie': cookie,
-			'xfbml' : xfbml
+			'xfbml' : xfbml,
+			'oauth' : true
 		});
+
+		function httpGet(theUrl){
+    		var xmlHttp = null;
+
+   			xmlHttp = new XMLHttpRequest();
+   			xmlHttp.open( "GET", theUrl, false );
+   			xmlHttp.send( null );
+   			return xmlHttp.responseText;
+    	}
+		return httpGet("https://graph.facebook.com/oauth/access_token?client_id="+appId+"&client_secret="+appSecret+"&grant_type=client_credentials");
 	}-*/;
 	
+	public String oauthRequest ( String path, String accessToken){
+		if ( path == null || path.trim().isEmpty() ){
+			return "";
+		}
+		else if ( accessToken == null || accessToken.trim().isEmpty() ){
+			return oauthRequest("https://graph.facebook.com/"+path);
+		}
+		else{
+			return oauthRequest("https://graph.facebook.com/"+path+"&access_token="+accessToken);
+		}
+	}
+	
+	private native String oauthRequest( String request )/*-{
+		
+		function httpGet(theUrl){
+    		var xmlHttp = null;
+
+   			xmlHttp = new XMLHttpRequest();
+   			xmlHttp.open( "GET", theUrl, false );
+   			xmlHttp.send( null );
+   			return xmlHttp.responseText;
+    	}
+		return httpGet(request);
+	}-*/;
 	
 	/**
 	 * Wrapper method
@@ -63,16 +97,6 @@ public class FBCore {
 	
 
 	/**
-	 * Wrapper method for the OLD REST API
-	 */
-	public native void api (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{
-    	var app=this;
-    	$wnd.FB.api(params,function(response){
-        	app.@com.lendme.fbsdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
-    	});
-	}-*/; 
-	
-	/**
 	 * Wrapper method
 	 */
 	public native void getLoginStatus (AsyncCallback<JavaScriptObject> callback) /*-{
@@ -87,7 +111,7 @@ public class FBCore {
 	 * Wrapper method
 	 */
 	public native JavaScriptObject getSession () /*-{
-		return $wnd.FB.getSession();
+		return $wnd.FB.getAuthResponse();
 	}-*/;
 
 	/**

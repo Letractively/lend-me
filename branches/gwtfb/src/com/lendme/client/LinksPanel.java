@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class BottonLinksPanel extends Composite {
+public class LinksPanel extends Composite {
 
 	private DockPanel links = new DockPanel ();
 	private HorizontalPanel leftSide = new HorizontalPanel ();
@@ -16,7 +16,7 @@ public class BottonLinksPanel extends Composite {
 
 	Anchor sourceCodeLink = new Anchor ( "Source" );
 
-	public BottonLinksPanel(){
+	public LinksPanel(){
 		links.getElement().setId("TopMenuLinks");
 
 		sourceCodeLink.setHref("http://code.google.com/p/lend-me/");
@@ -27,7 +27,7 @@ public class BottonLinksPanel extends Composite {
 		leftSide.add( sourceCodeLink );
 		links.add( leftSide, DockPanel.WEST );
 
-		logoutSide.add(	new HTML("<div style='text-align: center;'> <fb:login-button autologoutlink='true' /> </div>" ));//perms='publish_stream,read_stream' /> " ) );
+		logoutSide.add(	new HTML("<div style='text-align: center;'> <fb:login-button autologoutlink='true' scope='read_stream' /> </div>" ));
 		links.add(logoutSide, DockPanel.EAST);
 		initWidget ( links );
 	}

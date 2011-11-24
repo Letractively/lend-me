@@ -5,7 +5,6 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Class that wraps xfbml methods 
  * @see http://developers.facebook.com/docs/reference/javascript/#xfbml-methods
- * @author ola the wrapper
  */
 public class FBXfbml {
 

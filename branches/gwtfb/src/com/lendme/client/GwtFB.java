@@ -26,19 +26,20 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 	private DockPanel mainPanel = new DockPanel ();
 	private SimplePanel mainView = new SimplePanel ();
 	private SimplePanel leftSideBarView = new SimplePanel ();
-	private BottonLinksPanel bottonLinksPanel;
+	private LinksPanel topLinksPanel;
 
 	private FBCore fbCore = GWT.create(FBCore.class);
 	private FBEvent fbEvent = GWT.create(FBEvent.class);
 	private LendMeAsync lendMeService = GWT.create(LendMe.class);
-	
+
 	private boolean status = true;
 	private boolean xfbml = true;
 	private boolean cookie = true;
-	
+
 	// The sessionId which will be generated when the user logs in
 	private String currentSessionId = "";
-	
+	private String accessToken = "";
+
 	/**
 	 * This is the entry point method.
 	 */
@@ -46,19 +47,18 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 
 		History.addValueChangeHandler ( this );
 
-		fbCore.init(APPID, status, cookie, xfbml);
+		accessToken = fbCore.init(APPID, SECRET, status, cookie, xfbml).replace("access_token=", "");
 
 		RootPanel root = RootPanel.get();
 		root.getElement().setId ( "TheApp" );
 		mainView.getElement().setId("MainView");
 		leftSideBarView.getElement().setId("SideBarView");
 		mainPanel.add( new TopMenuPanel () , DockPanel.NORTH );
+		topLinksPanel = new LinksPanel();
+		mainPanel.add ( topLinksPanel, DockPanel.NORTH );
 		mainPanel.add( leftSideBarView, DockPanel.WEST );
 		mainPanel.add( mainView, DockPanel.CENTER );
-		bottonLinksPanel = new BottonLinksPanel();
-		mainPanel.add ( bottonLinksPanel, DockPanel.SOUTH );
 		root.add ( mainPanel );
-
 
 		//
 		// Callback used when session status is changed
@@ -66,18 +66,7 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 		class SessionChangeCallback extends Callback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
 				// Make sure cookie is set so we can use the non async method
-				lendMeService.LogInWithAdminUser(new AsyncCallback<String>() {
-					
-					@Override
-					public void onSuccess(String result) {
-						currentSessionId = result;
-					}
-					
-					public void onFailure(Throwable caught) {
-						currentSessionId = "";
-						//TODO Show error message
-					}
-				});
+				sessionChangedServerActions();
 				renderHomeView ();
 			}
 		}
@@ -86,13 +75,15 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 		// Get notified when user session is changed
 		//
 		SessionChangeCallback sessionChangeCallback = new SessionChangeCallback ();
-		fbEvent.subscribe("auth.sessionChange",sessionChangeCallback);
+		fbEvent.subscribe("auth.authResponseChange",sessionChangeCallback);
 
 		// Callback used when checking login status
 		class LoginStatusCallback extends Callback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
+				sessionChangedServerActions();
 				renderApp( Window.Location.getHash() );
 			}
+
 		}
 		LoginStatusCallback loginStatusCallback = new LoginStatusCallback ();
 
@@ -117,14 +108,17 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 		if ( token.endsWith("home") ) {
 			renderHomeView ();
 		}
+		else if ( token.contains("registration") ){
+			renderRegistrationView();
+		}
 		else if ( token.startsWith("options" ) ) {
 
 			String option = token.split("/")[1];
 
 			class TemporaryWidget extends Composite{
-				
+
 				VerticalPanel list = new VerticalPanel();
-				
+
 				public TemporaryWidget(String kind){
 					for ( int i=1; i<=10; i++ ){
 						list.add(new Hyperlink("List of " + kind + " pos. "+i, ""));
@@ -132,30 +126,30 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 					initWidget(list);
 				}
 			}
-			
+
 			if ( option.startsWith("friends") ){
 				mainView.setWidget(new TemporaryWidget("AMIGOS"));
-//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
+				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
 			}
 			else if ( option.startsWith("items") ){
 				mainView.setWidget(new TemporaryWidget("ITENS"));
-//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE ITEMS> );				
+				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE ITEMS> );				
 			}
 			else if ( option.startsWith("messages") ){
 				mainView.setWidget(new TemporaryWidget("MENSAGENS"));
-//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE MENSAGENS> );				
+				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE MENSAGENS> );				
 			}
 			else if ( option.startsWith("history") ){
 				mainView.setWidget(new TemporaryWidget("HISTORICO"));
-//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE HISTORICO> );				
+				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE HISTORICO> );				
 			}
 			else {
-				Window.alert ( "Unknown  url "  + token );
+				Window.alert ( "Unknown url ["  + token + " ]");
 			}
 
 		}
 		else {
-			Window.alert ( "Unknown  url "  + token );
+			Window.alert ( "Unknown url ["  + token + "]");
 		}
 	}
 
@@ -164,7 +158,7 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 	 */
 	private void renderWhenLoggedIn () {
 		mainView.setWidget ( new UserInfoViewController ( fbCore ) );
-		bottonLinksPanel.setLogoutButtonVisible(true);
+		topLinksPanel.setLogoutButtonVisible(true);
 		FBXfbml.parse();
 	}
 
@@ -172,8 +166,8 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 	 * Render GUI when not logged in
 	 */
 	private void renderWhenNotLoggedIn () {
-		mainView.setWidget ( new FrontpageViewController () );
-		bottonLinksPanel.setLogoutButtonVisible(false);
+		mainView.setWidget ( new FrontpageViewController (APPID) );
+		topLinksPanel.setLogoutButtonVisible(false);
 		FBXfbml.parse();
 	}
 
@@ -192,8 +186,79 @@ public class GwtFB implements EntryPoint, ValueChangeHandler<String>  {
 		}
 	}
 
+	private void renderRegistrationView() {
+		leftSideBarView.clear();
+
+		mainView.setWidget ( new RegistrationViewController (APPID) );
+		topLinksPanel.setLogoutButtonVisible(false);
+		FBXfbml.parse();
+	}
+
 	public void onValueChange(ValueChangeEvent<String> event) {
 		renderApp ( event.getValue() );
+	}
+
+	/**
+	 * Above goes methods that communicate with server
+	 */
+	public void sessionChangedServerActions(){
+
+		if ( fbCore.getSession() == null ){
+			if ( !currentSessionId.trim().isEmpty() ){
+
+				lendMeService.closeSession(currentSessionId, new AsyncCallback<Void>(){
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Problem when closing session ["+currentSessionId+"]: "+caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						Window.alert("Session ["+currentSessionId+"] closed properly. ");
+						currentSessionId = "";
+					}
+
+				});
+			}
+		}
+		else {
+			if ( currentSessionId.trim().isEmpty() ){
+				
+				lendMeService.openSession("id", "name", "address", new AsyncCallback<String>(){
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Failed to open new session for logged fb user: "+caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(String result) {
+						Window.alert("User logged properly with session ["+result+"].");
+						currentSessionId = result;
+
+						lendMeService.getSessionInfo(currentSessionId, new AsyncCallback<String>(){
+
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert("Problems getting logged user session information: "+caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(String result) {
+								Window.alert("Logged user session info:\n\n"+result);
+							}
+
+						});
+					}
+
+				});
+
+			}
+
+
+		}
+
 	}
 
 }

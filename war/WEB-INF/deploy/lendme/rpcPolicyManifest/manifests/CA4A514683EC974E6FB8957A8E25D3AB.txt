@@ -1,0 +1,2 @@
+serviceClass: com.lendme.client.LendMe
+path: 19956E37A021EAEDE33243ED3CFB56BD.gwt.rpc

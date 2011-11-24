@@ -57,7 +57,7 @@ public class LendMeTextInterface {
 	private static final int READ_MESSAGES = 4;
 	private static final int GO_BACK_MESSAGES_TOOLS = 5;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		try {
 			//TODO Take this admin registration out. It is here just for testing the text interface.
 			lendMeAdapter.registerUser("admin","Administrador do Sistema", "Rua Montevideo", "33", "Monte Santo", "CG",
@@ -746,7 +746,7 @@ public class LendMeTextInterface {
 		return true;
 	}
 		
-	private static String logo() {
+	private static String logo() throws Exception{
 		String logo =
 			     "\t  _       _ _ _   __     _    _ _ _        _       _   _ _ _  " +
 			   "\n\t | |     | |_|_| |  |   | |  |     |      | |     | | | |_|_|" +

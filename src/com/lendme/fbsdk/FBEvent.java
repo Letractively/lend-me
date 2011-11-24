@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * Class that wraps Facebook Event Handling methods
  * @see http://developers.facebook.com/docs/reference/javascript/#event-handling
- * @author ola the wrapper
  */
 public class FBEvent {
 	

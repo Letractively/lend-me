@@ -6,7 +6,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface LendMeAsync {
 
-	void openSession(String login, AsyncCallback<String> callback);
+	void openSession(String login, String name, String address,
+			AsyncCallback<String> callback);
 
 	void closeSession(String sessionId, AsyncCallback<Void> callback);
 
@@ -146,5 +147,6 @@ public interface LendMeAsync {
 	void getSessionInfo(String currentUserSessionId,
 			AsyncCallback<String> callback);
 
-	void LogInWithAdminUser(AsyncCallback<String> callback);
+	void fetchURLAndRetrieveSignedRequestContent(String appId,
+			AsyncCallback<String> callback);
 }

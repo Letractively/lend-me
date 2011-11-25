@@ -35,7 +35,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 	// The sessionId which will be generated when the user logs in
 	private String currentSessionId = "";
-//	private String accessToken = "";
 
 	/**
 	 * This is the entry point method.
@@ -44,7 +43,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 		History.addValueChangeHandler ( this );
 
-		fbCore.init(ApplicationConstants.APP_ID, ApplicationConstants.APP_SECRET, status, cookie, xfbml).replace("access_token=", "");
+		fbCore.init(ApplicationConstants.APP_ID, ApplicationConstants.APP_SECRET, status, cookie, xfbml);
 
 		RootPanel root = RootPanel.get();
 		root.getElement().setId ( "TheApp" );
@@ -125,7 +124,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 			}
 
 			if ( option.startsWith("friends") ){
-				mainView.setWidget(new UserViewer(currentSessionId));
+				mainView.setWidget(new UserViewer(lendMeService, currentSessionId));
 				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
 			}
 			else if ( option.startsWith("items") ){
@@ -222,33 +221,48 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		else {
 			if ( currentSessionId.trim().isEmpty() ){
 				
-				lendMeService.openSession("id", "name", "address", new AsyncCallback<String>(){
+				fbCore.api("/me", new AsyncCallback<JavaScriptObject>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert("Failed to open new session for logged fb user: "+caught.getMessage());
+						Window.alert("Failed to retrieve session user info: "+caught.getMessage());
 					}
 
 					@Override
-					public void onSuccess(String result) {
-						Window.alert("User logged properly with session ["+result+"].");
-						currentSessionId = result;
-
-						lendMeService.getSessionInfo(currentSessionId, new AsyncCallback<String>(){
+					public void onSuccess(JavaScriptObject result) {
+						
+						JSOModel model = result.cast();
+						String id = model.get("id");
+						
+						lendMeService.openSession(id, new AsyncCallback<String>(){
 
 							@Override
 							public void onFailure(Throwable caught) {
-								Window.alert("Problems getting logged user session information: "+caught.getMessage());
+								Window.alert("Failed to open new session for logged fb user: "+caught.getMessage());
 							}
 
 							@Override
 							public void onSuccess(String result) {
-								Window.alert("Logged user session info:\n\n"+result);
+								Window.alert("User logged properly with session ["+result+"].");
+								currentSessionId = result;
+
+								lendMeService.getSessionInfo(currentSessionId, new AsyncCallback<String>(){
+
+									@Override
+									public void onFailure(Throwable caught) {
+										Window.alert("Problems getting logged user session information: "+caught.getMessage());
+									}
+
+									@Override
+									public void onSuccess(String result) {
+										Window.alert("Logged user session info:\n\n"+result);
+									}
+
+								});
 							}
 
 						});
 					}
-
 				});
 
 			}

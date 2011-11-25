@@ -13,7 +13,7 @@ import com.lendme.server.entities.User;
  */
 public class ItemOwnerRankingComparatorStrategy implements Comparator<Item>{
 	
-	private LendMeFacade lendMe = new LendMeFacade();
+	private LendMeFacade lendMe = LendMeFacade.getInstance();
 
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)

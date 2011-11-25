@@ -27,8 +27,18 @@ public class LendMeFacade {
 	private LendMeItemModule itemModule;
 	private LendMeCommunicationModule  communicationModule; 
 	private LendMeUserModule userModule;
+
+	// global instance
+	private static LendMeFacade self;
 	
-	public LendMeFacade() {
+	public synchronized static LendMeFacade getInstance(){
+		if ( self == null ){
+			self = new LendMeFacade();
+		}
+		return self;
+	}
+	
+	private LendMeFacade() {
 		//time = TimeMonitor.getInstance();
 		repository = LendMeRepository.getInstance();
 		userModule = new LendMeUserModule();

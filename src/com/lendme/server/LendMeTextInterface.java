@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class LendMeTextInterface {
 	
-	private static LendMeImpl lendMeAdapter = new LendMeImpl();
+	private static LendMeWebInterfaceImpl lendMeAdapter = new LendMeWebInterfaceImpl();
 	private static Scanner scanner = new Scanner(System.in);
 	private static boolean sair;
 	private static boolean usersTools;

@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class LendMeAcceptanceTestInterface {
 	
-	LendMeImpl system = new LendMeImpl();
+	LendMeWebInterfaceImpl system = new LendMeWebInterfaceImpl();
 
 	/**
 	 * Apaga todos os dados do sistema, como

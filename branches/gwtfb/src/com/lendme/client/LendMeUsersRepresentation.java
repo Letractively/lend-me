@@ -24,33 +24,19 @@ public class LendMeUsersRepresentation extends PopupPanel {
 	private final String urlDefaultImg = "";
 	
 	private String[] userInfo = {"", "", "", "", "", ""};
-	private final Image image;
+	private Image image;
 	private final Label loginLabel;
 	private final Label nameLabel;
 	private final Label addressLabel;
 	private final Label reputationLabel;
+	private final AbsolutePanel absolutePanel;
 	
 	public LendMeUsersRepresentation() {
 		super(true);
+		absolutePanel = new AbsolutePanel();
 		
-		final AbsolutePanel absolutePanel = new AbsolutePanel();
 		setWidget(absolutePanel);
 		absolutePanel.setSize("242px", "117px");
-		
-		image = new Image("lend_me/gwt/clean/images/user.png");
-		
-		image.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				//TODO Call details User
-			}
-		});
-		image.addMouseOverHandler(new MouseOverHandler() {
-			public void onMouseOver(MouseOverEvent event) {
-				setStyleName("gwt-PopupPanel");
-			}
-		});
-		absolutePanel.add(image, 10, 13);
-		image.setSize("80px", "91px");
 		
 		loginLabel = new Label("login");
 		absolutePanel.add(loginLabel, 106, 15);
@@ -101,27 +87,51 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		
 	}
 
-	public LendMeUsersRepresentation(String imgPath, String login, String name, String address, String reputation){
+	public LendMeUsersRepresentation(String imgPath, String login, String name,
+			String address, String reputation) {
 		this();
-		
+
 		setUserInfo(imgPath, login, name, address, reputation);
-		
-		if(userInfo[LOGIN].length() >= 21) loginLabel.setText(userInfo[LOGIN].substring(0, 16)+"...");
-		else loginLabel.setText(userInfo[LOGIN]);
-		
-		if(userInfo[NAME].length() >= 21) nameLabel.setText(userInfo[NAME].substring(0, 16)+"...");
-		else nameLabel.setText(userInfo[NAME]);
-		
-		if(userInfo[ADDRESS].length() >= 21) addressLabel.setText(userInfo[ADDRESS].substring(0, 16)+"...");
-		else addressLabel.setText(userInfo[ADDRESS]);
-		
-		if(userInfo[REPUTATION].length() >= 13) reputationLabel.setText("points: "+userInfo[REPUTATION].substring(0,10)+"...");
-		else reputationLabel.setText("points: "+userInfo[REPUTATION]);
-		
-		if(imgPath == null || imgPath.equals("")) imgPath = this.urlDefaultImg;
-		
-		image.setUrl(imgPath);
-		
+
+		if (userInfo[LOGIN].length() >= 21)
+			loginLabel.setText(userInfo[LOGIN].substring(0, 16) + "...");
+		else
+			loginLabel.setText(userInfo[LOGIN]);
+
+		if (userInfo[NAME].length() >= 21)
+			nameLabel.setText(userInfo[NAME].substring(0, 16) + "...");
+		else
+			nameLabel.setText(userInfo[NAME]);
+
+		if (userInfo[ADDRESS].length() >= 21)
+			addressLabel.setText(userInfo[ADDRESS].substring(0, 16) + "...");
+		else
+			addressLabel.setText(userInfo[ADDRESS]);
+
+		if (userInfo[REPUTATION].length() >= 13)
+			reputationLabel.setText("points: "
+					+ userInfo[REPUTATION].substring(0, 10) + "...");
+		else
+			reputationLabel.setText("points: " + userInfo[REPUTATION]);
+
+		if (imgPath == null || imgPath.equals(""))
+			imgPath = this.urlDefaultImg;
+
+		image = new Image(imgPath);
+
+		image.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				// TODO Call details User
+			}
+		});
+		image.addMouseOverHandler(new MouseOverHandler() {
+			public void onMouseOver(MouseOverEvent event) {
+				setStyleName("gwt-PopupPanel");
+			}
+		});
+		absolutePanel.add(image, 10, 13);
+		image.setSize("80px", "91px");
+
 	}
 	
 	public void setUserInfo(String imgPath, String login, String name, String address, String reputation){

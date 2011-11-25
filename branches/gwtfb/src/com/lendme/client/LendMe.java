@@ -8,6 +8,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("facade")
 public interface LendMe extends RemoteService{
 
+	public String openSession(String id) throws Exception;
+	
 	public String openSession(String login, String name, String address) throws Exception;
 
 	public void closeSession(String sessionId) throws Exception;
@@ -104,7 +106,5 @@ public interface LendMe extends RemoteService{
 	public void republishItemRequest(String sessionId, String requestPublicationId) throws Exception;
 	
 	public String getSessionInfo(String currentUserSessionId) throws Exception;
-	
-	public String fetchURLAndRetrieveSignedRequestContent(String appId) throws Exception;
-	
+
 }

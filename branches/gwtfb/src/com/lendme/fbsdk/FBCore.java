@@ -13,7 +13,7 @@ public class FBCore {
 	 * Wrapper method
 	 * @see http://developers.facebook.com/docs/reference/javascript/FB.init
 	 */
-	public native String init (String appId, String appSecret, boolean status, boolean cookie, boolean xfbml) /*-{
+	public native void init (String appId, String appSecret, boolean status, boolean cookie, boolean xfbml) /*-{
 		$wnd.FB.init({
 			'appId': appId, 
 			'status': status,
@@ -21,16 +21,6 @@ public class FBCore {
 			'xfbml' : xfbml,
 			'oauth' : true
 		});
-
-		function httpGet(theUrl){
-    		var xmlHttp = null;
-
-   			xmlHttp = new XMLHttpRequest();
-   			xmlHttp.open( "GET", theUrl, false );
-   			xmlHttp.send( null );
-   			return xmlHttp.responseText;
-    	}
-		return httpGet("https://graph.facebook.com/oauth/access_token?client_id="+appId+"&client_secret="+appSecret+"&grant_type=client_credentials");
 	}-*/;
 	
 	public String oauthRequest ( String path, String accessToken){

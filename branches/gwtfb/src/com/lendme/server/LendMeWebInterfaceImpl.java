@@ -1,11 +1,5 @@
 package com.lendme.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,9 +19,9 @@ import com.lendme.server.entities.User;
 import com.lendme.server.utils.UserDateComparatorStrategy;
 
 @SuppressWarnings("serial")
-public class LendMeImpl extends RemoteServiceServlet implements LendMe {
+public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements LendMe {
 	
-	private LendMeFacade lendMe = new LendMeFacade();
+	private LendMeFacade lendMe = LendMeFacade.getInstance();
 	
 
 	/**
@@ -814,40 +808,6 @@ public class LendMeImpl extends RemoteServiceServlet implements LendMe {
 
 	public String getSessionInfo(String currentUserSessionId) throws Exception {
 		return lendMe.getSessionInfo(currentUserSessionId);
-	}
-	
-	public String fetchURLAndRetrieveSignedRequestContent(String APPID) throws Exception{
-		return staticFetchURLAndRetrieveSignedRequestContent(APPID);
-	}
-	
-	public static String staticFetchURLAndRetrieveSignedRequestContent(String APPID) throws Exception{
-		try {
-			URL url = new URL("https://www.facebook.com/plugins/registration.php?client_id="+APPID+"&redirect_uri=http://127.0.0.1:8888/Lend_me_gwtfb.html?gwt.codesvr=127.0.0.1:9997&fields=name,birthday,gender,location,email");
-			URLConnection connection = url.openConnection();
-			connection.setRequestProperty("Request-Method", "GET");
-			connection.setDoInput(true);
-			connection.setDoOutput(false);
-			connection.connect();
-			
-			StringBuilder contentReader = new StringBuilder();
-			String strSlice = "";
-			
-			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			
-			while((strSlice = br.readLine()) != null){
-				contentReader.append(strSlice);
-			}
-			
-			return new String(contentReader);
-		} catch (MalformedURLException e) {
-			throw new Exception("Given url appears malformed: "+e.getMessage());
-		} catch (IOException e) {
-			throw new Exception("Unable to fetch facebook url: "+e.getMessage());
-		}
-	}
-	
-	public static void main(String[] args) throws Exception{
-		System.out.println(staticFetchURLAndRetrieveSignedRequestContent("246859665375002"));
 	}
 	
 }

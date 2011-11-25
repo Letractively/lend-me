@@ -18,7 +18,7 @@ public class RegistrationViewController extends Composite {
 		outer.add ( new Image ( images.logo()) );
 		outer.add ( new HTML ( "<div style='text-align: center;'> Cadastre-se no nosso sistema com sua conta do Facebook: </div>" ) );
 		outer.add ( new HTML ("<iframe " +
-				"src=\"https://www.facebook.com/plugins/registration.php?client_id="+ApplicationConstants.APP_ID+"&redirect_uri="+ApplicationConstants.APP_URL+"/lendme/fbreader&fields=name,birthday,gender,location,email" +
+				"src=\"https://www.facebook.com/plugins/registration.php?client_id="+ApplicationConstants.APP_ID+"&redirect_uri="+ApplicationConstants.APP_URL+"/fbreader&fields=name,birthday,gender,location,email" +
 				"\"&fb_only=\"true\"&fb_register=\"true\"" +
 				" scrolling=\"auto\"" + " frameborder=\"no\"" + " style=\"border:none\"" + " allowTransparency=\"true\"" + "width=\"100%\"" + "height=\"330\">" + "</iframe>"));
 		initWidget ( outer );

@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class LinksPanel extends Composite {
@@ -23,8 +24,9 @@ public class LinksPanel extends Composite {
 		sourceCodeLink.setTarget("blank");
 
 		leftSide.add ( new Hyperlink ( "Home" , "home" ) );
-		leftSide.add ( new Anchor("Facebook", true, "http://www.facebook.com/apps/application.php?id="+ApplicationConstants.APP_ID+"&sk="+ApplicationConstants.APP_ID));
+		leftSide.add ( new Anchor("Facebook Page", true, "http://www.facebook.com/apps/application.php?id="+ApplicationConstants.APP_ID+"&sk="+ApplicationConstants.APP_ID));
 		leftSide.add( sourceCodeLink );
+		leftSide.add( new Label(" - Bem vindo a LendMe! Este eh o sistema que chegou para revolucionar o modo como voce enxerga as suas coisas e as coisas ao seu redor.") );
 		links.add( leftSide, DockPanel.WEST );
 
 		logoutSide.add(	new HTML("<div style='text-align: center;'> <fb:login-button autologoutlink='true' /> </div>" ));

@@ -91,11 +91,6 @@ body {
 
 
 /** Example rules used by the template application (remove for your app) */
-h1 {
-  font-size: 2em;
-  font-weight: bold;
-  color: #777777;
-}
 
 .sendButton {
   display: block;
@@ -103,13 +98,6 @@ h1 {
 }
 
 /** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
-  width: 400px;
-}
-
-.dialogVPanel {
-  margin: 5px;
-}
 
 .serverResponseLabelError {
   color: red;
@@ -118,4 +106,66 @@ h1 {
 /** Set ids using widget.getElement().setId("idOfElement") */
 #closeButton {
   margin: 15px 6px 6px;
+}
+
+h1 {
+	color: Blue;
+	margin: 40px 0px 70px;
+	font-size: 1em;
+	font-weight: bold;
+	text-align: center;
+}
+
+
+/** Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+  width: 1200px;
+}
+
+.dialogVPanel {
+  margin: 20px;
+}
+
+
+.lendme-logo {
+	color: midnightblue;
+	font-size: xx-large;
+	font-weight: bold;
+}
+.gwt-InlineLabel {
+	color: navy;
+	font-size: 36px;
+	font-style: normal;
+	font-weight: bolder;
+}
+.alert {
+	color: Red;
+	font-size: 10px;
+	background-color: lemonchiffon;
+}
+.mouseOverUser {
+	margin: 1px;
+	padding: 1px;
+	border: thin Maroon;
+	cursor: move;
+}
+.gwt-bar {
+	color: Blue;
+	font-weight: bolder;
+}
+.gwt-Label-item {
+	font-size: 11px;
+}
+.gwt-TextBox {
+	font-size: 8px;
+}
+.gwt-Label-1 {
+	text-decoration: underline;
+}
+.gwt-Image {
+	cursor: hand;
+}
+.gwt-PopupPanel-modify {
+	border: medium;
+	cursor: crosshair;
 }

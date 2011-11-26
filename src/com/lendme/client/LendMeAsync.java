@@ -7,9 +7,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface LendMeAsync {
 
 	void openSession(String id, AsyncCallback<String> asyncCallback);
-	
-	void openSession(String login, String name, String address,
-			AsyncCallback<String> callback);
 
 	void closeSession(String sessionId, AsyncCallback<Void> callback);
 

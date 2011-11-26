@@ -8,12 +8,13 @@
 <!-- Servlets -->
   <servlet>
     <servlet-name>facadeServlet</servlet-name>
-    <servlet-class>com.lendme.server.LendMeImpl</servlet-class>
+    <servlet-class>com.lendme.server.LendMeWebInterfaceImpl</servlet-class>
   </servlet>
   
   <servlet>
   	<servlet-name>fbUserInfoReader</servlet-name>
   	<servlet-class>com.lendme.server.servlets.FBUserInfoReader</servlet-class>
+  	<load-on-startup>1</load-on-startup>
   </servlet>
   
   <servlet-mapping>
@@ -23,7 +24,7 @@
   
   <servlet-mapping>
   	<servlet-name>fbUserInfoReader</servlet-name>
-  	<url-pattern>/lendme/fbreader/*</url-pattern>
+  	<url-pattern>/fbreader</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

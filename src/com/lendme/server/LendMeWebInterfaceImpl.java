@@ -64,12 +64,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * 
 	 */
 	public String openSession(String login) throws Exception{
-		return openSession(login, "", "");
-	}
-	
-	public String openSession(String login, String name, String address) throws Exception{
-		
-		return lendMe.openSession(login, name, address);
+		return lendMe.openSession(login);
 	}
 	
 	/**

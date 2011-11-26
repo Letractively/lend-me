@@ -1,6 +1,7 @@
 package com.lendme.server;
 
 import java.util.Map;
+import java.util.Set;
 
 
 public class LendMeAcceptanceTestInterface {
@@ -387,7 +388,15 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String lerTopicos(String idSessao, String tipo) throws Exception {
 		
-		String[] resultado = system.getTopics(idSessao, tipo);
+		Set<String> topics = system.getTopics(idSessao, tipo).keySet();
+		String[] resultado = new String[topics.size()];
+		
+		int i = 0;
+		for (String topic : topics) {
+			resultado[i++] = topic;
+		}
+		
+		
 		if ( resultado.length == 0 ) {
 			return "Não há tópicos criados";
 		}
@@ -404,7 +413,14 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String lerMensagens(String idSessao, String idTopico) throws Exception {
 		
-		String[] resultado = system.getTopicMessages(idSessao, idTopico);
+		Set<String> messages = system.getTopicMessages(idSessao, idTopico).keySet();
+		String[] resultado = new String[messages.size()];
+		
+		int i = 0;
+		for (String message : messages) {
+			resultado[i++] = message;
+		}
+		
 		return formatarASaida(resultado);
 	}
 	

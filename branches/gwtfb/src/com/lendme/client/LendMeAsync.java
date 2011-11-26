@@ -53,13 +53,13 @@ public interface LendMeAsync {
 			AsyncCallback<String> callback);
 
 	void getTopics(String solicitorSession, String topicType,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String,String[]>> callback);
 
 	void getTopicsWithIds(String solicitorSession, String topicType,
 			AsyncCallback<String[]> callback);
 
 	void getTopicMessages(String solicitorSession, String topicId,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String,String[]>> callback);
 
 	void registerItem(String creatorSession, String name, String description,
 			String category, AsyncCallback<String> callback);

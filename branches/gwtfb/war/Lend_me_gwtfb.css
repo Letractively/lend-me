@@ -108,6 +108,26 @@ body {
   margin: 15px 6px 6px;
 }
 
+.topicsHeader {
+  background-color: #2062B8;
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.topicsLines {
+	color: black;
+	font-size: 10pt;
+	font-weight: bold;
+	background-color: #CCCCFF;
+}
+.messagesLines {
+	color: black;
+	font-size: 10pt;
+	font-weight: bold;
+	background-color: #CCFFFF;
+}
+
 h1 {
 	color: Blue;
 	margin: 40px 0px 70px;

@@ -549,7 +549,7 @@ public class LendMeTextInterface {
 	private static void readMessages() throws Exception {
 		System.out.println(listObjectsInArray("Mensagens do Tópico Escolhido",
 			lendMeAdapter.getTopicMessages(currentUserSessionId, 
-				returnCorrectString("\n\tInforme o id do tópico: "))));
+				returnCorrectString("\n\tInforme o id do tópico: ")).keySet().toArray()));
 	}
 	
 	private static void askForItemReturn() throws Exception {

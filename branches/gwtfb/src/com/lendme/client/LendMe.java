@@ -9,8 +9,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface LendMe extends RemoteService{
 
 	public String openSession(String id) throws Exception;
-	
-	public String openSession(String login, String name, String address) throws Exception;
 
 	public void closeSession(String sessionId) throws Exception;
 	

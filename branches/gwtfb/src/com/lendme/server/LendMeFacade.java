@@ -70,10 +70,6 @@ public class LendMeFacade {
 		return repository.openSession(login);
 	}
 	
-	public String openSession(String login, String name, String address) throws Exception {
-		return repository.openSession(login, name, address);
-	}
-	
 	/**
 	 * Returns the system date.
 	 * 

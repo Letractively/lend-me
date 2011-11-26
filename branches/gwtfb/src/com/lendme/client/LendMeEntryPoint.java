@@ -35,15 +35,16 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 	// The sessionId which will be generated when the user logs in
 	private String currentSessionId = "";
-
+	private String accessToken = "";
+	
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
 
 		History.addValueChangeHandler ( this );
-
-		fbCore.init(ApplicationConstants.APP_ID, ApplicationConstants.APP_SECRET, status, cookie, xfbml);
+		
+		accessToken = fbCore.init(ApplicationConstants.APP_ID, ApplicationConstants.APP_SECRET, status, cookie, xfbml);
 
 		RootPanel root = RootPanel.get();
 		root.getElement().setId ( "TheApp" );
@@ -57,7 +58,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		root.add ( mainPanel );
 
 		//
-		// Callback used when session status is changed
+		// Callback used when session status is changed; happens automatically
 		//
 		class SessionChangeCallback extends Callback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
@@ -68,7 +69,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 
 		//
-		// Get notified when user session is changed
+		// Get notified when user session is changed; happens when F5 is hit
 		//
 		SessionChangeCallback sessionChangeCallback = new SessionChangeCallback ();
 		fbEvent.subscribe("auth.authResponseChange",sessionChangeCallback);
@@ -76,8 +77,11 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		// Callback used when checking login status
 		class LoginStatusCallback extends Callback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
-				sessionChangedServerActions();
-				renderApp( Window.Location.getHash() );
+				String redirectTo = "#home";
+				if ( fbCore.getSession() != null ){
+					redirectTo = Window.Location.getHash();
+				}
+				renderApp(redirectTo);
 			}
 
 		}
@@ -140,12 +144,12 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE HISTORICO> );				
 			}
 			else {
-				Window.alert ( "Unknown url ["  + token + " ]");
+				renderHomeView();
 			}
 
 		}
 		else {
-			Window.alert ( "Unknown url ["  + token + "]");
+			renderHomeView();
 		}
 	}
 
@@ -211,7 +215,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 					@Override
 					public void onSuccess(Void result) {
-						Window.alert("Session ["+currentSessionId+"] closed properly. ");
 						currentSessionId = "";
 					}
 
@@ -220,21 +223,20 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 		else {
 			if ( currentSessionId.trim().isEmpty() ){
-				
-				fbCore.api("/me", new AsyncCallback<JavaScriptObject>() {
+
+				fbCore.api("/me&access_token="+accessToken, new AsyncCallback<JavaScriptObject>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert("Failed to retrieve session user info: "+caught.getMessage());
+						Window.alert("Failed to retrieve session user id: "+caught.getMessage());
 					}
 
 					@Override
 					public void onSuccess(JavaScriptObject result) {
-						
 						JSOModel model = result.cast();
-						String id = model.get("id");
+						String currentUserId = model.get("id");
 						
-						lendMeService.openSession(id, new AsyncCallback<String>(){
+						lendMeService.openSession(currentUserId, new AsyncCallback<String>(){
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -243,7 +245,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 							@Override
 							public void onSuccess(String result) {
-								Window.alert("User logged properly with session ["+result+"].");
 								currentSessionId = result;
 
 								lendMeService.getSessionInfo(currentSessionId, new AsyncCallback<String>(){
@@ -255,13 +256,14 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 									@Override
 									public void onSuccess(String result) {
-										Window.alert("Logged user session info:\n\n"+result);
+										//Could do something. Doesn't mean that some action is required.
 									}
 
 								});
 							}
 
 						});
+						
 					}
 				});
 

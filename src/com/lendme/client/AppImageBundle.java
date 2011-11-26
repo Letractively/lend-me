@@ -4,8 +4,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
 /**
- * Application Images
- * @author ola
+ * Client Images
  */
 public interface AppImageBundle extends ClientBundle {
     
@@ -14,5 +13,8 @@ public interface AppImageBundle extends ClientBundle {
     
     @Source ( "topMenu.png" )
     ImageResource topMenu();
-
+    
+    @Source ( "exclama.jpg" )
+    ImageResource updateAction();
+    
 }

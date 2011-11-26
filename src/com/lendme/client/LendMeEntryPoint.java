@@ -10,6 +10,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -155,7 +156,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
 								}
 								else if ( option.startsWith("items") ){
-									mainView.setWidget(new TemporaryWidget("ITENS"));
+									mainView.setWidget(new ItemViewer(lendMeService, currentSessionId));
 									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE ITEMS> );				
 								}
 								else if ( option.startsWith("messages") ){
@@ -197,7 +198,19 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	 * Render GUI when not logged in
 	 */
 	private void renderWhenNotLoggedIn () {
+		
+		class CommentsPanel extends Composite{
+			private VerticalPanel verticalBar = new VerticalPanel();
+			
+			public CommentsPanel(){
+				verticalBar.add ( new HTML ( "<div style='margin-top: 7px;'> Diga o que vc pensa dessa nova ideia: </div>" ) );
+				verticalBar.add(new HTML ( "<hr/><fb:comments numposts='2' xid='gwtfb' width='275px' />" ) );
+				initWidget(verticalBar);
+			}
+		}
+		
 		mainView.setWidget ( new FrontpageViewController (ApplicationConstants.APP_ID) );
+		leftSideBarView.setWidget(new CommentsPanel());
 		topLinksPanel.setLogoutButtonVisible(false);
 		FBXfbml.parse();
 	}

@@ -318,16 +318,19 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @return an array of strings containing the results
 	 * @see com.lendme.LendMeFacade#getTopics(String, String)
 	 */
-	public String[] getTopics(String solicitorSession, String topicType) throws Exception{
+	public Map<String,String[]> getTopics(String solicitorSession, String topicType) throws Exception{
 		
 		List<Topic> results = lendMe.getTopics(solicitorSession, topicType);
 		Collections.sort(results);
-		String[] handled = new String[results.size()];
-		Iterator<Topic> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getSubject();
+		Map<String, String[]> topicsMap = new TreeMap<String, String[]>();
+		for ( Topic currentTopic : results){
+			String[] currTopicProps = new String[4]; 
+			currTopicProps[0] = currentTopic.getID();
+			currTopicProps[1] = String.valueOf(currentTopic.getMessages().size());
+			currTopicProps[2] = currentTopic.getDate().toString();
+			topicsMap.put(currentTopic.getSubject(), currTopicProps);
 		}
-		return handled;
+		return topicsMap;
 	}
 	
    /** Handles with results from search in System, transforming them in a string array
@@ -354,16 +357,21 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @return an array of strings containing the results
 	 * @see com.lendme.LendMeFacade#getTopicsMessages(String, String)
 	 */
-	public String[] getTopicMessages(String solicitorSession, String topicId) throws Exception{
+	public Map<String, String[]> getTopicMessages(String solicitorSession, String topicId) throws Exception{
 		
 		List<Message> results = lendMe.getTopicMessages(solicitorSession, topicId);
 		Collections.sort(results);
-		String[] handled = new String[results.size()];
-		Iterator<Message> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getMessage();
+		Map<String, String[]> messagesMap = new TreeMap<String, String[]>();
+		for ( Message currentMessage : results){
+			String[] currTopicProps = new String[4]; 
+			currTopicProps[0] = currentMessage.getMessage();
+			currTopicProps[1] = currentMessage.getSubject();
+			currTopicProps[2] = currentMessage.getSender();
+			currTopicProps[3] = currentMessage.getDate().toString();
+			currTopicProps[4] = currentMessage.getLendingId();
+			messagesMap.put(currentMessage.getMessage(), currTopicProps);
 		}
-		return handled;
+		return messagesMap;
 	}
 
 	/**

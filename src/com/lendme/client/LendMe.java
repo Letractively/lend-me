@@ -41,11 +41,11 @@ public interface LendMe extends RemoteService{
 	public String sendMessage(String senderSession, String subject,	String message, String receiverLogin, String lendingId)
 		throws Exception;
 	
-	public String[] getTopics(String solicitorSession, String topicType) throws Exception;
+	public Map<String,String[]> getTopics(String solicitorSession, String topicType) throws Exception;
 	
 	public String[] getTopicsWithIds(String solicitorSession, String topicType) throws Exception;
 	
-	public String[] getTopicMessages(String solicitorSession, String topicId) throws Exception;
+	public Map<String,String[]> getTopicMessages(String solicitorSession, String topicId) throws Exception;
 	
 	public String registerItem(String creatorSession, String name, String description, String category) throws Exception;
 	

@@ -64,17 +64,21 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 			public void onSuccess ( JavaScriptObject response ) {
 				// Make sure cookie is set so we can use the non async method
 				sessionChangedServerActions();
-				renderHomeView ();
+//				renderHomeView ();
+				String redirectTo = "#home";
+				if ( fbCore.getSession() != null ){
+					redirectTo = Window.Location.getHash();
+				}
+				renderApp(redirectTo);
 			}
 		}
 
-		//
-		// Get notified when user session is changed; happens when F5 is hit
-		//
 		SessionChangeCallback sessionChangeCallback = new SessionChangeCallback ();
 		fbEvent.subscribe("auth.authResponseChange",sessionChangeCallback);
 
-		// Callback used when checking login status
+		//
+		// Callback happens when F5 is hit or when browser redirects to some url
+		//
 		class LoginStatusCallback extends Callback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
 				String redirectTo = "#home";
@@ -94,62 +98,89 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	/**
 	 * Render GUI
 	 */
-	private void renderApp ( String token ) {
+	private void renderApp ( String rawtoken ) {
 
 		leftSideBarView.setWidget( new HomeSideBarPanel () );
 
-		token = token.replace("#", "");
+		rawtoken = rawtoken.replace("#", "");
 
-		if ( token == null || "".equals ( token ) || "#".equals ( token ) ) 
-		{
-			token = "home";
+		if ( rawtoken == null || "".equals ( rawtoken ) || "#".equals ( rawtoken ) ){
+			rawtoken = "home";
 		}
+		
+		final String token = rawtoken;
 
-		if ( token.endsWith("home") ) {
-			renderHomeView ();
-		}
-		else if ( token.contains("registration") ){
+		if ( token.contains("registration") && fbCore.getSession() == null ){
 			renderRegistrationView();
 		}
-		else if ( token.startsWith("options" ) ) {
+		else{
+			JavaScriptObject session = fbCore.getSession();
+			if ( session != null ){
+				fbCore.api("/me", new AsyncCallback<JavaScriptObject>() {
 
-			String option = token.split("/")[1];
-
-			class TemporaryWidget extends Composite{
-
-				VerticalPanel list = new VerticalPanel();
-
-				public TemporaryWidget(String kind){
-					for ( int i=1; i<=10; i++ ){
-						list.add(new Hyperlink("List of " + kind + " pos. "+i, ""));
+					@Override
+					public void onFailure(Throwable caught) {
 					}
-					initWidget(list);
-				}
-			}
 
-			if ( option.startsWith("friends") ){
-				mainView.setWidget(new UserViewer(lendMeService, currentSessionId));
-				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
+					@Override
+					public void onSuccess(JavaScriptObject result) {
+						JSOModel model = result.cast();
+						if ( model.get("id").contains("undefined") ){
+							Window.Location.replace(ApplicationConstants.APP_URL);
+							Window.Location.reload();
+							return;
+						}
+						else{
+							if ( token.endsWith("home") ) {
+								renderHomeView ();
+							}
+							else if ( token.startsWith("options" ) ) {
+
+								String option = token.split("/")[1];
+
+								class TemporaryWidget extends Composite{
+
+									VerticalPanel list = new VerticalPanel();
+
+									public TemporaryWidget(String kind){
+										for ( int i=1; i<=10; i++ ){
+											list.add(new Hyperlink("List of " + kind + " pos. "+i, ""));
+										}
+										initWidget(list);
+									}
+								}
+
+								if ( option.startsWith("friends") ){
+									mainView.setWidget(new UserViewer(lendMeService, currentSessionId));
+									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
+								}
+								else if ( option.startsWith("items") ){
+									mainView.setWidget(new TemporaryWidget("ITENS"));
+									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE ITEMS> );				
+								}
+								else if ( option.startsWith("messages") ){
+									mainView.setWidget(new TemporaryWidget("MENSAGENS"));
+									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE MENSAGENS> );				
+								}
+								else if ( option.startsWith("history") ){
+									mainView.setWidget(new TemporaryWidget("HISTORICO"));
+									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE HISTORICO> );				
+								}
+								else {
+									renderHomeView();
+								}
+
+							}
+							else {
+								renderHomeView();
+							}
+						}
+					}
+				});
 			}
-			else if ( option.startsWith("items") ){
-				mainView.setWidget(new TemporaryWidget("ITENS"));
-				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE ITEMS> );				
-			}
-			else if ( option.startsWith("messages") ){
-				mainView.setWidget(new TemporaryWidget("MENSAGENS"));
-				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE MENSAGENS> );				
-			}
-			else if ( option.startsWith("history") ){
-				mainView.setWidget(new TemporaryWidget("HISTORICO"));
-				//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE HISTORICO> );				
-			}
-			else {
+			else{
 				renderHomeView();
 			}
-
-		}
-		else {
-			renderHomeView();
 		}
 	}
 

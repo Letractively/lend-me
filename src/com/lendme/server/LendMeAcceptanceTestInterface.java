@@ -2,6 +2,9 @@ package com.lendme.server;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+
+import com.google.gwt.dev.js.rhino.ObjToIntMap.Iterator;
 
 
 public class LendMeAcceptanceTestInterface {
@@ -494,7 +497,20 @@ public class LendMeAcceptanceTestInterface {
 	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
 	 */
 	public String historicoAtividades(String idSessao) throws Exception{
-		return formatarASaida(system.getActivityHistory(idSessao));
+
+		StringBuilder resultadoFormatado = new StringBuilder();
+		
+		int i = 0;
+		for (String activitie : system.getActivityHistory(idSessao).keySet()){
+			resultadoFormatado.append(activitie);
+
+			if ( i < system.getActivityHistory(idSessao).keySet().size() - 1 ){
+				resultadoFormatado.append("; ");
+			}
+			i++;
+		}
+		
+		return resultadoFormatado.toString();
 	}
 	
 	/**
@@ -502,7 +518,20 @@ public class LendMeAcceptanceTestInterface {
 	 * de todos os amigos do usuário cujo ID da sessão foi dado.
 	 */
 	public String historicoAtividadesConjunto(String idSessao) throws Exception{
-		return formatarASaida(system.getJointActivityHistory(idSessao));
+
+		StringBuilder resultadoFormatado = new StringBuilder();
+		
+		int i = 0;
+		for (String activitie : system.getJointActivityHistory(idSessao).keySet()){
+			resultadoFormatado.append(activitie);
+
+			if ( i < system.getJointActivityHistory(idSessao).keySet().size() - 1 ){
+				resultadoFormatado.append("; ");
+			}
+			i++;
+		}
+		
+		return resultadoFormatado.toString();
 	}
 	
 	private String formatarASaida(String[] resultado) {

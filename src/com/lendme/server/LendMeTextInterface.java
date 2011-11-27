@@ -652,13 +652,36 @@ public class LendMeTextInterface {
 	}
 	
 	private static void viewMyActivityHistory() throws Exception {
-		System.out.println(listObjectsInArray("Meu Histórico de Atividades", 
-				lendMeAdapter.getActivityHistory(currentUserSessionId)));
+		String[] myActivities = new String[lendMeAdapter.getActivityHistory(currentUserSessionId).keySet().size()];
+		
+		int i = 0;
+		for(String activity : lendMeAdapter.getActivityHistory(currentUserSessionId).keySet()){
+			if(i == 0){
+				myActivities[i] = activity;
+			}else{
+				myActivities[i] = "; " + activity;
+			}
+			i++;
+		}
+		
+		System.out.println(listObjectsInArray("Meu Histórico de Atividades", myActivities));
 	}
 	
 	private static void viewJointActivityHistory() throws Exception {
+		String[] myActivities = new String[lendMeAdapter.getJointActivityHistory(currentUserSessionId).keySet().size()];
+		
+		int i = 0;
+		for(String activity : lendMeAdapter.getJointActivityHistory(currentUserSessionId).keySet()){
+			if(i == 0){
+				myActivities[i] = activity;
+			}else{
+				myActivities[i] = "; " + activity;
+			}
+			i++;
+		}
+		
 		System.out.println(listObjectsInArray("Histórico Conjunto de Atividades", 
-				lendMeAdapter.getJointActivityHistory(currentUserSessionId)));
+				myActivities));
 	}
 	
 	private static void publishItemRequest() throws Exception {

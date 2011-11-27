@@ -1,6 +1,7 @@
 package com.lendme.client;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -62,12 +63,11 @@ public class HistoryViewer extends Composite {
 		historyPenel.setSize("450px", "220px");
 		
 		
-		lendMeService.getActivityHistory(solicitorSessionID,new AsyncCallback<String[]>() {
+		lendMeService.getActivityHistory(solicitorSessionID,new AsyncCallback<Map<String, String>>() {
 
 			@Override
-			public void onSuccess(String[] result) {
+			public void onSuccess(Map<String, String> result) {
 				// TODO Auto-generated method stub
-				//for()
 				
 			}
 			

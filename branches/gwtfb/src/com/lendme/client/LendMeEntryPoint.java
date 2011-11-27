@@ -156,11 +156,11 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
 								}
 								else if ( option.startsWith("items") ){
-									mainView.setWidget(new ItemViewer(lendMeService, currentSessionId));
+									mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId));
 									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE ITEMS> );				
 								}
 								else if ( option.startsWith("messages") ){
-									mainView.setWidget(new TopicsViewer(lendMeService, currentSessionId, "all"));
+									mainView.setWidget(new TemporaryWidget("MENSAGENS"));
 									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE MENSAGENS> );				
 								}
 								else if ( option.startsWith("history") ){

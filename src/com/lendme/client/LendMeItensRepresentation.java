@@ -1,9 +1,14 @@
 package com.lendme.client;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class LendMeItensRepresentation extends AbsolutePanel {
 
@@ -12,9 +17,12 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	private final Label name;
 	private final Label category;
 	private final Label description;
-	
-	
+	private ItemViewer itemViewer;
+		
 	private final int MAX_SIZE = 20;
+	private Label topSelect;
+	private Label underSelect;
+	private AbsolutePanel conteinerPanel;
 	
 	/**
 	 * @wbp.parser.constructor
@@ -22,53 +30,85 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	public LendMeItensRepresentation() {
 		super();
 		
-		AbsolutePanel absolutePanel = new AbsolutePanel();
-		absolutePanel.setStyleName("gwt-PopupPanel");
-		super.add(absolutePanel);
-		absolutePanel.setSize("250px", "74px");
+		AppImageBundle images = GWT.create(AppImageBundle.class);
+		conteinerPanel = new AbsolutePanel();
+		conteinerPanel.setStyleName("gwt-PopupPanel");
+		super.add(conteinerPanel);
+		conteinerPanel.setSize("250px", "74px");
 		
 		image = new Image();
-		absolutePanel.add(image, 10, 10);
+		image.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				itemViewer = new ItemViewer(image.getUrl(), name.getText(), description.getText(), "", category.getText());
+				itemViewer.center();				
+			}
+		});
+		image.addMouseOutHandler(new MouseOutHandler() {
+			public void onMouseOut(MouseOutEvent event) {
+				conteinerPanel.setStyleName("gwt-PopupPanel");
+				topSelect.setVisible(false);
+				underSelect.setVisible(false);
+			}
+		});
+		image.addMouseOverHandler(new MouseOverHandler() {
+			public void onMouseOver(MouseOverEvent event) {
+				conteinerPanel.setStyleName("gwt-PopupPanel-modif");
+				topSelect.setVisible(true);
+				underSelect.setVisible(true);
+			}
+		});
+		conteinerPanel.add(image, 10, 10);
 		image.setSize("57px", "54px");
 		
 		Label lblNewLabel = new Label("Name:");
 		lblNewLabel.setStyleName("gwt-Label-item");
-		absolutePanel.add(lblNewLabel, 71, 10);
+		conteinerPanel.add(lblNewLabel, 71, 10);
 		
 		name = new Label("");
 		name.setStyleName("gwt-Label-item");
-		absolutePanel.add(name, 113, 10);
+		conteinerPanel.add(name, 113, 10);
 		name.setSize("127px", "14px");
 		
 		Label lblCategoria = new Label("Category:");
 		lblCategoria.setStyleName("gwt-Label-item");
-		absolutePanel.add(lblCategoria, 71, 30);
+		conteinerPanel.add(lblCategoria, 71, 30);
 		lblCategoria.setSize("37px", "14px");
 		
 		category = new Label("");
 		category.setStyleName("gwt-Label-item");
-		absolutePanel.add(category, 134, 30);
+		conteinerPanel.add(category, 134, 30);
 		category.setSize("106px", "14px");
 		
 		Label lblNewLabel_3 = new Label("Description:");
 		lblNewLabel_3.setStyleName("gwt-Label-item");
-		absolutePanel.add(lblNewLabel_3, 72, 50);
+		conteinerPanel.add(lblNewLabel_3, 72, 50);
 		
 		description = new Label("");
 		description.setStyleName("gwt-Label-item");
-		absolutePanel.add(description, 134, 50);
+		conteinerPanel.add(description, 134, 50);
 		description.setSize("106px", "14px");
 		
-	    AppImageBundle images = GWT.create( AppImageBundle.class);
-		exclama = new Image ( images.updateAction() );
-		absolutePanel.add(exclama, 230, 10);
+		exclama = new Image(images.updateAction());
+		conteinerPanel.add(exclama, 230, 10);
 		exclama.setSize("29px", "29px");
-		exclama.setVisible(false);
 		
+		topSelect = new Label("--------------------------------------------------------------------------------------------");
+		topSelect.setStyleName("gwt-bar");
+		topSelect.setSize("275px", "17px");
+		topSelect.setVisible(false);
+		conteinerPanel.add(topSelect, 0, -4);
+		
+		underSelect = new Label("--------------------------------------------------------------------------------------------");
+		underSelect.setStyleName("gwt-bar");
+		underSelect.setSize("275px", "17px");
+		underSelect.setVisible(false);
+		
+		conteinerPanel.add(underSelect, 0, 64);
 	}
 	
 	public LendMeItensRepresentation(String imgURL ,String name, String category, String description, boolean action){
 		this();
+		
 		setStyleName("gwt-Label-item");
 		exclama.setVisible(action);
 		/*name*/

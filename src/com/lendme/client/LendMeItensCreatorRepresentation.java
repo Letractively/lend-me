@@ -64,8 +64,8 @@ public class LendMeItensCreatorRepresentation extends PopupPanel {
 		
 		FileUpload fileUpload = new FileUpload();
 		fileUpload.setStyleName("gwt-TextBox");
-		absolutePanel.add(fileUpload, 7, 152);
-		fileUpload.setSize("91px", "23px");
+		absolutePanel.add(fileUpload, 10, 152);
+		fileUpload.setSize("111px", "23px");
 		
 		PushButton pshbtnNewButton = new PushButton("Create");
 		pshbtnNewButton.addClickHandler(new ClickHandler() {

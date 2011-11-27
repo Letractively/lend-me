@@ -183,9 +183,18 @@ h1 {
 	text-decoration: underline;
 }
 .gwt-Image {
-	cursor: hand;
+	cursor: pointer;
 }
 .gwt-PopupPanel-modify {
 	border: medium;
-	cursor: crosshair;
+	cursor: pointer;
 }
+.gwt-PopupPanel-modif {
+	color: blue;
+	cursor: pointer;
+}
+.gwt-ListBox {
+	font-size: 11px;
+}
+
+

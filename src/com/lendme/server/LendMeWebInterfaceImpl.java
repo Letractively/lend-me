@@ -1,7 +1,9 @@
 package com.lendme.server;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.TreeMap;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.lendme.client.LendMe;
 import com.lendme.server.entities.ActivityRegistry;
+import com.lendme.server.entities.EventDate;
 import com.lendme.server.entities.Item;
 import com.lendme.server.entities.Lending;
 import com.lendme.server.entities.Lending.LendingStatus;
@@ -697,8 +700,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 */
 	public String[] getActivityHistory(String solicitorSessionId) throws Exception {
 		
-		List<ActivityRegistry> results = lendMe.getActivityHistory(
-				solicitorSessionId);
+		List<ActivityRegistry> results = lendMe.getActivityHistory(solicitorSessionId);
 		String[] handled;
 		
 		if (results.size() == 0) {
@@ -706,14 +708,29 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			handled[0] = "Não há atividades";
 			return handled;
 		}
-		
 		handled = new String[results.size()];
 		Iterator<ActivityRegistry> iterator = results.iterator();
 		for ( int i=0; i<handled.length; i++ ){
 			ActivityRegistry actualActivityRegistry = iterator.next();
-			handled[i] = actualActivityRegistry.getDescription();
+			EventDate time = actualActivityRegistry.getTime();
+
+			String dateInternationalFormat = time.getDate().toString(); 
+			String dia  = dateInternationalFormat.substring(8, 10);
+			String mes = dateInternationalFormat.substring(4, 7);
+			String ano = dateInternationalFormat.substring(24, 28);
+			String dateBrazillianFormat = dia + "/" + mes + "/" + ano;
+			
+			String hora = dateInternationalFormat.substring(7, 13); 
+			
+			handled[i] = "<description>" + actualActivityRegistry.getDescription() + "</description>" +
+			"<date>" + dateBrazillianFormat +  "</date>" + "<hour>" + hora + "</hour>";
 		}
 		return handled;
+	}
+	
+	public static void main(String[] args) {
+		Date d = new Date();
+		System.out.println(d.toString());
 	}
 
 	/**

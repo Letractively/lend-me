@@ -80,12 +80,12 @@ public class ItemsViewer extends Composite{
 		
 		while(myItemsIterator.hasNext()){
 			
-			if(i%2 == 0) {
+			if(i%2 != 0) {
 				actualX = XCol2;
+				actualY -=90;
 			}
 			else {
 				actualX = XCol1;
-				actualY -=90;
 			}
 			
 			this.conteinerPanel.add(myItemsIterator.next(),actualX,actualY);

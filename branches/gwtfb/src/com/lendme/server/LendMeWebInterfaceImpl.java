@@ -698,32 +698,16 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	/**
 	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
 	 */
-	public String[] getActivityHistory(String solicitorSessionId) throws Exception {
+	public Map<String, String> getActivityHistory(String solicitorSessionId) throws Exception {
 		
 		List<ActivityRegistry> results = lendMe.getActivityHistory(solicitorSessionId);
-		String[] handled;
+		TreeMap<String, String> handled = new TreeMap<String, String>();
 		
-		if (results.size() == 0) {
-			handled = new String[1];
-			handled[0] = "Não há atividades";
-			return handled;
-		}
-		handled = new String[results.size()];
-		Iterator<ActivityRegistry> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			ActivityRegistry actualActivityRegistry = iterator.next();
+		for (ActivityRegistry actualActivityRegistry : results){
 			EventDate time = actualActivityRegistry.getTime();
-
-			String dateInternationalFormat = time.getDate().toString(); 
-			String dia  = dateInternationalFormat.substring(8, 10);
-			String mes = dateInternationalFormat.substring(4, 7);
-			String ano = dateInternationalFormat.substring(24, 28);
-			String dateBrazillianFormat = dia + "/" + mes + "/" + ano;
+			String date = formatDate(time);
 			
-			String hora = dateInternationalFormat.substring(7, 13); 
-			
-			handled[i] = "<description>" + actualActivityRegistry.getDescription() + "</description>" +
-			"<date>" + dateBrazillianFormat +  "</date>" + "<hour>" + hora + "</hour>";
+			handled.put(actualActivityRegistry.getDescription(), date);
 		}
 		return handled;
 	}
@@ -731,6 +715,22 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	public static void main(String[] args) {
 		Date d = new Date();
 		System.out.println(d.toString());
+	}
+	
+	private String formatDate(EventDate time){
+		String timeInfo = null;
+
+		String dateInternationalFormat = time.getDate().toString(); 
+		String dia  = dateInternationalFormat.substring(8, 10);
+		String mes = dateInternationalFormat.substring(4, 7);
+		String ano = dateInternationalFormat.substring(24, 28);
+		String dateBrazillianFormat = dia + "/" + mes + "/" + ano;
+		
+		String hour = dateInternationalFormat.substring(7, 13);
+		
+		timeInfo = "Data: "+ dateBrazillianFormat + "  Hora: " + hour;
+		return timeInfo;
+
 	}
 
 	/**
@@ -740,22 +740,15 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @return Retorna um array contendo o histórico de todos os
 	 * amigos do usuário cujo ID da sessão foi passado como parâmetro. 
 	 */
-	public String[] getJointActivityHistory(String solicitorSessionId) throws Exception {
-		List<ActivityRegistry> results = lendMe.getJointActivityHistory(
-				solicitorSessionId);
-		String[] handled;
+	public Map<String, String> getJointActivityHistory(String solicitorSessionId) throws Exception {
+		List<ActivityRegistry> results = lendMe.getJointActivityHistory(solicitorSessionId);
+		TreeMap<String, String> handled = new TreeMap<String, String>();
 		
-		if (results.size() == 0) {
-			handled = new String[1];
-			handled[0] = "Não há atividades";
-			return handled;
-		}
-		
-		handled = new String[results.size()];
-		Iterator<ActivityRegistry> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			ActivityRegistry actualActivityRegistry = iterator.next();
-			handled[i] = actualActivityRegistry.getDescription();
+		for (ActivityRegistry actualActivityRegistry : results){
+			EventDate time = actualActivityRegistry.getTime();
+			String date = formatDate(time);
+			
+			handled.put(actualActivityRegistry.getDescription(), date);
 		}
 		return handled;
 	}

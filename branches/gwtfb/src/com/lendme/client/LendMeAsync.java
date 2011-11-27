@@ -126,10 +126,10 @@ public interface LendMeAsync {
 			AsyncCallback<String> callback);
 
 	void getActivityHistory(String solicitorSessionId,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String, String>> callback);
 
 	void getJointActivityHistory(String solicitorSessionId,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String, String>> callback);
 
 	void getFriendsPublishedItemRequests(String solicitorSessionId,
 			AsyncCallback<String[]> callback);

@@ -2,185 +2,112 @@ package com.lendme.client;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class HistoryViewer extends Composite {
 	
-	private ArrayList<LendMeHistoricElementRepresent> historyElementBuffer;
-	private AbsolutePanel headerPenel;
-	private RootPanel rootPanel;
-	private AbsolutePanel historyPenel;
-	private Label lblMeuHistrico;
-	private final int MAX_NUMBER_HISTORY_ELEMENTS = 5;
-	private String solicitorSessionID;
-	private LendMeAsync lendMeService;
-	private int pageNumber;
-	final String NEXT_ICON_PATH = "http://www.prospectingmkt.com.br/files/images/portfolio/televisao/arrow-right.png";
-	final String PREVIOUS_ICON_PATH = "http://www.prospectingmkt.com.br/files/images/portfolio/televisao/arrow-left.png";
-	final String REFRESH_ICON_PATH = "http://www.gettyicons.com/free-icons/112/must-have/png/32/refresh_32.png";
-	private Image refreshIcon;
-	private Image next;
-	Image previous;
+	private AbsolutePanel rootPanel = new AbsolutePanel();
+	private VerticalPanel container = new VerticalPanel();
+	private final Label errorLabel; 
+	private final String errorMessage = "Erro: LendMe nao conseguiu obter informacao do servidor.";
 	
-	
-	
-	public HistoryViewer(LendMeAsync lendMeService, String solicitorSessionID){
+	public HistoryViewer(LendMeAsync lendMeService,String solicitorSessionId, String scope) {
 		
-		historyElementBuffer = new ArrayList<LendMeHistoricElementRepresent>();
-		this.solicitorSessionID = solicitorSessionID;
-		this.lendMeService = lendMeService;
-		pageNumber = 1;
+		container.setStyleName("topicsLines");
 		
-		rootPanel = RootPanel.get();
-		rootPanel.setSize("600px", "600px");
-		
-		headerPenel = new AbsolutePanel();
-		rootPanel.add(headerPenel, 0, 0);
-		headerPenel.setSize("450px", "65px");
-		
-		lblMeuHistrico = new Label("Histórico pessoal\n\n");
-		headerPenel.add(lblMeuHistrico, 20, 10);
-		lblMeuHistrico.setSize("118px", "34px");
-		
-		Label lblVejaOQue = new Label("Veja o que seus amigos adam fazendo no Lend-me!");
-		headerPenel.add(lblVejaOQue, 0, 50);
-		lblVejaOQue.setSize("450px", "15px");
-		
-		refreshIcon = new Image((String) null);
-		refreshIcon.setUrl(REFRESH_ICON_PATH);
-		refreshIcon.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				firstPage();
-			}
-		});
-		headerPenel.add(refreshIcon, 343, 10);
-		refreshIcon.setVisible(true);
-		refreshIcon.setSize("32px", "32px");
-		
-		
-		next = new Image((String) null);
-		next.setUrl(NEXT_ICON_PATH);
-		next.setSize("49px", "36px");
-		headerPenel.add(next, 391, 7);
-		
-		previous = new Image((String) null);
-		previous.setUrl(PREVIOUS_ICON_PATH);
-		
-		previous.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				nextPage();
-			}
-		});
-		previous.setSize("49px", "36px");
-		previous.setUrl(PREVIOUS_ICON_PATH);
-		previous.setVisible(true);
-		headerPenel.add(previous, 272, 10);
-		//
-		
-		historyPenel = new AbsolutePanel();
-		rootPanel.add(historyPenel, 0, 64);
-		historyPenel.setSize("450px", "400px");
-		
-		lendMeService.getActivityHistory(solicitorSessionID,new AsyncCallback<Map<String, String>>() {
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				loadBuffer();
-				addTopicstoPanel();
-				initWidget(historyPenel);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Fail: "+caught.getMessage());
-			}
-		});
-		
-	}
-	
-	private void loadBuffer(){
-		lendMeService.getActivityHistory(solicitorSessionID,new AsyncCallback<Map<String, String>>() {
+		container.setWidth("570px");
 
-			
-			public void onFailure(Throwable caught) {
-				Window.alert("Fail: "+caught.getMessage());
-				
-			}
+		ScrollPanel scrollPanel = new ScrollPanel();
+		rootPanel.add(scrollPanel, 0, 32);
+		scrollPanel.setSize("600px", "515px");
+		rootPanel.setSize("600px", "550px");
+		
+		scrollPanel.add(container);
+		
+		errorLabel = new Label("error");
+		container.add(errorLabel);
+		errorLabel.setStyleName("topicsLines");
+		
+		HorizontalPanel topPanel = new HorizontalPanel();
+		container.add(topPanel);
+		topPanel.setWidth("600px");
+		
+		Label numberOfMsgsLabel = new Label("numOfMsgs");
+		numberOfMsgsLabel.setText("Visualiza\u00E7ao:");
+		numberOfMsgsLabel.setSize("210px", "15px");
+		topPanel.add(numberOfMsgsLabel);
+		
+		Label subjectLabel = new Label("subject");
+		subjectLabel.setText((scope.equals("all")?"Todos do Sistema":"Pessoal"));
+		subjectLabel.setSize("210px", "15px");
+		topPanel.add(subjectLabel);
+		
+		topPanel.addStyleName("topicsHeader");
+		
+		final VerticalPanel activityPanel = new VerticalPanel();
+		container.add(activityPanel);
+		activityPanel.setSize("599px", "481px");
+		errorLabel.setVisible(false);
+		
+		rootPanel.add(scrollPanel, 0, 32);
+		
+		if ( scope.equals("all") ){
+			lendMeService.getActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, ArrayList<String[]>>>() {
 
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				String description = null;
-				String time = null;
-				
-				int firstElement = (pageNumber - 1) * MAX_NUMBER_HISTORY_ELEMENTS;
-				int finalElement = pageNumber * 5;
-				
-				Set<String> descriptionsSet = result.keySet();
-				String[] descriptions = (String[]) descriptionsSet.toArray();
-				
-				for(int i = firstElement; i < finalElement; i++){
-					if(descriptions[i] != null){
-						description = descriptions[i];
-						time = result.get(description);
-						historyElementBuffer.add(new LendMeHistoricElementRepresent(description, time));
-					}else{
-						break;
+				@Override
+				public void onSuccess(Map<String, ArrayList<String[]>> result) {
+					for (String date : result.keySet() ){
+						DockPanel datePanel = new DockPanel();
+						datePanel.setWidth("660px");
+						datePanel.add(new Label("Atividates em "+date), DockPanel.CENTER);
+						activityPanel.add(datePanel);
+						for ( String[] content : result.get(date) ){
+							activityPanel.add(new LendMeActivityRep(content[0], content[1], content[2]));
+						}
 					}
 				}
-				
-			}
-			
-		});
-	}
-	
-	public void addTopicstoPanel() {
-		int i = 0;
-		for(LendMeHistoricElementRepresent element : historyElementBuffer){
-			if(i < MAX_NUMBER_HISTORY_ELEMENTS){
-				historyPenel.add(element, 0, i * 80);
-			}else{
-				break;
-			}
-		}
-	}
-	
-	private PopupPanel criatePopup(String message, int width, int height){
-		PopupPanel popup = new PopupPanel();
-		popup.setPixelSize(width, height);
-		Label label = new Label(message);
-		label.setPixelSize(width, height);
-		popup.add(label);
-		
-		return null;
-		
-	}
-	
-	private void nextPage(){
-		if(historyElementBuffer.get((pageNumber * MAX_NUMBER_HISTORY_ELEMENTS) + 1) != null){
-			pageNumber = pageNumber + 1;
-		}
-		loadBuffer();
-		addTopicstoPanel();
-		initWidget(historyPenel);
-	}
-	
-	private void firstPage(){
-		pageNumber = 1;
 
-		loadBuffer();
-		addTopicstoPanel();
-		initWidget(historyPenel);
+				@Override
+				public void onFailure(Throwable caught) {
+					errorLabel.setText(errorMessage + " - " + caught.getMessage());
+					errorLabel.setVisible(true);
+				}
+			});
+		}
+		else{
+			lendMeService.getJointActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, ArrayList<String[]>>>() {
+
+				@Override
+				public void onSuccess(Map<String, ArrayList<String[]>> result) {
+					for (String date : result.keySet() ){
+						DockPanel datePanel = new DockPanel();
+						datePanel.setWidth("660px");
+						datePanel.add(new Label("Atividates em "+date), DockPanel.CENTER);
+						activityPanel.add(datePanel);
+						for ( String[] content : result.get(date) ){
+							activityPanel.add(new LendMeActivityRep(content[0], content[1], content[2]));
+						}
+					}
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					errorLabel.setText(errorMessage + " - " + caught.getMessage());
+					errorLabel.setVisible(true);
+				}
+			});
+		}
+		
+		this.initWidget(rootPanel);
+		
 	}
+	
 }

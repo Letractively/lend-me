@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratorPanel;
+import com.lendme.client.UserViewer.FriendshipStatus;
 
 public class LendMeUsersContainer extends AbsolutePanel {
 
@@ -14,12 +15,12 @@ public class LendMeUsersContainer extends AbsolutePanel {
 	private LendMeAsync lendMeService;
 	private String solicitorSessionId;
 	
-	private Button breakFriendshipButton;
+	private Button addBreakFriendshipButton;
 	private Button acceptFriendshipButton;
 	private Button declineFriendshipButton;
 	
 	public LendMeUsersContainer(LendMeAsync lendMeService, String solicitorSessionId,
-			LendMeUsersRepresentation user, boolean viewCurrentFriends) {
+			LendMeUsersRepresentation user, FriendshipStatus status) {
 		
 		this.user = user;
 		this.solicitorSessionId = solicitorSessionId;
@@ -30,14 +31,14 @@ public class LendMeUsersContainer extends AbsolutePanel {
 		
 		absolutePanel.add(user, 0, 0);
 		
-		if (viewCurrentFriends) {
+		if (status.equals(FriendshipStatus.FRIEND)) {
 			
-			breakFriendshipButton = new Button("Desfazer Amizade");
-			absolutePanel.add(breakFriendshipButton, 55, 134);
-			breakFriendshipButton.setSize("150px", "24px");
-			breakFriendshipButton.addStyleName("purple-font");
+			addBreakFriendshipButton = new Button("Desfazer Amizade");
+			absolutePanel.add(addBreakFriendshipButton, 55, 134);
+			addBreakFriendshipButton.setSize("150px", "24px");
+			addBreakFriendshipButton.addStyleName("purple-font");
 			
-			breakFriendshipButton.addClickHandler(new ClickHandler() {
+			addBreakFriendshipButton.addClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
@@ -45,12 +46,12 @@ public class LendMeUsersContainer extends AbsolutePanel {
 				}
 			});
 		
-		} else {
+		} else if (status.equals(FriendshipStatus.REQUESTED_MY_FRIENDSHIP)){
 			
 			acceptFriendshipButton = new Button("Aprovar Amizade");
-			acceptFriendshipButton.setText("Aprovar");
-			absolutePanel.add(acceptFriendshipButton, 30, 134);
-			acceptFriendshipButton.setSize("80px", "24px");
+			acceptFriendshipButton.setText("Aprov. Amizade");
+			absolutePanel.add(acceptFriendshipButton, 5, 134);
+			acceptFriendshipButton.setSize("130px", "24px");
 			acceptFriendshipButton.addStyleName("green-font");
 			
 			acceptFriendshipButton.addClickHandler(new ClickHandler() {
@@ -62,10 +63,10 @@ public class LendMeUsersContainer extends AbsolutePanel {
 			});
 			
 			declineFriendshipButton = new Button("Rejeitar Amizade");
-			absolutePanel.add(declineFriendshipButton, 145, 134);
-			declineFriendshipButton.setText("Rejeitar");
-			declineFriendshipButton.setSize("80px", "24px");
-			declineFriendshipButton.addStyleName("purple-font");
+			absolutePanel.add(declineFriendshipButton, 140, 134);
+			declineFriendshipButton.setText("Rej. Amizade");
+			declineFriendshipButton.setSize("110px", "24px");
+			declineFriendshipButton.addStyleName("green-font");
 			
 			declineFriendshipButton.addClickHandler(new ClickHandler() {
 				
@@ -77,10 +78,43 @@ public class LendMeUsersContainer extends AbsolutePanel {
 			});
 		}
 		
+		else {
+			// NOT_FRIEND
+			addBreakFriendshipButton = new Button("Requisitar Amizade");
+			absolutePanel.add(addBreakFriendshipButton, 55, 134);
+			addBreakFriendshipButton.setSize("150px", "24px");
+			addBreakFriendshipButton.addStyleName("purple-font");
+			
+			addBreakFriendshipButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					askForFriendship();
+				}
+			});
+		}
+		
 		DecoratorPanel decPanel = new DecoratorPanel();
 		decPanel.add(absolutePanel);
 		
 		this.add(decPanel);
+	}
+	
+	private void askForFriendship() {
+		lendMeService.askForFriendship(solicitorSessionId, 
+				user.getLogin(), new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Nao foi possivel requisitar a amizade: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				Window.alert("Requisicao de amizade feita com sucesso!");
+				
+			}
+		});
 	}
 	
 	private void breakFriendship() {

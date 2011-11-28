@@ -31,7 +31,7 @@ public class NewMsgForm extends PopupPanel {
 	private RichTextToolbar toolbar;
 	private NewMsgForm me;
 	
-	private String receivedLendingId;
+	private String receivedLendingId = "";
 
 	public NewMsgForm(LendMeAsync lendMeService, String solicitorSessionId,
 			String receiver, String subject, String lendingId) {
@@ -228,6 +228,14 @@ public class NewMsgForm extends PopupPanel {
 						}
 					});
 		}
+	}
+	
+	public void resetFields() {
+		receiverTextBox.setText("");
+		subjectText.setText("");
+		textArea.setText("");
+		negotiationRdioBtn.setValue(false);
+		lendingListBox.clear();
 	}
 	
 	private String getChosenLendingId() {

@@ -4,19 +4,15 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalSplitPanel;
-import com.gwtext.client.widgets.Container;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Button;
-import com.gwtext.client.core.EventObject;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 @SuppressWarnings("deprecation")
 
 public class HistoryViewer extends Composite {
@@ -141,7 +137,6 @@ public class HistoryViewer extends Composite {
 	}
 	
 	private PopupPanel criatePopup(String message, int width, int height){
-		Container c = new Container();
 		PopupPanel popup = new PopupPanel();
 		popup.setPixelSize(width, height);
 		Label label = new Label(message);

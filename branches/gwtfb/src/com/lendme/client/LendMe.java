@@ -55,7 +55,7 @@ public interface LendMe extends RemoteService{
 	public String[] searchForItemsWithIds(String solicitorSession, String key, String attribute, String disposition,
 			String criteria) throws Exception;
 	
-	public String[] getItems(String solicitorSession) throws Exception;
+	public Map<String, String[]> getItems(String solicitorSession) throws Exception;
 	
 	public String[] getItems(String solicitorSession, String solicitedLogin) throws Exception;
 	

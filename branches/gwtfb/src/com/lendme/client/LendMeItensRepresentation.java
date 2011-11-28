@@ -27,7 +27,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public LendMeItensRepresentation() {
+	private LendMeItensRepresentation() {
 		super();
 		
 		AppImageBundle images = GWT.create(AppImageBundle.class);

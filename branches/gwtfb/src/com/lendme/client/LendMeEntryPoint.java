@@ -37,6 +37,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	// The sessionId which will be generated when the user logs in
 	private String currentSessionId = "";
 	private String accessToken = "";
+	private String idSessionTests = "";
 	
 	/**
 	 * This is the entry point method.
@@ -156,7 +157,25 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
 								}
 								else if ( option.startsWith("items") ){
-									mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId));
+									lendMeService.openSession("pedrorml", new AsyncCallback<String>() {
+
+										@Override
+										public void onFailure(Throwable caught) {
+											Window.alert("Deu merda na sessao!");
+										}
+
+										@Override
+										public void onSuccess(String result) {
+											Window.alert("Criou Sessao: "+idSessionTests);
+											if(idSessionTests != ""){
+												mainView.setWidget(new ItemsViewer(lendMeService,idSessionTests));
+											}else{
+												mainView.setWidget(new ItemsViewer(lendMeService,result));
+												idSessionTests = result;
+											}
+											
+										}
+									});
 									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE ITEMS> );				
 								}
 								else if ( option.startsWith("messages") ){

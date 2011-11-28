@@ -290,7 +290,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 		else if ( option.equals("history") ){
 			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
-			mainView.setWidget(new Label("HISTORICO"));
+			mainView.setWidget(new HistoryViewer(lendMeService, currentSessionId, "all"));
 		}
 		else {
 			renderHomeView(viewedUser);

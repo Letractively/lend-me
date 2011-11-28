@@ -1,5 +1,6 @@
 package com.lendme.client;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -126,10 +127,10 @@ public interface LendMeAsync {
 			AsyncCallback<String> callback);
 
 	void getActivityHistory(String solicitorSessionId,
-			AsyncCallback<Map<String, String>> callback);
+			AsyncCallback<Map<String, ArrayList<String[]>>> callback);
 
 	void getJointActivityHistory(String solicitorSessionId,
-			AsyncCallback<Map<String, String>> callback);
+			AsyncCallback<Map<String, ArrayList<String[]>>> callback);
 
 	void getFriendsPublishedItemRequests(String solicitorSessionId,
 			AsyncCallback<String[]> callback);

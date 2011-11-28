@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -13,7 +14,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-@SuppressWarnings("deprecation")
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PushButton;
 
 public class HistoryViewer extends Composite {
 	
@@ -26,6 +28,13 @@ public class HistoryViewer extends Composite {
 	private String solicitorSessionID;
 	private LendMeAsync lendMeService;
 	private int pageNumber;
+	final String NEXT_ICON_PATH = "http://www.prospectingmkt.com.br/files/images/portfolio/televisao/arrow-right.png";
+	final String PREVIOUS_ICON_PATH = "http://www.prospectingmkt.com.br/files/images/portfolio/televisao/arrow-left.png";
+	final String REFRESH_ICON_PATH = "http://www.gettyicons.com/free-icons/112/must-have/png/32/refresh_32.png";
+	private Image refreshIcon;
+	private Image next;
+	Image previous;
+	
 	
 	
 	public HistoryViewer(LendMeAsync lendMeService, String solicitorSessionID){
@@ -36,42 +45,49 @@ public class HistoryViewer extends Composite {
 		pageNumber = 1;
 		
 		rootPanel = RootPanel.get();
-		rootPanel.setSize("600px", "450px");
+		rootPanel.setSize("600px", "600px");
 		
 		headerPenel = new AbsolutePanel();
 		rootPanel.add(headerPenel, 0, 0);
-		headerPenel.setSize("450px", "50px");
+		headerPenel.setSize("450px", "65px");
 		
 		lblMeuHistrico = new Label("Histórico pessoal\n\n");
 		headerPenel.add(lblMeuHistrico, 20, 10);
-		lblMeuHistrico.setSize("104px", "18px");
+		lblMeuHistrico.setSize("118px", "34px");
 		
 		Label lblVejaOQue = new Label("Veja o que seus amigos adam fazendo no Lend-me!");
-		headerPenel.add(lblVejaOQue, 0, 34);
+		headerPenel.add(lblVejaOQue, 0, 50);
 		lblVejaOQue.setSize("450px", "15px");
 		
-		Button button = new Button("<< Mais recentes");
-		button.addClickHandler(new ClickHandler() {
+		refreshIcon = new Image((String) null);
+		refreshIcon.setUrl(REFRESH_ICON_PATH);
+		refreshIcon.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				previousPage();
+				firstPage();
 			}
 		});
-		headerPenel.add(button, 164, 7);
-		button.setSize("132px", "21px");
+		headerPenel.add(refreshIcon, 343, 10);
+		refreshIcon.setSize("32px", "32px");
 		
-		Button btnMaisAntigas = new Button("Mais antigas >>");
-		btnMaisAntigas.addClickHandler(new ClickHandler() {
+		next = new Image((String) null);
+		next.setUrl(NEXT_ICON_PATH);
+		headerPenel.add(next, 391, 7);
+		next.setSize("49px", "36px");
+		
+		previous = new Image((String) null);
+		previous.setUrl(PREVIOUS_ICON_PATH);
+		previous.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				nextPage();
 			}
 		});
-		headerPenel.add(btnMaisAntigas, 313, 7);
-		btnMaisAntigas.setSize("122px", "21px");
+		headerPenel.add(previous, 272, 10);
+		previous.setSize("49px", "36px");
+		//
 		
 		historyPenel = new AbsolutePanel();
-		rootPanel.add(historyPenel, 0, 50);
+		rootPanel.add(historyPenel, 0, 64);
 		historyPenel.setSize("450px", "400px");
-		
 		
 		lendMeService.getActivityHistory(solicitorSessionID,new AsyncCallback<Map<String, String>>() {
 			@Override
@@ -83,8 +99,7 @@ public class HistoryViewer extends Composite {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				
-				
+				Window.alert("Fail: "+caught.getMessage());
 			}
 		});
 		
@@ -93,9 +108,9 @@ public class HistoryViewer extends Composite {
 	private void loadBuffer(){
 		lendMeService.getActivityHistory(solicitorSessionID,new AsyncCallback<Map<String, String>>() {
 
-			@Override
+			
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				Window.alert("Fail: "+caught.getMessage());
 				
 			}
 
@@ -156,14 +171,11 @@ public class HistoryViewer extends Composite {
 		initWidget(historyPenel);
 	}
 	
-	private void previousPage(){
-		if(pageNumber > 1){
-			pageNumber = pageNumber - 1;
-		}
-		
+	private void firstPage(){
+		pageNumber = 1;
+
 		loadBuffer();
 		addTopicstoPanel();
 		initWidget(historyPenel);
-
 	}
 }

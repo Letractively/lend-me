@@ -8,7 +8,6 @@ import java.util.TreeMap;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -33,7 +32,7 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 			"-----------------------------------------------------------------" +
 			"-------------------------------------------------------"		;//120 tra�os
 	
-	private final String errorMsg = "Error: LendMe could not retrieve information from the server."; 
+	private final String errorMsg = "Erro: LendMe nao conseguiu obter informacao do servidor."; 
 	
 	private String solicitorSessionId;
 	 
@@ -51,6 +50,7 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 		hPanel.setHeight("30px");
 		
 		expandButton = new Button();
+		expandButton.setStyleName("gwt-button");
 		expandButton.setText("+");
 		expandButton.setWidth("30px");
 		hPanel.add(expandButton);
@@ -201,15 +201,15 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 //				@Override
 //				public void onSuccess(Map<String, String[]> result) {
 //					for (String message : result.keySet()) {
-//					topicMessages.add(new LendMeMsgsRep(result.get(message)[0], result.get(message)[1],
+//					topicMessages.add(new LendMeMsgsRep(lendMeService, solicitorSessionId, result.get(message)[0], result.get(message)[1],
 //						result.get(message)[2], result.get(message)[3], result.get(message)[4]));
 //				}}
 //			});
 		
 		for (int i = 0; i < 3; i++) {
-			topicMessages.add(new LendMeMsgsRep(
+			topicMessages.add(new LendMeMsgsRep(lendMeService, solicitorSessionId,
 					"message"+i, "subject"+i,"sender"+i,
-					"date"+i, "lendingId"+i));
+					"date"+i, "00"+i));
 		}
 		return topicMessages;
 	}

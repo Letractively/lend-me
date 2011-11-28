@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -17,10 +19,11 @@ public class TopicsViewer extends Composite {
 	private List<LendMeTopicsRep> topics = new ArrayList<LendMeTopicsRep>();
 	private AbsolutePanel rootPanel = new AbsolutePanel();
 	private VerticalPanel container = new VerticalPanel();
+	private NewMsgForm newMsgForm;
 	private final Label errorLabel; 
-	private final String errorMessage = "Error: LendMe could not retrieve information from the server.";
-	final String solicitorSessionId;  
+	private final String errorMessage = "Erro: LendMe nao conseguiu obter informacao do servidor.";
 	
+	final String solicitorSessionId;  
 	private boolean topicsAlreadyAdded = false;
 	private LendMeAsync lendMeService;
 	
@@ -29,14 +32,24 @@ public class TopicsViewer extends Composite {
 		
 		this.lendMeService = lendMeService;
 		this.solicitorSessionId = solicitorSessionId;
+		container.setStyleName("topicsLines");
 		
-		HorizontalPanel topPanel = new HorizontalPanel();
-		topPanel.setWidth("600px");
-		rootPanel.add(topPanel);
+		container.setWidth("570px");
+
+		ScrollPanel scrollPanel = new ScrollPanel();
+		rootPanel.add(scrollPanel, 0, 32);
+		scrollPanel.setSize("600px", "408px");
+		rootPanel.setSize("600px", "441px");
+		
+		scrollPanel.add(container);
 		
 		errorLabel = new Label("error");
-		rootPanel.add(errorLabel);
-		errorLabel.setVisible(false);
+		container.add(errorLabel);
+		errorLabel.setStyleName("topicsLines");
+		
+		HorizontalPanel topPanel = new HorizontalPanel();
+		container.add(topPanel);
+		topPanel.setWidth("600px");
 		
 		Label expandCollapseLabel = new Label("expand/collapse");
 		expandCollapseLabel.setText("+/--");
@@ -59,17 +72,21 @@ public class TopicsViewer extends Composite {
 		topPanel.add(creationDateLabel);
 		
 		topPanel.addStyleName("topicsHeader");
+		errorLabel.setVisible(false);
 		
-		container.setWidth("570px");
-
-		ScrollPanel scrollPanel = new ScrollPanel();
-		rootPanel.add(scrollPanel);
-		scrollPanel.setSize("600px", "270px");
-		rootPanel.setSize("600px", "300px");
+		rootPanel.add(scrollPanel, 0, 32);
 		
-		scrollPanel.add(container);
+		Button newMsgButton = new Button("Nova Mensagem");
+		rootPanel.add(newMsgButton, 465, 0);
+		newMsgButton.setSize("114px", "29px");
 		
-		rootPanel.add(scrollPanel);
+		newMsgButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				createNewMsg();
+			}
+		});
 		
 		for (int i = 0; i < 3; i++) {
 			topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"subject"+i, "id"+i,
@@ -93,6 +110,7 @@ public class TopicsViewer extends Composite {
 		addTopicstoPanel();
 		
 		this.initWidget(rootPanel);
+		
 	}
 	
 	private void addTopics(Map<String, String[]>result) {
@@ -100,6 +118,11 @@ public class TopicsViewer extends Composite {
 			topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId, topic, result.get(topic)[0],
 					result.get(topic)[1], result.get(topic)[2]));
 		}
+	}
+	
+	private void createNewMsg() {
+		newMsgForm = new NewMsgForm(lendMeService, solicitorSessionId);
+		newMsgForm.center();
 	}
 
 	public void addTopicstoPanel() {

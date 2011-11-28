@@ -114,7 +114,7 @@ public interface LendMeAsync {
 			AsyncCallback<String[]> callback);
 
 	void getLendingRecords(String solicitorSession, String kind,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String,String[]>> callback);
 
 	void getLendingRecordsWithIds(String solicitorSession, String kind,
 			AsyncCallback<String[]> callback);

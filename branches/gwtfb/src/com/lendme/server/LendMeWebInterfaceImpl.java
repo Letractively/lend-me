@@ -637,21 +637,31 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * (Non-javadoc)
 	 * @see com.lendme.LendMeFacade#searchForLendingRecords(String, String)
 	 */	
-	public String[] getLendingRecords(String solicitorSession, String kind) throws Exception{
+	public Map<String, String[]> getLendingRecords(String solicitorSession, String kind) throws Exception{
 		
 		List<Lending> results = new ArrayList<Lending>(lendMe.searchForLendingRecords(solicitorSession, kind));
-		String[] handled = new String[results.size()];
-		Iterator<Lending> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			String template = "%s-%s:%s:%s";
-			Lending tmp = iterator.next();
-			handled[i] = String.format(template, tmp.getLender().getLogin(),
-					tmp.getBorrower().getLogin(), tmp.getItem().getName(),
-					tmp.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
-				  ( tmp.getStatus() == LendingStatus.FINISHED ? "Completado" : 
-					tmp.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" ));
+		Map<String, String[]> lendingRecords = new TreeMap<String, String[]>();
+		for (Lending lending : results) {
+			String[] lendingProps = new String[11];
+			lendingProps[0] = lending.getBorrower().getName();
+			lendingProps[1] = lending.getLender().getName();
+			lendingProps[2] = lending.getItem().getName();
+			lendingProps[3] = String.valueOf(lending.getRequiredDays());
+			lendingProps[4] = String.valueOf(lending.isReturned());
+			lendingProps[5] = String.valueOf(lending.isRequestedBack());
+			lendingProps[6] = lending.getRequestionDate().toString();
+			lendingProps[7] = lending.getLendingDate().toString();
+			lendingProps[8] = lending.getID();
+			lendingProps[9] = lending.getStatus() == LendingStatus.ONGOING ? "Andamento" : 
+				  ( lending.getStatus() == LendingStatus.FINISHED ? "Completado" : 
+					lending.getStatus() == LendingStatus.CANCELLED ? "Cancelado" : "Negado" );
+			lendingProps[10] = lending.getDesiredItemName();
+			lendingProps[11] = lending.getDesiredItemDescription();
+			lendingRecords.put(lending.getID(), lendingProps);
+			
 		}
-		return handled;
+		
+		return lendingRecords;
 	}
 	
 	/**

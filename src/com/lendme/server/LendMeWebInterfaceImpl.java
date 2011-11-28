@@ -1,7 +1,6 @@
 package com.lendme.server;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -198,16 +197,28 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @return an array of strings containing the results logins
 	 * @see com.lendme.LendMeFacade#getFriendshipRequests(String)
 	 */
-	public String[] getFriendshipRequests(String solicitorSession) throws Exception {
+	public Map<String,String[]> getFriendshipRequests(String solicitorSession) throws Exception {
 
 		List<User> results = new ArrayList<User>(lendMe.getFriendshipRequests(solicitorSession));
+		Map<String, String[]> actualResult = new TreeMap<String, String[]>();
 		Collections.sort(results,  new UserDateComparatorStrategy());
-		String[] handled = new String[results.size()];
+		
 		Iterator<User> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getLogin();
+		String[] atributtes;
+
+		while(iterator.hasNext()){
+			
+			User next = iterator.next();
+			
+			atributtes = new String[3];
+			atributtes[0] = next.getName();
+			atributtes[1] = Integer.toString(next.getScore());
+			atributtes[2] = next.getAddress().getFullAddress();
+						
+			actualResult.put(next.getLogin(), atributtes);
 		}
-		return handled;
+		
+		return actualResult;
 	}
 
 	 /** Handles with results from search in System, transforming them in a string array

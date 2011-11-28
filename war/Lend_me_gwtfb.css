@@ -314,3 +314,16 @@ button em.rightImage{
   border: 1px solid #BBBBBB;
   border-spacing: 0px;
 }
+
+.purple-font {
+  font-color: #990000;
+  font-weight: bolder;
+  font-size: 8pt;
+}
+
+.green-font {
+  font-color: #00FF99;
+  font-weight: bolder;
+  font-size: 8pt;
+}
+}

@@ -444,7 +444,7 @@ public class LendMeTextInterface {
 	private static void evaluateFriendship() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de requisições de amizade",
-				lendMeAdapter.getFriendshipRequests(currentUserSessionId)));
+				(String[])lendMeAdapter.getFriendshipRequests(currentUserSessionId).keySet().toArray()));
 		
 		String friendLogin = returnCorrectString("\n \t Informe o login do usuário: ");
 		
@@ -836,8 +836,5 @@ public class LendMeTextInterface {
 	private static void printException(Exception e) {
 		System.out.println("\n \t" + e.getMessage());
 	}
-
 	
-	
-
 }

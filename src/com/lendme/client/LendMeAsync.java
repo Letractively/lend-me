@@ -35,7 +35,7 @@ public interface LendMeAsync {
 			AsyncCallback<Void> callback);
 
 	void getFriendshipRequests(String solicitorSession,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String, String[]>> callback);
 
 	void getFriends(String solicitorSession, AsyncCallback<Map<String, String[]>> callback);
 

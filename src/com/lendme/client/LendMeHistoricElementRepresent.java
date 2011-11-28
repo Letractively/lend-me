@@ -15,8 +15,8 @@ public class LendMeHistoricElementRepresent extends Composite {
 	private final int DESCRIPTION = 1;
 	private final int TIME = 2;
 	
-	final String ICON_ADD_USER = "";
-	final String ICON_NEW_ITEM = "";
+	final String ICON_ADD_USER = "http://support.microsoft.com/library/images/support/kbgraphics/Public/en-us/office/New%20icon%20image.jpg";
+	final String ICON_NEW_ITEM = "http://www.ablemuse.com/v4/images/new-icon.gif";
 	final String ICON_LEND = "";
 	final String ICON_ITEM_INTEREST = "";
 	final String ICON_FINISH_LENDING = "";

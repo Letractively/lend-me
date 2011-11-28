@@ -8,10 +8,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
-import com.gwtext.client.widgets.Button;
+import com.gwtext.client.widgets.Container;
 import com.google.gwt.user.client.ui.Label;
+import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.event.ButtonListenerAdapter;
 import com.gwtext.client.core.EventObject;
 @SuppressWarnings("deprecation")
@@ -21,8 +23,6 @@ public class HistoryViewer extends Composite {
 	private ArrayList<LendMeHistoricElementRepresent> historyElementBuffer;
 	private AbsolutePanel headerPenel;
 	private RootPanel rootPanel;
-	private Button forwardButton;
-	private Button backButton;
 	private AbsolutePanel historyPenel;
 	private Label lblMeuHistrico;
 	private final int MAX_NUMBER_HISTORY_ELEMENTS = 5;
@@ -36,6 +36,7 @@ public class HistoryViewer extends Composite {
 		historyElementBuffer = new ArrayList<LendMeHistoricElementRepresent>();
 		this.solicitorSessionID = solicitorSessionID;
 		this.lendMeService = lendMeService;
+		pageNumber = 1;
 		
 		rootPanel = RootPanel.get();
 		rootPanel.setSize("600px", "450px");
@@ -44,32 +45,20 @@ public class HistoryViewer extends Composite {
 		rootPanel.add(headerPenel, 0, 0);
 		headerPenel.setSize("450px", "50px");
 		
-		forwardButton = new Button("<< Mais recentes");
-		forwardButton.addListener(new ButtonListenerAdapter() {
-			@Override
-			public void onClick(Button button, EventObject e) {
-				previousPage();
-			}
-		});
-		headerPenel.add(forwardButton, 190, 10);
-		
-		backButton = new Button("Mais antigas >>");
-		backButton.addListener(new ButtonListenerAdapter() {
-			@Override
-			public void onClick(Button button, EventObject e) {
-				previousPage();
-			}
-		});
-		headerPenel.add(backButton, 318, 10);
-		backButton.setSize("122px", "21px");
-		
 		lblMeuHistrico = new Label("Histórico pessoal\n\n");
 		headerPenel.add(lblMeuHistrico, 20, 10);
-		lblMeuHistrico.setSize("104px", "39px");
+		lblMeuHistrico.setSize("104px", "18px");
 		
 		Label lblVejaOQue = new Label("Veja o que seus amigos adam fazendo no Lend-me!");
 		headerPenel.add(lblVejaOQue, 0, 34);
 		lblVejaOQue.setSize("450px", "15px");
+		
+		Button button = new Button("<< Mais recentes");
+		headerPenel.add(button, 185, 7);
+		
+		Button btnMaisAntigas = new Button("Mais antigas >>");
+		headerPenel.add(btnMaisAntigas, 313, 7);
+		btnMaisAntigas.setSize("122px", "21px");
 		
 		historyPenel = new AbsolutePanel();
 		rootPanel.add(historyPenel, 0, 50);
@@ -114,9 +103,13 @@ public class HistoryViewer extends Composite {
 				String[] descriptions = (String[]) descriptionsSet.toArray();
 				
 				for(int i = firstElement; i < finalElement; i++){
-					description = descriptions[i];
-					time = result.get(description);
-					historyElementBuffer.add(new LendMeHistoricElementRepresent(description, time));
+					if(descriptions[i] != null){
+						description = descriptions[i];
+						time = result.get(description);
+						historyElementBuffer.add(new LendMeHistoricElementRepresent(description, time));
+					}else{
+						break;
+					}
 				}
 				
 			}
@@ -135,6 +128,18 @@ public class HistoryViewer extends Composite {
 		}
 	}
 	
+	private PopupPanel criatePopup(String message, int width, int height){
+		Container c = new Container();
+		PopupPanel popup = new PopupPanel();
+		popup.setPixelSize(width, height);
+		Label label = new Label(message);
+		label.setPixelSize(width, height);
+		popup.add(label);
+		
+		return null;
+		
+	}
+	
 	private void nextPage(){
 		if(historyElementBuffer.get((pageNumber * MAX_NUMBER_HISTORY_ELEMENTS) + 1) != null){
 			pageNumber = pageNumber + 1;
@@ -145,7 +150,7 @@ public class HistoryViewer extends Composite {
 	}
 	
 	private void previousPage(){
-		if(pageNumber > 0){
+		if(pageNumber > 1){
 			pageNumber = pageNumber - 1;
 		}
 		

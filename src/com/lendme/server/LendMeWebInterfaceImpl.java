@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -445,16 +446,34 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * do usuário solicitante.
 	 * @throws Exception
 	 */
-	public String[] getItems(String solicitorSession) throws Exception{
+	public Map<String, String[]> getItems(String solicitorSession) throws Exception{
 		
 		List<Item> results = new ArrayList<Item>(lendMe.getItems(solicitorSession));
 		Collections.sort(results);
-		String[] handled = new String[results.size()];
-		Iterator<Item> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getName();
+		
+		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
+		
+		
+		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
+		boolean identifierAction = false;
+		
+		for(Item actualItem : results){
+			for(Lending actualLending : result){
+				if(actualLending.getItem().equals(actualItem)){
+					identifierAction = true;
+					break;
+				}
+			}
+			String[] fields = new String[5];
+			fields[0] = actualItem.getName();
+			fields[1] = actualItem.getCategory();
+			fields[2] = actualItem.getDescription();
+			fields[3] = String.valueOf(identifierAction);
+			fields[4] = this.formatDate(actualItem.getCreationDate());
+			mapResults.put(actualItem.getID(), fields);
 		}
-		return handled;
+	
+		return mapResults;
 	}
 
 	/**
@@ -720,117 +739,118 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			handled.put(actualActivityRegistry.getDescription(), date);
 		}
 		return handled;
-	}
-	
-	public static void main(String[] args) {
-		Date d = new Date();
-		System.out.println(d.toString());
-	}
-	
-	private String formatDate(EventDate time){
-		String timeInfo = null;
-
-		String dateInternationalFormat = time.getDate().toString(); 
-		String dia  = dateInternationalFormat.substring(8, 10);
-		String mes = dateInternationalFormat.substring(4, 7);
-		String ano = dateInternationalFormat.substring(24, 28);
-		String dateBrazillianFormat = dia + "/" + mes + "/" + ano;
-		
-		String hour = dateInternationalFormat.substring(7, 13);
-		
-		timeInfo = "Data: "+ dateBrazillianFormat + "  Hora: " + hour;
-		return timeInfo;
-
-	}
-
-	/**
-	 * 
-	 * @param solicitorSessionId ID da sassão do usuário que deseja 
-	 * ver o histórico das atividades dos seu amigos.
-	 * @return Retorna um array contendo o histórico de todos os
-	 * amigos do usuário cujo ID da sessão foi passado como parâmetro. 
-	 */
-	public Map<String, String> getJointActivityHistory(String solicitorSessionId) throws Exception {
-		List<ActivityRegistry> results = lendMe.getJointActivityHistory(solicitorSessionId);
-		TreeMap<String, String> handled = new TreeMap<String, String>();
-		
-		for (ActivityRegistry actualActivityRegistry : results){
-			EventDate time = actualActivityRegistry.getTime();
-			String date = formatDate(time);
-			
-			handled.put(actualActivityRegistry.getDescription(), date);
 		}
-		return handled;
-	}
-
-	/**
-	 * 
-	 * @param solicitorSessionId ID da sessão do usuário solicitado.
-	 * @return Retorna um array com todas as publicações de requisição
-	 * de itens feitas pelos amigos do usuário solicitado.
-	 * @throws Exception
-	 */
-	public String[] getFriendsPublishedItemRequests(String solicitorSessionId) throws Exception {
-		List<Lending> results = lendMe.getFriendsPublishedItemRequests(solicitorSessionId);
-		String[] handled;
 		
-		if (results.size() == 0) {
-			handled = new String[1];
-			handled[0] = "Não há publicações de pedidos de seus amigos";
+		public static void main(String[] args) {
+			Date d = new Date();
+			System.out.println(d.toString());
+		}
+		
+		private String formatDate(EventDate time){
+			String timeInfo = null;
+
+			String dateInternationalFormat = time.getDate().toString(); 
+			String dia  = dateInternationalFormat.substring(8, 10);
+			String mes = dateInternationalFormat.substring(4, 7);
+			String ano = dateInternationalFormat.substring(24, 28);
+			String dateBrazillianFormat = dia + "/" + mes + "/" + ano;
+			
+			String hour = dateInternationalFormat.substring(7, 13);
+			
+			timeInfo = "Data: "+ dateBrazillianFormat + "  Hora: " + hour;
+			return timeInfo;
+
+		}
+
+		/**
+		 * 
+		 * @param solicitorSessionId ID da sassão do usuário que deseja 
+		 * ver o histórico das atividades dos seu amigos.
+		 * @return Retorna um array contendo o histórico de todos os
+		 * amigos do usuário cujo ID da sessão foi passado como parâmetro. 
+		 */
+		public Map<String, String> getJointActivityHistory(String solicitorSessionId) throws Exception {
+			List<ActivityRegistry> results = lendMe.getJointActivityHistory(solicitorSessionId);
+			TreeMap<String, String> handled = new TreeMap<String, String>();
+			
+			for (ActivityRegistry actualActivityRegistry : results){
+				EventDate time = actualActivityRegistry.getTime();
+				String date = formatDate(time);
+				
+				handled.put(actualActivityRegistry.getDescription(), date);
+			}
 			return handled;
 		}
-		
-		handled = new String[results.size()];
-		Iterator<Lending> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			Lending currentLending= iterator.next();
-			handled[i] = "Id: " + currentLending.getID() + "\n\t "
-					+ currentLending.getBorrower().getName()+ "\n\t "
-					+ currentLending.getDesiredItemName()+ "\n\t "
-					+ currentLending.getDesiredItemDescription();
-		}
-		return handled;
-	}
+
+		/**
+		 * 
+		 * @param solicitorSessionId ID da sessão do usuário solicitado.
+		 * @return Retorna um array com todas as publicações de requisição
+		 * de itens feitas pelos amigos do usuário solicitado.
+		 * @throws Exception
+		 */
+		public String[] getFriendsPublishedItemRequests(String solicitorSessionId) throws Exception {
+			List<Lending> results = lendMe.getFriendsPublishedItemRequests(solicitorSessionId);
+			String[] handled;
 			
-	/**
-	 * Publica o Pedido de um item. 	
-	 * @param sessionId ID da sessão do usuário que deseja publicar 
-	 * o pedido de um item.
-	 * @param itemName Nome do item cujo pedido será publicado.
-	 * @param itemDescription Descrição do item cujo pedido será publicado. 
-	 */
-	public String publishItemRequest(String sessionId, String itemName,
-			String itemDescription) throws Exception{
-		return lendMe.publishItemRequest(sessionId, itemName, itemDescription);
-	}
+			if (results.size() == 0) {
+				handled = new String[1];
+				handled[0] = "Não há publicações de pedidos de seus amigos";
+				return handled;
+			}
+			
+			handled = new String[results.size()];
+			Iterator<Lending> iterator = results.iterator();
+			for ( int i=0; i<handled.length; i++ ){
+				Lending currentLending= iterator.next();
+				handled[i] = "Id: " + currentLending.getID() + "\n\t "
+						+ currentLending.getBorrower().getName()+ "\n\t "
+						+ currentLending.getDesiredItemName()+ "\n\t "
+						+ currentLending.getDesiredItemDescription();
+			}
+			return handled;
+		}
+				
+		/**
+		 * Publica o Pedido de um item. 	
+		 * @param sessionId ID da sessão do usuário que deseja publicar 
+		 * o pedido de um item.
+		 * @param itemName Nome do item cujo pedido será publicado.
+		 * @param itemDescription Descrição do item cujo pedido será publicado. 
+		 */
+		public String publishItemRequest(String sessionId, String itemName,
+				String itemDescription) throws Exception{
+			return lendMe.publishItemRequest(sessionId, itemName, itemDescription);
+		}
 
-	/**
-	 * Oferece um item .
-	 * @param sessionId ID da sessão do usuário que deseja oferecer o item.
-	 * @param requestPublicationId 
-	 * @param itemId ID do item que será oferecido. 
-	 */
-	public void offerItem(String sessionId, String requestPublicationId,
-			String itemId) throws Exception{
-		lendMe.offerItem(sessionId, requestPublicationId, itemId);
-	}
+		/**
+		 * Oferece um item .
+		 * @param sessionId ID da sessão do usuário que deseja oferecer o item.
+		 * @param requestPublicationId 
+		 * @param itemId ID do item que será oferecido. 
+		 */
+		public void offerItem(String sessionId, String requestPublicationId,
+				String itemId) throws Exception{
+			lendMe.offerItem(sessionId, requestPublicationId, itemId);
+		}
 
-	/**
-	 * Republica o pedido de um item.
-	 * @param sessionId idSessao ID da sessão do usuário que deseja oferecer o item.
-	 * @param requestPublicationId
-	 */
-	public void republishItemRequest(String sessionId, String requestPublicationId) 
-		throws Exception{
-		lendMe.republishItemRequest(sessionId, requestPublicationId);		
-	}
+		/**
+		 * Republica o pedido de um item.
+		 * @param sessionId idSessao ID da sessão do usuário que deseja oferecer o item.
+		 * @param requestPublicationId
+		 */
+		public void republishItemRequest(String sessionId, String requestPublicationId) 
+			throws Exception{
+			lendMe.republishItemRequest(sessionId, requestPublicationId);		
+		}
 
-	public void closeSystem() {
-		lendMe.closeSystem();
-	}
+		public void closeSystem() {
+			lendMe.closeSystem();
+		}
 
-	public String getSessionInfo(String currentUserSessionId) throws Exception {
-		return lendMe.getSessionInfo(currentUserSessionId);
-	}
-	
+		public String getSessionInfo(String currentUserSessionId) throws Exception {
+			return lendMe.getSessionInfo(currentUserSessionId);
+		}
+		
 }
+		

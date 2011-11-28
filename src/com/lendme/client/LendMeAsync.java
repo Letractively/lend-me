@@ -72,7 +72,7 @@ public interface LendMeAsync {
 			String attribute, String disposition, String criteria,
 			AsyncCallback<String[]> callback);
 
-	void getItems(String solicitorSession, AsyncCallback<String[]> callback);
+	void getItems(String solicitorSession, AsyncCallback<Map<String, String[]>> callback);
 
 	void getItemsWithIds(String solicitorSession,
 			AsyncCallback<String[]> callback);

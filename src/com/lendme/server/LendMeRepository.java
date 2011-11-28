@@ -64,27 +64,55 @@ public final class LendMeRepository {
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
 	public String openSession(String login) throws Exception {
-		if (userExists(login)) {
+		
+			if (userExists(login)) {
 			Session session = new Session(getUserByLogin(login));
 			sessions.add(session);
 			return session.getId();
-		} else {
-			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
-		    Iterator<Entity> users = datastore.prepare(query).asIterator();
-		    while ( users.hasNext() ){
-		    	Entity user = users.next();
-		    	if ( (""+user.getProperty("id")).equals(login) ){
-		    		String name = ((String) user.getProperty("name"));
-		    		String address = ((String) user.getProperty("address"));
-		    		registerUser(login, name, address);
-					Session session = new Session(getUserByLogin(login));
-					sessions.add(session);
-					return session.getId();
-		    	}
-		    }
-	    	throw new Exception("Usuário inexistente");
-		}
+			} else {
+			// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+//			    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
+//			    Iterator<Entity> users = datastore.prepare(query).asIterator();
+//			    while ( users.hasNext() ){
+//			     Entity user = users.next();
+//			     if ( (""+user.getProperty("id")).equals(login) ){
+//			     String name = ((String) user.getProperty("name"));
+//			     String address = ((String) user.getProperty("address"));
+			String name = "pedro limeira";
+			String address = "rua dos prazeres";
+			    registerUser(login, name, address);
+			Session session = new Session(getUserByLogin(login));
+			sessions.add(session);
+			return session.getId();
+//			     }
+//			    }
+//			     throw new Exception("UsuÃ¡rio inexistente");
+			}
+		
+		
+		
+		
+//		if (userExists(login)) {
+//			Session session = new Session(getUserByLogin(login));
+//			sessions.add(session);
+//			return session.getId();
+//		} else {
+//			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+//		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
+//		    Iterator<Entity> users = datastore.prepare(query).asIterator();
+//		    while ( users.hasNext() ){
+//		    	Entity user = users.next();
+//		    	if ( (""+user.getProperty("id")).equals(login) ){
+//		    		String name = ((String) user.getProperty("name"));
+//		    		String address = ((String) user.getProperty("address"));
+//		    		registerUser(login, name, address);
+//					Session session = new Session(getUserByLogin(login));
+//					sessions.add(session);
+//					return session.getId();
+//		    	}
+//		    }
+//	    	throw new Exception("Usuï¿½rio inexistente");
+//		}
 	}
 	
 	/**

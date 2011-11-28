@@ -9,6 +9,7 @@ import com.lendme.server.entities.Lending;
 import com.lendme.server.entities.Lending.LendingStatus;
 
 
+
 public class LendMeAcceptanceTestInterface {
 	
 	LendMeWebInterfaceImpl system = new LendMeWebInterfaceImpl();
@@ -198,11 +199,12 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String getItens(String idSessao) throws Exception{
 
-		String[] resultado = system.getItems(idSessao);
-		if ( resultado.length == 0 ){
+		Map<String, String[]> resultado = system.getItems(idSessao);
+		String[] result = ((String[]) resultado.keySet().toArray());
+		if ( result.length == 0 ){
 			return "O usuário não possui itens cadastrados";
 		}
-		return formatarASaida(resultado);
+		return formatarASaida(result);
 	}
 
 	/**

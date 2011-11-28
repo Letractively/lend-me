@@ -38,36 +38,39 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		setWidget(absolutePanel);
 		absolutePanel.setSize("242px", "117px");
 		
+		final FocusPanel focusPanel = new FocusPanel();
+		AbsolutePanel internalPanel = new AbsolutePanel();
+		focusPanel.add(internalPanel);
+		
 		loginLabel = new Label("login");
-		absolutePanel.add(loginLabel, 106, 15);
+		internalPanel.add(loginLabel, 106, 15);
 		loginLabel.setSize("126px", "17px");
 		
 		nameLabel = new Label("name");
-		absolutePanel.add(nameLabel, 106, 38);
+		internalPanel.add(nameLabel, 106, 38);
 		nameLabel.setSize("126px", "17px");
 		
 		addressLabel = new Label("address");
-		absolutePanel.add(addressLabel, 106, 61);
+		internalPanel.add(addressLabel, 106, 61);
 		addressLabel.setSize("126px", "17px");
 		
 		reputationLabel = new Label("reputation");
-		absolutePanel.add(reputationLabel, 105, 84);
+		internalPanel.add(reputationLabel, 105, 84);
 		reputationLabel.setSize("127px", "17px");
 		
 		/*Isso se chama popularmente como a boa e velha gambiarra*/
-		final Label topBar = new Label("--------------------------------------------------------");
+		final Label topBar = new Label("----------------------------------------------------------");
 		topBar.setStyleName("gwt-bar");
-		absolutePanel.add(topBar, 9, -6);
+		internalPanel.add(topBar, 0, -6);
 		topBar.setSize("240px", "11px");
 		topBar.setVisible(false);
 		
-		final Label downBar = new Label("--------------------------------------------------------");
+		final Label downBar = new Label("----------------------------------------------------------");
 		downBar.setStyleName("gwt-bar");
-		absolutePanel.add(downBar, 9, 103);
+		internalPanel.add(downBar, 0, 103);
 		downBar.setSize("240px", "11px");
 		downBar.setVisible(false);
 
-		final FocusPanel focusPanel = new FocusPanel();
 		focusPanel.addMouseOutHandler(new MouseOutHandler() {
 			public void onMouseOut(MouseOutEvent event) {
 				topBar.setVisible(false);
@@ -83,6 +86,8 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		});
 		
 		absolutePanel.add(focusPanel, 5, 1);
+		
+		internalPanel.setSize("230px", "113px");
 		focusPanel.setSize("230px", "113px");
 		
 	}

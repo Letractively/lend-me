@@ -59,10 +59,10 @@ public class FriendshipManager {
 			throw new Exception("Amizade inexistente");//inv√°lida - pedido de amizade para si pr√≥prio");//"Invalid friendship");
 		}
 		if ( sentFriendshipRequests.contains(user) ){
-			throw new Exception("Requisi√ß√£o j√° solicitada");//"The user has already been sent");
+			throw new Exception("RequisiÁ„o j· solicitada");//"The user has already been sent");
 		}
 		if ( friends.contains(user) ){
-			throw new Exception("Os usu√°rios j√° s√£o amigos");//"The users are already friends");
+			throw new Exception("Os usu·rios j· s„o amigos");//"The users are already friends");
 		}
 		sentFriendshipRequests.add(user);
 		user.getUserOperationManager().getFriendshipManager().receiveFriendshipRequest(me);

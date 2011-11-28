@@ -101,19 +101,29 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @return an array of strings containing the results names and addresses
 	 * @see com.lendme.LendMFacade#searchUsersByAttributeKey(String, String, String)
 	 */
-	public String[] searchUsersByAttributeKey(String solicitorSession, String key, String attribute)
+	public Map<String, String[]> searchUsersByAttributeKey(String solicitorSession, String key, String attribute)
 		throws Exception{
 		
-		List<User> results = 
-				new ArrayList<User>(lendMe.searchUsersByAttributeKey(solicitorSession, key, attribute));
+		Map<String, String[]> searchResultsMap = new TreeMap<String, String[]>();
+		List<User> results = new ArrayList<User>(lendMe.searchUsersByAttributeKey(solicitorSession, key, attribute));
 		Collections.sort(results,  new UserDateComparatorStrategy());
-		String[] handled = new String[results.size()];
+		
 		Iterator<User> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			User tmp = iterator.next();
-			handled[i] = tmp.getName() + " - " + tmp.getAddress();
+		String[] atributtes;
+		
+		while(iterator.hasNext()){
+
+			User next = iterator.next();
+			
+			atributtes = new String[3];
+			atributtes[0] = next.getName();
+			atributtes[1] = Integer.toString(next.getScore());
+			atributtes[2] = next.getAddress().getFullAddress();
+						
+			searchResultsMap.put(next.getLogin(), atributtes);
+			
 		}
-		return handled;
+		return searchResultsMap;
 	}
 	
 	/**
@@ -121,19 +131,28 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * no sistema ordenados pela distância entre cada um e o usuáio dono 
 	 * do ID da sessão dada. 
 	 */
-	public String[] listUsersByDistance(String solicitorSession) throws Exception{
+	public Map<String, String[]> listUsersByDistance(String solicitorSession) throws Exception{
 		
+		Map<String, String[]> searchResultsMap = new TreeMap<String, String[]>();
 		List<User> results = new ArrayList<User>(lendMe.listUsersByDistance(solicitorSession));
+		Collections.sort(results,  new UserDateComparatorStrategy());
 		
-		String[] handled = new String[results.size()];
 		Iterator<User> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			User tmp = iterator.next();
-			handled[i] = tmp.getName() + " - " + tmp.getAddress();
-		}
-		return handled;
-			
+		String[] atributtes;
 		
+		while(iterator.hasNext()){
+
+			User next = iterator.next();
+			
+			atributtes = new String[3];
+			atributtes[0] = next.getName();
+			atributtes[1] = Integer.toString(next.getScore());
+			atributtes[2] = next.getAddress().getFullAddress();
+						
+			searchResultsMap.put(next.getLogin(), atributtes);
+			
+		}
+		return searchResultsMap;
 	}
 	
    /** Handles with results from search in System, transforming them in a string array
@@ -416,16 +435,35 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @param criteria Criterios suportados: "REPUTACAO" e "DATACRIACAO".
 	 * @return Retorna um array com o nome de todos os itens encontrados na pesquisa.
 	 */
-	public String[] searchForItems(String solicitorSession, String key, String attribute,
+	public Map<String, String[]> searchForItems(String solicitorSession, String key, String attribute,
 		String disposition, String criteria) throws Exception{
 		
 		List<Item> results = lendMe.searchForItem(solicitorSession, key, attribute, disposition, criteria);
-		String[] handled = new String[results.size()];
-		Iterator<Item> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getName();
+		Collections.sort(results);
+		
+		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
+		
+		
+		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
+		boolean identifierAction = false;
+		
+		for(Item actualItem : results){
+			for(Lending actualLending : result){
+				if(actualLending.getItem().equals(actualItem)){
+					identifierAction = true;
+					break;
+				}
+			}
+			String[] fields = new String[5];
+			fields[0] = actualItem.getName();
+			fields[1] = actualItem.getCategory();
+			fields[2] = actualItem.getDescription();
+			fields[3] = String.valueOf(identifierAction);
+			fields[4] = this.formatDate(actualItem.getCreationDate());
+			mapResults.put(actualItem.getID(), fields);
 		}
-		return handled;
+	
+		return mapResults;
 	}
 
 	/**
@@ -513,16 +551,34 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @param solicitedLogin Login do usuário solicitado.
 	 * @return Retorna um array com o nome de todos os itens do usuário solicitado.
 	 */
-	public String[] getItems(String solicitorSession, String solicitedLogin) throws Exception{
+	public Map<String, String[]> getItems(String solicitorSession, String solicitedLogin) throws Exception{
 		
 		List<Item> results = new ArrayList<Item>(lendMe.getItems(solicitorSession, solicitedLogin));
 		Collections.sort(results);
-		String[] handled = new String[results.size()];
-		Iterator<Item> iterator = results.iterator();
-		for ( int i=0; i<handled.length; i++ ){
-			handled[i] = iterator.next().getName();
+		
+		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
+		
+		
+		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
+		boolean identifierAction = false;
+		
+		for(Item actualItem : results){
+			for(Lending actualLending : result){
+				if(actualLending.getItem().equals(actualItem)){
+					identifierAction = true;
+					break;
+				}
+			}
+			String[] fields = new String[5];
+			fields[0] = actualItem.getName();
+			fields[1] = actualItem.getCategory();
+			fields[2] = actualItem.getDescription();
+			fields[3] = String.valueOf(identifierAction);
+			fields[4] = this.formatDate(actualItem.getCreationDate());
+			mapResults.put(actualItem.getID(), fields);
 		}
-		return handled;
+	
+		return mapResults;
 	}
 
 	/**
@@ -863,5 +919,14 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			return lendMe.getSessionInfo(currentUserSessionId);
 		}
 		
-}
+		public boolean areFriends(String sessionOwner, String anotherUserLogin) throws Exception{
+			return lendMe.areFriends(sessionOwner, anotherUserLogin);
+		}
+
+		@Override
+		public String getUserAttributeBySessionId(String sessionId, String attribute)
+				throws Exception {
+			return lendMe.getUserAttributeBySessionId(sessionId, attribute);
+		}
 		
+}

@@ -14,10 +14,10 @@ public interface LendMeAsync {
 			AsyncCallback<String> callback);
 
 	void searchUsersByAttributeKey(String solicitorSession, String key,
-			String attribute, AsyncCallback<String[]> callback);
+			String attribute, AsyncCallback<Map<String, String[]>> callback);
 
 	void listUsersByDistance(String solicitorSession,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String, String[]>> callback);
 
 	void getUserAttribute(String login, String attribute,
 			AsyncCallback<String> callback);
@@ -66,7 +66,7 @@ public interface LendMeAsync {
 
 	void searchForItems(String solicitorSession, String key, String attribute,
 			String disposition, String criteria,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String, String[]>> callback);
 
 	void searchForItemsWithIds(String solicitorSession, String key,
 			String attribute, String disposition, String criteria,
@@ -78,7 +78,7 @@ public interface LendMeAsync {
 			AsyncCallback<String[]> callback);
 
 	void getItems(String solicitorSession, String solicitedLogin,
-			AsyncCallback<String[]> callback);
+			AsyncCallback<Map<String, String[]>> callback);
 
 	void getItemAttribute(String itemId, String attribute,
 			AsyncCallback<String> callback);
@@ -144,6 +144,12 @@ public interface LendMeAsync {
 			AsyncCallback<Void> callback);
 
 	void getSessionInfo(String currentUserSessionId,
+			AsyncCallback<String> callback);
+
+	void areFriends(String sessionOwner, String anotherUserLogin,
+			AsyncCallback<Boolean> callback);
+
+	void getUserAttributeBySessionId(String sessionId, String attribute,
 			AsyncCallback<String> callback);
 
 }

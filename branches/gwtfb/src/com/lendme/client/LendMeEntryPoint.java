@@ -1,5 +1,8 @@
 package com.lendme.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -36,7 +39,63 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 	// The sessionId which will be generated when the user logs in
 	private String currentSessionId = "";
+	private String currentUserId = "";
 	private String accessToken = "";
+	
+	class SessionInfo {
+		private boolean sessionFound = false;
+		public SessionInfo(boolean sessionFound){
+			this.sessionFound = sessionFound;
+		}
+		public boolean sessionFound(){
+			return sessionFound;
+		}
+		public void setSessionFound(boolean sessionFound){
+			this.sessionFound = sessionFound;
+		}
+	}
+	
+	class UserSearchResultFound implements AsyncCallback<Map<String, String[]>>{
+
+		private Map<String, String[]> result = new HashMap<String, String[]>();
+		@Override
+		public void onFailure(Throwable caught) {
+			Window.alert("Problema ocorreu ao obter resultado da pesquisa: "+caught.getMessage());
+		}
+
+		@Override
+		public void onSuccess(Map<String, String[]> result) {
+			this.result = result;
+			displayUserSearchResults(result);
+		}
+		
+		public Map<String, String[]> getResult(){
+			return result;
+		}
+	}
+	
+	class ItemSearchResultFound implements AsyncCallback<Map<String, String[]>>{
+
+		private Map<String, String[]> result = new HashMap<String, String[]>();
+		@Override
+		public void onFailure(Throwable caught) {
+			Window.alert("Problema ocorreu ao obter resultado da pesquisa: "+caught.getMessage());
+		}
+
+		@Override
+		public void onSuccess(Map<String, String[]> result) {
+			this.result = result;
+			displayItemSearchResults(result);
+		}
+		
+		public Map<String, String[]> getResult(){
+			return result;
+		}
+	}
+	
+	public final SessionInfo sessionInfo = new SessionInfo(false);
+	public final UserSearchResultFound userSearchResult = new UserSearchResultFound();
+	public final ItemSearchResultFound itemSearchResult = new ItemSearchResultFound();
 	
 	/**
 	 * This is the entry point method.
@@ -50,6 +109,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		RootPanel root = RootPanel.get();
 		root.getElement().setId ( "TheApp" );
 		mainView.getElement().setId("MainView");
+		mainView.setSize("400px", "600px");
 		leftSideBarView.getElement().setId("SideBarView");
 		mainPanel.add( new TopMenuPanel () , DockPanel.NORTH );
 		topLinksPanel = new LinksPanel();
@@ -65,7 +125,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 			public void onSuccess ( JavaScriptObject response ) {
 				// Make sure cookie is set so we can use the non async method
 				sessionChangedServerActions();
-//				renderHomeView ();
 				String redirectTo = "#home";
 				if ( fbCore.getSession() != null ){
 					redirectTo = Window.Location.getHash();
@@ -85,6 +144,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 				String redirectTo = "#home";
 				if ( fbCore.getSession() != null ){
 					redirectTo = Window.Location.getHash();
+					sessionInfo.setSessionFound(true);
 				}
 				renderApp(redirectTo);
 			}
@@ -101,8 +161,8 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	 */
 	private void renderApp ( String rawtoken ) {
 
-		leftSideBarView.setWidget( new HomeSideBarPanel () );
-
+//		Window.alert("Rendering app: rawtoken = "+rawtoken);
+		
 		rawtoken = rawtoken.replace("#", "");
 
 		if ( rawtoken == null || "".equals ( rawtoken ) || "#".equals ( rawtoken ) ){
@@ -110,35 +170,45 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 		
 		final String token = rawtoken;
+		
+//		Window.alert("final token="+token);
 
 		if ( token.contains("registration") && fbCore.getSession() == null ){
+//			Window.alert("will render registration view");
 			renderRegistrationView();
 		}
 		else{
 			JavaScriptObject session = fbCore.getSession();
 			if ( session != null ){
+//				Window.alert("A session exists");
 				fbCore.api("/me", new AsyncCallback<JavaScriptObject>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
+						Window.alert("Failed to retrieve user basic info: "+caught.getMessage());
 					}
 
 					@Override
 					public void onSuccess(JavaScriptObject result) {
 						JSOModel model = result.cast();
 						if ( model.get("id").contains("undefined") ){
+//							Window.alert("undefined user is logged");
 							Window.Location.replace(ApplicationConstants.APP_URL);
 							Window.Location.reload();
 							return;
 						}
 						else{
-							if ( token.endsWith("home") ) {
-								renderHomeView ();
+							currentUserId = model.get("id");
+//							Window.alert("Do action based on token:"+token);
+							if ( token.contains("home") ) {
+//								Window.alert("Will render home view, currentUserId is "+currentUserId);
+								renderHomeView(currentUserId);
 							}
-							else if ( token.startsWith("options" ) ) {
+							else if ( token.contains("options" ) ) {
 
-								String option = token.split("/")[1];
-
+								String option = token.substring(token.indexOf("options")).split("/")[1];
+//								Window.alert("Will render options view, currentUserId is "+currentUserId+" , option is "+option);
+								
 								class TemporaryWidget extends Composite{
 
 									VerticalPanel list = new VerticalPanel();
@@ -150,37 +220,55 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 										initWidget(list);
 									}
 								}
+								
+								String viewedUser = currentUserId;
+								if ( token.split("/").length != 2 ){
+									viewedUser = token.split("/")[0];
+								}
+								
+//								Window.alert("viewed user is "+viewedUser);
 
-								if ( option.startsWith("friends") ){
-									mainView.setWidget(new UserViewer(lendMeService, currentSessionId, true));
-									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE AMIGOS> );
+								if ( option.equals("friends") ){
+									leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
+									displayCurrentUserFriends(viewedUser);
 								}
-								else if ( option.startsWith("items") ){
-									mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId));
-									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE ITEMS> );				
+								else if ( option.equals("items") ){
+									leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
+									displayCurrentUserItems(viewedUser);
 								}
-								else if ( option.startsWith("messages") ){
-									mainView.setWidget(new TopicsViewer(lendMeService, currentSessionId, "all"));
-									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE MENSAGENS> );				
+								else if ( option.equals("messages") ){
+									leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
+									mainView.setWidget(new TopicsViewer(lendMeService, currentSessionId, ""));
 								}
-								else if ( option.startsWith("history") ){
-									mainView.setWidget(new HistoryViewer(lendMeService, currentSessionId));
-									//				mainView.setWidget( <AQUI FICA A TELA DE LISTAGEM DE HISTORICO> );				
+								else if ( option.equals("history") ){
+									leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
+									mainView.setWidget(new TemporaryWidget("HISTORICO"));
 								}
 								else {
-									renderHomeView();
+									renderHomeView(viewedUser);
 								}
+//								Window.alert("rendered screen based on option "+option);
 
 							}
 							else {
-								renderHomeView();
+//								Window.alert("Simply viewing user prfile");
+								if ( token.split("/").length < 2 ){
+									Window.alert("User to be viewed is self");
+									renderHomeView(currentUserId);
+								}
+								else{
+									String viewedUser = token.split("/")[0];
+									Window.alert("User to be viewed is "+viewedUser);
+									renderHomeView(viewedUser);
+								}
 							}
 						}
 					}
 				});
 			}
 			else{
-				renderHomeView();
+//				Window.alert("Session is null, render home view, currentUser is "+currentUserId);
+				renderHomeView(currentUserId);
 			}
 		}
 	}
@@ -189,7 +277,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	 * Render GUI when logged in
 	 */
 	private void renderWhenLoggedIn () {
-		mainView.setWidget ( new UserInfoViewController ( fbCore ) );
+		mainView.setWidget ( new UserInfoViewController ( currentUserId ) );
 		topLinksPanel.setLogoutButtonVisible(true);
 		FBXfbml.parse();
 	}
@@ -204,7 +292,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 			
 			public CommentsPanel(){
 				verticalBar.add ( new HTML ( "<div style='margin-top: 7px;'> Diga o que vc pensa dessa nova ideia: </div>" ) );
-				verticalBar.add(new HTML ( "<hr/><fb:comments numposts='2' xid='gwtfb' width='275px' />" ) );
+				verticalBar.add(new HTML ( "<hr/><fb:comments numposts='1' xid='gwtfb' width='435px' />" ) );
 				initWidget(verticalBar);
 			}
 		}
@@ -219,13 +307,15 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	 * Render home view. If user is logged in display welcome message, otherwise
 	 * display login dialog.
 	 */
-	private void renderHomeView () {
+	private void renderHomeView (String token) {
 		leftSideBarView.clear();
 
 		if ( fbCore.getSession() == null ) {
+//			Window.alert("Rendering home view unlogged");
 			renderWhenNotLoggedIn ();
 		} else {
-			leftSideBarView.setWidget( new HomeSideBarPanel () );
+//			Window.alert("Rendering home view logged");
+			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, token, fbCore, userSearchResult, itemSearchResult));
 			renderWhenLoggedIn();
 		}
 	}
@@ -239,6 +329,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	}
 
 	public void onValueChange(ValueChangeEvent<String> event) {
+//		Window.alert("on value change: "+event.getValue());
 		renderApp ( event.getValue() );
 	}
 
@@ -264,6 +355,9 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 				});
 			}
+			else{
+				Window.alert("Session is null and Current session id is empty");
+			}
 		}
 		else {
 			if ( currentSessionId.trim().isEmpty() ){
@@ -278,7 +372,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 					@Override
 					public void onSuccess(JavaScriptObject result) {
 						JSOModel model = result.cast();
-						String currentUserId = model.get("id");
+						currentUserId = model.get("id");
 						
 						lendMeService.openSession(currentUserId, new AsyncCallback<String>(){
 
@@ -290,7 +384,9 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 							@Override
 							public void onSuccess(String result) {
 								currentSessionId = result;
-
+								
+//								Window.alert("Session ["+result+"] opened sucessfully");
+								
 								lendMeService.getSessionInfo(currentSessionId, new AsyncCallback<String>(){
 
 									@Override
@@ -300,7 +396,8 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 									@Override
 									public void onSuccess(String result) {
-										//Could do something. Doesn't mean that some action is required.
+//										Window.alert(result);
+										renderHomeView(currentUserId);
 									}
 
 								});
@@ -312,10 +409,33 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 				});
 
 			}
+			else{
+				Window.alert("Session exists and Current session id is: "+currentSessionId);
+			}
 
 
 		}
 
 	}
+	
+	public void displayUserSearchResults(Map<String, String[]> results){
+		mainView.setWidget(new UserViewer(lendMeService, currentSessionId, currentUserId, userSearchResult.getResult()));
+	}
 
+	public void displayItemSearchResults(Map<String, String[]> results){
+		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, itemSearchResult.getResult()));
+	}
+	
+	public void displayCurrentUserFriends(String viewedLogin){
+		lendMeService.getFriends(currentSessionId, viewedLogin, userSearchResult);
+	}
+	
+	public void displayCurrentUserReceivedFriendshipRequests(){
+		lendMeService.getFriendshipRequests(currentSessionId, userSearchResult);
+	}
+	
+	public void displayCurrentUserItems(String viewedLogin){
+		lendMeService.getItems(currentSessionId, viewedLogin, itemSearchResult);
+	}
+	
 }

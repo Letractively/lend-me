@@ -69,7 +69,7 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		PushButton answerMsgButton = new PushButton("New button");
 		answerMsgButton.getUpFace().setText("Responder");
 		hPanel.add(answerMsgButton);
-		answerMsgButton.setSize("60px", "20px");
+		answerMsgButton.setSize("70px", "20px");
 		
 		answerMsgButton.addClickHandler(new ClickHandler() {
 			
@@ -130,9 +130,12 @@ public class LendMeMsgsRep extends AbsolutePanel {
 	}
 	
 	private void sendAnswerMessage() {
-		
-		answerMsg = new NewMsgForm(lendMeService, solicitorSessionId, 
-				getSender(), getSubject(), getLendingId());
+		if (answerMsg == null) {
+			answerMsg = new NewMsgForm(lendMeService, solicitorSessionId, 
+					getSender(), getSubject(), getLendingId());
+		} else {
+			answerMsg.resetFields();
+		}
 		answerMsg.center();
 	}
 

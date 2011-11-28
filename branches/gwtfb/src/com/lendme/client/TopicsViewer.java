@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -38,8 +39,8 @@ public class TopicsViewer extends Composite {
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		rootPanel.add(scrollPanel, 0, 32);
-		scrollPanel.setSize("600px", "408px");
-		rootPanel.setSize("600px", "441px");
+		scrollPanel.setSize("600px", "515px");
+		rootPanel.setSize("600px", "550px");
 		
 		scrollPanel.add(container);
 		
@@ -88,24 +89,24 @@ public class TopicsViewer extends Composite {
 			}
 		});
 		
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 15; i++) {
 			topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"subject"+i, "id"+i,
 					""+i, "date"+i));
 		}
 		
-//		lendMeService.getTopics(solicitorSessionId, topicType, new AsyncCallback<Map<String,String[]>>() {
-//
-//			@Override
-//			public void onSuccess(Map<String, String[]> result) {
-//				addTopics(result);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				errorLabel.setText(errorMessage + " - " + caught.getMessage());
-//				errorLabel.setVisible(true);
-//			}
-//		});
+		lendMeService.getTopics(solicitorSessionId, topicType, new AsyncCallback<Map<String,String[]>>() {
+
+			@Override
+			public void onSuccess(Map<String, String[]> result) {
+				addTopics(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				errorLabel.setText(errorMessage + " - " + caught.getMessage());
+				errorLabel.setVisible(true);
+			}
+		});
 		
 		addTopicstoPanel();
 		

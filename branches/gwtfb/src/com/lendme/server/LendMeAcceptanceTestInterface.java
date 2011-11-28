@@ -278,12 +278,13 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String getRequisicoesDeAmizade(String idSessao) throws Exception{
 
-		String[] resultado = system.getFriendshipRequests(idSessao);
+		Map<String,String[]> resultado = system.getFriendshipRequests(idSessao);
 
-		if ( resultado.length == 0 ){
+		
+		if ( resultado.keySet().size() == 0 ){
 			return "Não há requisições";
 		}
-		return formatarASaida(resultado);
+		return formatarASaida((String[])resultado.keySet().toArray());
 	}
 	
 	/**

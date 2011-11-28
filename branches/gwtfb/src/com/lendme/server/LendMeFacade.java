@@ -316,7 +316,7 @@ public class LendMeFacade {
 	/**
 	 * @param sessionId  ID da sessão.
 	 * @return Retorna um Set com todos os usuários
-	 * que o usuário cujo ID da sessão foi dado requisitou amizade. 
+	 * que requisitaram amizade com o usuário cujo ID da sessão foi dado. 
 	 */
 	public  Set<User> getFriendshipRequests(String sessionId) throws Exception{
 		return userModule.getOwnerFriendshipRequests(getUserProfile(sessionId));

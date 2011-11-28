@@ -28,7 +28,7 @@ public interface LendMe extends RemoteService{
 	
 	public void breakFriendship(String solicitorSession, String solicitedLogin) throws Exception;
 	
-	public String[] getFriendshipRequests(String solicitorSession) throws Exception;
+	public Map<String, String[]> getFriendshipRequests(String solicitorSession) throws Exception;
 	
 	public Map<String, String[]> getFriends(String solicitorSession) throws Exception;
 	

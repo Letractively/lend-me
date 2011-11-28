@@ -83,7 +83,7 @@ public interface LendMe extends RemoteService{
 	
 	public String[] getReceivedItemRequests(String solicitorSession) throws Exception;
 	
-	public String[] getLendingRecords(String solicitorSession, String kind) throws Exception;
+	public Map<String, String[]> getLendingRecords(String solicitorSession, String kind) throws Exception;
 	
 	public String[] getLendingRecordsWithIds(String solicitorSession, String kind) throws Exception;
 	

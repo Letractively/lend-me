@@ -1,10 +1,12 @@
 package com.lendme.server;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import com.google.gwt.dev.js.rhino.ObjToIntMap.Iterator;
+import com.lendme.server.entities.Lending;
+import com.lendme.server.entities.Lending.LendingStatus;
 
 
 public class LendMeAcceptanceTestInterface {
@@ -341,11 +343,20 @@ public class LendMeAcceptanceTestInterface {
 	
 	public String getEmprestimos(String idSessao, String tipo) throws Exception{
 	
-		String[] resultado = system.getLendingRecords(idSessao, tipo);
-		if ( resultado.length == 0 ){
+		Map<String, String[]> resultado = system.getLendingRecords(idSessao, tipo);
+		Iterator<String> iterator = resultado.keySet().iterator();
+		String[] actualResult = new String[resultado.keySet().size()];
+		for ( int i=0; i< actualResult.length; i++ ){
+			String template = "%s-%s:%s:%s";
+			String currLending = iterator.next();
+			actualResult[i] = String.format(template, resultado.get(currLending)[1],
+				resultado.get(currLending)[0], resultado.get(currLending)[2],
+				resultado.get(currLending)[9]);
+		}
+		if ( actualResult.length == 0 ){
 			return "Não há empréstimos deste tipo";
 		}
-		return formatarASaida(resultado);
+		return formatarASaida(actualResult);
 	}
 	
 	/**

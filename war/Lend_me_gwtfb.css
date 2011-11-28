@@ -4,6 +4,7 @@
 
 body {
 	width: 100%;
+	font-size: 13pt;
 }
 
 #TheApp {
@@ -177,7 +178,7 @@ h1 {
 	font-size: 11px;
 }
 .gwt-TextBox {
-	font-size: 8px;
+	font-size: 13pt;
 }
 .gwt-Label-1 {
 	text-decoration: underline;
@@ -197,4 +198,119 @@ h1 {
 	font-size: 11px;
 }
 
+.btn a{
+	float: left;
+	height: 30px;
+	background: url(http://www.iconesgratis.net/imagens/xbuttons_@_icon_aqua.png) repeat-x left top;
+	line-height: 30px;
+	padding: 0 10px;
+	color: #fff;
+	font-size: 1em;
+	text-decoration: none;
+}
 
+button{
+    margin: 0px;
+    padding: 0px;
+    font-family:Lucida Sans MS, Tahoma;
+    font-size: 12px;
+    color: #000; 
+    white-space:nowrap;
+    width:auto;
+    overflow:visible;
+    height:28px;
+}
+
+button em{
+    vertical-align:middle;
+    margin:0 2px;
+    display:inline-block;
+    width:16px;
+    height:16px;
+    background-image: url(images/ui-icons_3d3d3d_256x240.png);      
+}
+
+button em.leftImage{
+    background-position: -96px -112px;
+}
+
+button em.rightImage{
+    background-position: -64px -16px;
+}
+.msg-label {
+	font-size: 15px;
+}
+.new-msg-label {
+	color: white;
+	font-size: 13px;
+	font-weight: bold;
+	background: #0033ff
+}
+
+/** Rich Test CSS*/
+
+.gwt-RichTextArea {
+	font-size: 13pt;
+}
+.hasRichTextToolbar {
+  border: 0px;
+}
+.gwt-RichTextToolbar {
+  background: #e3e8f3 url(images/hborder.png) repeat-x 0px -2003px;
+  border-bottom: 1px solid #BBBBBB;
+  padding: 3px;
+  margin: 0px;
+}
+.gwt-RichTextToolbar .gwt-PushButton-up {
+  padding: 0px 1px 0px 0px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  border-width: 1px; 
+}
+.gwt-RichTextToolbar .gwt-PushButton-up-hovering {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 1px 0px 0px;
+  border-width: 1px; 
+}
+.gwt-RichTextToolbar .gwt-PushButton-down {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 0px 0px 1px;
+  border-width: 1px; 
+}
+.gwt-RichTextToolbar .gwt-PushButton-down-hovering {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 0px 0px 1px;
+  border-width: 1px; 
+}
+.gwt-RichTextToolbar .gwt-ToggleButton-up {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 1px 0px 0px;
+  border:1px solid #bbb;
+  border-bottom: 1px solid #a0a0a0;
+}
+.gwt-RichTextToolbar .gwt-ToggleButton-up-hovering {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 1px 0px 0px;
+  border-width: 1px;
+}
+.gwt-RichTextToolbar .gwt-ToggleButton-down {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 0px 0px 1px;
+  border-width: 1px;
+}
+.gwt-RichTextToolbar .gwt-ToggleButton-down-hovering {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 0px 0px 1px;
+  border-width: 1px;
+}
+.cw-RichText {
+  border: 1px solid #BBBBBB;
+  border-spacing: 0px;
+}

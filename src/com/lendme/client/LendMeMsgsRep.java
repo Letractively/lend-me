@@ -3,10 +3,17 @@ package com.lendme.client;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.PushButton;
 
 public class LendMeMsgsRep extends AbsolutePanel {
 	
@@ -15,30 +22,39 @@ public class LendMeMsgsRep extends AbsolutePanel {
 	private final Label subjectLabel;
 	private final Label dateLabel;
 	private final Label messageLabel;
+	private NewMsgForm answerMsg;
 	
 	private final String separatorString = 
 		"-----------------------------------------------------------------" +
 		"-----------------------------------" ;//100 tracos
 	
+	private LendMeAsync lendMeService;
+	private String solicitorSessionId;
+	
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public LendMeMsgsRep() {
+	public LendMeMsgsRep(String currentSessionId, LendMeAsync lendMeService) {
+		
+		this.solicitorSessionId = currentSessionId;
+		this.lendMeService = lendMeService;
+		
+		setWidth("530");
 		
 		VerticalPanel vPanel = new VerticalPanel();
 		vPanel.setWidth("500px");
 		
-		subjectLabel = new Label("subject");
+		subjectLabel = new Label("Assunto");
 		subjectLabel.setStyleName("messagesLines");
 		vPanel.add(subjectLabel);
 		
 		
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setStyleName("messagesLines");
-		hPanel.setHeight("30px");
+		hPanel.setSize("484px", "30px");
 		
-		senderLabel = new Label("sender");
-		senderLabel.setWidth("400px");
+		senderLabel = new Label("Remetente");
+		senderLabel.setWidth("300px");
 		senderLabel.setStyleName("messagesLines");
 		hPanel.add(senderLabel);
 		
@@ -46,10 +62,26 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		dateLabel = new Label("date");
 		dateLabel.setStyleName("messagesLines");
 		hPanel.add(dateLabel);
+		dateLabel.setWidth("50");
 		
 		vPanel.add(hPanel);
 		
-		messageLabel = new Label("message");
+		PushButton answerMsgButton = new PushButton("New button");
+		answerMsgButton.getUpFace().setText("Responder");
+		hPanel.add(answerMsgButton);
+		answerMsgButton.setSize("60px", "20px");
+		
+		answerMsgButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				sendAnswerMessage();
+			}
+		});
+		
+		hPanel.add(answerMsgButton);
+		
+		messageLabel = new Label("Mensagem de Exemplo...");
 		messageLabel.setStyleName("messagesLines");
 		messageLabel.setWidth("500px");
 		vPanel.add(messageLabel);
@@ -62,9 +94,9 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		
 		HorizontalPanel greatPanel = new HorizontalPanel();
 		
-		Label tabSeparator = new Label();
-		tabSeparator.setWidth("30px");
-		greatPanel.add(tabSeparator);
+		Image image = new Image("http://icons.iconarchive.com/icons/fasticon/fast-icon-users/128/user-icon.png");
+		greatPanel.add(image);
+		image.setSize("45px", "48px");
 		greatPanel.add(vPanel);
 		greatPanel.setStyleName("messagesLines");
 		
@@ -72,9 +104,9 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		this.add(greatPanel);
 	}
 	
-	public LendMeMsgsRep(String message, String subject, 
+	public LendMeMsgsRep(LendMeAsync lendMeService, String currentSessionId, String message, String subject, 
 			String sender, String date, String lendingId) {
-		this();
+		this(currentSessionId, lendMeService);
 		
 		fillPropertiesMap(message, subject, sender, date, lendingId);
 		
@@ -95,6 +127,13 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		messageProperties.put("sender", sender);
 		messageProperties.put("date", date);
 		messageProperties.put("lendingId", lendingId);
+	}
+	
+	private void sendAnswerMessage() {
+		
+		answerMsg = new NewMsgForm(lendMeService, solicitorSessionId, 
+				getSender(), getSubject(), getLendingId());
+		answerMsg.center();
 	}
 
 	public String getMessage() {

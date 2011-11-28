@@ -13,9 +13,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
 import com.gwtext.client.widgets.Container;
 import com.google.gwt.user.client.ui.Label;
-import com.gwtext.client.widgets.Button;
-import com.gwtext.client.widgets.event.ButtonListenerAdapter;
+import com.google.gwt.user.client.ui.Button;
 import com.gwtext.client.core.EventObject;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 @SuppressWarnings("deprecation")
 
 public class HistoryViewer extends Composite {
@@ -54,9 +55,20 @@ public class HistoryViewer extends Composite {
 		lblVejaOQue.setSize("450px", "15px");
 		
 		Button button = new Button("<< Mais recentes");
-		headerPenel.add(button, 185, 7);
+		button.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				previousPage();
+			}
+		});
+		headerPenel.add(button, 164, 7);
+		button.setSize("132px", "21px");
 		
 		Button btnMaisAntigas = new Button("Mais antigas >>");
+		btnMaisAntigas.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				nextPage();
+			}
+		});
 		headerPenel.add(btnMaisAntigas, 313, 7);
 		btnMaisAntigas.setSize("122px", "21px");
 		

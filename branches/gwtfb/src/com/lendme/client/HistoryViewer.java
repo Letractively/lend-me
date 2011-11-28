@@ -9,11 +9,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PushButton;
 
 public class HistoryViewer extends Composite {
 	
@@ -65,22 +67,27 @@ public class HistoryViewer extends Composite {
 			}
 		});
 		headerPenel.add(refreshIcon, 343, 10);
+		refreshIcon.setVisible(true);
 		refreshIcon.setSize("32px", "32px");
+		
 		
 		next = new Image((String) null);
 		next.setUrl(NEXT_ICON_PATH);
-		headerPenel.add(next, 391, 7);
 		next.setSize("49px", "36px");
+		headerPenel.add(next, 391, 7);
 		
 		previous = new Image((String) null);
 		previous.setUrl(PREVIOUS_ICON_PATH);
+		
 		previous.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				nextPage();
 			}
 		});
-		headerPenel.add(previous, 272, 10);
 		previous.setSize("49px", "36px");
+		previous.setUrl(PREVIOUS_ICON_PATH);
+		previous.setVisible(true);
+		headerPenel.add(previous, 272, 10);
 		//
 		
 		historyPenel = new AbsolutePanel();
@@ -149,7 +156,6 @@ public class HistoryViewer extends Composite {
 		}
 	}
 	
-	@SuppressWarnings("unused")
 	private PopupPanel criatePopup(String message, int width, int height){
 		PopupPanel popup = new PopupPanel();
 		popup.setPixelSize(width, height);

@@ -17,10 +17,10 @@ public class LendMeHistoricElementRepresent extends Composite {
 	
 	final String ICON_ADD_USER = "http://support.microsoft.com/library/images/support/kbgraphics/Public/en-us/office/New%20icon%20image.jpg";
 	final String ICON_NEW_ITEM = "http://www.ablemuse.com/v4/images/new-icon.gif";
-	final String ICON_LEND = "";
-	final String ICON_ITEM_INTEREST = "";
-	final String ICON_FINISH_LENDING = "";
-	final String ICON_NEED_ITEM = "";
+	final String ICON_LEND = "http://lcvinvestments.com/images/handshake.gif";
+	final String ICON_ITEM_INTEREST = "http://2.bp.blogspot.com/_heKfcJbaI4c/TAd-V76tdxI/AAAAAAAABfM/_4duzSOlLe0/s200/smEyeballs.jpg";
+	final String ICON_FINISH_LENDING = "http://cdn5.iconfinder.com/data/icons/fatcow/32x32/flag_finish.png";
+	final String ICON_NEED_ITEM = "http://www.gratisjogos.info/image.jogos/puzzle.jpg";
 	
 	
 	private String[] historicElementInfo = {"", "", ""};
@@ -64,33 +64,27 @@ public class LendMeHistoricElementRepresent extends Composite {
 		this();
 		
 		if(description.contains(" são amigos agora")){
-			//TODO
-			//icon.setPixelSize(width, height);
+			icon.setPixelSize(50, 42);
 			icon.setUrl(this.ICON_ADD_USER);
 			
 		}else if(description.contains(" cadastrou ")){
-			//TODO
-			//icon.setPixelSize(width, height);
+			icon.setPixelSize(46, 39);
 			icon.setUrl(this.ICON_NEW_ITEM);
 			
 		}else if(description.contains(" emprestou ")){
-			//TODO
-			//icon.setPixelSize(width, height);
+			icon.setPixelSize(44, 48);
 			icon.setUrl(this.ICON_LEND);
 			
 		}else if(description.contains(" tem interesse pelo item ")){
-			//TODO
-			//icon.setPixelSize(width, height);
+			icon.setPixelSize(50, 49);
 			icon.setUrl(this.ICON_NEED_ITEM);
 			
 		}else if(description.contains(" confirmou o término do empréstimo do item ")){
-			//TODO
-			//icon.setPixelSize(width, height);
+			icon.setPixelSize(32, 32);
 			icon.setUrl(this.ICON_FINISH_LENDING);
 			
 		}else if(description.contains(" precisa do item ")){
-			//TODO
-			//icon.setPixelSize(width, height);
+			icon.setPixelSize(49, 47);
 			icon.setUrl(this.ICON_NEED_ITEM);
 		}
 		

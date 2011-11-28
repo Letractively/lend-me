@@ -108,5 +108,7 @@ public interface LendMe extends RemoteService{
 	public boolean areFriends(String sessionOwner, String anotherUserLogin) throws Exception;
 	
 	public String getUserAttributeBySessionId(String sessionId, String attribute) throws Exception;
+
+	public boolean userExists(String viewedUser) throws Exception;
 	
 }

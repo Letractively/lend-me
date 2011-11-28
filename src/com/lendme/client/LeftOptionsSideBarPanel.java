@@ -3,6 +3,7 @@ package com.lendme.client;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -36,21 +37,6 @@ public class LeftOptionsSideBarPanel extends Composite {
 		this.lendMeService = lendMeService;
 		
 		if (currentUserLogin == null || currentUserLogin.trim().isEmpty() ){
-//			Window.alert("current user is still null, retrieve current user from fb");
-//			fbCore.api("/me", new AsyncCallback<JavaScriptObject>() {
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//				}
-//
-//				@Override
-//				public void onSuccess(JavaScriptObject result) {
-//					JSOModel model = result.cast();
-//					String retrievedLogin = model.get("id");
-//					Window.alert("current user retrieved is "+retrievedLogin);
-//					validate(currentSessionId, retrievedLogin, viewedLogin, fbCore);
-//				}
-//			});
 			initWidget(realRootPanel);
 			return;
 		}
@@ -60,11 +46,11 @@ public class LeftOptionsSideBarPanel extends Composite {
 	}
 	
 	private void validate(String currentSessionId, String currentUserLogin, String viewedLogin, FBCore fbCore, UserSearchResultFound userSearchResult, ItemSearchResultFound itemSearchResult){
-		if ( !checkExistance(currentUserLogin) ){
+		if ( !fbCore.userExists(currentUserLogin) ){
 			initWidget(realRootPanel);
 			return;
 		}
-		else if ( !checkExistance(viewedLogin) ){
+		else if ( !fbCore.userExists(viewedLogin) ){
 			viewedLogin = currentUserLogin;
 		}
 		
@@ -274,7 +260,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 
 			@Override
 			public void onKeyPress(KeyPressEvent event) {
-				if ( event.getUnicodeCharCode() == 13 ){
+				if ( event.getCharCode() == KeyCodes.KEY_ENTER ){
 					if ( searchForFriends.getValue().booleanValue() ) {
 						if (searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Endereco") ){
 							lendMeService.searchUsersByAttributeKey(currentSessionId, searchKey.getText(), "endereco",
@@ -294,8 +280,8 @@ public class LeftOptionsSideBarPanel extends Composite {
 
 		}
 		
-		searchKey.addKeyPressHandler(new EnterKeyHit());
 		searchStart.addClickHandler(new StartSearch());
+		searchStart.addKeyPressHandler(new EnterKeyHit());
 
 		Label optionsLabel = new Label("Op\u00E7oes");
 		optionsLabel.setStyleName("gwt-SearchFont");
@@ -351,28 +337,5 @@ public class LeftOptionsSideBarPanel extends Composite {
 		});
 
 	}
-
-	private boolean checkExistance(String id){
-		if ( id == null || id.trim().isEmpty()){
-			return false;
-		}
-		String info = retrieveBasicInfo(id);
-		if ( info.contains("error") || info.contains("Some of the aliases you requested do not exist: "+id) ){
-			return false;
-		}
-		return true;
-	}
-	
-	private native String retrieveBasicInfo(String id)/*-{
-		function httpGet(theUrl){
-			var xmlHttp = null;
-
-			xmlHttp = new XMLHttpRequest();
-			xmlHttp.open( "GET", theUrl, false );
-			xmlHttp.send( null );
-			return xmlHttp.responseText;
-		}
-		return httpGet("https://graph.facebook.com/"+id);
-	}-*/;
 	
 }

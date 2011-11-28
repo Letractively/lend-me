@@ -158,5 +158,28 @@ public class FBCore {
     protected void callbackSuccess(AsyncCallback<JavaScriptObject> callback, JavaScriptObject obj) {
         callback.onSuccess (obj);
     }
+    
+	public boolean userExists(String id){
+		if ( id == null || id.trim().isEmpty()){
+			return false;
+		}
+		String info = retrieveBasicInfo(id);
+		if ( info.contains("error") || info.contains("Some of the aliases you requested do not exist: "+id) ){
+			return false;
+		}
+		return true;
+	}
+	
+	public native String retrieveBasicInfo(String id)/*-{
+		function httpGet(theUrl){
+			var xmlHttp = null;
+
+			xmlHttp = new XMLHttpRequest();
+			xmlHttp.open( "GET", theUrl, false );
+			xmlHttp.send( null );
+			return xmlHttp.responseText;
+		}
+		return httpGet("https://graph.facebook.com/"+id);
+	}-*/;
 
 }

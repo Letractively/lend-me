@@ -152,4 +152,6 @@ public interface LendMeAsync {
 	void getUserAttributeBySessionId(String sessionId, String attribute,
 			AsyncCallback<String> callback);
 
+	void userExists(String viewedUser, AsyncCallback<Boolean> asyncCallback);
+
 }

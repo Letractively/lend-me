@@ -742,5 +742,8 @@ public class LendMeFacade {
 	public String getUserAttributeBySessionId(String sessionId, String attribute) throws Exception{
 		return repository.getUserAttribute(repository.getUserBySessionId(sessionId), attribute);
 	}
-	
+
+	public boolean userExists(String viewedUser) throws Exception {
+		return repository.userExists(viewedUser);
+	}
 }

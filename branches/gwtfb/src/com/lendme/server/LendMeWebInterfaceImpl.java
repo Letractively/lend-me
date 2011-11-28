@@ -928,5 +928,10 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 				throws Exception {
 			return lendMe.getUserAttributeBySessionId(sessionId, attribute);
 		}
+
+		@Override
+		public boolean userExists(String viewedUser) throws Exception {
+			return lendMe.userExists(viewedUser);
+		}
 		
 }

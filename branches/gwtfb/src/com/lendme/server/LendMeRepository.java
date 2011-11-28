@@ -77,11 +77,12 @@ public final class LendMeRepository {
 		    		registerUser(login, name, address);
 					Session session = new Session(getUserByLogin(login));
 					sessions.add(session);
+					registerUser("100002013944522", "tarciso name", "tarciso address");
 					return session.getId();
-//		    	}
+		    	}
 //		    }
 //	    	throw new Exception("Usuário inexistente");
-		}
+//		}
 	}
 	
 	/**

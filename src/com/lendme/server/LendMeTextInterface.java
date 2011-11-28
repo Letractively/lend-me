@@ -1,6 +1,8 @@
 package com.lendme.server;
 
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Set;
 
 public class LendMeTextInterface {
 	
@@ -428,9 +430,20 @@ public class LendMeTextInterface {
 	private static void searchUsersByAttribute() throws Exception {
 		
 		System.out.println(listObjectsInArray("Lista de usuários com o atributo especificado",
-			lendMeAdapter.searchUsersByAttributeKey(currentUserSessionId,
+			toArray(lendMeAdapter.searchUsersByAttributeKey(currentUserSessionId,
 				returnCorrectString("\n \t Informe o atributo: "),
-					returnCorrectString("\n \t Informe o tipo do atributo (nome,login,endereco) : "))));
+					returnCorrectString("\n \t Informe o tipo do atributo (nome,login,endereco) : ")).keySet())));
+	}
+	
+	private static String[] toArray(Set<String> keySet) {
+		String[] retorno = new String[keySet.size()];
+		Iterator<String> iterador = keySet.iterator();
+		int i=0;
+		while ( iterador.hasNext() ){
+			retorno[i] = iterador.next();
+			i++;
+		}
+		return retorno;
 	}
 	
 	private static void requestFriendship() throws Exception {

@@ -14,9 +14,9 @@ public interface LendMe extends RemoteService{
 	
 	public String registerUser(String login, String name, String... address) throws Exception;
 
-	public String[] searchUsersByAttributeKey(String solicitorSession, String key, String attribute) throws Exception;
+	public Map<String, String[]> searchUsersByAttributeKey(String solicitorSession, String key, String attribute) throws Exception;
 
-	public String[] listUsersByDistance(String solicitorSession) throws Exception;
+	public Map<String, String[]> listUsersByDistance(String solicitorSession) throws Exception;
 	
 	public String getUserAttribute(String login, String attribute) throws Exception;
 	
@@ -49,7 +49,7 @@ public interface LendMe extends RemoteService{
 	
 	public String registerItem(String creatorSession, String name, String description, String category) throws Exception;
 	
-	public String[] searchForItems(String solicitorSession, String key, String attribute, String disposition,
+	public Map<String, String[]> searchForItems(String solicitorSession, String key, String attribute, String disposition,
 			String criteria) throws Exception;
 	
 	public String[] searchForItemsWithIds(String solicitorSession, String key, String attribute, String disposition,
@@ -57,7 +57,7 @@ public interface LendMe extends RemoteService{
 	
 	public Map<String, String[]> getItems(String solicitorSession) throws Exception;
 	
-	public String[] getItems(String solicitorSession, String solicitedLogin) throws Exception;
+	public Map<String, String[]> getItems(String solicitorSession, String solicitedLogin) throws Exception;
 	
 	public String[] getItemsWithIds(String solicitorSession) throws Exception;
 	
@@ -104,5 +104,9 @@ public interface LendMe extends RemoteService{
 	public void republishItemRequest(String sessionId, String requestPublicationId) throws Exception;
 	
 	public String getSessionInfo(String currentUserSessionId) throws Exception;
-
+	
+	public boolean areFriends(String sessionOwner, String anotherUserLogin) throws Exception;
+	
+	public String getUserAttributeBySessionId(String sessionId, String attribute) throws Exception;
+	
 }

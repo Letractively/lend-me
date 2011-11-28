@@ -32,8 +32,6 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 			"-----------------------------------------------------------------" +
 			"-------------------------------------------------------"		;//120 tra�os
 	
-	private final String errorMsg = "Erro: LendMe nao conseguiu obter informacao do servidor."; 
-	
 	private String solicitorSessionId;
 	 
 	/**

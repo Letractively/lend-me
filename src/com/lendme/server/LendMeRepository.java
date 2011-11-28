@@ -3,14 +3,9 @@ package com.lendme.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Query;
 import com.lendme.server.entities.Session;
 import com.lendme.server.entities.User;
 import com.lendme.server.utils.AddressComparatorStrategy;
@@ -64,39 +59,11 @@ public final class LendMeRepository {
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
 	public String openSession(String login) throws Exception {
-		
-			if (userExists(login)) {
+		if (userExists(login)) {
 			Session session = new Session(getUserByLogin(login));
 			sessions.add(session);
 			return session.getId();
-			} else {
-			// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-//			    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
-//			    Iterator<Entity> users = datastore.prepare(query).asIterator();
-//			    while ( users.hasNext() ){
-//			     Entity user = users.next();
-//			     if ( (""+user.getProperty("id")).equals(login) ){
-//			     String name = ((String) user.getProperty("name"));
-//			     String address = ((String) user.getProperty("address"));
-			String name = "pedro limeira";
-			String address = "rua dos prazeres";
-			    registerUser(login, name, address);
-			Session session = new Session(getUserByLogin(login));
-			sessions.add(session);
-			return session.getId();
-//			     }
-//			    }
-//			     throw new Exception("Usu√°rio inexistente");
-			}
-		
-		
-		
-		
-//		if (userExists(login)) {
-//			Session session = new Session(getUserByLogin(login));
-//			sessions.add(session);
-//			return session.getId();
-//		} else {
+		} else {
 //			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 //		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
 //		    Iterator<Entity> users = datastore.prepare(query).asIterator();
@@ -105,14 +72,16 @@ public final class LendMeRepository {
 //		    	if ( (""+user.getProperty("id")).equals(login) ){
 //		    		String name = ((String) user.getProperty("name"));
 //		    		String address = ((String) user.getProperty("address"));
-//		    		registerUser(login, name, address);
-//					Session session = new Session(getUserByLogin(login));
-//					sessions.add(session);
-//					return session.getId();
+			String name = "guilherme name";
+			String address = "guilherme address";
+		    		registerUser(login, name, address);
+					Session session = new Session(getUserByLogin(login));
+					sessions.add(session);
+					return session.getId();
 //		    	}
 //		    }
-//	    	throw new Exception("UsuÔøΩrio inexistente");
-//		}
+//	    	throw new Exception("Usu·rio inexistente");
+		}
 	}
 	
 	/**
@@ -279,13 +248,13 @@ public final class LendMeRepository {
 	public Set<User> searchUsersByAttributeKey(String sessionId, String key,
 			String attribute) throws Exception{
 		if ( attribute == null || attribute.trim().length() == 0 ){
-			throw new Exception("Atributo inv√°lido");//"Invalid attribute");
+			throw new Exception("Atributo inv·lido");//"Invalid attribute");
 		}
 		if (!(attribute.equals("nome") || attribute.trim().equals("login") || attribute.trim().equals("endereco"))){
 			throw new Exception("Atributo inexistente");//"Inexistent attribute");
 		}
 		if ( key == null || key.trim().length() == 0 ){
-			throw new Exception("Palavra-chave inv√°lida");//"Invalid search key");
+			throw new Exception("Palavra-chave inv·lida");//"Invalid search key");
 		}
 		
 		Set<User> results = new HashSet<User>();

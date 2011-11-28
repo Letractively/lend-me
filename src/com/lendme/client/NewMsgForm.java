@@ -176,6 +176,7 @@ public class NewMsgForm extends PopupPanel {
 		lendingListBox.setVisible(true);
 	}
 	
+	@SuppressWarnings("unused")
 	private void putLendingsInListBox(Map<String, String[]> result) {
 		
 		String lendingString;

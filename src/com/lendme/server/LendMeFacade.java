@@ -735,4 +735,12 @@ public class LendMeFacade {
 		return new String(info);
 	}
 	
+	public boolean areFriends(String sessionOwner, String anotherUserLogin) throws Exception{
+		return repository.getUserBySessionId(sessionOwner).hasFriend(repository.getUserByLogin(anotherUserLogin));
+	}
+	
+	public String getUserAttributeBySessionId(String sessionId, String attribute) throws Exception{
+		return repository.getUserAttribute(repository.getUserBySessionId(sessionId), attribute);
+	}
+	
 }

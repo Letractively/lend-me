@@ -525,4 +525,5 @@ public class User implements InterestedOn<Item>{
 	public List<Topic> getTopics(String topicType) throws Exception{
 		return userOperationManager.getTopics(topicType);
 	}
+	
 }

@@ -3,10 +3,6 @@ package com.lendme.server;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-
-import com.lendme.server.entities.Lending;
-import com.lendme.server.entities.Lending.LendingStatus;
 
 
 
@@ -217,13 +213,24 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String getItens(String idSessao, String login) throws Exception{
 
-		String[] resultado = system.getItems(idSessao, login);
+		String[] resultado = paraArray(system.getItems(idSessao, login).keySet());
 		if ( resultado.length == 0 ){
 			return "O usuário não possui itens cadastrados";
 		}
 		return formatarASaida(resultado);
 	}
 	
+	private String[] paraArray(Set<String> keySet) {
+		String[] retorno = new String[keySet.size()];
+		Iterator<String> iterador = keySet.iterator();
+		int i=0;
+		while ( iterador.hasNext() ){
+			retorno[i] = iterador.next();
+			i++;
+		}
+		return retorno;
+	}
+
 	/**
 	 * Requisita o empréstimo de um item.
 	 * @param idSessao ID da sessão do usuário requisitante.
@@ -247,7 +254,7 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String localizarUsuario(String idSessao, String chave, String atributo) throws Exception{
 
-		String[] resultado = system.searchUsersByAttributeKey(idSessao, chave, atributo);
+		String[] resultado = paraArray(system.searchUsersByAttributeKey(idSessao, chave, atributo).keySet());
 		if ( resultado.length == 0 ){
 			return "Nenhum usuário encontrado";
 		}
@@ -262,7 +269,7 @@ public class LendMeAcceptanceTestInterface {
 	 * @param idSessao ID da sessão do usuário logado.
 	 */
 	public String localizarUsuario(String idSessao) throws Exception{
-	    String[] resultado = system.listUsersByDistance(idSessao);	
+	    String[] resultado = paraArray(system.listUsersByDistance(idSessao).keySet());	
 	    
 	    if ( resultado.length == 0 ){
 			return "Nenhum usuário encontrado";
@@ -465,7 +472,7 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String pesquisarItem(String idSessao, String chave, String atributo, String tipoDeOrdenacao, String criterioDeOrdenacao) throws Exception{
 		
-		String[] resultado = system.searchForItems(idSessao, chave, atributo, tipoDeOrdenacao, criterioDeOrdenacao);
+		String[] resultado = paraArray(system.searchForItems(idSessao, chave, atributo, tipoDeOrdenacao, criterioDeOrdenacao).keySet());
 		if ( resultado.length == 0 ) {
 			return "Nenhum item encontrado";
 		}		

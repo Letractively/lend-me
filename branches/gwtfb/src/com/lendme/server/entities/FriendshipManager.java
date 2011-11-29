@@ -124,7 +124,7 @@ public class FriendshipManager {
 		else{
 			user.getUserOperationManager().getFriendshipManager().declineRequestMirror(me);
 		}
-		sentFriendshipRequests.remove(user);
+		receivedFriendshipRequests.remove(user);
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class FriendshipManager {
 	 * @throws Exception
 	 */
 	public void declineRequestMirror(User user) throws Exception{
-		receivedFriendshipRequests.remove(user);
+		sentFriendshipRequests.remove(user);
 	}
 
 	/**

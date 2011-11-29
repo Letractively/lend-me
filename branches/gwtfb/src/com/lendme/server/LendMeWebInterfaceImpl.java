@@ -477,7 +477,6 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 					break;
 			}
 			fields[9] = interessados;
-			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
 			
 			for(int i=0; i < fields.length; i++){
 				if(fields[i] == null){
@@ -485,6 +484,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 				}
 			}
 			
+			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
 			mapResults.put(actualItem.getID(), fields);
 		}
 
@@ -611,12 +611,13 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		
 		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
 		
-		String interessados = "";
-		
+		Viewer userOwnerSession = lendMe.getUserProfile(solicitorSession);
+				
 		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
-		boolean identifierAction = false;
 		
 		for(Item actualItem : results){
+			String interessados = "";
+			boolean identifierAction = false;
 			for(Lending actualLending : result){
 				if(actualLending.getItem().equals(actualItem)){
 					interessados+=actualLending.getBorrower().getName()+":"+actualLending.getID()+";";
@@ -649,15 +650,14 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 				}
 			}
 			
-			String myLogin = lendMe.getUserProfile(solicitorSession).getOwnerLogin();
-			fields[10] = String.valueOf(ownerItem.getLogin().equals(myLogin));
+			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
 			
 			mapResults.put(actualItem.getID(), fields);
 		}
 	
 		return mapResults;
 	}
-	
+
 	/**
 	 * @param itemId ID do Item.
 	 * @param attribute Tipo de atributo do Item. 

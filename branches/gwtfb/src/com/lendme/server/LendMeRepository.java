@@ -63,31 +63,32 @@ public final class LendMeRepository {
 	 * @return the session id
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
-    public String openSession(String login) throws Exception {
-        if (userExists(login)) {
-            Session session = new Session(getUserByLogin(login));
-            sessions.add(session);
-            return session.getId();
-        } else {
-//            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-//            Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
-//            Iterator<Entity> users = datastore.prepare(query).asIterator();
-//            while ( users.hasNext() ){
-//                Entity user = users.next();
-//                if ( (""+user.getProperty("id")).equals(login) ){
-//                    String name = ((String) user.getProperty("name"));
-//                    String address = ((String) user.getProperty("address"));
-            String name = "manoel";
-            String address = "endereco";
-                    registerUser(login, name, address);
-                    Session session = new Session(getUserByLogin(login));
-                    sessions.add(session);
-                    return session.getId();
-                }
-//            }
-//            throw new Exception("Usuário inexistente");
-//        }
-    }	
+	public String openSession(String login) throws Exception {
+		if (userExists(login)) {
+			Session session = new Session(getUserByLogin(login));
+			sessions.add(session);
+			return session.getId();
+		} else {
+//			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+//		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
+//		    Iterator<Entity> users = datastore.prepare(query).asIterator();
+//		    while ( users.hasNext() ){
+//		    	Entity user = users.next();
+//		    	if ( (""+user.getProperty("id")).equals(login) ){
+//		    		String name = ((String) user.getProperty("name"));
+//		    		String address = ((String) user.getProperty("address"));
+				String name = "Pedro Limeira";
+				String address = "Campina Grande";
+		    		registerUser(login, name, address);
+					Session session = new Session(getUserByLogin(login));
+					sessions.add(session);
+					return session.getId();
+		    	}
+//		    }
+//	    	throw new Exception("Usu�rio inexistente");
+//		}
+	}
+	
 	/**
 	 * Closes the specified session.
 	 * 

@@ -1,5 +1,4 @@
 package com.lendme.client;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -13,7 +12,6 @@ import com.google.gwt.user.client.ui.Label;
 public class LendMeItensRepresentation extends AbsolutePanel {
 
 	private final Image image;
-	private final Image exclama;
 	private final Label name;
 	private final Label category;
 	private final Label description;
@@ -33,6 +31,9 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	private String itemIdLocal;
 	private String lendingIdLocal;
 	private String interestedsLocal;
+	private Image exclama;
+	
+	private String URLExclamation = "http://ricardolombardi.ig.com.br/wp-content/uploads/2008/05/2009/04/exclamation-001.jpg";
 	
 	/**
 	 * @wbp.parser.constructor
@@ -43,11 +44,10 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		this.lendmeLocal = lendme;
 		this.idSessionLocal = idSession;
 		
-		AppImageBundle images = GWT.create(AppImageBundle.class);
 		conteinerPanel = new AbsolutePanel();
 		conteinerPanel.setStyleName("gwt-PopupPanel");
 		super.add(conteinerPanel);
-		conteinerPanel.setSize("250px", "74px");
+		conteinerPanel.setSize("270px", "74px");
 		
 		image = new Image();
 		image.addClickHandler(new ClickHandler() {
@@ -80,7 +80,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		name = new Label("");
 		name.setStyleName("gwt-Label-item");
 		conteinerPanel.add(name, 113, 10);
-		name.setSize("127px", "14px");
+		name.setSize("118px", "14px");
 		
 		Label lblCategoria = new Label("Category:");
 		lblCategoria.setStyleName("gwt-Label-item");
@@ -101,10 +101,6 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		conteinerPanel.add(description, 134, 50);
 		description.setSize("106px", "14px");
 		
-		exclama = new Image(images.updateAction());
-		conteinerPanel.add(exclama, 230, 10);
-		exclama.setSize("29px", "29px");
-		
 		topSelect = new Label("--------------------------------------------------------------------------------------------");
 		topSelect.setStyleName("gwt-bar");
 		topSelect.setSize("275px", "17px");
@@ -117,6 +113,12 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		underSelect.setVisible(false);
 		
 		conteinerPanel.add(underSelect, 0, 64);
+		
+		exclama = new Image();
+		exclama.setUrl(URLExclamation);
+		conteinerPanel.add(exclama, 239, 10);
+		exclama.setSize("29px", "29px");
+		
 	}
 	
 	public LendMeItensRepresentation(LendMeAsync lendme, String idSession, String viewedLogin, String imgURL ,String name, String category, String description, String itemId, String lendingID,String interesteds, boolean iAmOwner,boolean action, boolean lent, boolean requested){

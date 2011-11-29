@@ -212,8 +212,9 @@ public class ItemViewer extends PopupPanel {
 		absolutePanel.add(lblNewLabel_1, 8, 160);
 		
 		
-		if(!lent){
+		if(!lent && iAmOwner){
 			actions.addItem("deletar");
+			
 		}else{
 			actions.addItem("pedir retorno");
 		}

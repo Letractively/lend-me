@@ -236,6 +236,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
+				Window.alert(searchKey.getText());
 				if ( searchForFriends.getValue().booleanValue() ) {
 					if (searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Endereco") ){
 						lendMeService.searchUsersByAttributeKey(currentSessionId, searchKey.getText(), "endereco",
@@ -265,12 +266,12 @@ public class LeftOptionsSideBarPanel extends Composite {
 									userSearchResultCallback);
 						}
 						else if ( searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Endereco") ){
-							lendMeService.listUsersByDistance(currentUserLogin, userSearchResultCallback);
+							lendMeService.listUsersByDistance(currentSessionId, userSearchResultCallback);
 						}
 					}
 					else{
 						String attribute = searchStrategy.getItemText(searchStrategy.getSelectedIndex()).toLowerCase();
-						lendMeService.searchForItems(currentUserLogin, searchKey.getText(), attribute,
+						lendMeService.searchForItems(currentSessionId, searchKey.getText(), attribute,
 								"crescente", "reputacao", itemSearchResultCallback);
 					}
 				}
@@ -279,18 +280,18 @@ public class LeftOptionsSideBarPanel extends Composite {
 		}
 		
 		searchStart.addClickHandler(new StartSearch());
-		searchStart.addKeyPressHandler(new EnterKeyHit());
+		searchKey.addKeyPressHandler(new EnterKeyHit());
 
 		Label optionsLabel = new Label("Op\u00E7oes");
 		optionsLabel.setStyleName("gwt-SearchFont");
 		rootPanel.add(optionsLabel, 9, 189);
-		Hyperlink hyperlink = new Hyperlink( "Amigos", "options/friends");
+		Hyperlink hyperlink = new Hyperlink( "Amigos", viewedLogin+"/options/friends");
 		rootPanel.add(hyperlink, 10, 216);
-		Hyperlink hyperlink_1 = new Hyperlink( "Items", "options/items");
+		Hyperlink hyperlink_1 = new Hyperlink( "Items", viewedLogin+"/options/items");
 		rootPanel.add(hyperlink_1, 10, 240);
-		Hyperlink hyperlink_2 = new Hyperlink( "Mensagens", "options/messages");
+		Hyperlink hyperlink_2 = new Hyperlink( "Mensagens", viewedLogin+"/options/messages");
 		rootPanel.add(hyperlink_2, 10, 264);
-		Hyperlink hyperlink_3 = new Hyperlink( "Historico", "options/history");
+		Hyperlink hyperlink_3 = new Hyperlink( "Historico", viewedLogin+"options/history");
 		rootPanel.add(hyperlink_3, 10, 288);
 
 

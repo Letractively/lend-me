@@ -1,6 +1,7 @@
 package com.lendme.client;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -109,6 +110,17 @@ public class UserViewer extends Composite{
 										usersContainers.put(container, container);
 									}
 								}
+								Set<String> theRemainingViewed = new HashSet<String>();
+								for ( LendMeUsersContainer remaining : usersContainers.keySet() ){
+									theRemainingViewed.add(remaining.getViewed());
+								}
+								Set<String> toBeRemoved = searchResults.keySet();
+								toBeRemoved.removeAll(theRemainingViewed);
+								for (String viewedLoginToBeExcluded : toBeRemoved ){
+									//creating a stub for container whose only important attribute is the viewedLogin
+									//because instances of Container with same viewedLogin are considered to be the same
+									usersContainers.remove(new LendMeUsersContainer(viewedLoginToBeExcluded));
+								}
 								refreshThis();
 							}
 							
@@ -128,7 +140,7 @@ public class UserViewer extends Composite{
 		lastY = 25;
 
 		for(LendMeUsersContainer container : usersContainers.keySet()){
-			containerPanel.add(container, lastX, lastY);
+			containerPanel.add(usersContainers.get(container), lastX, lastY);
 			height = height + 130;
 			containerPanel.setHeight(Integer.toString(height)+"px");
 									

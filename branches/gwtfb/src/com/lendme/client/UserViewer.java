@@ -1,7 +1,6 @@
 package com.lendme.client;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +17,7 @@ public class UserViewer extends Composite{
 	public enum FriendshipStatus {FRIEND, NOT_FRIEND, REQUESTED_MY_FRIENDSHIP};
 	
 //	private final String defaultImage = "http://icons.iconarchive.com/icons/fasticon/fast-icon-users/128/user-icon.png";
-	private static final List<LendMeUsersContainer> usersContainers = new ArrayList<LendMeUsersContainer>();
+	private static final Map<LendMeUsersContainer, LendMeUsersContainer> usersContainers = new HashMap<LendMeUsersContainer, LendMeUsersContainer>();
 	private static AbsolutePanel containerPanel;
 	private static ScrollPanel rootScrollPanel;
 	private static AbsolutePanel internalPanel;
@@ -103,11 +102,11 @@ public class UserViewer extends Composite{
 												FriendshipStatus.FRIEND : (userFriendshipRequests.contains(actualResult) ? 
 												FriendshipStatus.REQUESTED_MY_FRIENDSHIP : FriendshipStatus.NOT_FRIEND);
 										
-										
-										usersContainers.add(new LendMeUsersContainer(lendMeService, solicitorSession, userViewerLogin, searchResults,
+										LendMeUsersContainer container = new LendMeUsersContainer(lendMeService, solicitorSession, userViewerLogin, searchResults,
 												new LendMeUsersRepresentation("http://graph.facebook.com/"+actualResult+"/picture", actualResult,
 												searchResults.get(actualResult)[0], searchResults.get(actualResult)[2],
-												searchResults.get(actualResult)[1]), curUserFriendshipStatus));
+												searchResults.get(actualResult)[1]), curUserFriendshipStatus);
+										usersContainers.put(container, container);
 									}
 								}
 								refreshThis();
@@ -128,8 +127,7 @@ public class UserViewer extends Composite{
 		lastX = 10;
 		lastY = 25;
 
-		for(LendMeUsersContainer container : usersContainers){
-			containerPanel.remove(container);
+		for(LendMeUsersContainer container : usersContainers.keySet()){
 			containerPanel.add(container, lastX, lastY);
 			height = height + 130;
 			containerPanel.setHeight(Integer.toString(height)+"px");

@@ -63,30 +63,31 @@ public final class LendMeRepository {
 	 * @return the session id
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
-	public String openSession(String login) throws Exception {
-		if (userExists(login)) {
-			Session session = new Session(getUserByLogin(login));
-			sessions.add(session);
-			return session.getId();
-		} else {
-			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
-		    Iterator<Entity> users = datastore.prepare(query).asIterator();
-		    while ( users.hasNext() ){
-		    	Entity user = users.next();
-		    	if ( (""+user.getProperty("id")).equals(login) ){
-		    		String name = ((String) user.getProperty("name"));
-		    		String address = ((String) user.getProperty("address"));
-		    		registerUser(login, name, address);
-					Session session = new Session(getUserByLogin(login));
-					sessions.add(session);
-					return session.getId();
-		    	}
-		    }
-	    	throw new Exception("Usuário inexistente");
-		}
-	}
-	
+    public String openSession(String login) throws Exception {
+        if (userExists(login)) {
+            Session session = new Session(getUserByLogin(login));
+            sessions.add(session);
+            return session.getId();
+        } else {
+//            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+//            Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
+//            Iterator<Entity> users = datastore.prepare(query).asIterator();
+//            while ( users.hasNext() ){
+//                Entity user = users.next();
+//                if ( (""+user.getProperty("id")).equals(login) ){
+//                    String name = ((String) user.getProperty("name"));
+//                    String address = ((String) user.getProperty("address"));
+            String name = "manoel";
+            String address = "endereco";
+                    registerUser(login, name, address);
+                    Session session = new Session(getUserByLogin(login));
+                    sessions.add(session);
+                    return session.getId();
+                }
+//            }
+//            throw new Exception("UsuÃ¡rio inexistente");
+//        }
+    }	
 	/**
 	 * Closes the specified session.
 	 * 
@@ -251,13 +252,13 @@ public final class LendMeRepository {
 	public Set<User> searchUsersByAttributeKey(String sessionId, String key,
 			String attribute) throws Exception{
 		if ( attribute == null || attribute.trim().length() == 0 ){
-			throw new Exception("Atributo inválido");//"Invalid attribute");
+			throw new Exception("Atributo invï¿½lido");//"Invalid attribute");
 		}
 		if (!(attribute.equals("nome") || attribute.trim().equals("login") || attribute.trim().equals("endereco"))){
 			throw new Exception("Atributo inexistente");//"Inexistent attribute");
 		}
 		if ( key == null || key.trim().length() == 0 ){
-			throw new Exception("Palavra-chave inválida");//"Invalid search key");
+			throw new Exception("Palavra-chave invï¿½lida");//"Invalid search key");
 		}
 		
 		Set<User> results = new HashSet<User>();

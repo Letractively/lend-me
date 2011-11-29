@@ -27,7 +27,7 @@ public class HistoryViewer extends Composite {
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		rootPanel.setStyleName("rootPanelHistory");
-		rootPanel.add(scrollPanel, 0, 54);
+		rootPanel.add(scrollPanel, 0, 70);
 		scrollPanel.setSize("600px", "550px");
 		rootPanel.setSize("600px", "610px");
 		
@@ -61,16 +61,16 @@ public class HistoryViewer extends Composite {
 		
 		systemMsg = new Label("");
 		systemMsg.setStyleName("barra");
-		rootPanel.add(systemMsg, 0, 35);
-		systemMsg.setSize("600px", "20px");
+		rootPanel.add(systemMsg, 0, 58);
+		systemMsg.setSize("600px", "10px");
 		
 		Label titulo = new Label("Histórico de atividades");
-		titulo.setStyleName("titulo-historico");
-		rootPanel.add(titulo, 21, 0);
-		titulo.setSize("171px", "35px");
+		titulo.setStyleName("tituloHistorico");
+		rootPanel.add(titulo, 10, 23);
+		titulo.setSize("260px", "29px");
 
 		
-		rootPanel.add(scrollPanel, 0, 54);
+		rootPanel.add(scrollPanel, 0, 70);
 		
 		if ( scope.equals("all") ){
 			lendMeService.getActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, ArrayList<String[]>>>() {

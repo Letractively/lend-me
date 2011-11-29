@@ -133,7 +133,7 @@ public class Viewer {
 	 */
 	protected Set<Item> getOwnerItems() throws Exception{
 		if ( ownerItems == null ){
-			throw new Exception("O usuÃ¡rio nÃ£o tem permissÃ£o para visualizar estes itens");//"User has no permission to view these items");
+			throw new Exception("O usu�rio n�o tem permiss�o para visualizar estes itens");//"User has no permission to view these items");
 		}
 		return ownerItems;
 	}

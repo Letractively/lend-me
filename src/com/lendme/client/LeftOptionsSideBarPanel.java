@@ -282,17 +282,21 @@ public class LeftOptionsSideBarPanel extends Composite {
 		searchStart.addClickHandler(new StartSearch());
 		searchKey.addKeyPressHandler(new EnterKeyHit());
 
-		Label optionsLabel = new Label("Op\u00E7oes");
-		optionsLabel.setStyleName("gwt-SearchFont");
+		Label optionsLabel = new Label("Op\u00E7oes de "+userName.getText());
+		optionsLabel.setStyleName("gwt-OptionsFont");
 		rootPanel.add(optionsLabel, 9, 189);
 		Hyperlink hyperlink = new Hyperlink( "Amigos", viewedLogin+"/options/friends");
-		rootPanel.add(hyperlink, 10, 216);
+		hyperlink.setStyleName("gwt-SearchFont");
+		rootPanel.add(hyperlink, 11, 240);
 		Hyperlink hyperlink_1 = new Hyperlink( "Items", viewedLogin+"/options/items");
-		rootPanel.add(hyperlink_1, 10, 240);
+		hyperlink_1.setStyleName("gwt-SearchFont");
+		rootPanel.add(hyperlink_1, 11, 288);
 		Hyperlink hyperlink_2 = new Hyperlink( "Mensagens", viewedLogin+"/options/messages");
-		rootPanel.add(hyperlink_2, 10, 264);
+		hyperlink_2.setStyleName("gwt-SearchFont");
+		rootPanel.add(hyperlink_2, 11, 300);
 		Hyperlink hyperlink_3 = new Hyperlink( "Historico", viewedLogin+"options/history");
-		rootPanel.add(hyperlink_3, 10, 288);
+		hyperlink_3.setStyleName("gwt-SearchFont");
+		rootPanel.add(hyperlink_3, 11, 348);
 
 
 		initWidget(realRootPanel);

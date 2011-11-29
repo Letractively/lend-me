@@ -79,7 +79,27 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		private Map<String, String[]> result = new HashMap<String, String[]>();
 		@Override
 		public void onFailure(Throwable caught) {
-			Window.alert("Problema ocorreu ao obter resultado da pesquisa: "+caught.getMessage());
+			if ( caught.getMessage().equals("O usuário não tem permissão para visualizar estes itens") ){
+				class ErrorMessage extends Composite{
+					
+					private DockPanel dockPanel;
+					
+					public ErrorMessage(){
+						
+						dockPanel = new DockPanel();
+						VerticalPanel verticalPanel = new VerticalPanel();
+						verticalPanel.add(new Label("Voce nao tem permissao para visualizar estes itens!"));
+						dockPanel.add(verticalPanel, DockPanel.CENTER);
+						initWidget(dockPanel);
+					}
+					
+				}
+
+				mainView.setWidget(new ErrorMessage());
+			}
+			else{
+				Window.alert("Problema ocorreu ao obter resultado da pesquisa: "+caught.getMessage());
+			}
 		}
 
 		@Override

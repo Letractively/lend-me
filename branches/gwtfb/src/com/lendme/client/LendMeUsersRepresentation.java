@@ -124,7 +124,7 @@ public class LendMeUsersRepresentation extends PopupPanel {
 			imgPath = this.urlDefaultImg;
 
 		image = new Image(imgPath);
-		image.setStyleName(".gwtPointerCursor");
+		image.setStyleName("gwtPointerCursor");
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 			}

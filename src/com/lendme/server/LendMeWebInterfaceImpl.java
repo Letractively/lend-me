@@ -443,7 +443,8 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 
 		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
 
-
+		String interessados = "";
+		
 		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
 		boolean identifierAction = false;
 
@@ -454,12 +455,30 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 					break;
 				}
 			}
-			String[] fields = new String[5];
+			User ownerItem = lendMe.getItemOwner(actualItem.getID());
+			String[] fields = new String[10];
 			fields[0] = actualItem.getName();
 			fields[1] = actualItem.getCategory();
 			fields[2] = actualItem.getDescription();
 			fields[3] = String.valueOf(identifierAction);
 			fields[4] = this.formatDate(actualItem.getCreationDate());
+			
+			fields[5] = String.valueOf(ownerItem.getLentItems().contains(actualItem));//Se o item esta emprestado
+			fields[6] = String.valueOf(identifierAction); //Se o item foi requisitado
+			fields[7] = actualItem.getID();//Item ID
+			
+			for(Lending actualLending : ownerItem.getLending()){
+					actualLending.getItem().equals(actualItem);
+					fields[8] = actualLending.getID();
+					break;
+			}
+			fields[9] = interessados;
+			
+			for(int i=0; i < fields.length; i++){
+				if(fields[i] == null){
+					fields[i] = "";
+				}
+			}
 			mapResults.put(actualItem.getID(), fields);
 		}
 

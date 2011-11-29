@@ -79,7 +79,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		private Map<String, String[]> result = new HashMap<String, String[]>();
 		@Override
 		public void onFailure(Throwable caught) {
-			if ( caught.getMessage().equals("O usuário não tem permissão para visualizar estes itens") ){
+			if ( caught.getMessage().equals("O usuï¿½rio nï¿½o tem permissï¿½o para visualizar estes itens") ){
 				class ErrorMessage extends Composite{
 					
 					private DockPanel dockPanel;
@@ -310,6 +310,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 		else if ( option.equals("history") ){
 			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
+//			mainView.setSize(width, height);
 			mainView.setWidget(new HistoryViewer(lendMeService, currentSessionId, "all"));
 		}
 		else {

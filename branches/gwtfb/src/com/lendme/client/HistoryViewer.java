@@ -42,8 +42,8 @@ public class HistoryViewer extends Composite {
 		scrollPanel = new ScrollPanel();
 		rootPanel.setStyleName("rootPanelHistory");
 		rootPanel.add(scrollPanel, 0, 70);
-		scrollPanel.setSize("600px", "550px");
-		rootPanel.setSize("600px", "610px");
+		scrollPanel.setSize("600px", "500px");
+		rootPanel.setSize("600px", "570px");
 		
 		scrollPanel.add(container);
 		
@@ -69,17 +69,17 @@ public class HistoryViewer extends Composite {
 		
 		activityPanel = new VerticalPanel();
 		container.add(activityPanel);
-		activityPanel.setSize("600px", "548px");
+		activityPanel.setSize("600px", "500px");
 		errorLabel.setVisible(false);
 
 		
 		systemMsg = new Label("");
-		systemMsg.setStyleName("barra");
+		systemMsg.addStyleName("barra");
 		rootPanel.add(systemMsg, 0, 58);
 		systemMsg.setSize("600px", "10px");
 		
 		titulo = new Label("Histórico de atividades");
-		titulo.setStyleName("tituloHistorico");
+		titulo.addStyleName("tituloHistorico");
 		rootPanel.add(titulo, 10, 23);
 		titulo.setSize("260px", "29px");
 
@@ -90,7 +90,6 @@ public class HistoryViewer extends Composite {
 		refreshIcon = new Image((String) null);
 		refreshIcon.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				refreshIcon.setStyleName("opacity");
 				refreshPage(scope);
 			}
 		});

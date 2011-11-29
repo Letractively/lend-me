@@ -70,7 +70,7 @@ public class ItemsViewer extends Composite{
 		String[] values;
 		for(String actualKey : result.keySet()){
 			values = result.get(actualKey);
-			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal,defaultImageURL, values[0], values[1],values[2], values[7], values[8], values[9],Boolean.valueOf(values[3]), Boolean.valueOf(values[5]), Boolean.valueOf(values[6])));
+			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal,defaultImageURL, values[0], values[1],values[2], values[7], values[8], values[9],Boolean.valueOf(values[11]),Boolean.valueOf(values[3]), Boolean.valueOf(values[5]), Boolean.valueOf(values[6])));
 		}
 		Iterator<LendMeItensRepresentation> myItemsIterator = myItems.iterator();
 		int i = 0;

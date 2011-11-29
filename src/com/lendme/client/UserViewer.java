@@ -77,18 +77,32 @@ public class UserViewer extends Composite{
 					@Override
 					public void onSuccess(Map<String, String[]> result) {
 						userFriendshipRequests = result.keySet();
-						for(String actualResult : searchResults.keySet()){ 
-							curUserFriendshipStatus = userFriends.contains(actualResult) ?
-									FriendshipStatus.FRIEND : (userFriendshipRequests.contains(actualResult) ? 
-									FriendshipStatus.REQUESTED_MY_FRIENDSHIP : FriendshipStatus.NOT_FRIEND);
+						lendMeService.getUserAttributeBySessionId(solicitorSession, "login", new AsyncCallback<String>(){
+
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert("Nao foi possivel descobrir o login do dono da sessao atual: "+caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(String result) {
+								for(String actualResult : searchResults.keySet()){ 
+									if ( !actualResult.equals(result) ){
+										curUserFriendshipStatus = userFriends.contains(actualResult) ?
+												FriendshipStatus.FRIEND : (userFriendshipRequests.contains(actualResult) ? 
+												FriendshipStatus.REQUESTED_MY_FRIENDSHIP : FriendshipStatus.NOT_FRIEND);
+										
+										
+										usersContainers.add(new LendMeUsersContainer(lendMeService, solicitorSession, 
+												new LendMeUsersRepresentation("http://graph.facebook.com/"+actualResult+"/picture", actualResult,
+												searchResults.get(actualResult)[0], searchResults.get(actualResult)[2],
+												searchResults.get(actualResult)[1]), curUserFriendshipStatus));
+									}
+								}
+								refreshThis();
+							}
 							
-							
-							usersContainers.add(new LendMeUsersContainer(lendMeService, solicitorSession, 
-									new LendMeUsersRepresentation("http://graph.facebook.com/"+actualResult+"/picture", actualResult,
-									searchResults.get(actualResult)[0], searchResults.get(actualResult)[2],
-									searchResults.get(actualResult)[1]), curUserFriendshipStatus));
-						}
-						refreshThis();
+						});
 					}
 				});
 			}

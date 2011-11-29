@@ -19,7 +19,7 @@ public class LendMeItensCreatorRepresentation extends PopupPanel {
 	private LendMeItensCreatorRepresentation i_am;
 	private String defaultURL = "http://www.quatrocantos.com/clipart/ferramentas/imagens/ferramenta01/martelo.gif";
 	
-	public LendMeItensCreatorRepresentation(LendMeAsync lendme, String session) {
+	public LendMeItensCreatorRepresentation(LendMeAsync lendme, String session, final String viewedLogin) {
 		super(true);
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
@@ -80,6 +80,7 @@ public class LendMeItensCreatorRepresentation extends PopupPanel {
 					public void onSuccess(String result) {
 						Window.alert("Item register with sucess!");
 						i_am.hide();
+						LendMeEntryPoint.displayCurrentUserItems(viewedLogin);
 					}
 					
 					@Override

@@ -87,8 +87,8 @@ public class UserViewer extends Composite{
 									new LendMeUsersRepresentation("http://graph.facebook.com/"+actualResult+"/picture", actualResult,
 									searchResults.get(actualResult)[0], searchResults.get(actualResult)[2],
 									searchResults.get(actualResult)[1]), curUserFriendshipStatus));
-							refreshThis();
 						}
+						refreshThis();
 					}
 				});
 			}

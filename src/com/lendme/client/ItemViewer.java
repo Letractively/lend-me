@@ -36,6 +36,8 @@ public class ItemViewer extends PopupPanel {
 					  String infoStr, String itemId, String lendingId,String interesteds,final boolean iAmOwner ,boolean lent, boolean requested) {
 		
 		super(true);
+		setAnimationEnabled(true);
+		setGlassEnabled(true);
 		
 		this.imgURL = imgURL;
 		this.nameStr = nameStr;

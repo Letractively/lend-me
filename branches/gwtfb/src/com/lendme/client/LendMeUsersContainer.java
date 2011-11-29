@@ -106,6 +106,11 @@ public class LendMeUsersContainer extends AbsolutePanel {
 		this.add(decPanel);
 	}
 	
+	//Stub constructor
+	public LendMeUsersContainer(String userViewerLogin) {
+		this.userViewerLogin = userViewerLogin;
+	}
+
 	private void askForFriendship() {
 		lendMeService.askForFriendship(solicitorSessionId, 
 				user.getLogin(), new AsyncCallback<Void>() {

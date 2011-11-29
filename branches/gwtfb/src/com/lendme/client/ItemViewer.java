@@ -154,7 +154,7 @@ public class ItemViewer extends PopupPanel {
 					});
 				}
 				
-				if(actions.getSelectedIndex() == 1 && actions.getItemText(1).equals("pedir emprestado")){
+				if(actions.getSelectedIndex() == 0 && actions.getItemText(0).equals("pedir emprestado")){
 					lendmeLocal.requestItem(idSessionLocal, itemIdLocal, qtdeDias.getValue(), new AsyncCallback<String>() {
 
 						@Override

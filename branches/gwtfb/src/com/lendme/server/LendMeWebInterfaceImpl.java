@@ -1,7 +1,9 @@
 package com.lendme.server;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -361,7 +363,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			String[] currTopicProps = new String[4]; 
 			currTopicProps[0] = currentTopic.getID();
 			currTopicProps[1] = String.valueOf(currentTopic.getMessages().size());
-			currTopicProps[2] = currentTopic.getDate().toString();
+			currTopicProps[2] = formatToDayMonthYear(currentTopic.getDate());
 			topicsMap.put(currentTopic.getSubject(), currTopicProps);
 		}
 		return topicsMap;
@@ -401,7 +403,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			currTopicProps[0] = currentMessage.getMessage();
 			currTopicProps[1] = currentMessage.getSubject();
 			currTopicProps[2] = currentMessage.getSender();
-			currTopicProps[3] = currentMessage.getDate().toString();
+			currTopicProps[3] = formatDate(currentMessage.getDate());
 			currTopicProps[4] = currentMessage.getLendingId();
 			messagesMap.put(currentMessage.getMessage(), currTopicProps);
 		}
@@ -882,26 +884,26 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 
 	private String formatToDayMonthYear(EventDate time){
 		
-		String dateInternationalFormat = time.getDate().toString(); 
-		String dia  = dateInternationalFormat.substring(8, 10);
-		String mes = dateInternationalFormat.substring(4, 7);
-		String ano = dateInternationalFormat.substring(24, 28);
-		String dateBrazillianFormat = dia + "/" + mes + "/" + ano;
-		return dateBrazillianFormat;
+		Date toBeFormatted = time.getDate(); 
+	 
+        SimpleDateFormat dateformatDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
+ 
+        StringBuilder dateDDMMYYYY = new StringBuilder( dateformatDDMMYYYY.format( toBeFormatted ) );
+		
+        return dateDDMMYYYY.toString();
 	}
 	
 	private String formatDate(EventDate time){
-		String timeInfo = null;
+		String timeInfo = "";
 
-		String dateInternationalFormat = time.getDate().toString(); 
-		String dia  = dateInternationalFormat.substring(8, 10);
-		String mes = dateInternationalFormat.substring(4, 7);
-		String ano = dateInternationalFormat.substring(24, 28);
-		String dateBrazillianFormat = dia + "/" + mes + "/" + ano;
+		Date toBeFormatted = time.getDate(); 
+		SimpleDateFormat dateformatDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
+		StringBuilder dateDDMMYYYY = new StringBuilder( dateformatDDMMYYYY.format( toBeFormatted ) );
 
-		String hour = dateInternationalFormat.substring(7, 13);
-
-		timeInfo = "Data: "+ dateBrazillianFormat + "  Hora: " + hour;
+		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+		StringBuilder hour = new StringBuilder( hourFormat.format( toBeFormatted ) );
+		
+		timeInfo = "Data: "+ dateDDMMYYYY + "  Hora: " + hour;
 		return timeInfo;
 
 	}

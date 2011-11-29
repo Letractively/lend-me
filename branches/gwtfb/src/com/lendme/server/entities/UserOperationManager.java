@@ -27,6 +27,7 @@ public class UserOperationManager {
 		this.itemManager = new ItemManager();
 	}
 	
+	
 	public FriendshipManager getFriendshipManager() {
 		return friendshipManager;
 	}

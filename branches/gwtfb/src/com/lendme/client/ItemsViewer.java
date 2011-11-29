@@ -30,13 +30,15 @@ public class ItemsViewer extends Composite{
 	private final int  XCol1 = 1;
 	private final int  XCol2 = 270;
 
-	private final LendMeAsync lendmeAsync;
+	private final LendMeAsync lendmeLocal;
+	private final String idSessionLocal;
 
 	public ItemsViewer(LendMeAsync lendme, String idSession, Map<String, String[]> result) {
 
-		this.lendmeAsync = lendme;
-
-		creator = new LendMeItensCreatorRepresentation(lendmeAsync, idSession);
+		this.lendmeLocal = lendme;
+		this.idSessionLocal = idSession;
+		
+		creator = new LendMeItensCreatorRepresentation(lendmeLocal, idSessionLocal);
 		myItems = new ArrayList<LendMeItensRepresentation>();
 
 		rootPanel = new VerticalPanel();
@@ -68,7 +70,7 @@ public class ItemsViewer extends Composite{
 		String[] values;
 		for(String actualKey : result.keySet()){
 			values = result.get(actualKey);
-			myItems.add(new LendMeItensRepresentation(defaultImageURL, values[0], values[1],values[2], Boolean.valueOf(values[3])));
+			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal,defaultImageURL, values[0], values[1],values[2], values[7], values[8], values[9],Boolean.valueOf(values[3]), Boolean.valueOf(values[5]), Boolean.valueOf(values[6])));
 		}
 		Iterator<LendMeItensRepresentation> myItemsIterator = myItems.iterator();
 		int i = 0;

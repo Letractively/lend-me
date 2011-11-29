@@ -526,4 +526,8 @@ public class User implements InterestedOn<Item>{
 		return userOperationManager.getTopics(topicType);
 	}
 	
+	public Set<Lending> getLending(){
+		return userOperationManager.getItemManager().getMyLentItems();
+	}
+	
 }

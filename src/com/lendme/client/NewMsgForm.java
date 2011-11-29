@@ -155,28 +155,28 @@ public class NewMsgForm extends PopupPanel {
 	}
 	
 	private void showOngoingLendings() {
-//		lendMeService.getLendingRecords(solicitorSessionId, "all", 
-//			new AsyncCallback<Map<String,String[]>>() {
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					Window.alert("Erro: Nao foi possivel ter acesso aos emprestimos do usuario.");
-//				}
-//
-//				@Override
-//				public void onSuccess(Map<String, String[]> result) {
-//					putLendingsInListBox(result);
-//				}
-//		});
-		for (int i = 0; i < 3; i++) {
-			lendingListBox.addItem("Id: 00" + i + "; Dono: Fulano" + i + 
-					"; Benef: Sicrano" + i + "; Item: %item" + i + "; Status: status");
-		}
+		lendMeService.getLendingRecords(solicitorSessionId, "all", 
+			new AsyncCallback<Map<String,String[]>>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Erro: Nao foi possivel ter acesso aos emprestimos do usuario.");
+				}
+
+				@Override
+				public void onSuccess(Map<String, String[]> result) {
+					putLendingsInListBox(result);
+				}
+		});
+//		for (int i = 0; i < 3; i++) {
+//			lendingListBox.addItem("Id: 00" + i + "; Dono: Fulano" + i + 
+//					"; Benef: Sicrano" + i + "; Item: %item" + i + "; Status: status");
+//		}
 		lendingListBox.setVisibleItemCount(1);
 		lendingListBox.setVisible(true);
 	}
 	
-	@SuppressWarnings("unused")
+
 	private void putLendingsInListBox(Map<String, String[]> result) {
 		
 		String lendingString;
@@ -186,7 +186,7 @@ public class NewMsgForm extends PopupPanel {
 					+ "; Status: " + result.get(lending)[9];
 			lendingListBox.addItem(lendingString);
 		}
-		lendingListBox.setVisibleItemCount(result.keySet().size());
+		lendingListBox.setVisibleItemCount(1);
 		lendingListBox.setVisible(true);
 	}
 	

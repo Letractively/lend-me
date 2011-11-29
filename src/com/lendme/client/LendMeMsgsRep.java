@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -21,13 +22,9 @@ public class LendMeMsgsRep extends AbsolutePanel {
 	private final Label messageLabel;
 	private NewMsgForm answerMsg;
 	
-	private final String separatorString = 
-		"-----------------------------------------------------------------" +
-		"-----------------------------------" ;//100 tracos
-	
 	private LendMeAsync lendMeService;
 	private String solicitorSessionId;
-	
+
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -36,10 +33,10 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		this.solicitorSessionId = currentSessionId;
 		this.lendMeService = lendMeService;
 		
-		setWidth("530");
+		setWidth("550px");
 		
 		VerticalPanel vPanel = new VerticalPanel();
-		vPanel.setWidth("500px");
+		vPanel.setWidth("550px");
 		
 		subjectLabel = new Label("Assunto");
 		subjectLabel.setStyleName("messagesLines");
@@ -83,12 +80,6 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		messageLabel.setWidth("500px");
 		vPanel.add(messageLabel);
 
-		Label separatorLabel = new Label();
-		separatorLabel.setStyleName("messagesLines");
-		separatorLabel.setWidth("500px");
-		separatorLabel.setText(separatorString);
-		vPanel.add(separatorLabel);
-		
 		HorizontalPanel greatPanel = new HorizontalPanel();
 		
 		Image image = new Image("http://icons.iconarchive.com/icons/fasticon/fast-icon-users/128/user-icon.png");
@@ -97,8 +88,11 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		greatPanel.add(vPanel);
 		greatPanel.setStyleName("messagesLines");
 		
+		DecoratorPanel decPanel = new DecoratorPanel();
+		decPanel.add(greatPanel);
 		
-		this.add(greatPanel);
+		
+		this.add(decPanel);
 	}
 	
 	public LendMeMsgsRep(LendMeAsync lendMeService, String currentSessionId, String message, String subject, 

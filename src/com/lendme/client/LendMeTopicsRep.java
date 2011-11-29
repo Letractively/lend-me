@@ -8,8 +8,10 @@ import java.util.TreeMap;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -23,14 +25,9 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 	private final Label subjectLabel;
 	private final Label dateLabel;
 	private final Label numMsgsLabel;
-	private final Label upSeparatorLabel;
 	private final Label errorLabel;
 	private final VerticalPanel msgPanel;
 	private final LendMeAsync lendMeService;
-	
-	private final String separatorString = 
-			"-----------------------------------------------------------------" +
-			"-------------------------------------------------------"		;//120 tra�os
 	
 	private String solicitorSessionId;
 	 
@@ -80,7 +77,7 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 
 		VerticalPanel vPanel = new VerticalPanel();
 		vPanel.setStyleName("topicsLines");
-		vPanel.setWidth("540px");
+		vPanel.setWidth("510px");
 		
 		errorLabel = new Label("error");
 		this.add(errorLabel);
@@ -88,25 +85,17 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 		
 		vPanel.add(hPanel);
 		
-		upSeparatorLabel = new Label();
-		upSeparatorLabel.setStyleName("topicsLines");
-		upSeparatorLabel.setText(separatorString);
-		upSeparatorLabel.setVisible(false);
-		vPanel.add(upSeparatorLabel);
-		
 		msgPanel = new VerticalPanel();
 		msgPanel.setStyleName("topicsLines");
-		msgPanel.setWidth("540px");
+		msgPanel.setWidth("510px");
 		msgPanel.setVisible(false);
 		
 		vPanel.add(msgPanel);
 		
-		Label downSeparatorLabel = new Label();
-		downSeparatorLabel.setStyleName("topicsLines");
-		downSeparatorLabel.setText(separatorString);
-		vPanel.add(downSeparatorLabel);
+		DecoratorPanel decPanel = new DecoratorPanel();
+		decPanel.add(vPanel);
 		
-		this.add(vPanel);
+		this.add(decPanel);
 	}
 	
 	public LendMeTopicsRep(LendMeAsync lendMeService, String solicitorSessionId, String subject, String id, String numMsgs, String date) {
@@ -169,7 +158,6 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 				msgPanel.add(currMessage);
 			}
 			msgPanel.setVisible(true);
-			upSeparatorLabel.setVisible(true);
 			
 		} else {
 			expandButton.setText("+");
@@ -178,7 +166,6 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 			}
 			topicMessages.clear();
 			msgPanel.setVisible(false);
-			upSeparatorLabel.setVisible(false);
 		}
 		
 		this.fireEvent(new TopicAccessedEvent());
@@ -187,28 +174,28 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 	
 	private List<LendMeMsgsRep> getMessages() {
 		
-//		lendMeService.getTopicMessages(solicitorSessionId, getId(), new AsyncCallback<Map<String,String[]>>() {
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					errorLabel.setText(errorMsg + " - " + caught.getMessage());
-//					errorLabel.setVisible(true);
-//					
-//				}
-//
-//				@Override
-//				public void onSuccess(Map<String, String[]> result) {
-//					for (String message : result.keySet()) {
-//					topicMessages.add(new LendMeMsgsRep(lendMeService, solicitorSessionId, result.get(message)[0], result.get(message)[1],
-//						result.get(message)[2], result.get(message)[3], result.get(message)[4]));
-//				}}
-//			});
+		lendMeService.getTopicMessages(solicitorSessionId, getId(), new AsyncCallback<Map<String,String[]>>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					errorLabel.setText("Could not get user messages: " + " - " + caught.getMessage());
+					errorLabel.setVisible(true);
+					
+				}
+
+				@Override
+				public void onSuccess(Map<String, String[]> result) {
+					for (String message : result.keySet()) {
+					topicMessages.add(new LendMeMsgsRep(lendMeService, solicitorSessionId, result.get(message)[0], result.get(message)[1],
+						result.get(message)[2], result.get(message)[3], result.get(message)[4]));
+				}}
+			});
 		
-		for (int i = 0; i < 3; i++) {
-			topicMessages.add(new LendMeMsgsRep(lendMeService, solicitorSessionId,
-					"message"+i, "subject"+i,"sender"+i,
-					"date"+i, "00"+i));
-		}
+//		for (int i = 0; i < 3; i++) {
+//			topicMessages.add(new LendMeMsgsRep(lendMeService, solicitorSessionId,
+//					"message"+i, "subject"+i,"sender"+i,
+//					"date"+i, "00"+i));
+//		}
 		return topicMessages;
 	}
 

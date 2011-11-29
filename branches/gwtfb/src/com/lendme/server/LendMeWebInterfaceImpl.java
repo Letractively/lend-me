@@ -442,6 +442,8 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 
 		List<Item> results = lendMe.searchForItem(solicitorSession, key, attribute, disposition, criteria);
 		Collections.sort(results);
+		
+		Viewer userOwnerSession = lendMe.getUserProfile(solicitorSession);
 
 		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
 
@@ -458,7 +460,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 				}
 			}
 			User ownerItem = lendMe.getItemOwner(actualItem.getID());
-			String[] fields = new String[10];
+			String[] fields = new String[11];
 			fields[0] = actualItem.getName();
 			fields[1] = actualItem.getCategory();
 			fields[2] = actualItem.getDescription();
@@ -481,6 +483,8 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 					fields[i] = "";
 				}
 			}
+			
+			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
 			mapResults.put(actualItem.getID(), fields);
 		}
 
@@ -525,6 +529,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		
 		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
 		
+		Viewer userOwnerSession = lendMe.getUserProfile(solicitorSession);
 		
 		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
 		boolean identifierAction = false;
@@ -541,7 +546,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			User ownerItem = lendMe.getItemOwner(actualItem.getID());
 			
 									
-			String[] fields = new String[10];
+			String[] fields = new String[11];
 			fields[0] = actualItem.getName();
 			fields[1] = actualItem.getCategory();
 			fields[2] = actualItem.getDescription();
@@ -564,6 +569,8 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 					fields[i] = "";
 				}
 			}
+			
+			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
 						
 			mapResults.put(actualItem.getID(), fields);
 		}
@@ -604,6 +611,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		
 		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
 		
+		Viewer userOwnerSession = lendMe.getUserProfile(solicitorSession);
 		
 		String interessados = "";
 		
@@ -642,6 +650,9 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 					fields[i] = "";
 				}
 			}
+			
+			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
+			
 			mapResults.put(actualItem.getID(), fields);
 		}
 	

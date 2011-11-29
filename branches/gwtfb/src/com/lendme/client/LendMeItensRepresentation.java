@@ -29,6 +29,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	
 	private boolean lent;
 	private boolean requested;
+	private boolean iAmOwnerLocal;
 	private String itemIdLocal;
 	private String lendingIdLocal;
 	private String interestedsLocal;
@@ -51,7 +52,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		image = new Image();
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				itemViewer = new ItemViewer(lendmeLocal, idSessionLocal,image.getUrl(), name.getText(), description.getText(), "", category.getText(), itemIdLocal, lendingIdLocal, interestedsLocal, lent, requested);
+				itemViewer = new ItemViewer(lendmeLocal, idSessionLocal,image.getUrl(), name.getText(), description.getText(), "", category.getText(), itemIdLocal, lendingIdLocal, interestedsLocal,iAmOwnerLocal, lent, requested);
 				itemViewer.center();				
 			}
 		});
@@ -118,7 +119,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		conteinerPanel.add(underSelect, 0, 64);
 	}
 	
-	public LendMeItensRepresentation(LendMeAsync lendme, String idSession, String imgURL ,String name, String category, String description, String itemId, String lendingID,String interesteds,boolean action, boolean lent, boolean requested){
+	public LendMeItensRepresentation(LendMeAsync lendme, String idSession, String imgURL ,String name, String category, String description, String itemId, String lendingID,String interesteds, boolean iAmOwner,boolean action, boolean lent, boolean requested){
 		this(lendme, idSession);
 		
 		this.lent = lent;
@@ -126,6 +127,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		this.itemIdLocal = itemId;
 		this.lendingIdLocal = lendingID;
 		this.interestedsLocal = interesteds;
+		this.iAmOwnerLocal = iAmOwner;
 				
 		setStyleName("gwt-Label-item");
 		exclama.setVisible(action);

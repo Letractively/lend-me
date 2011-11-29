@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.ui.IntegerBox;
 
 public class ItemViewer extends PopupPanel {
 
@@ -25,17 +26,16 @@ public class ItemViewer extends PopupPanel {
 	
 	private ListBox actions;
 	private ListBox interestingUsers;
+	private IntegerBox qtdeDias;
 	
 	private String idSessionLocal;
 	private LendMeAsync lendmeLocal;
 	
 	public ItemViewer(LendMeAsync lendme, String idSession,String imgURL,
 					  String nameStr, String descriptionStr, String statusStr,
-					  String infoStr, String itemId, String lendingId,String interesteds,boolean lent, boolean requested) {
+					  String infoStr, String itemId, String lendingId,String interesteds,boolean iAmOwner ,boolean lent, boolean requested) {
 		
 		super(true);
-		setGlassEnabled(true);
-		setAnimationEnabled(true);
 		
 		this.imgURL = imgURL;
 		this.nameStr = nameStr;
@@ -79,17 +79,17 @@ public class ItemViewer extends PopupPanel {
 		info.setSize("191px", "17px");
 		
 		Label lblNewLabel_6 = new Label("Usuarios Interessados:");
-		absolutePanel.add(lblNewLabel_6, 10, 134);
+		absolutePanel.add(lblNewLabel_6, 8, 134);
 		
 		interestingUsers = new ListBox();
-		absolutePanel.add(interestingUsers, 163, 130);
+		absolutePanel.add(interestingUsers, 169, 132);
 		interestingUsers.setSize("173px", "22px");
 		
 		Label lblNewLabel_7 = new Label("Ações:");
-		absolutePanel.add(lblNewLabel_7, 10, 158);
+		absolutePanel.add(lblNewLabel_7, 7, 191);
 		
 		actions = new ListBox();
-		absolutePanel.add(actions, 58, 156);
+		absolutePanel.add(actions, 64, 189);
 		actions.setSize("200px", "22px");
 		
 		PushButton agir = new PushButton("New button");
@@ -151,10 +151,27 @@ public class ItemViewer extends PopupPanel {
 						}
 					});
 				}
+				
+				if(actions.getSelectedIndex() == 1 && actions.getItemText(1).equals("pedir emprestado")){
+					lendmeLocal.requestItem(idSessionLocal, itemIdLocal, qtdeDias.getValue(), new AsyncCallback<String>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Problema na comunicação com o servidor. Tente novamente.");
+							
+						}
+
+						@Override
+						public void onSuccess(String result) {
+							Window.alert("Requisicao realizada com sucesso!");
+							
+						}
+					});
+				}
 			}
 		});
 		agir.setHTML("<center><b>Agir</b></center>");
-		absolutePanel.add(agir, 267, 155);
+		absolutePanel.add(agir, 274, 188);
 		agir.setSize("56px", "15px");
 		
 		Image image = new Image(imgURL);
@@ -186,6 +203,15 @@ public class ItemViewer extends PopupPanel {
 		status.setText(this.statusStr);
 		info.setText(this.infoStr);
 		
+		qtdeDias = new IntegerBox();
+		qtdeDias.setEnabled(false);
+		absolutePanel.add(qtdeDias, 96, 160);
+		qtdeDias.setSize("42px", "17px");
+		
+		Label lblNewLabel_1 = new Label("Qtde. dias:");
+		absolutePanel.add(lblNewLabel_1, 8, 160);
+		
+		
 		if(!lent){
 			actions.addItem("deletar");
 		}else{
@@ -193,6 +219,10 @@ public class ItemViewer extends PopupPanel {
 		}
 		if(requested){
 			actions.addItem("emprestar");
+		}
+		if(!iAmOwner){
+			actions.addItem("pedir emprestado");
+			qtdeDias.setEnabled(true);
 		}
 		
 		idsInterestingUser = new String[interesteds.split(";").length];

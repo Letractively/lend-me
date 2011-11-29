@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -27,13 +31,15 @@ public class TopicsViewer extends Composite {
 	final String solicitorSessionId;  
 	private boolean topicsAlreadyAdded = false;
 	private LendMeAsync lendMeService;
-	
+	private String currentTopicType;
+	private ListBox topicTypeListBox;
 	
 	public TopicsViewer(LendMeAsync lendMeService,String solicitorSessionId, String topicType) {
 		
 		this.lendMeService = lendMeService;
 		this.solicitorSessionId = solicitorSessionId;
-		container.setStyleName("topicsLines");
+		this.currentTopicType = topicType;
+		container.setStyleName("h1");
 		
 		container.setWidth("570px");
 
@@ -89,29 +95,30 @@ public class TopicsViewer extends Composite {
 			}
 		});
 		
-//		for (int i = 0; i < 15; i++) {
-//			topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"subject"+i, "id"+i,
-//					""+i, "date"+i));
-//		}
+		Label lblTipoDeTpico = new Label("Tipo de Tópico:");
+		rootPanel.add(lblTipoDeTpico, 120, 0);
 		
-		lendMeService.getTopics(solicitorSessionId, topicType, new AsyncCallback<Map<String,String[]>>() {
-
+		topicTypeListBox = new ListBox();
+		topicTypeListBox.setName("topic type combo");
+		topicTypeListBox.addItem("offtopic");
+		topicTypeListBox.addItem("negociacao");
+		topicTypeListBox.addItem("todos");
+		topicTypeListBox.setItemSelected(2, true);
+		
+		rootPanel.add(topicTypeListBox, 225, 0);
+		
+		topicTypeListBox.addChangeHandler(new ChangeHandler() {
+			
 			@Override
-			public void onSuccess(Map<String, String[]> result) {
-				addTopics(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				errorLabel.setText(errorMessage + " - " + caught.getMessage());
-				errorLabel.setVisible(true);
+			public void onChange(ChangeEvent event) {
+				removeTopicsFromPanel();
+				getTopics();
 			}
 		});
 		
-		addTopicstoPanel();
+		getTopics();
 		
 		this.initWidget(rootPanel);
-		
 	}
 	
 	private void addTopics(Map<String, String[]>result) {
@@ -119,6 +126,7 @@ public class TopicsViewer extends Composite {
 			topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId, topic, result.get(topic)[0],
 					result.get(topic)[1], result.get(topic)[2]));
 		}
+		addTopicstoPanel();
 	}
 	
 	private void createNewMsg() {
@@ -144,9 +152,52 @@ public class TopicsViewer extends Composite {
 	}
 	
 	public void refresh() {
+		removeTopicsFromPanel();
+		addTopicstoPanel();
+	}
+	
+	private void removeTopicsFromPanel() {
 		for (LendMeTopicsRep topic : topics) {
 			container.remove(topic);
 		}
-		addTopicstoPanel();
+	}
+ 	
+	private void getTopics() {
+//		topics.clear();
+//		currentTopicType = topicTypeListBox.getItemText(topicTypeListBox.getSelectedIndex());
+//		
+//		for (int i = 0; i < 5; i++) {
+//			if (currentTopicType.equals("todos")) {
+//				topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"todos"+i, "id"+i,
+//						""+i, "date"+i));
+//			} 
+//			else if (currentTopicType.equals("offtopic")) {
+//				topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"offtopic"+i, "id"+i,
+//						""+i, "date"+i));
+//			}
+//			
+//			else {
+//				topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"negociacao"+i, "id"+i,
+//						""+i, "date"+i));
+//			}
+//			
+//		}
+//		// Tirar a linha abaixo quando acabar de testar
+//		addTopicstoPanel();
+		
+		
+		lendMeService.getTopics(solicitorSessionId, currentTopicType, new AsyncCallback<Map<String,String[]>>() {
+
+			@Override
+			public void onSuccess(Map<String, String[]> result) {
+				addTopics(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				errorLabel.setText(errorMessage + " - " + caught.getMessage());
+				errorLabel.setVisible(true);
+			}
+		});
 	}
 }

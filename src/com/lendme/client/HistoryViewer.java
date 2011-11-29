@@ -106,8 +106,6 @@ public class HistoryViewer extends Composite {
 						DockPanel datePanel = new DockPanel();
 						datePanel.setWidth("660px");
 						datePanel.add(new Label("Atividates em "+date), DockPanel.CENTER);
-						systemMsg.setText("Veja suas atividades no Lend-me!");
-						rootPanel.add(systemMsg);
 						activityPanel.add(datePanel);
 						for ( String[] content : result.get(date) ){
 							activityPanel.add(new LendMeActivityRep(content[0], content[1], content[2]));

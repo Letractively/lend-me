@@ -477,6 +477,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 					break;
 			}
 			fields[9] = interessados;
+			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
 			
 			for(int i=0; i < fields.length; i++){
 				if(fields[i] == null){
@@ -484,7 +485,6 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 				}
 			}
 			
-			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
 			mapResults.put(actualItem.getID(), fields);
 		}
 
@@ -611,8 +611,6 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		
 		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
 		
-		Viewer userOwnerSession = lendMe.getUserProfile(solicitorSession);
-		
 		String interessados = "";
 		
 		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
@@ -628,7 +626,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			}
 			
 			User ownerItem = lendMe.getItemOwner(actualItem.getID());
-			String[] fields = new String[10];
+			String[] fields = new String[11];
 			fields[0] = actualItem.getName();
 			fields[1] = actualItem.getCategory();
 			fields[2] = actualItem.getDescription();
@@ -651,14 +649,15 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 				}
 			}
 			
-			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
+			String myLogin = lendMe.getUserProfile(solicitorSession).getOwnerLogin();
+			fields[10] = String.valueOf(ownerItem.getLogin().equals(myLogin));
 			
 			mapResults.put(actualItem.getID(), fields);
 		}
 	
 		return mapResults;
 	}
-
+	
 	/**
 	 * @param itemId ID do Item.
 	 * @param attribute Tipo de atributo do Item. 
@@ -872,6 +871,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	/**
 	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
 	 */
+	@SuppressWarnings("deprecation")
 	public Map<String, ArrayList<String[]>> getActivityHistory(String solicitorSessionId) throws Exception {
 
 		List<ActivityRegistry> results = lendMe.getActivityHistory(solicitorSessionId);
@@ -883,8 +883,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			String date = formatToDayMonthYear(time);
 			content[0] = actualActivityRegistry.getKind().toString();
 			content[1] = actualActivityRegistry.getDescription();
-			content[2] = formatDate(time);
-
+			content[2] = actualActivityRegistry.getTime().getDate().toGMTString().split(" ")[3];
 			if ( handled.get(date) == null ){
 				handled.put(date, new ArrayList<String[]>());
 			}
@@ -926,6 +925,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @return Retorna um array contendo o histórico de todos os
 	 * amigos do usuário cujo ID da sessão foi passado como parâmetro. 
 	 */
+	@SuppressWarnings("deprecation")
 	public Map<String, ArrayList<String[]>> getJointActivityHistory(String solicitorSessionId) throws Exception {
 		List<ActivityRegistry> results = lendMe.getJointActivityHistory(solicitorSessionId);
 		Map<String, ArrayList<String[]>> handled = new HashMap<String, ArrayList<String[]>>();
@@ -936,7 +936,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			String date = formatToDayMonthYear(time);
 			content[0] = actualActivityRegistry.getKind().toString();
 			content[1] = actualActivityRegistry.getDescription();
-			content[2] = formatDate(time);			
+			content[2] = actualActivityRegistry.getTime().getDate().toGMTString().split(" ")[3];
 			if ( handled.get(date) == null ){
 				handled.put(date, new ArrayList<String[]>());
 			}

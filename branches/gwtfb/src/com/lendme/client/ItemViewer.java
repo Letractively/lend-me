@@ -215,7 +215,7 @@ public class ItemViewer extends PopupPanel {
 		if(!lent && iAmOwner){
 			actions.addItem("deletar");
 			
-		}else{
+		}else if(iAmOwner && lent){
 			actions.addItem("pedir retorno");
 		}
 		if(requested){
@@ -230,7 +230,7 @@ public class ItemViewer extends PopupPanel {
 		int i = 0;
 		
 		for(String actualUserName : interesteds.split(";")){
-			if(!(interesteds.split(";").length <= 1)){
+			if(!actualUserName.equals("")){
 				interestingUsers.addItem(actualUserName);
 				idsInterestingUser[i] = actualUserName.split(":")[1];
 				i++;

@@ -31,9 +31,9 @@ public class ItemViewer extends PopupPanel {
 	private String idSessionLocal;
 	private LendMeAsync lendmeLocal;
 	
-	public ItemViewer(LendMeAsync lendme, String idSession,String imgURL,
+	public ItemViewer(LendMeAsync lendme, String idSession, final String viewedLogin, String imgURL,
 					  String nameStr, String descriptionStr, String statusStr,
-					  String infoStr, String itemId, String lendingId,String interesteds,boolean iAmOwner ,boolean lent, boolean requested) {
+					  String infoStr, String itemId, String lendingId,String interesteds,final boolean iAmOwner ,boolean lent, boolean requested) {
 		
 		super(true);
 		
@@ -107,7 +107,7 @@ public class ItemViewer extends PopupPanel {
 							public void onSuccess(Void result) {
 								Window.alert("Item removido com sucesso!");
 								hide();
-								
+								LendMeEntryPoint.displayCurrentUserItems(viewedLogin);
 							}
 							
 							@Override

@@ -33,12 +33,12 @@ public class ItemsViewer extends Composite{
 	private final LendMeAsync lendmeLocal;
 	private final String idSessionLocal;
 
-	public ItemsViewer(LendMeAsync lendme, String idSession, Map<String, String[]> result) {
+	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, String[]> result) {
 
 		this.lendmeLocal = lendme;
 		this.idSessionLocal = idSession;
 		
-		creator = new LendMeItensCreatorRepresentation(lendmeLocal, idSessionLocal);
+		creator = new LendMeItensCreatorRepresentation(lendmeLocal, idSessionLocal, viewedLogin);
 		myItems = new ArrayList<LendMeItensRepresentation>();
 
 		rootPanel = new VerticalPanel();
@@ -70,7 +70,7 @@ public class ItemsViewer extends Composite{
 		String[] values;
 		for(String actualKey : result.keySet()){
 			values = result.get(actualKey);
-			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal,defaultImageURL, values[0], values[1],values[2], values[7], values[8], values[9],Boolean.valueOf(values[11]),Boolean.valueOf(values[3]), Boolean.valueOf(values[5]), Boolean.valueOf(values[6])));
+			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal, viewedLogin, defaultImageURL, values[0], values[1],values[2], values[7], values[8], values[9],Boolean.valueOf(values[10]),Boolean.valueOf(values[3]), Boolean.valueOf(values[5]), Boolean.valueOf(values[6])));
 		}
 		Iterator<LendMeItensRepresentation> myItemsIterator = myItems.iterator();
 		int i = 0;
@@ -96,5 +96,5 @@ public class ItemsViewer extends Composite{
 		initWidget(rootPanel);
 
 	}
-
+	
 }

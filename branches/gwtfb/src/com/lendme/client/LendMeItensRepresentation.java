@@ -37,7 +37,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	private LendMeItensRepresentation(LendMeAsync lendme, String idSession) {
+	private LendMeItensRepresentation(LendMeAsync lendme, String idSession, final String viewedLogin) {
 		super();
 		
 		this.lendmeLocal = lendme;
@@ -52,7 +52,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		image = new Image();
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				itemViewer = new ItemViewer(lendmeLocal, idSessionLocal,image.getUrl(), name.getText(), description.getText(), "", category.getText(), itemIdLocal, lendingIdLocal, interestedsLocal,iAmOwnerLocal, lent, requested);
+				itemViewer = new ItemViewer(lendmeLocal, idSessionLocal, viewedLogin, image.getUrl(), name.getText(), description.getText(), "", category.getText(), itemIdLocal, lendingIdLocal, interestedsLocal,iAmOwnerLocal, lent, requested);
 				itemViewer.center();				
 			}
 		});
@@ -119,8 +119,8 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		conteinerPanel.add(underSelect, 0, 64);
 	}
 	
-	public LendMeItensRepresentation(LendMeAsync lendme, String idSession, String imgURL ,String name, String category, String description, String itemId, String lendingID,String interesteds, boolean iAmOwner,boolean action, boolean lent, boolean requested){
-		this(lendme, idSession);
+	public LendMeItensRepresentation(LendMeAsync lendme, String idSession, String viewedLogin, String imgURL ,String name, String category, String description, String itemId, String lendingID,String interesteds, boolean iAmOwner,boolean action, boolean lent, boolean requested){
+		this(lendme, idSession, viewedLogin);
 		
 		this.lent = lent;
 		this.requested = requested;

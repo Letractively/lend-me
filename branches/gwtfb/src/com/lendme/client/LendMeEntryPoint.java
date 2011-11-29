@@ -25,21 +25,21 @@ import com.lendme.fbsdk.FBXfbml;
 public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String>  {
 
 	private DockPanel mainPanel = new DockPanel ();
-	private SimplePanel mainView = new SimplePanel ();
+	private static SimplePanel mainView = new SimplePanel ();
 	private SimplePanel leftSideBarView = new SimplePanel ();
 	private LinksPanel topLinksPanel;
 
 	private FBCore fbCore = GWT.create(FBCore.class);
 	private FBEvent fbEvent = GWT.create(FBEvent.class);
-	private LendMeAsync lendMeService = GWT.create(LendMe.class);
+	private static LendMeAsync lendMeService = GWT.create(LendMe.class);
 
 	private boolean status = true;
 	private boolean xfbml = true;
 	private boolean cookie = true;
 
 	// The sessionId which will be generated when the user logs in
-	private String currentSessionId = "";
-	private String currentUserId = "";
+	private static String currentSessionId = "";
+	private static String currentUserId = "";
 	private String accessToken = "";
 
 	class SessionInfo {
@@ -74,7 +74,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 	}
 
-	class ItemSearchResultFound implements AsyncCallback<Map<String, String[]>>{
+	static class ItemSearchResultFound implements AsyncCallback<Map<String, String[]>>{
 
 		private Map<String, String[]> result = new HashMap<String, String[]>();
 		@Override
@@ -105,7 +105,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		@Override
 		public void onSuccess(Map<String, String[]> result) {
 			this.result = result;
-			displayItemSearchResults(result);
+			displayItemSearchResults(currentUserId, result);
 		}
 
 		public Map<String, String[]> getResult(){
@@ -115,7 +115,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 	public final SessionInfo sessionInfo = new SessionInfo(false);
 	public final UserSearchResultFound userSearchResult = new UserSearchResultFound();
-	public final ItemSearchResultFound itemSearchResult = new ItemSearchResultFound();
+	public final static ItemSearchResultFound itemSearchResult = new ItemSearchResultFound();
 
 	/**
 	 * This is the entry point method.
@@ -495,11 +495,11 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		mainView.setWidget(new UserViewer(lendMeService, currentSessionId, currentUserId, userSearchResult.getResult()));
 	}
 
-	public void displayItemSearchResults(Map<String, String[]> results){
+	public static void displayItemSearchResults(String viewedLogin, Map<String, String[]> results){
 		displayResultMap(results);
-		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, itemSearchResult.getResult()));
+		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, viewedLogin, itemSearchResult.getResult()));
 	}
-
+	
 	public void displayCurrentUserFriends(String viewedLogin){
 		lendMeService.getFriends(currentSessionId, viewedLogin, userSearchResult);
 	}
@@ -508,11 +508,11 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		lendMeService.getFriendshipRequests(currentSessionId, userSearchResult);
 	}
 
-	public void displayCurrentUserItems(String viewedLogin){
+	public static void displayCurrentUserItems(String viewedLogin){
 		lendMeService.getItems(currentSessionId, viewedLogin, itemSearchResult);
 	}
 
-	public void displayResultMap(Map<String, String[]> results){
+	public static void displayResultMap(Map<String, String[]> results){
 		StringBuilder formatted = new StringBuilder();
 		for ( String key : results.keySet() ){
 			formatted.append(key+": {");

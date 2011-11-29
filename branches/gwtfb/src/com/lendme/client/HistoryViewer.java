@@ -22,13 +22,12 @@ public class HistoryViewer extends Composite {
 	public HistoryViewer(LendMeAsync lendMeService,String solicitorSessionId, String scope) {
 		
 		container.setStyleName("topicsLines");
-		
-		container.setWidth("570px");
+		container.setSize("600px", "500px");
 
 		ScrollPanel scrollPanel = new ScrollPanel();
-		rootPanel.add(scrollPanel, 0, 32);
-		scrollPanel.setSize("600px", "515px");
-		rootPanel.setSize("600px", "550px");
+		rootPanel.add(scrollPanel, 0, 54);
+		scrollPanel.setSize("600px", "550px");
+		rootPanel.setSize("600px", "610px");
 		
 		scrollPanel.add(container);
 		
@@ -54,10 +53,10 @@ public class HistoryViewer extends Composite {
 		
 		final VerticalPanel activityPanel = new VerticalPanel();
 		container.add(activityPanel);
-		activityPanel.setSize("599px", "481px");
+		activityPanel.setSize("600px", "548px");
 		errorLabel.setVisible(false);
 		
-		rootPanel.add(scrollPanel, 0, 32);
+		rootPanel.add(scrollPanel, 0, 54);
 		
 		if ( scope.equals("all") ){
 			lendMeService.getActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, ArrayList<String[]>>>() {
@@ -67,7 +66,7 @@ public class HistoryViewer extends Composite {
 					for (String date : result.keySet() ){
 						DockPanel datePanel = new DockPanel();
 						datePanel.setWidth("660px");
-						datePanel.add(new Label("Atividates em "+date), DockPanel.CENTER);
+						datePanel.add(new Label("Atividates em "+ date), DockPanel.CENTER);
 						activityPanel.add(datePanel);
 						for ( String[] content : result.get(date) ){
 							activityPanel.add(new LendMeActivityRep(content[0], content[1], content[2]));
@@ -108,6 +107,14 @@ public class HistoryViewer extends Composite {
 		
 		this.initWidget(rootPanel);
 		
+		Label lblVejaOQue = new Label("Veja o que seus amigos andam fazendo no Lend-me!");
+		lblVejaOQue.setStyleName("barra");
+		rootPanel.add(lblVejaOQue, 0, 35);
+		lblVejaOQue.setSize("600px", "20px");
+		
+		Label lblHistricoDeAtividades = new Label("Histórico de atividades");
+		rootPanel.add(lblHistricoDeAtividades, 21, 0);
+		lblHistricoDeAtividades.setSize("171px", "35px");
+		
 	}
-	
 }

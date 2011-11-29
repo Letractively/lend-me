@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -92,7 +93,7 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		
 	}
 
-	public LendMeUsersRepresentation(String imgPath, String login, String name,
+	public LendMeUsersRepresentation(String imgPath, final String login, String name,
 			String address, String reputation) {
 		this();
 
@@ -123,10 +124,9 @@ public class LendMeUsersRepresentation extends PopupPanel {
 			imgPath = this.urlDefaultImg;
 
 		image = new Image(imgPath);
-
+		image.setStyleName(".gwtPointerCursor");
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				// TODO Call details User
 			}
 		});
 		image.addMouseOverHandler(new MouseOverHandler() {
@@ -136,6 +136,9 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		});
 		absolutePanel.add(image, 10, 13);
 		image.setSize("80px", "91px");
+		Hyperlink redirect = new Hyperlink("", login);
+		redirect.setSize("80px", "91px");
+		absolutePanel.add(redirect, 10, 13);
 
 	}
 	

@@ -17,7 +17,7 @@ public class UserViewer extends Composite{
 	
 	public enum FriendshipStatus {FRIEND, NOT_FRIEND, REQUESTED_MY_FRIENDSHIP};
 	
-	private final String defaultImage = "http://icons.iconarchive.com/icons/fasticon/fast-icon-users/128/user-icon.png";
+//	private final String defaultImage = "http://icons.iconarchive.com/icons/fasticon/fast-icon-users/128/user-icon.png";
 	private List<LendMeUsersContainer> usersContainers = new ArrayList<LendMeUsersContainer>();
 	private Set<String> userFriends, userFriendshipRequests;
 	private AbsolutePanel containerPanel;
@@ -27,17 +27,10 @@ public class UserViewer extends Composite{
 	private int lastX = 10;
 	private int lastY = 25;
 	
-	private LendMeAsync lendMeService;
-	private String solicitorSession;
-	private String userViewerLogin;
 	private FriendshipStatus curUserFriendshipStatus;
 	
-	public UserViewer(LendMeAsync lendMeService, String solicitorSession, String userViewerLogin,
-			Map<String, String[]> searchResults) {
-		
-		this.lendMeService = lendMeService;
-		this.solicitorSession = solicitorSession;
-		this.userViewerLogin = userViewerLogin;
+	public UserViewer(final LendMeAsync lendMeService, final String solicitorSession, final String userViewerLogin,
+			final Map<String, String[]> searchResults) {
 		
 		rootScrollPanel = new ScrollPanel();
 		//this.add(rootScrollPanel, 10, 28);
@@ -73,36 +66,33 @@ public class UserViewer extends Composite{
 			@Override
 			public void onSuccess(Map<String, String[]> result) {
 				userFriends = result.keySet();
+				lendMeService.getFriendshipRequests(solicitorSession, new AsyncCallback<Map<String,String[]>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Nao foi possivel ter acesso as amizades requisitadas ao usuario: " + caught.getMessage());
+						
+					}
+
+					@Override
+					public void onSuccess(Map<String, String[]> result) {
+						userFriendshipRequests = result.keySet();
+						for(String actualResult : searchResults.keySet()){ 
+							curUserFriendshipStatus = userFriends.contains(actualResult) ?
+									FriendshipStatus.FRIEND : (userFriendshipRequests.contains(actualResult) ? 
+									FriendshipStatus.REQUESTED_MY_FRIENDSHIP : FriendshipStatus.NOT_FRIEND);
+							
+							
+							usersContainers.add(new LendMeUsersContainer(lendMeService, solicitorSession, 
+									new LendMeUsersRepresentation("http://graph.facebook.com/"+actualResult+"/picture", actualResult,
+									searchResults.get(actualResult)[0], searchResults.get(actualResult)[2],
+									searchResults.get(actualResult)[1]), curUserFriendshipStatus));
+							refreshThis();
+						}
+					}
+				});
 			}
 		});
-		
-		lendMeService.getFriendshipRequests(solicitorSession, new AsyncCallback<Map<String,String[]>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Nao foi possivel ter acesso as amizades requisitadas ao usuario: " + caught.getMessage());
-				
-			}
-
-			@Override
-			public void onSuccess(Map<String, String[]> result) {
-				userFriendshipRequests = result.keySet();
-				
-			}
-		});
-		
-		
-		for(String actualResult : searchResults.keySet()){ 
-			curUserFriendshipStatus = userFriends.contains(actualResult) ?
-					FriendshipStatus.FRIEND : (userFriendshipRequests.contains(actualResult) ? 
-					FriendshipStatus.REQUESTED_MY_FRIENDSHIP : FriendshipStatus.NOT_FRIEND);
-			
-			
-			usersContainers.add(new LendMeUsersContainer(lendMeService, solicitorSession, 
-					new LendMeUsersRepresentation(defaultImage, actualResult,
-					searchResults.get(actualResult)[0], searchResults.get(actualResult)[2],
-					searchResults.get(actualResult)[1]), curUserFriendshipStatus));
-		}
 		
 			// Uncomment this piece of code and comment the server calls to test without the server connection
 //			for (int i = 0; i < 5; i++) {
@@ -111,8 +101,6 @@ public class UserViewer extends Composite{
 //						"address" + i, "reputation" + i), FriendshipStatus.REQUESTED_MY_FRIENDSHIP) );
 //			}
 
-		refreshThis();
-		
 		initWidget(rootScrollPanel);
 	}
 	

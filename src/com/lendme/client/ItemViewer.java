@@ -1,11 +1,15 @@
 package com.lendme.client;
 
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class ItemViewer extends PopupPanel {
 
@@ -15,8 +19,19 @@ public class ItemViewer extends PopupPanel {
 	private String descriptionStr;
 	private String statusStr;
 	private String infoStr;
+	private String itemIdLocal;
+	private String lendingIdLocal;
+	private String[] idsInterestingUser;
 	
-	public ItemViewer(String imgURL, String nameStr, String descriptionStr, String statusStr, String infoStr) {
+	private ListBox actions;
+	private ListBox interestingUsers;
+	
+	private String idSessionLocal;
+	private LendMeAsync lendmeLocal;
+	
+	public ItemViewer(LendMeAsync lendme, String idSession,String imgURL,
+					  String nameStr, String descriptionStr, String statusStr,
+					  String infoStr, String itemId, String lendingId,String interesteds,boolean lent, boolean requested) {
 		
 		super(true);
 		setGlassEnabled(true);
@@ -27,6 +42,10 @@ public class ItemViewer extends PopupPanel {
 		this.descriptionStr = descriptionStr;
 		this.statusStr = statusStr;
 		this.infoStr = infoStr;
+		this.idSessionLocal = idSession;
+		this.itemIdLocal = itemId;
+		this.lendmeLocal = lendme;
+		this.lendingIdLocal = lendingId;
 		
 		AbsolutePanel absolutePanel = new AbsolutePanel();
 		setWidget(absolutePanel);
@@ -62,21 +81,81 @@ public class ItemViewer extends PopupPanel {
 		Label lblNewLabel_6 = new Label("Usuarios Interessados:");
 		absolutePanel.add(lblNewLabel_6, 10, 134);
 		
-		ListBox interestingUsers = new ListBox();
+		interestingUsers = new ListBox();
 		absolutePanel.add(interestingUsers, 163, 130);
 		interestingUsers.setSize("173px", "22px");
 		
 		Label lblNewLabel_7 = new Label("Ações:");
 		absolutePanel.add(lblNewLabel_7, 10, 158);
 		
-		ListBox comboBox_1 = new ListBox();
-		absolutePanel.add(comboBox_1, 58, 156);
-		comboBox_1.setSize("200px", "22px");
+		actions = new ListBox();
+		absolutePanel.add(actions, 58, 156);
+		actions.setSize("200px", "22px");
 		
-		PushButton pshbtnNewButton = new PushButton("New button");
-		pshbtnNewButton.setHTML("<center><b>Agir</b></center>");
-		absolutePanel.add(pshbtnNewButton, 267, 155);
-		pshbtnNewButton.setSize("56px", "15px");
+		PushButton agir = new PushButton("New button");
+		agir.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				
+				if(actions.getSelectedIndex() == 0 && actions.getItemText(0).equals("deletar")){//Delete Item
+					
+					boolean confirm = Window.confirm("Tem certeza que deseja apagar o item ?");
+					
+					if(confirm){
+						lendmeLocal.deleteItem(idSessionLocal, itemIdLocal, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								Window.alert("Item removido com sucesso!");
+								hide();
+								
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert("Erro na remoção do item. Tente novamente!");
+								
+							}
+						});
+					}
+				}
+				
+				if(actions.getSelectedIndex() == 0 && actions.getItemText(0).equals("pedir retorno")){
+					
+					
+					lendmeLocal.returnItem(idSessionLocal, lendingIdLocal, new AsyncCallback<String>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Problema no servidor, tente novamente!");
+							
+						}
+
+						@Override
+						public void onSuccess(String result) {
+							Window.alert("Seu pedido de retorno foi encaminhado.");
+						}
+					});
+				}
+				
+				if(actions.getSelectedIndex() == 1 && actions.getItemText(1).equals("emprestar")){
+					lendmeLocal.approveLending(idSessionLocal, idsInterestingUser[interestingUsers.getSelectedIndex()], new AsyncCallback<String>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Problema no servidor, tente novamente!");
+						}
+
+						@Override
+						public void onSuccess(String result) {
+							Window.alert("Você aprovou o emprestimo!");
+						}
+					});
+				}
+			}
+		});
+		agir.setHTML("<center><b>Agir</b></center>");
+		absolutePanel.add(agir, 267, 155);
+		agir.setSize("56px", "15px");
 		
 		Image image = new Image(imgURL);
 		absolutePanel.add(image, 10, 29);
@@ -102,10 +181,32 @@ public class ItemViewer extends PopupPanel {
 		absolutePanel.add(flagA, 201, 5);
 		flagA.setSize("23px", "22px");
 		
-		/**/
 		name.setText(this.nameStr);
 		descricao.setText(this.descriptionStr);
 		status.setText(this.statusStr);
 		info.setText(this.infoStr);
+		
+		if(!lent){
+			actions.addItem("deletar");
+		}else{
+			actions.addItem("pedir retorno");
+		}
+		if(requested){
+			actions.addItem("emprestar");
+		}
+		
+		idsInterestingUser = new String[interesteds.split(";").length];
+		int i = 0;
+		
+		for(String actualUserName : interesteds.split(";")){
+			if(!(interesteds.split(";").length <= 1)){
+				interestingUsers.addItem(actualUserName);
+				idsInterestingUser[i] = actualUserName.split(":")[1];
+				i++;
+			}else{
+				break;
+			}
+		}
+		
 	}
 }

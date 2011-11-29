@@ -1,5 +1,7 @@
 package com.lendme.client;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -7,8 +9,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 
 public class LendMeItensRepresentation extends AbsolutePanel {
 
@@ -24,11 +24,23 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	private Label underSelect;
 	private AbsolutePanel conteinerPanel;
 	
+	private final LendMeAsync lendmeLocal;
+	private final String idSessionLocal;
+	
+	private boolean lent;
+	private boolean requested;
+	private String itemIdLocal;
+	private String lendingIdLocal;
+	private String interestedsLocal;
+	
 	/**
 	 * @wbp.parser.constructor
 	 */
-	private LendMeItensRepresentation() {
+	private LendMeItensRepresentation(LendMeAsync lendme, String idSession) {
 		super();
+		
+		this.lendmeLocal = lendme;
+		this.idSessionLocal = idSession;
 		
 		AppImageBundle images = GWT.create(AppImageBundle.class);
 		conteinerPanel = new AbsolutePanel();
@@ -39,7 +51,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		image = new Image();
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				itemViewer = new ItemViewer(image.getUrl(), name.getText(), description.getText(), "", category.getText());
+				itemViewer = new ItemViewer(lendmeLocal, idSessionLocal,image.getUrl(), name.getText(), description.getText(), "", category.getText(), itemIdLocal, lendingIdLocal, interestedsLocal, lent, requested);
 				itemViewer.center();				
 			}
 		});
@@ -106,9 +118,15 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		conteinerPanel.add(underSelect, 0, 64);
 	}
 	
-	public LendMeItensRepresentation(String imgURL ,String name, String category, String description, boolean action){
-		this();
+	public LendMeItensRepresentation(LendMeAsync lendme, String idSession, String imgURL ,String name, String category, String description, String itemId, String lendingID,String interesteds,boolean action, boolean lent, boolean requested){
+		this(lendme, idSession);
 		
+		this.lent = lent;
+		this.requested = requested;
+		this.itemIdLocal = itemId;
+		this.lendingIdLocal = lendingID;
+		this.interestedsLocal = interesteds;
+				
 		setStyleName("gwt-Label-item");
 		exclama.setVisible(action);
 		/*name*/

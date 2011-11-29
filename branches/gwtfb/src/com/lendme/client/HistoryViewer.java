@@ -18,6 +18,7 @@ public class HistoryViewer extends Composite {
 	private VerticalPanel container = new VerticalPanel();
 	private final Label errorLabel; 
 	private final String errorMessage = "Erro: LendMe nao conseguiu obter informacao do servidor.";
+	private Label systemMsg;
 	
 	public HistoryViewer(LendMeAsync lendMeService,String solicitorSessionId, String scope) {
 		
@@ -25,6 +26,7 @@ public class HistoryViewer extends Composite {
 		container.setSize("600px", "500px");
 
 		ScrollPanel scrollPanel = new ScrollPanel();
+		rootPanel.setStyleName("rootPanelHistory");
 		rootPanel.add(scrollPanel, 0, 54);
 		scrollPanel.setSize("600px", "550px");
 		rootPanel.setSize("600px", "610px");
@@ -55,6 +57,18 @@ public class HistoryViewer extends Composite {
 		container.add(activityPanel);
 		activityPanel.setSize("600px", "548px");
 		errorLabel.setVisible(false);
+
+		
+		systemMsg = new Label("");
+		systemMsg.setStyleName("barra");
+		rootPanel.add(systemMsg, 0, 35);
+		systemMsg.setSize("600px", "20px");
+		
+		Label titulo = new Label("Histórico de atividades");
+		titulo.setStyleName("titulo-historico");
+		rootPanel.add(titulo, 21, 0);
+		titulo.setSize("171px", "35px");
+
 		
 		rootPanel.add(scrollPanel, 0, 54);
 		
@@ -67,6 +81,8 @@ public class HistoryViewer extends Composite {
 						DockPanel datePanel = new DockPanel();
 						datePanel.setWidth("660px");
 						datePanel.add(new Label("Atividates em "+ date), DockPanel.CENTER);
+						systemMsg.setText("Veja o que seus amigos andam fazendo no Lend-me!");
+						rootPanel.add(systemMsg);
 						activityPanel.add(datePanel);
 						for ( String[] content : result.get(date) ){
 							activityPanel.add(new LendMeActivityRep(content[0], content[1], content[2]));
@@ -90,6 +106,8 @@ public class HistoryViewer extends Composite {
 						DockPanel datePanel = new DockPanel();
 						datePanel.setWidth("660px");
 						datePanel.add(new Label("Atividates em "+date), DockPanel.CENTER);
+						systemMsg.setText("Veja suas atividades no Lend-me!");
+						rootPanel.add(systemMsg);
 						activityPanel.add(datePanel);
 						for ( String[] content : result.get(date) ){
 							activityPanel.add(new LendMeActivityRep(content[0], content[1], content[2]));
@@ -106,15 +124,6 @@ public class HistoryViewer extends Composite {
 		}
 		
 		this.initWidget(rootPanel);
-		
-		Label lblVejaOQue = new Label("Veja o que seus amigos andam fazendo no Lend-me!");
-		lblVejaOQue.setStyleName("barra");
-		rootPanel.add(lblVejaOQue, 0, 35);
-		lblVejaOQue.setSize("600px", "20px");
-		
-		Label lblHistricoDeAtividades = new Label("Histórico de atividades");
-		rootPanel.add(lblHistricoDeAtividades, 21, 0);
-		lblHistricoDeAtividades.setSize("171px", "35px");
 		
 	}
 }

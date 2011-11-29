@@ -872,7 +872,6 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	/**
 	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
 	 */
-	@SuppressWarnings("deprecation")
 	public Map<String, ArrayList<String[]>> getActivityHistory(String solicitorSessionId) throws Exception {
 
 		List<ActivityRegistry> results = lendMe.getActivityHistory(solicitorSessionId);
@@ -884,7 +883,8 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			String date = formatToDayMonthYear(time);
 			content[0] = actualActivityRegistry.getKind().toString();
 			content[1] = actualActivityRegistry.getDescription();
-			content[2] = actualActivityRegistry.getTime().getDate().toGMTString().split(" ")[3];
+			content[2] = formatDate(time);
+
 			if ( handled.get(date) == null ){
 				handled.put(date, new ArrayList<String[]>());
 			}
@@ -926,7 +926,6 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @return Retorna um array contendo o histórico de todos os
 	 * amigos do usuário cujo ID da sessão foi passado como parâmetro. 
 	 */
-	@SuppressWarnings("deprecation")
 	public Map<String, ArrayList<String[]>> getJointActivityHistory(String solicitorSessionId) throws Exception {
 		List<ActivityRegistry> results = lendMe.getJointActivityHistory(solicitorSessionId);
 		Map<String, ArrayList<String[]>> handled = new HashMap<String, ArrayList<String[]>>();
@@ -937,7 +936,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 			String date = formatToDayMonthYear(time);
 			content[0] = actualActivityRegistry.getKind().toString();
 			content[1] = actualActivityRegistry.getDescription();
-			content[2] = actualActivityRegistry.getTime().getDate().toGMTString().split(" ")[3];
+			content[2] = formatDate(time);			
 			if ( handled.get(date) == null ){
 				handled.put(date, new ArrayList<String[]>());
 			}

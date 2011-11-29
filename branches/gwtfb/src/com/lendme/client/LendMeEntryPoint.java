@@ -286,14 +286,14 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 		else if ( option.equals("messages") ){
 			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
-			mainView.setWidget(new TopicsViewer(lendMeService, currentSessionId, "all"));
+			mainView.setWidget(new TopicsViewer(lendMeService, currentSessionId, "todos"));
 		}
 		else if ( option.equals("history") ){
 			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
 			mainView.setWidget(new HistoryViewer(lendMeService, currentSessionId, "all"));
 		}
 		else {
-			renderHomeView(viewedUser);
+//			renderHomeView(viewedUser);
 		}
 	}
 

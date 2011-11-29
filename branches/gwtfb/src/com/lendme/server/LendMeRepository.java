@@ -3,9 +3,14 @@ package com.lendme.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Query;
 import com.lendme.server.entities.Session;
 import com.lendme.server.entities.User;
 import com.lendme.server.utils.AddressComparatorStrategy;
@@ -64,25 +69,23 @@ public final class LendMeRepository {
 			sessions.add(session);
 			return session.getId();
 		} else {
-//			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-//		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
-//		    Iterator<Entity> users = datastore.prepare(query).asIterator();
-//		    while ( users.hasNext() ){
-//		    	Entity user = users.next();
-//		    	if ( (""+user.getProperty("id")).equals(login) ){
-//		    		String name = ((String) user.getProperty("name"));
-//		    		String address = ((String) user.getProperty("address"));
-			String name = "guilherme name";
-			String address = "guilherme address";
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
+		    Iterator<Entity> users = datastore.prepare(query).asIterator();
+		    while ( users.hasNext() ){
+		    	Entity user = users.next();
+		    	if ( (""+user.getProperty("id")).equals(login) ){
+		    		String name = ((String) user.getProperty("name"));
+		    		String address = ((String) user.getProperty("address"));
 		    		registerUser(login, name, address);
 					Session session = new Session(getUserByLogin(login));
+//			registerUser("100002013944522", "Tarciso", "Rua 2");
 					sessions.add(session);
-					registerUser("100002013944522", "tarciso name", "tarciso address");
 					return session.getId();
 		    	}
-//		    }
-//	    	throw new Exception("Usuário inexistente");
-//		}
+		    }
+	    	throw new Exception("Usuário inexistente");
+		}
 	}
 	
 	/**

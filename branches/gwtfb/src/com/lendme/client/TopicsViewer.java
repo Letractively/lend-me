@@ -89,10 +89,10 @@ public class TopicsViewer extends Composite {
 			}
 		});
 		
-		for (int i = 0; i < 15; i++) {
-			topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"subject"+i, "id"+i,
-					""+i, "date"+i));
-		}
+//		for (int i = 0; i < 15; i++) {
+//			topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"subject"+i, "id"+i,
+//					""+i, "date"+i));
+//		}
 		
 		lendMeService.getTopics(solicitorSessionId, topicType, new AsyncCallback<Map<String,String[]>>() {
 

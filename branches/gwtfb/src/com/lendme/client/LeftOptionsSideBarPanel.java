@@ -133,8 +133,6 @@ public class LeftOptionsSideBarPanel extends Composite {
 					@Override
 					public void onSuccess(Void result) {
 						Window.alert("Solicitacao de amizade enviada!");
-						Window.Location.replace(ApplicationConstants.APP_URL);
-						Window.Location.reload();
 					}
 
 				});
@@ -308,7 +306,8 @@ public class LeftOptionsSideBarPanel extends Composite {
 			@Override
 			public void onSuccess(JavaScriptObject result) {
 				String id = ((JSOModel)result.cast()).get("id");
-				if ( !id.equals(currentUserLogin) ){
+				if ( !id.equals(viewedLogin) ){
+					Window.alert("Verificar se sao amigos:" +currentSessionId+" "+viewedLogin);
 					lendMeService.areFriends(currentSessionId, viewedLogin, new AsyncCallback<Boolean>(){
 
 						@Override

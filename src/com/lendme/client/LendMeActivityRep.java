@@ -12,11 +12,13 @@ public class LendMeActivityRep extends AbsolutePanel {
 	final String ICON_ITEM_INTEREST = "http://2.bp.blogspot.com/_heKfcJbaI4c/TAd-V76tdxI/AAAAAAAABfM/_4duzSOlLe0/s200/smEyeballs.jpg";
 	final String ICON_FINISH_LENDING = "http://cdn5.iconfinder.com/data/icons/fatcow/32x32/flag_finish.png";
 	final String ICON_NEED_ITEM = "http://www.gratisjogos.info/image.jogos/puzzle.jpg";
+	private Image kindIcon;
 	
 	public LendMeActivityRep(String kind, String message, String date){
-		setSize("600px", "60px");
+		setStyleName("borda");
+		setSize("600px", "70px");
 		
-		Image kindIcon = null;
+		kindIcon = null;
 		if ( kind.equals("ADICAO_DE_AMIGO_CONCLUIDA") ){
 			kindIcon = new Image(ICON_ADD_USER);
 		}
@@ -42,11 +44,16 @@ public class LendMeActivityRep extends AbsolutePanel {
 		kindIcon.setSize("40px", "40px");
 		
 		Label description = new Label(message);
-		add(description, 56, 27);
+		add(description, 55, 20);
 		description.setSize("437px", "23px");
 		
 		Label hour = new Label(date);
 		hour.setStyleName("gwtHour");
-		add(hour, 519, 27);
+		add(hour, 517, 23);
+		
+		Label label = new Label("________________________________________________________________");
+		label.setStyleName("linha");
+		add(label, 10, 49);
+		label.setSize("578px", "21px");
 	}
 }

@@ -79,7 +79,6 @@ public final class LendMeRepository {
 		    		String address = ((String) user.getProperty("address"));
 		    		registerUser(login, name, address);
 					Session session = new Session(getUserByLogin(login));
-//			registerUser("100002013944522", "Tarciso", "Rua 2");
 					sessions.add(session);
 					return session.getId();
 		    	}

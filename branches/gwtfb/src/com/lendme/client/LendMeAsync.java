@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
 
 public interface LendMeAsync {
 
@@ -67,19 +68,20 @@ public interface LendMeAsync {
 
 	void searchForItems(String solicitorSession, String key, String attribute,
 			String disposition, String criteria,
-			AsyncCallback<Map<String, String[]>> callback);
+			AsyncCallback<Map<String, ItemInfo>> callback);
 
 	void searchForItemsWithIds(String solicitorSession, String key,
 			String attribute, String disposition, String criteria,
 			AsyncCallback<String[]> callback);
 
-	void getItems(String solicitorSession, AsyncCallback<Map<String, String[]>> callback);
+	void getItems(String solicitorSession,
+			AsyncCallback<Map<String, ItemInfo>> callback);
 
 	void getItemsWithIds(String solicitorSession,
 			AsyncCallback<String[]> callback);
 
 	void getItems(String solicitorSession, String solicitedLogin,
-			AsyncCallback<Map<String, String[]>> callback);
+			AsyncCallback<Map<String, ItemInfo>> callback);
 
 	void getItemAttribute(String itemId, String attribute,
 			AsyncCallback<String> callback);

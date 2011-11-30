@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
 
 public class ItemsViewer extends Composite{
 
@@ -33,7 +34,7 @@ public class ItemsViewer extends Composite{
 	private final LendMeAsync lendmeLocal;
 	private final String idSessionLocal;
 
-	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, String[]> result) {
+	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, ItemInfo> result) {
 
 		this.lendmeLocal = lendme;
 		this.idSessionLocal = idSession;
@@ -67,10 +68,8 @@ public class ItemsViewer extends Composite{
 		Label lblMyItems = new Label("My Items");
 		topBar.add(lblMyItems, 10, 2);
 
-		String[] values;
 		for(String actualKey : result.keySet()){
-			values = result.get(actualKey);
-			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal, viewedLogin, defaultImageURL, values[0], values[1],values[2], values[7], values[8], values[9],Boolean.valueOf(values[10]),Boolean.valueOf(values[3]), Boolean.valueOf(values[5]), Boolean.valueOf(values[6])));
+			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal, viewedLogin, defaultImageURL, result.get(actualKey)));
 		}
 		Iterator<LendMeItensRepresentation> myItemsIterator = myItems.iterator();
 		int i = 0;

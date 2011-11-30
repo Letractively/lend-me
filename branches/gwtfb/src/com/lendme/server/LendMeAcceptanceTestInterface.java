@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
+
 
 
 public class LendMeAcceptanceTestInterface {
@@ -195,10 +197,10 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String getItens(String idSessao) throws Exception{
 
-		Map<String, String[]> resultado = system.getItems(idSessao);
+		Map<String, ItemInfo> resultado = system.getItems(idSessao);
 		String[] result = ((String[]) resultado.keySet().toArray());
 		if ( result.length == 0 ){
-			return "O usuário não possui itens cadastrados";
+			return "O usuario nao possui itens cadastrados";
 		}
 		return formatarASaida(result);
 	}

@@ -1,5 +1,6 @@
 package com.lendme.server;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,13 +9,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.lendme.client.LendMe;
 import com.lendme.server.entities.ActivityRegistry;
 import com.lendme.server.entities.EventDate;
+import com.lendme.server.entities.InterestedOn;
 import com.lendme.server.entities.Item;
 import com.lendme.server.entities.Lending;
 import com.lendme.server.entities.Lending.LendingStatus;
@@ -28,6 +29,73 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 
 	private LendMeFacade lendMe = LendMeFacade.getInstance();
 
+	public enum ItemState {
+		LENT, AVAILABLE, RETURNED, ASKED_FOR_RETURN,
+		UNAVAILABLE, INTERESTED, REQUESTED;
+	}
+	
+	public class ItemInfo implements Serializable{
+		
+		final String itemName;
+		final String category;
+		final String description;
+		final String creationDate;
+		final String itemId;
+		final String lendingId;
+		final String[] interested;
+		final boolean belongsToMe;
+		final ItemState state;
+		
+		public ItemInfo( String itemName, String category, String description, String creationDate, String itemId,
+				String lendingId, String[] interested, boolean belongsToMe, ItemState state){
+			this.itemName = itemName;
+			this.category = category;
+			this.description = description;
+			this.creationDate = creationDate;
+			this.itemId = itemId;
+			this.lendingId = lendingId;
+			this.interested = interested;
+			this.belongsToMe = belongsToMe;
+			this.state = state;
+		}
+
+		public String getItemName() {
+			return itemName;
+		}
+
+		public String getCategory() {
+			return category;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public String getCreationDate() {
+			return creationDate;
+		}
+
+		public String getItemId() {
+			return itemId;
+		}
+
+		public String getLendingId() {
+			return lendingId;
+		}
+
+		public String[] getInterested() {
+			return interested;
+		}
+
+		public boolean belongsToMe() {
+			return belongsToMe;
+		}
+
+		public ItemState getState() {
+			return state;
+		}
+
+	}
 
 	/**
 	 * Apaga todos os dados do sistema, como
@@ -437,58 +505,13 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @param criteria Criterios suportados: "REPUTACAO" e "DATACRIACAO".
 	 * @return Retorna um array com o nome de todos os itens encontrados na pesquisa.
 	 */
-	public Map<String, String[]> searchForItems(String solicitorSession, String key, String attribute,
+	public Map<String, ItemInfo> searchForItems(String solicitorSession, String key, String attribute,
 			String disposition, String criteria) throws Exception{
 
 		List<Item> results = lendMe.searchForItem(solicitorSession, key, attribute, disposition, criteria);
 		Collections.sort(results);
-		
-		Viewer userOwnerSession = lendMe.getUserProfile(solicitorSession);
 
-		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
-
-		String interessados = "";
-		
-		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
-		boolean identifierAction = false;
-
-		for(Item actualItem : results){
-			for(Lending actualLending : result){
-				if(actualLending.getItem().equals(actualItem)){
-					identifierAction = true;
-					break;
-				}
-			}
-			User ownerItem = lendMe.getItemOwner(actualItem.getID());
-			String[] fields = new String[11];
-			fields[0] = actualItem.getName();
-			fields[1] = actualItem.getCategory();
-			fields[2] = actualItem.getDescription();
-			fields[3] = String.valueOf(identifierAction);
-			fields[4] = this.formatDate(actualItem.getCreationDate());
-			
-			fields[5] = String.valueOf(ownerItem.getLentItems().contains(actualItem));//Se o item esta emprestado
-			fields[6] = String.valueOf(identifierAction); //Se o item foi requisitado
-			fields[7] = actualItem.getID();//Item ID
-			
-			for(Lending actualLending : ownerItem.getLending()){
-					actualLending.getItem().equals(actualItem);
-					fields[8] = actualLending.getID();
-					break;
-			}
-			fields[9] = interessados;
-			
-			for(int i=0; i < fields.length; i++){
-				if(fields[i] == null){
-					fields[i] = "";
-				}
-			}
-			
-			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
-			mapResults.put(actualItem.getID(), fields);
-		}
-
-		return mapResults;
+		return parseMap(solicitorSession, results);
 	}
 
 	/**
@@ -520,62 +543,12 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * do usuário solicitante.
 	 * @throws Exception
 	 */
-	public Map<String, String[]> getItems(String solicitorSession) throws Exception{
-		
+	public Map<String, ItemInfo> getItems(String solicitorSession) throws Exception{
+
 		List<Item> results = new ArrayList<Item>(lendMe.getItems(solicitorSession));
 		Collections.sort(results);
-		
-		String interessados = "";
-		
-		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
-		
-		Viewer userOwnerSession = lendMe.getUserProfile(solicitorSession);
-		
-		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
-		boolean identifierAction = false;
-		
-		for(Item actualItem : results){
-			for(Lending actualLending : result){
-				if(actualLending.getItem().equals(actualItem)){
-					interessados+=actualLending.getBorrower().getName()+":"+actualLending.getID()+";";
-					identifierAction = true;
-					break;
-				}
-			}
-			
-			User ownerItem = lendMe.getItemOwner(actualItem.getID());
-			
-									
-			String[] fields = new String[11];
-			fields[0] = actualItem.getName();
-			fields[1] = actualItem.getCategory();
-			fields[2] = actualItem.getDescription();
-			fields[3] = String.valueOf(identifierAction);
-			fields[4] = this.formatDate(actualItem.getCreationDate());
-			
-			fields[5] = String.valueOf(ownerItem.getLentItems().contains(actualItem));//Se o item esta emprestado
-			fields[6] = String.valueOf(identifierAction); //Se o item foi requisitado
-			fields[7] = actualItem.getID();//Item ID
-			
-			for(Lending actualLending : ownerItem.getLending()){
-					actualLending.getItem().equals(actualItem);
-					fields[8] = actualLending.getID();
-					break;
-			}
-			fields[9] = interessados;
-			
-			for(int i=0; i < fields.length; i++){
-				if(fields[i] == null){
-					fields[i] = "";
-				}
-			}
-			
-			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
-						
-			mapResults.put(actualItem.getID(), fields);
-		}
-	
-		return mapResults;
+
+		return parseMap(solicitorSession, results);
 	}
 
 	/**
@@ -604,60 +577,117 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @param solicitedLogin Login do usuário solicitado.
 	 * @return Retorna um array com o nome de todos os itens do usuário solicitado.
 	 */
-	public Map<String, String[]> getItems(String solicitorSession, String solicitedLogin) throws Exception{
-		
+	public Map<String, ItemInfo> getItems(String solicitorSession, String solicitedLogin) throws Exception{
+
 		List<Item> results = new ArrayList<Item>(lendMe.getItems(solicitorSession, solicitedLogin));
 		Collections.sort(results);
 		
-		Map<String, String[]> mapResults = new TreeMap<String, String[]>();
-		
-		Viewer userOwnerSession = lendMe.getUserProfile(solicitorSession);
-				
-		Set<Lending> result = lendMe.getReceivedItemRequests(solicitorSession);
-		
-		for(Item actualItem : results){
-			String interessados = "";
-			boolean identifierAction = false;
-			for(Lending actualLending : result){
-				if(actualLending.getItem().equals(actualItem)){
-					interessados+=actualLending.getBorrower().getName()+":"+actualLending.getID()+";";
-					identifierAction = true;
-					break;
-				}
-			}
-			
-			User ownerItem = lendMe.getItemOwner(actualItem.getID());
-			String[] fields = new String[11];
-			fields[0] = actualItem.getName();
-			fields[1] = actualItem.getCategory();
-			fields[2] = actualItem.getDescription();
-			fields[3] = String.valueOf(identifierAction);
-			fields[4] = this.formatDate(actualItem.getCreationDate());
-			fields[5] = String.valueOf(ownerItem.getLentItems().contains(actualItem));//Se o item esta emprestado
-			fields[6] = String.valueOf(identifierAction); //Se o item foi requisitado
-			fields[7] = actualItem.getID();//Item ID
-
-			for(Lending actualLending : ownerItem.getLending()){
-				actualLending.getItem().equals(actualItem);
-				fields[8] = actualLending.getID();
-				break;
-			}
-			fields[9] = interessados;
-			
-			for(int i=0; i < fields.length; i++){
-				if(fields[i] == null){
-					fields[i] = "";
-				}
-			}
-			
-			fields[10] = String.valueOf(userOwnerSession.getOwner().equals(ownerItem));
-			
-			mapResults.put(actualItem.getID(), fields);
-		}
-	
-		return mapResults;
+		return parseMap(solicitorSession, results);
 	}
 
+	public Map<String, ItemInfo> parseMap(String solicitorSession, List<Item> results ) throws Exception{
+		Map<String, ItemInfo> returnedMap = new HashMap<String, ItemInfo>();
+
+		for ( Item item : results ){
+			
+			String itemName = item.getName();
+			String itemCategory = item.getCategory();
+			String itemDescription = item.getDescription();
+			String creationDate = item.getCreationDate().toString();
+			String itemID = item.getID();
+			String lendingID = "";
+			boolean belongsToMe = lendMe.getItemOwner(itemID).getLogin().equals(lendMe.getUserProfile(solicitorSession).getOwnerLogin());
+			
+			ItemState state = ItemState.AVAILABLE;
+			List<String> interested = new ArrayList<String>();
+			
+			if ( belongsToMe ){
+				
+				for ( Lending lendingRecord : lendMe.getItemOwner(itemID).getUserOperationManager().getItemManager().getMyLentItems() ){
+					if ( lendingRecord.getItem().getID().equals(itemID) ){
+						if ( !lendingRecord.isReturned() ){
+							state = ItemState.LENT;
+							lendingID = lendingRecord.getID();
+							for ( Lending devolutionReqRecord : 
+								lendMe.getItemOwner(itemID).getUserOperationManager().getItemManager().getSentItemDevolutionRequests() ){
+								if ( devolutionReqRecord.getItem().getID().equals(itemID) ){
+									state = ItemState.ASKED_FOR_RETURN;
+									lendingID = devolutionReqRecord.getID();
+									break;
+								}
+							}
+							break;
+						}
+						else{
+							state = ItemState.RETURNED;
+							lendingID = lendingRecord.getID();
+							break;
+						}
+					}
+				}
+				
+				if ( !(state == ItemState.LENT) && !(state == ItemState.RETURNED) && !(state == ItemState.ASKED_FOR_RETURN) ){
+					state = ItemState.AVAILABLE;
+					for ( Lending lendingRecord : lendMe.getItemOwner(itemID).getUserOperationManager().getItemManager().getReceivedItemRequests() ){
+						if ( lendingRecord.getItem().getID().equals(itemID) ){
+							state = ItemState.REQUESTED;
+							lendingID = lendingRecord.getID();
+							interested.add(lendingRecord.getID()+":"+lendingRecord.getBorrower().getName());
+						}
+					}
+				}
+
+			}
+			else{
+
+				for ( Lending lendingRecord : lendMe.getItemOwner(itemID).getUserOperationManager().getItemManager().getMyLentItems() ){
+					if ( lendingRecord.getItem().getID().equals(itemID) ){
+						state = ItemState.UNAVAILABLE;
+						lendingID = lendingRecord.getID();
+						for ( Item interestingItem : lendMe.getItemOwner(itemID).getUserOperationManager().getItemManager().getInterestedOnMyItems().keySet() ){
+							if ( interestingItem.getID().equals(itemID) ){
+								for ( InterestedOn<Item> interestedUser : lendMe.getItemOwner(itemID).getUserOperationManager().
+										getItemManager().getInterestedOnMyItems().get(interestingItem) ){
+									if ( ((User) interestedUser).getLogin().equals(lendMe.getUserAttributeBySessionId(solicitorSession, "login") ) ){
+										state = ItemState.INTERESTED;
+										break;
+									}
+								}
+							}
+						}
+						break;
+					}
+				}
+				
+				if ( !(state == ItemState.UNAVAILABLE) && !(state == ItemState.INTERESTED) ){
+					state = ItemState.AVAILABLE;
+					for ( Lending lendingRecord : lendMe.getUserProfile(solicitorSession).getOwner().getUserOperationManager().getItemManager().getSentItemRequests() ){
+						if ( lendingRecord.getItem().getID().equals(itemID) ){
+							state = ItemState.REQUESTED;
+							lendingID = lendingRecord.getID();
+						}
+					}
+				}
+				
+				if ( !(state == ItemState.AVAILABLE) && !(state == ItemState.REQUESTED) ){
+					for ( Lending lendingRecord : lendMe.getUserProfile(solicitorSession).getOwner().getUserOperationManager().getItemManager().getMyBorrowedItems() ){
+						if ( lendingRecord.getItem().getID().equals(itemID) ){
+							state = ItemState.LENT;
+							lendingID = lendingRecord.getID();
+							if ( lendingRecord.isReturned() ){
+								state = ItemState.RETURNED;
+							}
+							break;
+						}
+					}
+				}
+				
+			}
+			returnedMap.put(itemID, new ItemInfo(itemName, itemCategory, itemDescription, creationDate, itemID, lendingID, (String[]) interested.toArray(), belongsToMe, state));
+		}
+		return returnedMap;
+	}
+	
 	/**
 	 * @param itemId ID do Item.
 	 * @param attribute Tipo de atributo do Item. 
@@ -893,16 +923,16 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	}
 
 	private String formatToDayMonthYear(EventDate time){
-		
+
 		Date toBeFormatted = time.getDate(); 
-	 
-        SimpleDateFormat dateformatDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
- 
-        StringBuilder dateDDMMYYYY = new StringBuilder( dateformatDDMMYYYY.format( toBeFormatted ) );
-		
-        return dateDDMMYYYY.toString();
+
+		SimpleDateFormat dateformatDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
+
+		StringBuilder dateDDMMYYYY = new StringBuilder( dateformatDDMMYYYY.format( toBeFormatted ) );
+
+		return dateDDMMYYYY.toString();
 	}
-	
+
 	private String formatDate(EventDate time){
 		String timeInfo = "";
 
@@ -912,7 +942,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 
 		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
 		StringBuilder hour = new StringBuilder( hourFormat.format( toBeFormatted ) );
-		
+
 		timeInfo = "Data: "+ dateDDMMYYYY + "  Hora: " + hour;
 		return timeInfo;
 

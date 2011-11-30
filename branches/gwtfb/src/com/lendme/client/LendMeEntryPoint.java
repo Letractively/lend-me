@@ -509,7 +509,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	}
 
 	public static void displayCurrentUserItems(String viewedLogin){
-		LeftOptionsSideBarPanel.setLastQueryData(false, currentSessionId, viewedLogin, itemSearchResult);
+		LeftOptionsSideBarPanel.setLastQueryData(lendMeService, false, currentSessionId, viewedLogin, itemSearchResult);
 		lendMeService.getItems(currentSessionId, viewedLogin, itemSearchResult);
 	}
 

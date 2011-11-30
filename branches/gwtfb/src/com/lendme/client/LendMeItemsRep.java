@@ -14,9 +14,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 
-public class ItemViewer extends PopupPanel {
+public class LendMeItemsRep extends PopupPanel {
 
-	public ItemViewer(final LendMeAsync lendMeService, final String sessionId,
+	public LendMeItemsRep(final LendMeAsync lendMeService, final String sessionId,
 			final String viewedLogin, String imgURL, final String[] itemInfo) {
 
 		super(true);

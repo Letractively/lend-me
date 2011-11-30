@@ -66,7 +66,7 @@ public interface LendMeAsync {
 			String category, AsyncCallback<String> callback);
 
 	void searchForItems(String solicitorSession, String key, String attribute,
-			String disposition, String criteria,
+			String disposition, String criteria,			
 			AsyncCallback<Map<String, ItemInfo>> callback);
 
 	void searchForItemsWithIds(String solicitorSession, String key,

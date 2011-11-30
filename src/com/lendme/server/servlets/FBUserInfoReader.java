@@ -78,12 +78,13 @@ public class FBUserInfoReader extends HttpServlet{
 				JsonObject registration = (JsonObject) data.get("registration");
 				String name = registration.get("name").toString();
 //				String birthday = registration.get("birthday").toString();
-//				String email = registration.get("email").toString();
+				String email = registration.get("email").toString();
 				String address = ((JsonObject) registration.get("location")).get("name").toString();
 				Entity user = new Entity("User");
 		        user.setProperty("id", id.replace("\"", ""));
 		        user.setProperty("name", name.replace("\"", ""));
 		        user.setProperty("address", address.replace("\"", ""));
+		        user.setProperty("email", email.replace("\"", ""));
 				DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 				datastore.put(user);
 		        response.sendRedirect(ApplicationConstants.APP_URL);

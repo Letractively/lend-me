@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
-public class LendMeItensRepresentation extends AbsolutePanel {
+public class LendMeItemRep extends AbsolutePanel {
 
 	private final int MAX_SIZE = 20;
 	private Label topSelect;
@@ -21,7 +21,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public LendMeItensRepresentation(final LendMeAsync lendMeService, final String sessionId, final String viewedLogin, final String imgURL, final String[] itemInfo){
+	public LendMeItemRep(final LendMeAsync lendMeService, final String sessionId, final String viewedLogin, final String imgURL, final String[] itemInfo){
 
 		conteinerPanel = new AbsolutePanel();
 		conteinerPanel.setStyleName("gwt-PopupPanel");
@@ -31,7 +31,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		final Image image = new Image();
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				LendMeItemsRep itemViewer = new LendMeItemsRep(lendMeService, sessionId, viewedLogin, image.getUrl(), itemInfo);
+				LendMeItemPopup itemViewer = new LendMeItemPopup(lendMeService, sessionId, viewedLogin, image.getUrl(), itemInfo);
 				itemViewer.center();
 			}
 		});

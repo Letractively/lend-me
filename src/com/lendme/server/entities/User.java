@@ -14,6 +14,7 @@ public class User implements InterestedOn<Item>{
 	private String login;
 	private String name;
 	private Address address;
+	private String email;
 	private EventDate creationDate;
 	private UserOperationManager userOperationManager;
 	
@@ -23,7 +24,7 @@ public class User implements InterestedOn<Item>{
 	 * @param address
 	 * @throws Exception
 	 */
-	public User(String login, String name, String... address) throws Exception{
+	public User(String login, String name, String email, String... address) throws Exception{
 		
 		if(login == null || login.trim().length() == 0){
 			throw new Exception("Login inválido");//"Invalid login");
@@ -36,6 +37,9 @@ public class User implements InterestedOn<Item>{
 		if( address == null || address.length == 0 ){
 			throw new Exception("Endereço inválido");//"Invalid address");
 		}
+		if ( email == null || email.length() == 0 ){
+			throw new Exception("Email invalido");
+		}
 		
 		for ( String addressElement : address ){
 			if ( addressElement == null ){
@@ -46,6 +50,7 @@ public class User implements InterestedOn<Item>{
 		this.login = login;
 		this.name = name;
 		this.address = new Address(address);
+		this.email = email;
 		this.creationDate = new EventDate(String.format(EntitiesConstants.USER_REGISTERED_MESSAGE, this.login, this.name));
 		this.userOperationManager = new UserOperationManager(this);
 	}
@@ -105,6 +110,10 @@ public class User implements InterestedOn<Item>{
 		return address;
 	}
 	
+	public String getEmail() {
+		return email;
+	}
+
 	/**
 	 * Retorna o OperationManager do usuario.
 	 * @return manager.

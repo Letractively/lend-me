@@ -29,7 +29,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	private SimplePanel leftSideBarView = new SimplePanel ();
 	private LinksPanel topLinksPanel;
 
-	private FBCore fbCore = GWT.create(FBCore.class);
+	private static FBCore fbCore = GWT.create(FBCore.class);
 	private FBEvent fbEvent = GWT.create(FBEvent.class);
 	private static LendMeAsync lendMeService = GWT.create(LendMe.class);
 
@@ -496,7 +496,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	}
 
 	public static void displayItemSearchResults(String viewedLogin, Map<String, String[]> results){
-		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, viewedLogin, itemSearchResult.getResult()));
+		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, viewedLogin, itemSearchResult.getResult(), fbCore));
 	}
 	
 	public void displayCurrentUserFriends(String viewedLogin){

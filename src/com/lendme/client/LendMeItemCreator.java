@@ -12,14 +12,14 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class LendMeItensCreatorRepresentation extends PopupPanel {
+public class LendMeItemCreator extends PopupPanel {
 
 	private final String idSession;
 	private final LendMeAsync lendmeAsync;
-	private LendMeItensCreatorRepresentation me;
+	private LendMeItemCreator me;
 	private String defaultURL = "http://www.quatrocantos.com/clipart/ferramentas/imagens/ferramenta01/martelo.gif";
 	
-	public LendMeItensCreatorRepresentation(LendMeAsync lendme, String session, final String viewedLogin) {
+	public LendMeItemCreator(LendMeAsync lendme, String session, final String viewedLogin) {
 		super(true);
 		setGlassEnabled(true);
 		setAnimationEnabled(true);

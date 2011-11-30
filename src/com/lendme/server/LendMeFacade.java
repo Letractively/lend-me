@@ -115,7 +115,7 @@ public class LendMeFacade {
 	 * @throws Exception for invalid parameters or if a user with login already exists
 	 */
 	public String registerUser(String login, String name, String... address) throws Exception{
-		return repository.registerUser(login, name, address);
+		return repository.registerUser(login, name, login+"@lendme.com", address);
 	}
 	
 	/**

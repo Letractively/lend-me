@@ -77,7 +77,8 @@ public final class LendMeRepository {
 		    	if ( (""+user.getProperty("id")).equals(login) ){
 		    		String name = ((String) user.getProperty("name"));
 		    		String address = ((String) user.getProperty("address"));
-					registerUser(login, name, address);
+		    		String email = ((String) user.getProperty("email"));
+					registerUser(login, name, email, address);
 					Session session = new Session(getUserByLogin(login));
 					sessions.add(session);
 					return session.getId();
@@ -110,8 +111,8 @@ public final class LendMeRepository {
 	 * @param address the user address
 	 * @throws Exception for invalid parameters or if a user with login already exists
 	 */
-	public String registerUser(String login, String name, String... address) throws Exception{
-		User newUser = new User(login, name, address);
+	public String registerUser(String login, String name, String email, String... address) throws Exception{
+		User newUser = new User(login, name, email, address);
 		if(!users.add(newUser)){
 			throw new Exception("Já existe um usuário com este login");//"User with this login already exists");
 		}

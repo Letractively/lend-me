@@ -162,9 +162,6 @@ public class TopicsViewer extends Composite {
 	}
  	
 	private void getTopics() {
-//		topics.clear();
-//		currentTopicType = topicTypeListBox.getItemText(topicTypeListBox.getSelectedIndex());
-//		
 //		for (int i = 0; i < 5; i++) {
 //			if (currentTopicType.equals("todos")) {
 //				topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"todos"+i, "id"+i,
@@ -184,6 +181,9 @@ public class TopicsViewer extends Composite {
 //		// Tirar a linha abaixo quando acabar de testar
 //		addTopicstoPanel();
 		
+		
+		topics.clear();
+		currentTopicType = topicTypeListBox.getItemText(topicTypeListBox.getSelectedIndex());
 		
 		lendMeService.getTopics(solicitorSessionId, currentTopicType, new AsyncCallback<Map<String,String[]>>() {
 

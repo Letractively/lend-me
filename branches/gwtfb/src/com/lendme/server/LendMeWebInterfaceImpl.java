@@ -400,7 +400,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		Collections.sort(results);
 		Map<String, String[]> messagesMap = new TreeMap<String, String[]>();
 		for ( Message currentMessage : results){
-			String[] currTopicProps = new String[4]; 
+			String[] currTopicProps = new String[5]; 
 			currTopicProps[0] = currentMessage.getMessage();
 			currTopicProps[1] = currentMessage.getSubject();
 			currTopicProps[2] = currentMessage.getSender();

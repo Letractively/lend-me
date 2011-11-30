@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class LendMeMsgsRep extends AbsolutePanel {
@@ -19,7 +20,7 @@ public class LendMeMsgsRep extends AbsolutePanel {
 	private final Label senderLabel;
 	private final Label subjectLabel;
 	private final Label dateLabel;
-	private final Label messageLabel;
+	private final TextBox messageTextBox;
 	private NewMsgForm answerMsg;
 	
 	private LendMeAsync lendMeService;
@@ -28,7 +29,7 @@ public class LendMeMsgsRep extends AbsolutePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public LendMeMsgsRep(String currentSessionId, LendMeAsync lendMeService) {
+	public LendMeMsgsRep(String currentSessionId, LendMeAsync lendMeService, String senderLogin) {
 		
 		this.solicitorSessionId = currentSessionId;
 		this.lendMeService = lendMeService;
@@ -47,11 +48,10 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		hPanel.setStyleName("messagesLines");
 		hPanel.setSize("484px", "30px");
 		
-		senderLabel = new Label("Remetente");
+		senderLabel = new Label("Remetente: ");
 		senderLabel.setWidth("300px");
 		senderLabel.setStyleName("messagesLines");
 		hPanel.add(senderLabel);
-		
 		
 		dateLabel = new Label("date");
 		dateLabel.setStyleName("messagesLines");
@@ -75,16 +75,18 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		
 		hPanel.add(answerMsgButton);
 		
-		messageLabel = new Label("Mensagem de Exemplo...");
-		messageLabel.setStyleName("messagesLines");
-		messageLabel.setWidth("500px");
-		vPanel.add(messageLabel);
+		messageTextBox = new TextBox();
+		messageTextBox.setReadOnly(true);
+		messageTextBox.setText("Mensagem de exemplo...");
+		messageTextBox.setStyleName("messagesLines");
+		messageTextBox.setWidth("500px");
+		vPanel.add(messageTextBox);
 
 		HorizontalPanel greatPanel = new HorizontalPanel();
 		
-		Image image = new Image("http://icons.iconarchive.com/icons/fasticon/fast-icon-users/128/user-icon.png");
-		greatPanel.add(image);
-		image.setSize("45px", "48px");
+		Image userPhoto = new Image("https://graph.facebook.com/" + senderLogin + "/picture");
+		greatPanel.add(userPhoto);
+		userPhoto.setSize("45px", "48px");
 		greatPanel.add(vPanel);
 		greatPanel.setStyleName("messagesLines");
 		
@@ -97,18 +99,34 @@ public class LendMeMsgsRep extends AbsolutePanel {
 	
 	public LendMeMsgsRep(LendMeAsync lendMeService, String currentSessionId, String message, String subject, 
 			String sender, String date, String lendingId) {
-		this(currentSessionId, lendMeService);
+		this(currentSessionId, lendMeService, sender);
 		
 		fillPropertiesMap(message, subject, sender, date, lendingId);
 		
-		if (subject.length() > 50) {
-			subjectLabel.setText(subject.substring(0, 50) + "...");
+		if (subject.length() > 60) {
+			subjectLabel.setText(subject.substring(0, 57) + "...");
 		} else {
 			subjectLabel.setText(subject); 
 		}
 		
+		if (sender.length() > 23) {
+			senderLabel.setText(senderLabel.getText() + sender.substring(0, 20) + "...");
+		} else {
+			senderLabel.setText(senderLabel.getText() + sender);
+		}
+
+//		setMessageText(message);
+		messageTextBox.setText(message);
+		
 		dateLabel.setText(date);
 	}
+	
+//	private void setMessageText(String message) {
+//		for (int i = 0; i < message.length(); i+=59) {
+//			messageTextBox.setText(message);
+//		}
+//		messageTextBox.setHeight(String.valueOf(message.length()/60)+"px");
+//	}
 	
 	
 	private void fillPropertiesMap(String message, String subject, 

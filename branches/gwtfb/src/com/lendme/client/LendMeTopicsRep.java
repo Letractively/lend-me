@@ -65,8 +65,11 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				expandOrCollapseMsgs();
-				
+				if (expandButton.getText().equals("+")) {
+					getMessages();
+				} else {
+					expandOrCollapseMsgs();
+				}
 			}
 		});
 		
@@ -103,17 +106,15 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 		
 		fillPropertiesMap(subject, id, numMsgs, date);
 		
-		numMsgsLabel.setText(String.valueOf(numMsgs));
+		numMsgsLabel.setText(numMsgs);
 		
-		if (subject.length() > 50) {
-			subjectLabel.setText(subject.substring(0, 50) + "...");
+		if (subject.length() > 40) {
+			subjectLabel.setText(subject.substring(0, 37) + "...");
 		} else {
-			subjectLabel.setText(subject); 
+			subjectLabel.setText(subject);
 		}
 		
 		dateLabel.setText(date);
-		this.getElement().getStyle().setPosition(Position.RELATIVE);
-		
 	}
 	
 	
@@ -145,10 +146,6 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 	}
 	
 	private void expandOrCollapseMsgs() {
-	
-		// Retrieve topic messages from the server
-		getMessages();
-	
 		if (expandButton.getText().contains("+")) {
 			expandButton.setText("--");
 			
@@ -180,7 +177,6 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 				public void onFailure(Throwable caught) {
 					errorLabel.setText("Could not get user messages: " + " - " + caught.getMessage());
 					errorLabel.setVisible(true);
-					
 				}
 
 				@Override
@@ -188,7 +184,11 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 					for (String message : result.keySet()) {
 					topicMessages.add(new LendMeMsgsRep(lendMeService, solicitorSessionId, result.get(message)[0], result.get(message)[1],
 						result.get(message)[2], result.get(message)[3], result.get(message)[4]));
-				}}
+					}
+					
+					expandOrCollapseMsgs();
+				}
+				
 			});
 		
 //		for (int i = 0; i < 3; i++) {

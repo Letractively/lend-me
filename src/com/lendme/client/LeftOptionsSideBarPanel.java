@@ -429,7 +429,8 @@ public class LeftOptionsSideBarPanel extends Composite {
 		}
 	}
 	
-	public static void setLastQueryData(boolean wasSearch, String currentSessionId, String viewedLogin, ItemSearchResultFound itemSearchCallback){
+	public static void setLastQueryData(LendMeAsync lendMeService, boolean wasSearch, String currentSessionId, String viewedLogin, ItemSearchResultFound itemSearchCallback){
+		lastQuery.setLendMeService(lendMeService);
 		lastQuery.setItemSearch(wasSearch);
 		lastQuery.setSessionId(currentSessionId);
 		lastQuery.setViewedLogin(viewedLogin);

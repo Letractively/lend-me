@@ -80,13 +80,13 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		conteinerPanel.add(description, 134, 50);
 		description.setSize("106px", "14px");
 		
-		topSelect = new Label("--------------------------------------------------------------------------------------------");
+		topSelect = new Label("");
 		topSelect.setStyleName("gwt-bar");
 		topSelect.setSize("275px", "17px");
 		topSelect.setVisible(false);
 		conteinerPanel.add(topSelect, 0, -4);
 		
-		underSelect = new Label("--------------------------------------------------------------------------------------------");
+		underSelect = new Label("");
 		underSelect.setStyleName("gwt-bar");
 		underSelect.setSize("275px", "17px");
 		underSelect.setVisible(false);

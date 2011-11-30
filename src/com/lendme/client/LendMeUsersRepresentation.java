@@ -60,13 +60,13 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		reputationLabel.setSize("127px", "17px");
 		
 		/*Isso se chama popularmente como a boa e velha gambiarra*/
-		final Label topBar = new Label("----------------------------------------------------------");
+		final Label topBar = new Label("");
 		topBar.setStyleName("gwt-bar");
 		internalPanel.add(topBar, 0, -6);
 		topBar.setSize("240px", "11px");
 		topBar.setVisible(false);
 		
-		final Label downBar = new Label("----------------------------------------------------------");
+		final Label downBar = new Label("");
 		downBar.setStyleName("gwt-bar");
 		internalPanel.add(downBar, 0, 103);
 		downBar.setSize("240px", "11px");
@@ -124,7 +124,7 @@ public class LendMeUsersRepresentation extends PopupPanel {
 			imgPath = this.urlDefaultImg;
 
 		image = new Image(imgPath);
-		image.setStyleName("gwtPointerCursor");
+		image.setStyleName("gwt-Image");
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 			}

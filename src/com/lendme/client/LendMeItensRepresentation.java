@@ -21,7 +21,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public LendMeItensRepresentation(final LendMeAsync lendMeService, final String sessionId, final String viewedLogin, final String imgURL, final ItemInfo itemInfo){
+	public LendMeItensRepresentation(final LendMeAsync lendMeService, final String sessionId, final String viewedLogin, final String imgURL, final String[] itemInfo){
 
 		conteinerPanel = new AbsolutePanel();
 		conteinerPanel.setStyleName("gwt-PopupPanel");
@@ -32,7 +32,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				ItemViewer itemViewer = new ItemViewer(lendMeService, sessionId, viewedLogin, image.getUrl(), itemInfo);
-				itemViewer.center();				
+				itemViewer.center();
 			}
 		});
 		image.addMouseOutHandler(new MouseOutHandler() {
@@ -100,33 +100,33 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		
 		setStyleName("gwt-Label-item");
 		boolean warnEvent = false;
-		if ( itemInfo.belongsToMe() && ( itemInfo.getState() == ItemState.REQUESTED || itemInfo.getState() == ItemState.RETURNED  ) ){
+		if ( new Boolean(itemInfo[7]).booleanValue() && ( itemInfo[8].equals("REQUESTED") || itemInfo[8].equals("RETURNED")  ) ){
 			warnEvent = true;
 		}
-		else if ( !itemInfo.belongsToMe() && ( itemInfo.getState() == ItemState.LENT ) ){
+		else if ( !(new Boolean(itemInfo[7]).booleanValue()) && ( itemInfo[8].equals("LENT") ) ){
 			warnEvent = true;
 		}
 		exclama.setVisible(warnEvent);
 
-		if (itemInfo.getItemName().length() < MAX_SIZE){
-			name.setText(itemInfo.getItemName());
+		if (itemInfo[0].length() < MAX_SIZE){
+			name.setText(itemInfo[0]);
 		}
 		else{
-			name.setText(itemInfo.getItemName().substring(0, MAX_SIZE-3)+"...");
+			name.setText(itemInfo[0].substring(0, MAX_SIZE-3)+"...");
 		}
 		
-		if ( itemInfo.getCategory().length() < MAX_SIZE ){
-			category.setText(itemInfo.getCategory());
+		if ( itemInfo[1].length() < MAX_SIZE ){
+			category.setText(itemInfo[1]);
 		}
 		else {
-			category.setText(itemInfo.getCategory().substring(0, MAX_SIZE-3)+"...");
+			category.setText(itemInfo[1].substring(0, MAX_SIZE-3)+"...");
 		}
 		
-		if ( itemInfo.getDescription().length() < MAX_SIZE){
-			description.setText(itemInfo.getDescription());
+		if ( itemInfo[2].length() < MAX_SIZE){
+			description.setText(itemInfo[2]);
 		}
 		else{
-			description.setText(itemInfo.getDescription().substring(0, MAX_SIZE-3)+"...");
+			description.setText(itemInfo[2].substring(0, MAX_SIZE-3)+"...");
 		}
 		
 		image.setUrl(imgURL);

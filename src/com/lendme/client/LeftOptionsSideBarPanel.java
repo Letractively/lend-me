@@ -33,6 +33,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 	public static class LastQueryData {
 
 		String sessionId;
+		String viewedLogin;
 		boolean itemSearch;
 		String queryKey;
 		String queryStrategy;
@@ -40,16 +41,6 @@ public class LeftOptionsSideBarPanel extends Composite {
 		ItemSearchResultFound itemSearchCallback;
 		LendMeAsync lendMeService;
 		
-		public LastQueryData(String sessionId, boolean itemSearch, String queryKey, String queryStrategy,
-				UserSearchResultFound userSearchCallback, ItemSearchResultFound itemSearchCallback, LendMeAsync lendMeService){
-			this.sessionId = sessionId;
-			this.itemSearch = itemSearch;
-			this.queryKey = queryKey;
-			this.queryStrategy = queryStrategy;
-			this.userSearchCallback = userSearchCallback;
-			this.itemSearchCallback = itemSearchCallback;
-			this.lendMeService = lendMeService;
-		}
 		public boolean isItemSearch() {
 			return itemSearch;
 		}
@@ -74,6 +65,12 @@ public class LeftOptionsSideBarPanel extends Composite {
 		public void setSessionId(String sessionId) {
 			this.sessionId = sessionId;
 		}
+		public String getViewedLogin(){
+			return viewedLogin;
+		}
+		public void setViewedLogin(String viewedLogin) {
+			this.viewedLogin = viewedLogin;
+		}
 		public UserSearchResultFound getUserSearchCallback() {
 			return userSearchCallback;
 		}
@@ -94,7 +91,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 		}
 	}
 	
-	public final static LastQueryData lastQuery = new LastQueryData("", false, "", "", null, null, null);
+	public final static LastQueryData lastQuery = new LastQueryData();
 	
 	public LeftOptionsSideBarPanel(final LendMeAsync lendMeService, final String currentSessionId, 
 			final String currentUserLogin, final String viewedLogin, final FBCore fbCore, UserSearchResultFound userSearchResult, ItemSearchResultFound itemSearchResult) {
@@ -316,6 +313,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 				}
 				lastQuery.setLendMeService(lendMeService);
 				lastQuery.setSessionId(currentSessionId);
+				lastQuery.setViewedLogin(viewedLogin);
 				lastQuery.setItemSearch(true);
 				lastQuery.setQueryKey(searchKey.getText());
 				lastQuery.setQueryStrategy(searchStrategy.getItemText(searchStrategy.getSelectedIndex()));
@@ -345,6 +343,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 					}
 					lastQuery.setLendMeService(lendMeService);
 					lastQuery.setSessionId(currentSessionId);
+					lastQuery.setViewedLogin(viewedLogin);
 					lastQuery.setItemSearch(true);
 					lastQuery.setQueryKey(searchKey.getText());
 					lastQuery.setQueryStrategy(searchStrategy.getItemText(searchStrategy.getSelectedIndex()));
@@ -361,13 +360,13 @@ public class LeftOptionsSideBarPanel extends Composite {
 		Label optionsLabel = new Label("Op\u00E7oes");
 		optionsLabel.setStyleName("gwt-OptionsFont");
 		rootPanel.add(optionsLabel, 9, 189);
-		Hyperlink hyperlink = new Hyperlink( "Amigos", viewedLogin+"/options/friends");
+		Hyperlink hyperlink = new Hyperlink( "Todos os Usuarios", viewedLogin+"/options/friends");
 		hyperlink.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink, 11, 240);
 		Hyperlink hyperlink_1 = new Hyperlink( "Items", viewedLogin+"/options/items");
 		hyperlink_1.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink_1, 11, 288);
-		Hyperlink hyperlink_2 = new Hyperlink( "Mensagens", viewedLogin+"/options/messages");
+		final Hyperlink hyperlink_2 = new Hyperlink( "Minhas Mensagens", viewedLogin+"/options/messages");
 		hyperlink_2.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink_2, 11, 336);
 		Hyperlink hyperlink_3 = new Hyperlink( "Historico", viewedLogin+"/options/history");
@@ -388,6 +387,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 			public void onSuccess(JavaScriptObject result) {
 				String id = ((JSOModel)result.cast()).get("id");
 				if ( !id.equals(viewedLogin) ){
+					hyperlink_2.setVisible(false);
 					Window.alert("Verificar se sao amigos:" +currentSessionId+" "+viewedLogin);
 					lendMeService.areFriends(currentSessionId, viewedLogin, new AsyncCallback<Boolean>(){
 
@@ -420,19 +420,20 @@ public class LeftOptionsSideBarPanel extends Composite {
 	
 	public static void redoQuery(){
 		if ( !lastQuery.isItemSearch() ) {
-			if (lastQuery.getQueryStrategy().equals("Endereco") ){
-				lastQuery.getLendMeService().searchUsersByAttributeKey(lastQuery.getSessionId(), lastQuery.getQueryKey(), "endereco",
-						lastQuery.getUserSearchCallback());
-			}
-			else if ( lastQuery.getQueryStrategy().equals("Nome") ){
-				lastQuery.getLendMeService().listUsersByDistance(lastQuery.getSessionId(), lastQuery.getUserSearchCallback());
-			}
+			lastQuery.getLendMeService().getItems(lastQuery.getSessionId(), lastQuery.getViewedLogin(), lastQuery.getItemSearchCallback());
 		}
 		else if ( lastQuery.isItemSearch() ){
 			String attribute = lastQuery.getQueryStrategy();
 			lastQuery.getLendMeService().searchForItems(lastQuery.getSessionId(), lastQuery.getQueryKey(), attribute,
 					"crescente", "reputacao", lastQuery.getItemSearchCallback());
 		}
+	}
+	
+	public static void setLastQueryData(boolean wasSearch, String currentSessionId, String viewedLogin, ItemSearchResultFound itemSearchCallback){
+		lastQuery.setItemSearch(wasSearch);
+		lastQuery.setSessionId(currentSessionId);
+		lastQuery.setViewedLogin(viewedLogin);
+		lastQuery.setItemSearchCallback(itemSearchCallback);
 	}
 	
 }

@@ -33,7 +33,7 @@ public class ItemsViewer extends Composite{
 	private final LendMeAsync lendmeLocal;
 	private final String idSessionLocal;
 
-	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, ItemInfo> result) {
+	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, String[]> result) {
 
 		this.lendmeLocal = lendme;
 		this.idSessionLocal = idSession;

@@ -66,21 +66,21 @@ public interface LendMeAsync {
 			String category, AsyncCallback<String> callback);
 
 	void searchForItems(String solicitorSession, String key, String attribute,
-			String disposition, String criteria,			
-			AsyncCallback<Map<String, ItemInfo>> callback);
+			String disposition, String criteria,
+			AsyncCallback<Map<String, String[]>> callback);
 
 	void searchForItemsWithIds(String solicitorSession, String key,
 			String attribute, String disposition, String criteria,
 			AsyncCallback<String[]> callback);
 
 	void getItems(String solicitorSession,
-			AsyncCallback<Map<String, ItemInfo>> callback);
+			AsyncCallback<Map<String, String[]>> callback);
 
 	void getItemsWithIds(String solicitorSession,
 			AsyncCallback<String[]> callback);
 
 	void getItems(String solicitorSession, String solicitedLogin,
-			AsyncCallback<Map<String, ItemInfo>> callback);
+			AsyncCallback<Map<String, String[]>> callback);
 
 	void getItemAttribute(String itemId, String attribute,
 			AsyncCallback<String> callback);
@@ -128,10 +128,10 @@ public interface LendMeAsync {
 			AsyncCallback<String> callback);
 
 	void getActivityHistory(String solicitorSessionId,
-			AsyncCallback<Map<String, String>> callback);
+			AsyncCallback<Map<String, ArrayList<String[]>>> callback);
 
 	void getJointActivityHistory(String solicitorSessionId,
-			AsyncCallback<Map<String, String>> callback);
+			AsyncCallback<Map<String, ArrayList<String[]>>> callback);
 
 	void getFriendsPublishedItemRequests(String solicitorSessionId,
 			AsyncCallback<String[]> callback);

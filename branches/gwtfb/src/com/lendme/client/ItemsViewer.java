@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
@@ -14,6 +16,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.lendme.fbsdk.FBCore;
 
 public class ItemsViewer extends Composite{
 
@@ -21,8 +24,8 @@ public class ItemsViewer extends Composite{
 	private ScrollPanel scrollPanel;
 	private AbsolutePanel topBar;
 	private VerticalPanel rootPanel;
-	private LendMeItensCreatorRepresentation creator;
-	private List<LendMeItensRepresentation> myItems;
+	private LendMeItemCreator creator;
+	private List<LendMeItemRep> myItems;
 
 	private final String defaultImageURL = "http://cdn2.iconfinder.com/data/icons/starwars/icons/128/clone-old.png";
 	private int actualHeightConteiner = 75;
@@ -34,13 +37,13 @@ public class ItemsViewer extends Composite{
 	private final LendMeAsync lendmeLocal;
 	private final String idSessionLocal;
 
-	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, String[]> result) {
+	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, String[]> result, FBCore fbCore) {
 
 		this.lendmeLocal = lendme;
 		this.idSessionLocal = idSession;
 		
-		creator = new LendMeItensCreatorRepresentation(lendmeLocal, idSessionLocal, viewedLogin);
-		myItems = new ArrayList<LendMeItensRepresentation>();
+		creator = new LendMeItemCreator(lendmeLocal, idSessionLocal, viewedLogin);
+		myItems = new ArrayList<LendMeItemRep>();
 
 		rootPanel = new VerticalPanel();
 		scrollPanel = new ScrollPanel();
@@ -56,7 +59,7 @@ public class ItemsViewer extends Composite{
 		topBar = new AbsolutePanel();
 		topBar.setSize("100%", "82px");
 
-		PushButton createItem = new PushButton("");
+		final PushButton createItem = new PushButton("");
 		createItem.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				creator.center();
@@ -65,15 +68,31 @@ public class ItemsViewer extends Composite{
 		createItem.getUpFace().setImage(new Image("http://www.777icons.com/libs/basic-vista/add-icon.gif"));
 		topBar.add(createItem, 543, 10);
 		createItem.setSize("58px", "54px");
+		
+		fbCore.api("/me", new AsyncCallback<JavaScriptObject>(){
 
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(JavaScriptObject result) {
+				JSOModel model = result.cast();
+				String viewingUser = model.get("id");
+				if ( viewingUser.equals(viewedLogin) ){
+					createItem.setVisible(false);
+				}
+			}
+		});
+		
 		Label lblMyItems = new Label("ITEMS");
 		lblMyItems.setStyleName("gwt-OptionsFont");
 		topBar.add(lblMyItems, 10, 2);
 
 		for(String actualKey : result.keySet()){
-			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal, viewedLogin, defaultImageURL, result.get(actualKey)));
+			myItems.add(new LendMeItemRep(lendmeLocal, idSessionLocal, viewedLogin, defaultImageURL, result.get(actualKey)));
 		}
-		Iterator<LendMeItensRepresentation> myItemsIterator = myItems.iterator();
+		Iterator<LendMeItemRep> myItemsIterator = myItems.iterator();
 		int i = 0;
 
 		while(myItemsIterator.hasNext()){

@@ -65,9 +65,13 @@ public class ItemsViewer extends Composite{
 				creator.center();
 			}
 		});
-		createItem.getUpFace().setImage(new Image("http://www.777icons.com/libs/basic-vista/add-icon.gif"));
+		Image plus = new Image("http://icons.iconarchive.com/icons/pixelmixer/basic/64/plus-icon.png");
+		plus.setSize("48px", "48px");
+		createItem.getUpFace().setImage(plus);
 		topBar.add(createItem, 543, 10);
-		createItem.setSize("58px", "54px");
+		createItem.setSize("48px", "48px");
+		
+		createItem.setVisible(false);
 		
 		fbCore.api("/me", new AsyncCallback<JavaScriptObject>(){
 
@@ -77,15 +81,17 @@ public class ItemsViewer extends Composite{
 
 			@Override
 			public void onSuccess(JavaScriptObject result) {
-				JSOModel model = result.cast();
-				String viewingUser = model.get("id");
+				String viewingUser = ((JSOModel)result.cast()).get("id");
 				if ( viewingUser.equals(viewedLogin) ){
+					createItem.setVisible(true);
+				}
+				else{
 					createItem.setVisible(false);
 				}
 			}
 		});
 		
-		Label lblMyItems = new Label("ITEMS");
+		Label lblMyItems = new Label("Itens");
 		lblMyItems.setStyleName("gwt-OptionsFont");
 		topBar.add(lblMyItems, 10, 2);
 
@@ -112,9 +118,6 @@ public class ItemsViewer extends Composite{
 		}
 
 		rootPanel.add(topBar);
-		
-		Label lblNewLabel = new Label("Adicione um item!");
-		topBar.add(lblNewLabel, 426, 54);
 		
 		PushButton refresh = new PushButton("");
 		topBar.add(refresh, 350, 10);

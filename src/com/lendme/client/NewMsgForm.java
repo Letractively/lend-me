@@ -35,7 +35,7 @@ public class NewMsgForm extends PopupPanel {
 
 	public NewMsgForm(LendMeAsync lendMeService, String solicitorSessionId,
 			String receiver, String subject, String lendingId) {
-		this(lendMeService, solicitorSessionId);
+		this(lendMeService, solicitorSessionId, "");
 		
 		receiverTextBox.setText(receiver);
 		subjectText.setText(subject);
@@ -56,7 +56,7 @@ public class NewMsgForm extends PopupPanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public NewMsgForm(LendMeAsync lendMeService, String solicitorSessionId) {
+	public NewMsgForm(LendMeAsync lendMeService, String solicitorSessionId, String receiverTextBoxText) {
 
 		super(true);
 		setSize("700px", "430px");
@@ -85,6 +85,7 @@ public class NewMsgForm extends PopupPanel {
 		});
 		
 		receiverTextBox = new TextBox();
+		receiverTextBox.setText(receiverTextBoxText);
 		absolutePanel.add(receiverTextBox, 72, 25);
 		receiverTextBox.setSize("213px", "20px");
 		

@@ -78,14 +78,14 @@ public class LendMeItemCreator extends PopupPanel {
 					
 					@Override
 					public void onSuccess(String result) {
-						Window.alert("Item register with sucess!");
+						Window.alert("Item cadastrado!");
 						me.hide();
 						LeftOptionsSideBarPanel.redoItemQuery();
 					}
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert("Fail: "+caught.getMessage());
+						Window.alert("Falha em cadastrar o item: "+caught.getMessage());
 					}
 				});
 			}

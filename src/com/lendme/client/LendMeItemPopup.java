@@ -4,10 +4,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -96,168 +92,37 @@ public class LendMeItemPopup extends PopupPanel {
 		Image returnedState = new Image("http://www.veryicon.com/icon/preview/System/iCandy%20Junior%20Toolbar/Back%202%20Icon.jpg");
 		absolutePanel.add(returnedState, 317, 5);
 		returnedState.setSize("23px", "22px");
-		returnedState.addMouseOverHandler(new MouseOverHandler(){
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				displayInfo.setText("Pedido de devolucao do item");
-				absolutePanel.add(displayInfo, 317, 0);
-				displayInfo.setVisible(true);
-			}
-			
-		});
-		returnedState.addMouseOutHandler(new MouseOutHandler(){
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				absolutePanel.remove(displayInfo);
-				displayInfo.setVisible(false);
-			}
-			
-		});
+		returnedState.setVisible(false);
 
 		Image lentState = new Image("http://icons.iconarchive.com/icons/visualpharm/must-have/48/Information-icon.png");
 		absolutePanel.add(lentState, 288, 5);
 		lentState.setSize("23px", "22px");
-		lentState.addMouseOverHandler(new MouseOverHandler(){
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				displayInfo.setText("Pedido de emprestimo do item");
-				absolutePanel.add(displayInfo, 288, 0);
-				displayInfo.setVisible(true);
-			}
-			
-		});
-		lentState.addMouseOutHandler(new MouseOutHandler(){
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				absolutePanel.remove(displayInfo);
-				displayInfo.setVisible(false);
-			}
-			
-		});
+		lentState.setVisible(false);
 
 		Image interestedState = new Image("http://icdn.pro/images/en/e/y/eyes-see-icone-9513-48.png");
 		absolutePanel.add(interestedState, 259, 5);
 		interestedState.setSize("23px", "22px");
-		interestedState.addMouseOverHandler(new MouseOverHandler(){
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				displayInfo.setText("Voce esta interessado no item");
-				absolutePanel.add(displayInfo, 259, 0);
-				displayInfo.setVisible(true);
-			}
-			
-		});
-		interestedState.addMouseOutHandler(new MouseOutHandler(){
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				absolutePanel.remove(displayInfo);
-				displayInfo.setVisible(false);
-			}
-			
-		});
+		interestedState.setVisible(false);
 
 		Image unavailableState = new Image("http://icons.iconarchive.com/icons/designkindle/build/48/Delete-icon.png");
 		absolutePanel.add(unavailableState, 230, 5);
 		unavailableState.setSize("23px", "22px");
-		unavailableState.addMouseOverHandler(new MouseOverHandler(){
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				displayInfo.setText("O item ja foi emprestado");
-				absolutePanel.add(displayInfo, 230, 0);
-				displayInfo.setVisible(true);
-			}
-			
-		});
-		unavailableState.addMouseOutHandler(new MouseOutHandler(){
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				absolutePanel.remove(displayInfo);
-				displayInfo.setVisible(false);
-			}
-			
-		});
+		unavailableState.setVisible(false);
 
 		Image availableState = new Image("http://icons.iconarchive.com/icons/dryicons/simplistica/48/accept-icon.png");
 		absolutePanel.add(availableState, 201, 5);
 		availableState.setSize("23px", "22px");
-		availableState.addMouseOverHandler(new MouseOverHandler(){
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				displayInfo.setText("O item esta disponivel");
-				absolutePanel.add(displayInfo, 201, 0);
-				displayInfo.setVisible(true);
-			}
-			
-		});
-		availableState.addMouseOutHandler(new MouseOutHandler(){
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				absolutePanel.remove(displayInfo);
-				displayInfo.setVisible(false);
-			}
-			
-		});
+		availableState.setVisible(false);
 		
 		Image requestedState = new Image("http://icons.iconarchive.com/icons/everaldo/crystal-clear/48/Action-share-icon.png");
 		absolutePanel.add(requestedState, 172, 5);
 		requestedState.setSize("23px", "22px");
-		requestedState.addMouseOverHandler(new MouseOverHandler(){
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				if ( new Boolean(itemInfo[7]).booleanValue() ){
-					displayInfo.setText("Alguem esta interessado no seu item");
-				}
-				else{
-					displayInfo.setText("Voce pediu esse item emprestado");
-				}
-				absolutePanel.add(displayInfo, 172, 0);
-				displayInfo.setVisible(true);
-			}
-			
-		});
-		requestedState.addMouseOutHandler(new MouseOutHandler(){
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				absolutePanel.remove(displayInfo);
-				displayInfo.setVisible(false);
-			}
-			
-		});
+		requestedState.setVisible(false);
 		
 		Image askedForReturnState = new Image("http://icons.iconarchive.com/icons/everaldo/crystal-clear/48/Action-share-icon.png");
 		absolutePanel.add(askedForReturnState, 143, 5);
 		askedForReturnState.setSize("23px", "22px");
-		askedForReturnState.addMouseOverHandler(new MouseOverHandler(){
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				displayInfo.setText("Voce ja pediu esse item de volta");
-				absolutePanel.add(displayInfo, 143, 0);
-				displayInfo.setVisible(true);
-			}
-			
-		});
-		askedForReturnState.addMouseOutHandler(new MouseOutHandler(){
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				absolutePanel.remove(displayInfo);
-				displayInfo.setVisible(false);
-			}
-			
-		});
+		askedForReturnState.setVisible(false);
 		
 		name.setText(itemInfo[0]);
 		descricao.setText(itemInfo[2]);
@@ -294,14 +159,17 @@ public class LendMeItemPopup extends PopupPanel {
 						interestedUserLendingIDsListBox
 						.getItemText(0)+" pediu seu item por "+interestedUserDesiredDaysAmount[0]+" dias no dia "+itemInfo[6].split(":")[3]+".");
 				actions.addItem("pedir de volta");
+				lentState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("ASKED_FOR_RETURN") ){
 				actions.addItem("pedir de volta");
 				actions.setEnabled(false);
 				agir.setEnabled(false);
+				askedForReturnState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("AVAILABLE") ){
 				actions.addItem("deletar");
+				availableState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("REQUESTED") ){
 				actions.addItem("emprestar");
@@ -313,19 +181,23 @@ public class LendMeItemPopup extends PopupPanel {
 				interestedUserLendingIDsListBox.setVisible(true);
 				interestedUserLendingIDsListBox.setEnabled(true);
 				interestedUsersLabel.setVisible(true);
+				requestedState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("RETURNED") ){
 				actions.addItem("confirmar devolucao");
 				actions.addItem("negar que houve devolucao");
+				returnedState.setVisible(true);
 			}
 		}
 		else{
 			if ( itemInfo[8].equals("UNAVAILABLE") ){
 				actions.addItem("tenho interesse nesse item");
+				unavailableState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("INTERESTED") ){
 				actions.addItem("tenho interesse nesse item");
 				actions.setEnabled(false);
+				interestedState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("LENT") ){
 				moreInfo.setVisible(true);
@@ -333,22 +205,26 @@ public class LendMeItemPopup extends PopupPanel {
 						interestedUserLendingIDsListBox
 						.getItemText(0)+" te emprestou esse item por "+interestedUserDesiredDaysAmount[0]+" dias no dia "+itemInfo[6].split(":")[3]+".");
 				actions.addItem("devolver");
+				lentState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("RETURNED") ){
 				actions.addItem("devolver");
 				actions.setEnabled(false);
 				agir.setEnabled(false);
+				returnedState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("AVAILABLE") ){
 				actions.addItem("pedir emprestado");
 				daysAmount.setVisible(true);
 				daysAmount.setEnabled(true);
 				daysAmountLabel.setVisible(true);
+				availableState.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("REQUESTED") ){
 				actions.addItem("pedir emprestado");
 				actions.setEnabled(false);
 				agir.setEnabled(false);
+				requestedState.setVisible(true);
 			}
 		}
 

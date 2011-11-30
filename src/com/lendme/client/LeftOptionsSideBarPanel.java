@@ -155,7 +155,6 @@ public class LeftOptionsSideBarPanel extends Composite {
 
 			@Override
 			public void onFailure(Throwable caught) {
-//				Window.alert("Erro ao capturar atributo do usuario: "+caught.getMessage());
 			}
 
 			@Override
@@ -296,14 +295,13 @@ public class LeftOptionsSideBarPanel extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert(searchKey.getText());
 				if ( searchForFriends.getValue().booleanValue() ) {
 					if (searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Endereco") ){
-						lendMeService.searchUsersByAttributeKey(currentSessionId, searchKey.getText(), "endereco",
-								userSearchResultCallback);
+						lendMeService.listUsersByDistance(currentSessionId, userSearchResultCallback);
 					}
 					else if ( searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Nome") ){
-						lendMeService.listUsersByDistance(currentSessionId, userSearchResultCallback);
+						lendMeService.searchUsersByAttributeKey(currentSessionId, searchKey.getText(), "nome",
+								userSearchResultCallback);
 					}
 				}
 				else if ( searchForItems.getValue().booleanValue() ){
@@ -329,11 +327,11 @@ public class LeftOptionsSideBarPanel extends Composite {
 				if ( event.getCharCode() == KeyCodes.KEY_ENTER ){
 					if ( searchForFriends.getValue().booleanValue() ) {
 						if ( searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Endereco") ){
-							lendMeService.searchUsersByAttributeKey(currentSessionId, searchKey.getText(), "endereco",
-									userSearchResultCallback);
+							lendMeService.listUsersByDistance(currentSessionId, userSearchResultCallback);
 						}
 						else if ( searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Nome") ){
-							lendMeService.listUsersByDistance(currentSessionId, userSearchResultCallback);
+							lendMeService.searchUsersByAttributeKey(currentSessionId, searchKey.getText(), "nome",
+									userSearchResultCallback);
 						}
 					}
 					else{
@@ -363,16 +361,17 @@ public class LeftOptionsSideBarPanel extends Composite {
 		Hyperlink hyperlink = new Hyperlink( "Amigos", viewedLogin+"/options/friends");
 		hyperlink.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink, 11, 240);
-		Hyperlink hyperlink_1 = new Hyperlink( "Items", viewedLogin+"/options/items");
+		Hyperlink hyperlink_1 = new Hyperlink( "Itens", viewedLogin+"/options/items");
 		hyperlink_1.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink_1, 11, 288);
 		final Hyperlink hyperlink_2 = new Hyperlink( "Minhas Mensagens", viewedLogin+"/options/messages");
 		hyperlink_2.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink_2, 11, 336);
-		Hyperlink hyperlink_3 = new Hyperlink( "Historico", viewedLogin+"/options/history");
+		final Hyperlink hyperlink_3 = new Hyperlink( "Historico", viewedLogin+"/options/history");
 		hyperlink_3.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink_3, 11, 384);
-
+		hyperlink_2.setVisible(false);
+		hyperlink_3.setVisible(false);
 
 		initWidget(realRootPanel);
 		
@@ -387,8 +386,6 @@ public class LeftOptionsSideBarPanel extends Composite {
 			public void onSuccess(JavaScriptObject result) {
 				String id = ((JSOModel)result.cast()).get("id");
 				if ( !id.equals(viewedLogin) ){
-					hyperlink_2.setVisible(false);
-					Window.alert("Verificar se sao amigos:" +currentSessionId+" "+viewedLogin);
 					lendMeService.areFriends(currentSessionId, viewedLogin, new AsyncCallback<Boolean>(){
 
 						@Override
@@ -411,6 +408,10 @@ public class LeftOptionsSideBarPanel extends Composite {
 						}
 
 					});
+				}
+				else{
+					hyperlink_2.setVisible(true);
+					hyperlink_3.setVisible(true);
 				}
 			}
 
@@ -435,11 +436,11 @@ public class LeftOptionsSideBarPanel extends Composite {
 		}
 		else if ( lastQuery.isReallyASearch() ){
 			if (lastQuery.getQueryStrategy().equals("Endereco") ){
-				lastQuery.getLendMeService().searchUsersByAttributeKey(lastQuery.getQueryStrategy(), lastQuery.getQueryKey(), "endereco",
-						lastQuery.getUserSearchCallback());
+				lastQuery.getLendMeService().listUsersByDistance(lastQuery.getSessionId(), lastQuery.getUserSearchCallback());
 			}
 			else if ( lastQuery.getQueryStrategy().equals("Nome") ){
-				lastQuery.getLendMeService().listUsersByDistance(lastQuery.getSessionId(), lastQuery.getUserSearchCallback());
+				lastQuery.getLendMeService().searchUsersByAttributeKey(lastQuery.getSessionId(), lastQuery.getQueryKey(), "nome",
+						lastQuery.getUserSearchCallback());
 			}
 		}
 	}

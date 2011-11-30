@@ -267,17 +267,17 @@ public final class LendMeRepository {
 				continue;
 			}
 			if ( attribute.equals("nome") ){
-				if ( getUserAttribute(user, "nome").contains(key) ){
+				if ( getUserAttribute(user, "nome").toLowerCase().contains(key.toLowerCase()) ){
 					results.add(user);
 				}
 			}
 			else if ( attribute.equals("login") ){
-				if ( ( getUserAttribute(user, "login").contains(key) ) ){
+				if ( ( getUserAttribute(user, "login").toLowerCase().contains(key.toLowerCase()) ) ){
 					results.add(user);
 				}
 			}
 			else if ( attribute.equals("endereco") ){
-				if ( ( getUserAttribute(user, "endereco").contains(key) ) ){
+				if ( ( getUserAttribute(user, "endereco").toLowerCase().contains(key.toLowerCase()) ) ){
 					results.add(user);
 				}
 			}

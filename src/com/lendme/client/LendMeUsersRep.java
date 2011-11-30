@@ -122,7 +122,9 @@ public class LendMeUsersRep extends PopupPanel {
 			imgPath = this.urlDefaultImg;
 
 		image = new PushButton();
-		image.getUpFace().setImage(new Image(imgPath));
+		Image im = new Image(imgPath);
+		im.setStyleName("gwt-Image");
+		image.getUpFace().setImage(im);
 		
 		image.setStyleName("gwt-Image");
 		image.addMouseOverHandler(new MouseOverHandler() {

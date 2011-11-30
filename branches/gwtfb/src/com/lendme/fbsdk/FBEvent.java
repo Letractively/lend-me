@@ -1,7 +1,6 @@
 package com.lendme.fbsdk;
 
 import com.google.gwt.core.client.JavaScriptObject;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**

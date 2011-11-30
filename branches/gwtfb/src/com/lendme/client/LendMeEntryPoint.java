@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.lendme.fbsdk.FBCore;
 import com.lendme.fbsdk.FBEvent;
 import com.lendme.fbsdk.FBXfbml;
-import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
 
 public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String>  {
 

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
+import com.lendme.client.ItemInfo;
 
 
 

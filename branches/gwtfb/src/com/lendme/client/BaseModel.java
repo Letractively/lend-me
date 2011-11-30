@@ -1,11 +1,11 @@
 package com.lendme.client;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.core.client.JsArrayString;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 
 public abstract class BaseModel {
 

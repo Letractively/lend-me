@@ -69,22 +69,32 @@ public final class LendMeRepository {
 			sessions.add(session);
 			return session.getId();
 		} else {
-			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
-		    Iterator<Entity> users = datastore.prepare(query).asIterator();
-		    while ( users.hasNext() ){
-		    	Entity user = users.next();
-		    	if ( (""+user.getProperty("id")).equals(login) ){
-		    		String name = ((String) user.getProperty("name"));
-		    		String address = ((String) user.getProperty("address"));
-		    		String email = ((String) user.getProperty("email"));
-					registerUser(login, name, email, address);
-					Session session = new Session(getUserByLogin(login));
-					sessions.add(session);
-					return session.getId();
-		    	}
-		    }
-	    	throw new Exception("Usu�rio inexistente");
+//			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+//		    Query query = new Query("User").addSort("id", Query.SortDirection.DESCENDING);
+//		    Iterator<Entity> users = datastore.prepare(query).asIterator();
+//		    while ( users.hasNext() ){
+//		    	Entity user = users.next();
+//		    	if ( (""+user.getProperty("id")).equals(login) ){
+//		    		String name = ((String) user.getProperty("name"));
+//		    		String address = ((String) user.getProperty("address"));
+//		    		String email = ((String) user.getProperty("email"));
+//					registerUser(login, name, email, address);
+//					Session session = new Session(getUserByLogin(login));
+//					sessions.add(session);
+//					return session.getId();
+//		    	}
+//		    }
+//	    	throw new Exception("Usuário inexistente");
+//	    	
+		
+		registerUser("100002013944522", "Tarciso Braz de Oliveira Filho", "Trav. Olegário Maciel");
+		registerUser("thiago", "Thiago Braz Alves de Oliveira", "Trav. Olegário Maciel");
+		registerUser("claudia", "Claudia Alves de Oliveira", "Trav. Olegário Maciel");
+		
+		Session currentSession = new Session(getUserByLogin("100002013944522"));
+		sessions.add(currentSession);
+		return currentSession.getId();
+		
 		}
 	}
 	
@@ -252,13 +262,13 @@ public final class LendMeRepository {
 	public Set<User> searchUsersByAttributeKey(String sessionId, String key,
 			String attribute) throws Exception{
 		if ( attribute == null || attribute.trim().length() == 0 ){
-			throw new Exception("Atributo inv�lido");//"Invalid attribute");
+			throw new Exception("Atributo inválido");//"Invalid attribute");
 		}
 		if (!(attribute.equals("nome") || attribute.trim().equals("login") || attribute.trim().equals("endereco"))){
 			throw new Exception("Atributo inexistente");//"Inexistent attribute");
 		}
 		if ( key == null || key.trim().length() == 0 ){
-			throw new Exception("Palavra-chave inv�lida");//"Invalid search key");
+			throw new Exception("Palavra-chave inválida");//"Invalid search key");
 		}
 		
 		Set<User> results = new HashSet<User>();
@@ -267,17 +277,17 @@ public final class LendMeRepository {
 				continue;
 			}
 			if ( attribute.equals("nome") ){
-				if ( getUserAttribute(user, "nome").toLowerCase().contains(key.toLowerCase()) ){
+				if ( getUserAttribute(user, "nome").contains(key) ){
 					results.add(user);
 				}
 			}
 			else if ( attribute.equals("login") ){
-				if ( ( getUserAttribute(user, "login").toLowerCase().contains(key.toLowerCase()) ) ){
+				if ( ( getUserAttribute(user, "login").contains(key) ) ){
 					results.add(user);
 				}
 			}
 			else if ( attribute.equals("endereco") ){
-				if ( ( getUserAttribute(user, "endereco").toLowerCase().contains(key.toLowerCase()) ) ){
+				if ( ( getUserAttribute(user, "endereco").contains(key) ) ){
 					results.add(user);
 				}
 			}

@@ -176,7 +176,7 @@ public class LendMeItemPopup extends PopupPanel {
 				actions.addItem("nao emprestar");
 				daysAmount.setVisible(true);
 				daysAmount.setEnabled(false);
-				daysAmount.setText(itemInfo[6].split(":")[2].replace(";", ""));
+				daysAmount.setText(itemInfo[6].split(";")[interestedUserLendingIDsListBox.getSelectedIndex()].split(":")[2]);
 				daysAmountLabel.setVisible(true);
 				interestedUserLendingIDsListBox.setVisible(true);
 				interestedUserLendingIDsListBox.setEnabled(true);

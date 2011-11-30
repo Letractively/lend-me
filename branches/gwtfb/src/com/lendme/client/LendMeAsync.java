@@ -156,4 +156,10 @@ public interface LendMeAsync {
 
 	void userExists(String viewedUser, AsyncCallback<Boolean> asyncCallback);
 
+	void getFriendsAndFriendshipRequests(String currentSessionId,
+			String viewedLogin, AsyncCallback<Map<String, String[]>> usersearchresult);
+
+	void getOwnedItemsAndBorrowedItems(String currentSessionId,
+			String viewedLogin, AsyncCallback<Map<String, String[]>> itemsearchresult);
+
 }

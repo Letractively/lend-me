@@ -111,5 +111,9 @@ public interface LendMe extends RemoteService{
 	public String getUserAttributeBySessionId(String sessionId, String attribute) throws Exception;
 
 	public boolean userExists(String viewedUser) throws Exception;
+
+	public Map<String, String[]> getFriendsAndFriendshipRequests(String currentSessionId, String viewedLogin) throws Exception;
+
+	public Map<String, String[]> getOwnedItemsAndBorrowedItems(String currentSessionId, String viewedLogin) throws Exception;
 	
 }

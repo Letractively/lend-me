@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -53,18 +54,20 @@ public class ItemsViewer extends Composite{
 		scrollPanel.setWidget(conteinerPanel);
 
 		topBar = new AbsolutePanel();
-		topBar.setSize("100%", "31px");
+		topBar.setSize("100%", "82px");
 
-		PushButton pshbtnNewButton = new PushButton(" +1 ");
-		pshbtnNewButton.addClickHandler(new ClickHandler() {
+		PushButton createItem = new PushButton("");
+		createItem.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				creator.center();
 			}
 		});
-		topBar.add(pshbtnNewButton, 570, 5);
-		pshbtnNewButton.setSize("18px", "13px");
+		createItem.getUpFace().setImage(new Image("http://www.777icons.com/libs/basic-vista/add-icon.gif"));
+		topBar.add(createItem, 543, 10);
+		createItem.setSize("58px", "54px");
 
-		Label lblMyItems = new Label("My Items");
+		Label lblMyItems = new Label("ITEMS");
+		lblMyItems.setStyleName("gwt-OptionsFont");
 		topBar.add(lblMyItems, 10, 2);
 
 		for(String actualKey : result.keySet()){
@@ -90,9 +93,24 @@ public class ItemsViewer extends Composite{
 		}
 
 		rootPanel.add(topBar);
+		
+		Label lblNewLabel = new Label("Adicione um item!");
+		topBar.add(lblNewLabel, 426, 54);
+		
+		PushButton refresh = new PushButton("");
+		topBar.add(refresh, 350, 10);
+		refresh.setSize("48px", "48px");
+		refresh.getUpFace().setImage(new Image("http://icons.iconarchive.com/icons/deleket/button/48/Button-Refresh-icon.png"));
+		refresh.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				LeftOptionsSideBarPanel.redoItemQuery();
+			}
+			
+		});
 		rootPanel.add(scrollPanel);
 		initWidget(rootPanel);
 
 	}
-	
 }

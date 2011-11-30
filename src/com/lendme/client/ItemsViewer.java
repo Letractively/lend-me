@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -16,7 +15,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.lendme.fbsdk.FBCore;
 
 public class ItemsViewer extends Composite{
 
@@ -37,10 +35,10 @@ public class ItemsViewer extends Composite{
 	private final LendMeAsync lendmeLocal;
 	private final String idSessionLocal;
 
-	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, String[]> result, FBCore fbCore) {
+	public ItemsViewer(LendMeAsync lendMeService, String sessionId, final String viewedLogin, Map<String, String[]> result) {
 
-		this.lendmeLocal = lendme;
-		this.idSessionLocal = idSession;
+		this.lendmeLocal = lendMeService;
+		this.idSessionLocal = sessionId;
 		
 		creator = new LendMeItemCreator(lendmeLocal, idSessionLocal, viewedLogin);
 		myItems = new ArrayList<LendMeItemRep>();
@@ -73,16 +71,16 @@ public class ItemsViewer extends Composite{
 		
 		createItem.setVisible(false);
 		
-		fbCore.api("/me", new AsyncCallback<JavaScriptObject>(){
+		lendMeService.getUserAttributeBySessionId(sessionId, "login", new AsyncCallback<String>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
+				createItem.setVisible(false);
 			}
 
 			@Override
-			public void onSuccess(JavaScriptObject result) {
-				String viewingUser = ((JSOModel)result.cast()).get("id");
-				if ( viewingUser.equals(viewedLogin) ){
+			public void onSuccess(String result) {
+				if ( result.equals(viewedLogin) ){
 					createItem.setVisible(true);
 				}
 				else{

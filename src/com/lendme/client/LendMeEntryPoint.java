@@ -469,7 +469,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	}
 
 	public static void displayItemSearchResults(String viewedLogin, Map<String, String[]> results){
-		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, viewedLogin, itemSearchResult.getResult(), fbCore));
+		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, viewedLogin, itemSearchResult.getResult()));
 	}
 	
 	public void displayCurrentUserFriends(String viewedLogin){

@@ -160,7 +160,7 @@ public class NewMsgForm extends PopupPanel {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("Erro: Nao foi possivel ter acesso aos emprestimos do usuario: "+caught.getMessage());
+					Window.alert("Erro: Nao foi possivel ter acesso aos emprestimos do usuario." + caught.getMessage());
 				}
 
 				@Override

@@ -139,12 +139,8 @@ public class LendMeMsgsRep extends AbsolutePanel {
 	}
 	
 	private void sendAnswerMessage() {
-		if (answerMsg == null) {
-			answerMsg = new NewMsgForm(lendMeService, solicitorSessionId, 
+		answerMsg = new NewMsgForm(lendMeService, solicitorSessionId, 
 					getSender(), getSubject(), getLendingId());
-		} else {
-			answerMsg.resetFields();
-		}
 		answerMsg.center();
 	}
 

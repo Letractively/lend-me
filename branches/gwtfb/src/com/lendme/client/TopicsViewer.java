@@ -129,7 +129,11 @@ public class TopicsViewer extends Composite {
 	}
 	
 	private void createNewMsg() {
-		newMsgForm = new NewMsgForm(lendMeService, solicitorSessionId);
+		if (newMsgForm == null) {
+			newMsgForm = new NewMsgForm(lendMeService, solicitorSessionId);
+		} else {
+			newMsgForm.resetFields();
+		}
 		newMsgForm.center();
 	}
 

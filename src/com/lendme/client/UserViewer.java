@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Image;
 
 public class UserViewer extends Composite{
 	
@@ -25,6 +26,7 @@ public class UserViewer extends Composite{
 	private static int height = 100;
 	private static int lastX = 10;
 	private static int lastY = 25;
+	private static Label lblLendme;
 	
 	public UserViewer(final LendMeAsync lendMeService, final String solicitorSession, final String userViewerLogin,
 			final Map<String, String[]> searchResults) {
@@ -53,18 +55,30 @@ public class UserViewer extends Composite{
 		containerPanel.setSize("600px", "600px");
 		
 		internalPanel = new AbsolutePanel();
-		//this.add(absolutePanel, 10, 9);
-		internalPanel.setSize("600px", "17px");
+		internalPanel.setStyleName("backGround1");
+		internalPanel.setSize("600px", "70px");
 		
 		Label lblNewLabel = new Label("USERS");
-		internalPanel.add(lblNewLabel, 270, 0);
+		lblNewLabel.setStyleName("defaultTitle");
+		internalPanel.add(lblNewLabel, 63, 19);
 		
 		final Label errorLabel = new Label("Houve um erro com a comunicação com o servidor.");
-		errorLabel.setStyleName("alert");
-		internalPanel.add(errorLabel, 3, 15);
+		errorLabel.setStyleName("defaultErrorStyle");
+		internalPanel.add(errorLabel, 0, 60);
+		errorLabel.setSize("290px", "10px");
 		errorLabel.setVisible(false);
 		
 		containerPanel.add(internalPanel);
+		
+		Image image = new Image((String) null);
+		image.setUrl("http://icons.iconarchive.com/icons/kawsone/teneo/48/Blacklist-icon.png");
+		internalPanel.add(image, 6, 5);
+		image.setSize("48px", "48px");
+		
+		lblLendme = new Label("Lend-me!");
+		lblLendme.setStyleName("barra");
+		internalPanel.add(lblLendme, 0, 58);
+		lblLendme.setSize("700px", "10px");
 		
 		lendMeService.getFriends(solicitorSession, new AsyncCallback<Map<String,String[]>>() {
 

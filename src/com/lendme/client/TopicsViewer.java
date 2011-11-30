@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Image;
 
 public class TopicsViewer extends Composite {
 	
@@ -43,15 +44,17 @@ public class TopicsViewer extends Composite {
 		container.setWidth("570px");
 
 		ScrollPanel scrollPanel = new ScrollPanel();
-		rootPanel.add(scrollPanel, 0, 32);
+		scrollPanel.setStyleName("backGround2");
+		rootPanel.setStyleName("backGround1");
+		rootPanel.add(scrollPanel, 0, 60);
 		scrollPanel.setSize("600px", "515px");
-		rootPanel.setSize("600px", "550px");
+		rootPanel.setSize("600px", "575px");
 		
 		scrollPanel.add(container);
 		
-		errorLabel = new Label("error");
+		errorLabel = new Label("Ocorreu um erro inesperado!");
 		container.add(errorLabel);
-		errorLabel.setStyleName("topicsLines");
+		errorLabel.setStyleName("defaultErrorStyle");
 		
 		HorizontalPanel topPanel = new HorizontalPanel();
 		container.add(topPanel);
@@ -80,11 +83,11 @@ public class TopicsViewer extends Composite {
 		topPanel.addStyleName("topicsHeader");
 		errorLabel.setVisible(false);
 		
-		rootPanel.add(scrollPanel, 0, 32);
+		rootPanel.add(scrollPanel, 0, 60);
 		
 		Button newMsgButton = new Button("Nova Mensagem");
-		rootPanel.add(newMsgButton, 465, 0);
-		newMsgButton.setSize("114px", "29px");
+		rootPanel.add(newMsgButton, 467, 13);
+		newMsgButton.setSize("123px", "23px");
 		
 		newMsgButton.addClickHandler(new ClickHandler() {
 			
@@ -95,7 +98,8 @@ public class TopicsViewer extends Composite {
 		});
 		
 		Label lblTipoDeTpico = new Label("Tipo de Tópico:");
-		rootPanel.add(lblTipoDeTpico, 120, 0);
+		lblTipoDeTpico.setStyleName("smalltxt");
+		rootPanel.add(lblTipoDeTpico, 248, 21);
 		
 		topicTypeListBox = new ListBox();
 		topicTypeListBox.setName("topic type combo");
@@ -104,7 +108,7 @@ public class TopicsViewer extends Composite {
 		topicTypeListBox.addItem("todos");
 		topicTypeListBox.setItemSelected(2, true);
 		
-		rootPanel.add(topicTypeListBox, 225, 0);
+		rootPanel.add(topicTypeListBox, 344, 13);
 		
 		topicTypeListBox.addChangeHandler(new ChangeHandler() {
 			
@@ -118,6 +122,15 @@ public class TopicsViewer extends Composite {
 		getTopics();
 		
 		this.initWidget(rootPanel);
+		
+		Label lblMensagens = new Label("Mensagens");
+		lblMensagens.setStyleName("defaultTitle");
+		rootPanel.add(lblMensagens, 64, 17);
+		
+		Image image = new Image((String) null);
+		image.setUrl("icons.iconarchive.com/icons/judge/iphone/48/mail-icon.png");
+		rootPanel.add(image, 10, 6);
+		image.setSize("48px", "48px");
 	}
 	
 	private void addTopics(Map<String, String[]>result) {

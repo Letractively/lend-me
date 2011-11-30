@@ -1,7 +1,7 @@
 package com.lendme.server.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author THE LENDERS
@@ -12,7 +12,7 @@ import java.util.Set;
 public class Topic implements Identifiable, Comparable<Topic> {
 	
 	private String subject;
-	private Set<Message> messages = new HashSet<Message>();
+	private List<Message> messages = new ArrayList<Message>();
 	private String id;
 	private EventDate creationDate;
 	
@@ -29,7 +29,7 @@ public class Topic implements Identifiable, Comparable<Topic> {
 	 * @param subject - titulo do topico.
 	 * @param messages - mensagens a serem colocadas no topico.
 	 */
-	public Topic(String subject, Set<Message> messages) {
+	public Topic(String subject, List<Message> messages) {
 		this.subject = subject;
 		this.messages = messages;
 		this.creationDate = new EventDate();
@@ -65,7 +65,7 @@ public class Topic implements Identifiable, Comparable<Topic> {
 	 * Retorna o conjunto de mensagens que estao no topico.
 	 * @return conjunto de mensagens.
 	 */
-	public Set<Message> getMessages() {
+	public List<Message> getMessages() {
 		return messages;
 	}
 

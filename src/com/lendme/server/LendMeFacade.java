@@ -405,6 +405,30 @@ public class LendMeFacade {
 		return communicationModule.sendMessage(sender, subject, message, receiver);
 	}
 	
+	public String sendMessageWithEmail(String senderSessionId, String subject, String message,
+			String receiverEmail) throws Exception {
+		
+		Viewer senderProfile = getUserProfile(senderSessionId);
+		User sender = null;
+		User receiver = null;
+		try {
+			receiver = repository.getUserByEmail(receiverEmail);
+			sender = getAnotherProfile(senderProfile, receiver.getLogin()).getObserver().getOwner();
+		} catch (Exception e) {
+			
+			if (e.getMessage().equals("Login inválido")) {
+				throw new Exception("Destinatário inválido");//"Invalid receiver");
+			}
+				
+			else if (e.getMessage().equals("Usuário inexistente")) {
+				throw new Exception("Destinatário inexistente");//"Inexistent receiver");
+			}else{
+				throw new Exception(e.getMessage());
+			}
+		}
+		return communicationModule.sendMessage(sender, subject, message, receiver);
+	}
+	
 	/**
 	 * Returns user with session specified by session id message topics.
 	 * 

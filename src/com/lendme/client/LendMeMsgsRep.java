@@ -64,6 +64,8 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		hPanel.add(dateLabel);
 		dateLabel.setWidth("50");
 		
+		messageTextBox = new TextBox();
+		
 		vPanel.add(hPanel);
 		
 		lendMeService.getUserAttributeBySessionId(currentSessionId, "login", new AsyncCallback<String>() {
@@ -108,7 +110,7 @@ public class LendMeMsgsRep extends AbsolutePanel {
 	}
 	
 	private void amITheSender(String myLogin) {
-		if (senderLogin.equals(myLogin)) {
+		if (! senderLogin.equals(myLogin)) {
 			PushButton answerMsgButton = new PushButton("New button");
 			answerMsgButton.getUpFace().setText("Responder");
 			hPanel.add(answerMsgButton);
@@ -123,7 +125,7 @@ public class LendMeMsgsRep extends AbsolutePanel {
 			});
 			hPanel.add(answerMsgButton);
 		}
-			messageTextBox = new TextBox();
+			
 			messageTextBox.setReadOnly(true);
 			messageTextBox.setText("Mensagem de exemplo...");
 			messageTextBox.setStyleName("messagesLines");

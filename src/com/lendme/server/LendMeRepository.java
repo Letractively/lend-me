@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
+import com.lendme.server.entities.Item;
 import com.lendme.server.entities.Session;
 import com.lendme.server.entities.User;
 import com.lendme.server.utils.AddressComparatorStrategy;
@@ -75,12 +76,13 @@ public final class LendMeRepository {
 		    while ( users.hasNext() ){
 		    	Entity user = users.next();
 		    	if ( (""+user.getProperty("id")).equals(login) ){
-		    		String name = ((String) user.getProperty("name"));
+		    		String name = ((String) user.getProperty("name")); 
 		    		String address = ((String) user.getProperty("address"));
 		    		String email = ((String) user.getProperty("email"));
 					registerUser(login, name, email, address);
 					Session session = new Session(getUserByLogin(login));
 					sessions.add(session);
+					populateSystem();
 					return session.getId();
 		    	}
 		    }
@@ -88,6 +90,51 @@ public final class LendMeRepository {
 		}
 	}
 	
+	private void populateSystem() throws Exception{
+		//Method only used to register some itens and users for system evaluation purposes
+		String[] names = { "Joao", "Carlos", "Janaina", "Henrique", "Laura", "Monica", "Augusto", "Melina", "Reinaldo" };
+		String[] addresses = {"Av. Mar Baltico, Intermares, Cabedelo", "Av. Oceano Pacifico, Intermares, Cabedelo",
+				"Av. Mar Vermelho, Intermares, Cabedelo", "R. Joaquim Caroca, Bodocongó, Campina Grande",
+				"R. Francisco Rosa de Farias, Monte Santo, Campina Grande", "R. Olegário Maciel, Monte Santo, Campina Grande",
+				"Av. Brasilia, Catolé, Campina Grande", "R. Montevideo, Prata, Campina Grande", "Av. Epitácio Pessoa, Centro, João Pessoa",
+				"22B Baker Street, Londres"};
+		String[] items = { "Star Wars - The Phantom Menace", "Star Wars - Attack of the Clones", 
+				"Star Wars - Revenge of the Sith", "Star Wars - A New Hope", 
+				"Star Wars - The Empire Strikes Back", "Star Wars - Return of the Jedi",
+				"LOST - 1ª Temporada", "LOST - 2ª Temporada", "Artemis Fowl - O menino prodigio do crime",
+				"Bíblia Sagrada", "O Monge e o Executivo", "O Poderoso Chefão", "Artemis Fowl - Paradoxo do tempo",
+				"Bola de Futebol", "Bola de Volei", "Artemis Fowl - Aventura no artico", "Guia do mochileiro das galáxias",
+				"Artemis Fowl - O codigo eterno", "Artemis Fowl - Vinganca de Opala", "Harry Potter"};
+		String[] categories = { "Filme", "Filme", "Filme", "Filme", "Filme", "Filme", "Série", "Série", "Livro",
+				"Livro", "Livro", "Livro", "Livro", "Livro", "Livro", "Livro", "Livro", "Livro", "Artigo Esportivo", "Artigo Esportivo",
+				"Filme", "Filme", "Filme", "Filme"};
+		List<String> itemIds = new ArrayList<String>();
+		List<String> sessionIds = new ArrayList<String>();
+		for ( int i = 0; i < 10; i++ ){
+			registerUser(names[i].toLowerCase(), names[i], names[i]+"@lendme.com", addresses[i]);
+			String session = openSession(names[i].toLowerCase());
+			String itemId = registerItem(session, items[i], items[i], categories[i]);
+			String itemId2 = registerItem(session, items[i+1], items[i+1], categories[i+1]);
+			itemIds.add(itemId);
+			itemIds.add(itemId2);
+			sessionIds.add(session);
+		}
+		for ( int j = 0; j<10; j++ ){
+			User user = getUserBySessionId(sessionIds.get(j));
+			User user2 = getUserBySessionId(sessionIds.get(j+1));
+			user.requestFriendship(user2);
+			user2.acceptFriendshipRequest(user);
+			for ( Item item : user.getAllItems() ){
+				String lending = user2.borrowItem(item, user, j+1);
+				user.approveLending(lending);
+			}
+			for ( Item item : user2.getAllItems() ){
+				String lending = user.borrowItem(item, user2, j+1);
+				user2.approveLending(lending);
+			}
+		}
+	}
+
 	/**
 	 * Closes the specified session.
 	 * 

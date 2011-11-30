@@ -1,7 +1,5 @@
 package com.lendme.client;
 
-import java.util.Map;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -17,20 +15,18 @@ public class LendMeUsersContainer extends AbsolutePanel {
 	private LendMeAsync lendMeService;
 	private String solicitorSessionId;
 	private String userViewerLogin;
-	private Map<String, String[]> searchResults;
 	
 	private Button addBreakFriendshipButton;
 	private Button acceptFriendshipButton;
 	private Button declineFriendshipButton;
 	
 	public LendMeUsersContainer(final LendMeAsync lendMeService, final String solicitorSessionId, final String userViewerLogin,
-			final Map<String, String[]> searchResults, LendMeUsersRepresentation user, FriendshipStatus status) {
+			LendMeUsersRepresentation user, FriendshipStatus status) {
 		
 		this.user = user;
 		this.solicitorSessionId = solicitorSessionId;
 		this.lendMeService = lendMeService;
 		this.userViewerLogin = userViewerLogin;
-		this.searchResults = searchResults;
 		
 		AbsolutePanel absolutePanel = new AbsolutePanel();
 		absolutePanel.setSize("253px", "160px");
@@ -123,6 +119,7 @@ public class LendMeUsersContainer extends AbsolutePanel {
 			@Override
 			public void onSuccess(Void result) {
 				Window.alert("Requisicao de amizade feita com sucesso!");
+				LeftOptionsSideBarPanel.redoUserQuery();
 			}
 		});
 	}
@@ -135,12 +132,12 @@ public class LendMeUsersContainer extends AbsolutePanel {
 			@Override
 			public void onSuccess(Void result) {
 				Window.alert("Amizade desfeita com sucesso!");
+				LeftOptionsSideBarPanel.redoUserQuery();
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert("Nao foi possivel desfazer a amizade: " + caught.getMessage());
-				UserViewer.displayUsers(lendMeService, solicitorSessionId, userViewerLogin, searchResults);
 			}
 		});
 	}
@@ -153,13 +150,12 @@ public class LendMeUsersContainer extends AbsolutePanel {
 					@Override
 					public void onFailure(Throwable caught) {
 						Window.alert("O pedido de amizade nao pode ser aprovado: " + caught.getMessage());
-						
 					}
 
 					@Override
 					public void onSuccess(Void result) {
 						Window.alert("O pedido de amizade foi aprovado!");
-						UserViewer.displayUsers(lendMeService, solicitorSessionId, userViewerLogin, searchResults);
+						LeftOptionsSideBarPanel.redoUserQuery();
 					}
 				
 				});
@@ -178,7 +174,7 @@ public class LendMeUsersContainer extends AbsolutePanel {
 					@Override
 					public void onSuccess(Void result) {
 						Window.alert("O pedido de amizade foi rejeitado!");
-						UserViewer.displayUsers(lendMeService, solicitorSessionId, userViewerLogin, searchResults);
+						LeftOptionsSideBarPanel.redoUserQuery();
 					}
 		});
 	}

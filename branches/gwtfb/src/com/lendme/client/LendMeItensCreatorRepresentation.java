@@ -16,7 +16,7 @@ public class LendMeItensCreatorRepresentation extends PopupPanel {
 
 	private final String idSession;
 	private final LendMeAsync lendmeAsync;
-	private LendMeItensCreatorRepresentation i_am;
+	private LendMeItensCreatorRepresentation me;
 	private String defaultURL = "http://www.quatrocantos.com/clipart/ferramentas/imagens/ferramenta01/martelo.gif";
 	
 	public LendMeItensCreatorRepresentation(LendMeAsync lendme, String session, final String viewedLogin) {
@@ -25,7 +25,7 @@ public class LendMeItensCreatorRepresentation extends PopupPanel {
 		setAnimationEnabled(true);
 		this.lendmeAsync = lendme;
 		this.idSession = session;
-		i_am = this;
+		me = this;
 		
 		setSize("291px", "211px");
 		
@@ -63,9 +63,9 @@ public class LendMeItensCreatorRepresentation extends PopupPanel {
 		category.setSize("146px", "13px");
 		
 		FileUpload fileUpload = new FileUpload();
-		fileUpload.setStyleName("gwt-TextBox");
+		fileUpload.setStyleName("purple-font");
 		absolutePanel.add(fileUpload, 10, 152);
-		fileUpload.setSize("111px", "23px");
+		fileUpload.setSize("255px", "70px");
 		
 		PushButton pshbtnNewButton = new PushButton("Create");
 		pshbtnNewButton.addClickHandler(new ClickHandler() {
@@ -79,8 +79,8 @@ public class LendMeItensCreatorRepresentation extends PopupPanel {
 					@Override
 					public void onSuccess(String result) {
 						Window.alert("Item register with sucess!");
-						i_am.hide();
-						LendMeEntryPoint.displayCurrentUserItems(viewedLogin);
+						me.hide();
+						LeftOptionsSideBarPanel.redoItemQuery();
 					}
 					
 					@Override

@@ -41,7 +41,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 		ItemSearchResultFound itemSearchCallback;
 		LendMeAsync lendMeService;
 		
-		public boolean isItemSearch() {
+		public boolean isReallyASearch() {
 			return itemSearch;
 		}
 		public void setItemSearch(boolean itemSearch) {
@@ -328,11 +328,11 @@ public class LeftOptionsSideBarPanel extends Composite {
 			public void onKeyPress(KeyPressEvent event) {
 				if ( event.getCharCode() == KeyCodes.KEY_ENTER ){
 					if ( searchForFriends.getValue().booleanValue() ) {
-						if (searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Endereco") ){
+						if ( searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Endereco") ){
 							lendMeService.searchUsersByAttributeKey(currentSessionId, searchKey.getText(), "endereco",
 									userSearchResultCallback);
 						}
-						else if ( searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Endereco") ){
+						else if ( searchStrategy.getItemText(searchStrategy.getSelectedIndex()).equals("Nome") ){
 							lendMeService.listUsersByDistance(currentSessionId, userSearchResultCallback);
 						}
 					}
@@ -360,7 +360,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 		Label optionsLabel = new Label("Op\u00E7oes");
 		optionsLabel.setStyleName("gwt-OptionsFont");
 		rootPanel.add(optionsLabel, 9, 189);
-		Hyperlink hyperlink = new Hyperlink( "Todos os Usuarios", viewedLogin+"/options/friends");
+		Hyperlink hyperlink = new Hyperlink( "Amigos", viewedLogin+"/options/friends");
 		hyperlink.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink, 11, 240);
 		Hyperlink hyperlink_1 = new Hyperlink( "Items", viewedLogin+"/options/items");
@@ -418,23 +418,40 @@ public class LeftOptionsSideBarPanel extends Composite {
 
 	}
 	
-	public static void redoQuery(){
-		if ( !lastQuery.isItemSearch() ) {
+	public static void redoItemQuery(){
+		if ( !lastQuery.isReallyASearch() ) {
 			lastQuery.getLendMeService().getItems(lastQuery.getSessionId(), lastQuery.getViewedLogin(), lastQuery.getItemSearchCallback());
 		}
-		else if ( lastQuery.isItemSearch() ){
+		else if ( lastQuery.isReallyASearch() ){
 			String attribute = lastQuery.getQueryStrategy();
 			lastQuery.getLendMeService().searchForItems(lastQuery.getSessionId(), lastQuery.getQueryKey(), attribute,
 					"crescente", "reputacao", lastQuery.getItemSearchCallback());
 		}
 	}
 	
-	public static void setLastQueryData(LendMeAsync lendMeService, boolean wasSearch, String currentSessionId, String viewedLogin, ItemSearchResultFound itemSearchCallback){
+	public static void redoUserQuery(){
+		if ( !lastQuery.isReallyASearch() ) {
+			lastQuery.getLendMeService().getFriends(lastQuery.getSessionId(), lastQuery.getViewedLogin(), lastQuery.getUserSearchCallback());
+		}
+		else if ( lastQuery.isReallyASearch() ){
+			if (lastQuery.getQueryStrategy().equals("Endereco") ){
+				lastQuery.getLendMeService().searchUsersByAttributeKey(lastQuery.getQueryStrategy(), lastQuery.getQueryKey(), "endereco",
+						lastQuery.getUserSearchCallback());
+			}
+			else if ( lastQuery.getQueryStrategy().equals("Nome") ){
+				lastQuery.getLendMeService().listUsersByDistance(lastQuery.getSessionId(), lastQuery.getUserSearchCallback());
+			}
+		}
+	}
+	
+	public static void setLastQueryData(LendMeAsync lendMeService, boolean wasSearch, String currentSessionId, String viewedLogin,
+			ItemSearchResultFound itemSearchCallback, UserSearchResultFound userSearchCallback){
 		lastQuery.setLendMeService(lendMeService);
 		lastQuery.setItemSearch(wasSearch);
 		lastQuery.setSessionId(currentSessionId);
 		lastQuery.setViewedLogin(viewedLogin);
 		lastQuery.setItemSearchCallback(itemSearchCallback);
+		lastQuery.setUserSearchCallback(userSearchCallback);
 	}
 	
 }

@@ -1,6 +1,5 @@
 package com.lendme.client;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +10,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Image;
 
 public class UserViewer extends Composite{
 	
@@ -19,14 +17,14 @@ public class UserViewer extends Composite{
 	public enum FriendshipStatus {FRIEND, NOT_FRIEND, REQUESTED_MY_FRIENDSHIP};
 	
 //	private final String defaultImage = "http://icons.iconarchive.com/icons/fasticon/fast-icon-users/128/user-icon.png";
-	private static final Map<LendMeUsersContainer, LendMeUsersContainer> usersContainers = new HashMap<LendMeUsersContainer, LendMeUsersContainer>();
+	private static final Set<LendMeUsersContainer> usersSet = new HashSet<LendMeUsersContainer>();
 	private static AbsolutePanel containerPanel;
 	private static ScrollPanel rootScrollPanel;
 	private static AbsolutePanel internalPanel;
+	private final static AbsolutePanel usersPanel = new AbsolutePanel();
 	private static int height = 100;
 	private static int lastX = 10;
 	private static int lastY = 25;
-	private static Label lblLendme;
 	
 	public UserViewer(final LendMeAsync lendMeService, final String solicitorSession, final String userViewerLogin,
 			final Map<String, String[]> searchResults) {
@@ -55,30 +53,23 @@ public class UserViewer extends Composite{
 		containerPanel.setSize("600px", "600px");
 		
 		internalPanel = new AbsolutePanel();
-		internalPanel.setStyleName("backGround1");
-		internalPanel.setSize("600px", "70px");
+		//this.add(absolutePanel, 10, 9);
+		internalPanel.setSize("600px", "17px");
 		
 		Label lblNewLabel = new Label("USERS");
-		lblNewLabel.setStyleName("defaultTitle");
-		internalPanel.add(lblNewLabel, 63, 19);
+		internalPanel.add(lblNewLabel, 270, 0);
 		
 		final Label errorLabel = new Label("Houve um erro com a comunicação com o servidor.");
-		errorLabel.setStyleName("defaultErrorStyle");
-		internalPanel.add(errorLabel, 0, 60);
-		errorLabel.setSize("290px", "10px");
+		errorLabel.setStyleName("alert");
+		internalPanel.add(errorLabel, 3, 15);
 		errorLabel.setVisible(false);
 		
 		containerPanel.add(internalPanel);
 		
-		Image image = new Image((String) null);
-		image.setUrl("http://icons.iconarchive.com/icons/kawsone/teneo/48/Blacklist-icon.png");
-		internalPanel.add(image, 6, 5);
-		image.setSize("48px", "48px");
-		
-		lblLendme = new Label("Lend-me!");
-		lblLendme.setStyleName("barra");
-		internalPanel.add(lblLendme, 0, 58);
-		lblLendme.setSize("700px", "10px");
+		usersPanel.setSize("600px", "600px");
+		containerPanel.add(usersPanel, 	0, 0);
+		usersSet.clear();
+		usersPanel.clear();
 		
 		lendMeService.getFriends(solicitorSession, new AsyncCallback<Map<String,String[]>>() {
 
@@ -117,23 +108,12 @@ public class UserViewer extends Composite{
 												FriendshipStatus.FRIEND : (userFriendshipRequests.contains(actualResult) ? 
 												FriendshipStatus.REQUESTED_MY_FRIENDSHIP : FriendshipStatus.NOT_FRIEND);
 										
-										LendMeUsersContainer container = new LendMeUsersContainer(lendMeService, solicitorSession, userViewerLogin, searchResults,
+										LendMeUsersContainer container = new LendMeUsersContainer(lendMeService, solicitorSession, userViewerLogin,
 												new LendMeUsersRepresentation("http://graph.facebook.com/"+actualResult+"/picture", actualResult,
 												searchResults.get(actualResult)[0], searchResults.get(actualResult)[2],
 												searchResults.get(actualResult)[1]), curUserFriendshipStatus);
-										usersContainers.put(container, container);
+										usersSet.add(container);
 									}
-								}
-								Set<String> theRemainingViewed = new HashSet<String>();
-								for ( LendMeUsersContainer remaining : usersContainers.keySet() ){
-									theRemainingViewed.add(remaining.getViewed());
-								}
-								Set<String> toBeRemoved = searchResults.keySet();
-								toBeRemoved.removeAll(theRemainingViewed);
-								for (String viewedLoginToBeExcluded : toBeRemoved ){
-									//creating a stub for container whose only important attribute is the viewedLogin
-									//because instances of Container with same viewedLogin are considered to be the same
-									usersContainers.remove(new LendMeUsersContainer(viewedLoginToBeExcluded));
 								}
 								refreshThis();
 							}
@@ -153,10 +133,10 @@ public class UserViewer extends Composite{
 		lastX = 10;
 		lastY = 25;
 
-		for(LendMeUsersContainer container : usersContainers.keySet()){
-			containerPanel.add(usersContainers.get(container), lastX, lastY);
+		for(LendMeUsersContainer container : usersSet){
+			usersPanel.add(container, lastX, lastY);
 			height = height + 130;
-			containerPanel.setHeight(Integer.toString(height)+"px");
+			usersPanel.setHeight(Integer.toString(height)+"px");
 									
 			if(elements%2 == 0){
 				lastY = lastY + 175;

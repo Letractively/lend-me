@@ -1,6 +1,8 @@
 package com.lendme.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -180,7 +182,9 @@ public class LendMeTopicsRep extends AbsolutePanel implements HasTopicBeenAccess
 
 				@Override
 				public void onSuccess(Map<String, String[]> result) {
-					for (String message : result.keySet()) {
+					List<String> resultList = new ArrayList<String>(result.keySet());
+					Collections.reverse(resultList);
+					for (String message : resultList) {
 					topicMessages.add(new LendMeMsgsRep(lendMeService, solicitorSessionId, result.get(message)[0], result.get(message)[1],
 						result.get(message)[2], result.get(message)[3], result.get(message)[4]));
 					}

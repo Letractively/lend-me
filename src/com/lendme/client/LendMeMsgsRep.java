@@ -5,6 +5,8 @@ import java.util.TreeMap;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,14 +19,17 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class LendMeMsgsRep extends AbsolutePanel {
 	
 	private Map<String, String> messageProperties = new TreeMap<String, String>();
-	private final Label senderLabel;
-	private final Label subjectLabel;
-	private final Label dateLabel;
-	private final TextBox messageTextBox;
+	private Label senderLabel;
+	private Label subjectLabel;
+	private Label dateLabel;
+	private TextBox messageTextBox;
 	private NewMsgForm answerMsg;
+	private HorizontalPanel hPanel;
+	private VerticalPanel vPanel;
 	
 	private LendMeAsync lendMeService;
 	private String solicitorSessionId;
+	private String senderLogin;
 
 	/**
 	 * @wbp.parser.constructor
@@ -33,10 +38,11 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		
 		this.solicitorSessionId = currentSessionId;
 		this.lendMeService = lendMeService;
+		this.senderLogin = senderLogin;
 		
 		setWidth("550px");
 		
-		VerticalPanel vPanel = new VerticalPanel();
+		vPanel = new VerticalPanel();
 		vPanel.setWidth("550px");
 		
 		subjectLabel = new Label("Assunto");
@@ -44,7 +50,7 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		vPanel.add(subjectLabel);
 		
 		
-		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel = new HorizontalPanel();
 		hPanel.setStyleName("messagesLines");
 		hPanel.setSize("484px", "30px");
 		
@@ -60,42 +66,23 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		
 		vPanel.add(hPanel);
 		
-		PushButton answerMsgButton = new PushButton("New button");
-		answerMsgButton.getUpFace().setText("Responder");
-		hPanel.add(answerMsgButton);
-		answerMsgButton.setSize("70px", "20px");
-		
-		answerMsgButton.addClickHandler(new ClickHandler() {
+		lendMeService.getUserAttributeBySessionId(currentSessionId, "login", new AsyncCallback<String>() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				sendAnswerMessage();
+			public void onSuccess(String result) {
+				amITheSender(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Could not retrieve information from the user: " + caught.getMessage());
+				
 			}
 		});
 		
-		hPanel.add(answerMsgButton);
-		
-		messageTextBox = new TextBox();
-		messageTextBox.setReadOnly(true);
-		messageTextBox.setText("Mensagem de exemplo...");
-		messageTextBox.setStyleName("messagesLines");
-		messageTextBox.setWidth("500px");
-		vPanel.add(messageTextBox);
-
-		HorizontalPanel greatPanel = new HorizontalPanel();
-		
-		Image userPhoto = new Image("https://graph.facebook.com/" + senderLogin + "/picture");
-		greatPanel.add(userPhoto);
-		userPhoto.setSize("45px", "48px");
-		greatPanel.add(vPanel);
-		greatPanel.setStyleName("messagesLines");
-		
-		DecoratorPanel decPanel = new DecoratorPanel();
-		decPanel.add(greatPanel);
-		
-		
-		this.add(decPanel);
 	}
+	
+	
 	
 	public LendMeMsgsRep(LendMeAsync lendMeService, String currentSessionId, String message, String subject, 
 			String sender, String date, String lendingId) {
@@ -115,19 +102,47 @@ public class LendMeMsgsRep extends AbsolutePanel {
 			senderLabel.setText(senderLabel.getText() + sender);
 		}
 
-//		setMessageText(message);
 		messageTextBox.setText(message);
 		
 		dateLabel.setText(date);
 	}
 	
-//	private void setMessageText(String message) {
-//		for (int i = 0; i < message.length(); i+=59) {
-//			messageTextBox.setText(message);
-//		}
-//		messageTextBox.setHeight(String.valueOf(message.length()/60)+"px");
-//	}
-	
+	private void amITheSender(String myLogin) {
+		if (senderLogin.equals(myLogin)) {
+			PushButton answerMsgButton = new PushButton("New button");
+			answerMsgButton.getUpFace().setText("Responder");
+			hPanel.add(answerMsgButton);
+			answerMsgButton.setSize("70px", "20px");
+			
+			answerMsgButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					sendAnswerMessage();
+				}
+			});
+			hPanel.add(answerMsgButton);
+		}
+			messageTextBox = new TextBox();
+			messageTextBox.setReadOnly(true);
+			messageTextBox.setText("Mensagem de exemplo...");
+			messageTextBox.setStyleName("messagesLines");
+			messageTextBox.setWidth("500px");
+			vPanel.add(messageTextBox);
+
+			HorizontalPanel greatPanel = new HorizontalPanel();
+			
+			Image userPhoto = new Image("https://graph.facebook.com/" + senderLogin + "/picture");
+			greatPanel.add(userPhoto);
+			userPhoto.setSize("45px", "48px");
+			greatPanel.add(vPanel);
+			greatPanel.setStyleName("messagesLines");
+			
+			DecoratorPanel decPanel = new DecoratorPanel();
+			decPanel.add(greatPanel);
+			
+			this.add(decPanel);
+	}
 	
 	private void fillPropertiesMap(String message, String subject, 
 			String sender, String date, String lendingId) {

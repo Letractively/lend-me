@@ -8,6 +8,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -26,7 +27,7 @@ public class NewMsgForm extends PopupPanel {
 	private TextBox receiverTextBox; 
 	private TextBox subjectText;
 	private ListBox lendingListBox;
-	private RadioButton negotiationRdioBtn;
+	private CheckBox negotiationCheckBox;
 	private RichTextArea textArea;
 	private RichTextToolbar toolbar;
 	private NewMsgForm me;
@@ -42,9 +43,9 @@ public class NewMsgForm extends PopupPanel {
 		receivedLendingId = lendingId;
 		
 		if (receivedLendingId.trim().isEmpty()) {
-			negotiationRdioBtn.setValue(false);
+			negotiationCheckBox.setValue(false);
 		} else {
-			negotiationRdioBtn.setValue(true);
+			negotiationCheckBox.setValue(true);
 			showOngoingLendings();
 			selectReceivedLending();
 			lendingListBox.setVisible(true);
@@ -132,15 +133,20 @@ public class NewMsgForm extends PopupPanel {
 		absolutePanel.add(subjectText, 72, 59);
 		subjectText.setSize("213px", "20px");
 		
-		negotiationRdioBtn = new RadioButton("new name", "Negociacao");
-		negotiationRdioBtn.setStyleName("msg-label");
-		absolutePanel.add(negotiationRdioBtn, 314, 25);
+		negotiationCheckBox = new CheckBox("Negociacao");
+		negotiationCheckBox.setStyleName("msg-label");
+		absolutePanel.add(negotiationCheckBox, 314, 25);
 		
-		negotiationRdioBtn.addClickHandler(new ClickHandler() {
+		negotiationCheckBox.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				showOngoingLendings();
+				if (negotiationCheckBox.getValue()) {
+					showOngoingLendings();
+				} else {
+					lendingListBox.clear();
+					lendingListBox.setVisible(false);
+				}
 			}
 		});
 		
@@ -189,7 +195,7 @@ public class NewMsgForm extends PopupPanel {
 	
 	private void sendMessage() {
 		
-		if (! negotiationRdioBtn.getValue()) {
+		if (! negotiationCheckBox.getValue()) {
 			lendMeService.sendMessage(solicitorSessionId, subjectText.getText(),
 					textArea.getText(), receiverTextBox.getText(), new AsyncCallback<String>() {
 						
@@ -232,7 +238,7 @@ public class NewMsgForm extends PopupPanel {
 		receiverTextBox.setText("");
 		subjectText.setText("");
 		textArea.setText("");
-		negotiationRdioBtn.setValue(false);
+		negotiationCheckBox.setValue(false);
 		lendingListBox.clear();
 	}
 	

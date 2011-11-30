@@ -127,7 +127,6 @@ public class LendMeMsgsRep extends AbsolutePanel {
 		}
 			
 			messageTextBox.setReadOnly(true);
-			messageTextBox.setText("Mensagem de exemplo...");
 			messageTextBox.setStyleName("messagesLines");
 			messageTextBox.setWidth("500px");
 			vPanel.add(messageTextBox);

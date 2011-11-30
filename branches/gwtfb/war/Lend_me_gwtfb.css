@@ -326,6 +326,60 @@ button em.rightImage{
   font-weight: bolder;
   font-size: 8pt;
 }
+.barra {
+	border-top: thin inset Maroon;
+	border-bottom: thin inset Maroon;
+	font-stretch: normal;
+	font-size: 10px;
+	text-indent: 3px;
+	background-color: #FF7F24;
+}
+.linha {
+	font-stretch: normal;
+	font-size: 9px;
+	font-style: normal;
+	font-weight: lighter;
+}
+.headerBackground {
+	background-color: #D9D9F3;
+}
+
+.backGround1{
+	background-color: #D9D9F3;
+}
+
+.backGround2{
+	background-color: #E6E6FA;
+}
+
+.smalltxt{
+	font-size: 13px;
+	font-style: normal;
+}
+
+
+.defaultTitle {
+	font-weight: bolder;
+	font-size: 23px;
+	font-color: #8B4513;
+	font-variant: small-caps;
+	font-style: oblique;
+}
+
+
+.defaultErrorStyle{
+	background-color: #FFFF00;
+	font-size: 11px;
+	font-weight: bolder;
+	font-color: #FF0000;
+}
+
+.click{
+	font-weight: bolder;
+	font-size: 12px;
+	font-color: #8B4513;
+}
+
 
 
 }

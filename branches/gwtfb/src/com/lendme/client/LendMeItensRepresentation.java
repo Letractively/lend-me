@@ -31,7 +31,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		final Image image = new Image();
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				ItemViewer itemViewer = new ItemViewer(lendMeService, sessionId, viewedLogin, image.getUrl(), itemInfo);
+				LendMeItemsRep itemViewer = new LendMeItemsRep(lendMeService, sessionId, viewedLogin, image.getUrl(), itemInfo);
 				itemViewer.center();
 			}
 		});

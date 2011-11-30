@@ -8,8 +8,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
-import com.lendme.server.LendMeWebInterfaceImpl.ItemState;
 
 public class LendMeItensRepresentation extends AbsolutePanel {
 

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
 
 @RemoteServiceRelativePath("facade")
 public interface LendMe extends RemoteService{

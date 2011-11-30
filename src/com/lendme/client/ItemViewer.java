@@ -11,8 +11,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
-import com.lendme.server.LendMeWebInterfaceImpl.ItemState;
 
 public class ItemViewer extends PopupPanel {
 

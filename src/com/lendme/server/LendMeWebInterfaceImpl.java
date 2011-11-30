@@ -1,6 +1,5 @@
 package com.lendme.server;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +11,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.lendme.client.ItemInfo;
+import com.lendme.client.ItemState;
 import com.lendme.client.LendMe;
 import com.lendme.server.entities.ActivityRegistry;
 import com.lendme.server.entities.EventDate;
@@ -28,74 +29,6 @@ import com.lendme.server.utils.UserDateComparatorStrategy;
 public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements LendMe {
 
 	private LendMeFacade lendMe = LendMeFacade.getInstance();
-
-	public enum ItemState {
-		LENT, AVAILABLE, RETURNED, ASKED_FOR_RETURN,
-		UNAVAILABLE, INTERESTED, REQUESTED;
-	}
-	
-	public class ItemInfo implements Serializable{
-		
-		final String itemName;
-		final String category;
-		final String description;
-		final String creationDate;
-		final String itemId;
-		final String lendingId;
-		final String[] interested;
-		final boolean belongsToMe;
-		final ItemState state;
-		
-		public ItemInfo( String itemName, String category, String description, String creationDate, String itemId,
-				String lendingId, String[] interested, boolean belongsToMe, ItemState state){
-			this.itemName = itemName;
-			this.category = category;
-			this.description = description;
-			this.creationDate = creationDate;
-			this.itemId = itemId;
-			this.lendingId = lendingId;
-			this.interested = interested;
-			this.belongsToMe = belongsToMe;
-			this.state = state;
-		}
-
-		public String getItemName() {
-			return itemName;
-		}
-
-		public String getCategory() {
-			return category;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public String getCreationDate() {
-			return creationDate;
-		}
-
-		public String getItemId() {
-			return itemId;
-		}
-
-		public String getLendingId() {
-			return lendingId;
-		}
-
-		public String[] getInterested() {
-			return interested;
-		}
-
-		public boolean belongsToMe() {
-			return belongsToMe;
-		}
-
-		public ItemState getState() {
-			return state;
-		}
-
-	}
 
 	/**
 	 * Apaga todos os dados do sistema, como

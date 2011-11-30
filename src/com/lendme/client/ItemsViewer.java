@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
 
 public class ItemsViewer extends Composite{
 

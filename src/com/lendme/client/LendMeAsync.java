@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
 
 public interface LendMeAsync {
 

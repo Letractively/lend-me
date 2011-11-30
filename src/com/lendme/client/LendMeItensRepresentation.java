@@ -8,51 +8,32 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
+import com.lendme.server.LendMeWebInterfaceImpl.ItemState;
 
 public class LendMeItensRepresentation extends AbsolutePanel {
 
-	private final Image image;
-	private final Label name;
-	private final Label category;
-	private final Label description;
-	private ItemViewer itemViewer;
-		
 	private final int MAX_SIZE = 20;
 	private Label topSelect;
 	private Label underSelect;
 	private AbsolutePanel conteinerPanel;
-	
-	private final LendMeAsync lendmeLocal;
-	private final String idSessionLocal;
-	
-	private boolean lent;
-	private boolean requested;
-	private boolean iAmOwnerLocal;
-	private String itemIdLocal;
-	private String lendingIdLocal;
-	private String interestedsLocal;
-	private Image exclama;
 	
 	private String URLExclamation = "http://ricardolombardi.ig.com.br/wp-content/uploads/2008/05/2009/04/exclamation-001.jpg";
 	
 	/**
 	 * @wbp.parser.constructor
 	 */
-	private LendMeItensRepresentation(LendMeAsync lendme, String idSession, final String viewedLogin) {
-		super();
-		
-		this.lendmeLocal = lendme;
-		this.idSessionLocal = idSession;
-		
+	public LendMeItensRepresentation(final LendMeAsync lendMeService, final String sessionId, final String viewedLogin, final String imgURL, final ItemInfo itemInfo){
+
 		conteinerPanel = new AbsolutePanel();
 		conteinerPanel.setStyleName("gwt-PopupPanel");
 		super.add(conteinerPanel);
 		conteinerPanel.setSize("270px", "74px");
 		
-		image = new Image();
+		final Image image = new Image();
 		image.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				itemViewer = new ItemViewer(lendmeLocal, idSessionLocal, viewedLogin, image.getUrl(), name.getText(), description.getText(), "", category.getText(), itemIdLocal, lendingIdLocal, interestedsLocal,iAmOwnerLocal, lent, requested);
+				ItemViewer itemViewer = new ItemViewer(lendMeService, sessionId, viewedLogin, image.getUrl(), itemInfo);
 				itemViewer.center();				
 			}
 		});
@@ -77,7 +58,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		lblNewLabel.setStyleName("gwt-Label-item");
 		conteinerPanel.add(lblNewLabel, 71, 10);
 		
-		name = new Label("");
+		Label name = new Label("");
 		name.setStyleName("gwt-Label-item");
 		conteinerPanel.add(name, 113, 10);
 		name.setSize("118px", "14px");
@@ -87,7 +68,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		conteinerPanel.add(lblCategoria, 71, 30);
 		lblCategoria.setSize("37px", "14px");
 		
-		category = new Label("");
+		Label category = new Label("");
 		category.setStyleName("gwt-Label-item");
 		conteinerPanel.add(category, 134, 30);
 		category.setSize("106px", "14px");
@@ -96,7 +77,7 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		lblNewLabel_3.setStyleName("gwt-Label-item");
 		conteinerPanel.add(lblNewLabel_3, 72, 50);
 		
-		description = new Label("");
+		Label description = new Label("");
 		description.setStyleName("gwt-Label-item");
 		conteinerPanel.add(description, 134, 50);
 		description.setSize("106px", "14px");
@@ -114,39 +95,43 @@ public class LendMeItensRepresentation extends AbsolutePanel {
 		
 		conteinerPanel.add(underSelect, 0, 64);
 		
-		exclama = new Image();
+		Image exclama = new Image();
 		exclama.setUrl(URLExclamation);
 		conteinerPanel.add(exclama, 239, 10);
 		exclama.setSize("29px", "29px");
 		
-	}
-	
-	public LendMeItensRepresentation(LendMeAsync lendme, String idSession, String viewedLogin, String imgURL ,String name, String category, String description, String itemId, String lendingID,String interesteds, boolean iAmOwner,boolean action, boolean lent, boolean requested){
-		this(lendme, idSession, viewedLogin);
-		
-		this.lent = lent;
-		this.requested = requested;
-		this.itemIdLocal = itemId;
-		this.lendingIdLocal = lendingID;
-		this.interestedsLocal = interesteds;
-		this.iAmOwnerLocal = iAmOwner;
-				
 		setStyleName("gwt-Label-item");
-		exclama.setVisible(action);
-		/*name*/
-		if(name.length() < MAX_SIZE) this.name.setText(name);
-		else this.name.setText(name.substring(0, MAX_SIZE-3)+"...");
+		boolean warnEvent = false;
+		if ( itemInfo.belongsToMe() && ( itemInfo.getState() == ItemState.REQUESTED || itemInfo.getState() == ItemState.RETURNED  ) ){
+			warnEvent = true;
+		}
+		else if ( !itemInfo.belongsToMe() && ( itemInfo.getState() == ItemState.LENT ) ){
+			warnEvent = true;
+		}
+		exclama.setVisible(warnEvent);
+
+		if (itemInfo.getItemName().length() < MAX_SIZE){
+			name.setText(itemInfo.getItemName());
+		}
+		else{
+			name.setText(itemInfo.getItemName().substring(0, MAX_SIZE-3)+"...");
+		}
 		
-		/*category*/
-		if(category.length() < MAX_SIZE) this.category.setText(category);
-		else this.category.setText(category.substring(0, MAX_SIZE-3)+"...");
+		if ( itemInfo.getCategory().length() < MAX_SIZE ){
+			category.setText(itemInfo.getCategory());
+		}
+		else {
+			category.setText(itemInfo.getCategory().substring(0, MAX_SIZE-3)+"...");
+		}
 		
-		/*description*/
-		if(description.length() < MAX_SIZE) this.description.setText(description);
-		else this.description.setText(description.substring(0, MAX_SIZE-3)+"...");
+		if ( itemInfo.getDescription().length() < MAX_SIZE){
+			description.setText(itemInfo.getDescription());
+		}
+		else{
+			description.setText(itemInfo.getDescription().substring(0, MAX_SIZE-3)+"...");
+		}
 		
 		image.setUrl(imgURL);
-		
 		
 	}
 }

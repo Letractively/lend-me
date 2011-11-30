@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
 
 @RemoteServiceRelativePath("facade")
 public interface LendMe extends RemoteService{
@@ -50,15 +51,15 @@ public interface LendMe extends RemoteService{
 	
 	public String registerItem(String creatorSession, String name, String description, String category) throws Exception;
 	
-	public Map<String, String[]> searchForItems(String solicitorSession, String key, String attribute, String disposition,
+	public Map<String, ItemInfo> searchForItems(String solicitorSession, String key, String attribute, String disposition,
 			String criteria) throws Exception;
 	
 	public String[] searchForItemsWithIds(String solicitorSession, String key, String attribute, String disposition,
 			String criteria) throws Exception;
 	
-	public Map<String, String[]> getItems(String solicitorSession) throws Exception;
+	public Map<String, ItemInfo> getItems(String solicitorSession) throws Exception;
 	
-	public Map<String, String[]> getItems(String solicitorSession, String solicitedLogin) throws Exception;
+	public Map<String, ItemInfo> getItems(String solicitorSession, String solicitedLogin) throws Exception;
 	
 	public String[] getItemsWithIds(String solicitorSession) throws Exception;
 	

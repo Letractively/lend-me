@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.lendme.fbsdk.FBCore;
 import com.lendme.fbsdk.FBEvent;
 import com.lendme.fbsdk.FBXfbml;
+import com.lendme.server.LendMeWebInterfaceImpl.ItemInfo;
 
 public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String>  {
 
@@ -74,9 +75,9 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 	}
 
-	static class ItemSearchResultFound implements AsyncCallback<Map<String, String[]>>{
+	static class ItemSearchResultFound implements AsyncCallback<Map<String, ItemInfo>>{
 
-		private Map<String, String[]> result = new HashMap<String, String[]>();
+		private Map<String, ItemInfo> result = new HashMap<String, ItemInfo>();
 		@Override
 		public void onFailure(Throwable caught) {
 			if ( caught.getMessage().equals("O usu�rio n�o tem permiss�o para visualizar estes itens") ){
@@ -103,12 +104,12 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 
 		@Override
-		public void onSuccess(Map<String, String[]> result) {
+		public void onSuccess(Map<String, ItemInfo> result) {
 			this.result = result;
 			displayItemSearchResults(currentUserId, result);
 		}
 
-		public Map<String, String[]> getResult(){
+		public Map<String, ItemInfo> getResult(){
 			return result;
 		}
 	}
@@ -496,9 +497,12 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		mainView.setWidget(new UserViewer(lendMeService, currentSessionId, currentUserId, userSearchResult.getResult()));
 	}
 
-	public static void displayItemSearchResults(String viewedLogin, Map<String, String[]> results){
-		displayResultMap(results);
+	public static void displayItemSearchResults(String viewedLogin, Map<String, ItemInfo> results){
 		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, viewedLogin, itemSearchResult.getResult()));
+	}
+	
+	public static void redoSearch(){
+		
 	}
 	
 	public void displayCurrentUserFriends(String viewedLogin){

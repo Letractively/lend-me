@@ -29,23 +29,86 @@ import com.lendme.fbsdk.FBCore;
 public class LeftOptionsSideBarPanel extends Composite {
 
 	final ScrollPanel realRootPanel = new ScrollPanel();
-	final LendMeAsync lendMeService;
 
+	public static class LastQueryData {
+
+		String sessionId;
+		boolean itemSearch;
+		String queryKey;
+		String queryStrategy;
+		UserSearchResultFound userSearchCallback;
+		ItemSearchResultFound itemSearchCallback;
+		LendMeAsync lendMeService;
+		
+		public LastQueryData(String sessionId, boolean itemSearch, String queryKey, String queryStrategy,
+				UserSearchResultFound userSearchCallback, ItemSearchResultFound itemSearchCallback, LendMeAsync lendMeService){
+			this.sessionId = sessionId;
+			this.itemSearch = itemSearch;
+			this.queryKey = queryKey;
+			this.queryStrategy = queryStrategy;
+			this.userSearchCallback = userSearchCallback;
+			this.itemSearchCallback = itemSearchCallback;
+			this.lendMeService = lendMeService;
+		}
+		public boolean isItemSearch() {
+			return itemSearch;
+		}
+		public void setItemSearch(boolean itemSearch) {
+			this.itemSearch = itemSearch;
+		}
+		public String getQueryKey() {
+			return queryKey;
+		}
+		public void setQueryKey(String queryKey) {
+			this.queryKey = queryKey;
+		}
+		public String getQueryStrategy() {
+			return queryStrategy;
+		}
+		public void setQueryStrategy(String queryStrategy) {
+			this.queryStrategy = queryStrategy;
+		}
+		public String getSessionId() {
+			return sessionId;
+		}
+		public void setSessionId(String sessionId) {
+			this.sessionId = sessionId;
+		}
+		public UserSearchResultFound getUserSearchCallback() {
+			return userSearchCallback;
+		}
+		public void setUserSearchCallback(UserSearchResultFound userSearchCallback) {
+			this.userSearchCallback = userSearchCallback;
+		}
+		public ItemSearchResultFound getItemSearchCallback() {
+			return itemSearchCallback;
+		}
+		public void setItemSearchCallback(ItemSearchResultFound itemSearchCallback) {
+			this.itemSearchCallback = itemSearchCallback;
+		}
+		public LendMeAsync getLendMeService() {
+			return lendMeService;
+		}
+		public void setLendMeService(LendMeAsync lendMeService) {
+			this.lendMeService = lendMeService;
+		}
+	}
+	
+	public final static LastQueryData lastQuery = new LastQueryData("", false, "", "", null, null, null);
+	
 	public LeftOptionsSideBarPanel(final LendMeAsync lendMeService, final String currentSessionId, 
 			final String currentUserLogin, final String viewedLogin, final FBCore fbCore, UserSearchResultFound userSearchResult, ItemSearchResultFound itemSearchResult) {
 
-		this.lendMeService = lendMeService;
-		
 		if (currentUserLogin == null || currentUserLogin.trim().isEmpty() ){
 			initWidget(realRootPanel);
 			return;
 		}
 		else{
-			validate(currentSessionId, currentUserLogin, viewedLogin, fbCore, userSearchResult, itemSearchResult);
+			validate(lendMeService, currentSessionId, currentUserLogin, viewedLogin, fbCore, userSearchResult, itemSearchResult);
 		}
 	}
 	
-	private void validate(String currentSessionId, String currentUserLogin, String viewedLogin, FBCore fbCore, UserSearchResultFound userSearchResult, ItemSearchResultFound itemSearchResult){
+	private void validate(LendMeAsync lendMeService, String currentSessionId, String currentUserLogin, String viewedLogin, FBCore fbCore, UserSearchResultFound userSearchResult, ItemSearchResultFound itemSearchResult){
 		if ( !fbCore.userExists(currentUserLogin) ){
 			initWidget(realRootPanel);
 			return;
@@ -54,12 +117,12 @@ public class LeftOptionsSideBarPanel extends Composite {
 			viewedLogin = currentUserLogin;
 		}
 		
-		renderBar(currentSessionId, currentUserLogin, viewedLogin, fbCore, userSearchResult, itemSearchResult);
+		renderBar(lendMeService, currentSessionId, currentUserLogin, viewedLogin, fbCore, userSearchResult, itemSearchResult);
 	}
 
 
 	
-	private void renderBar(final String currentSessionId, final String currentUserLogin,
+	private void renderBar(final LendMeAsync lendMeService, final String currentSessionId, final String currentUserLogin,
 			final String viewedLogin, final FBCore fbCore, final UserSearchResultFound userSearchResultCallback, final ItemSearchResultFound itemSearchResultCallback) {
 		/**
 		 * User Profile
@@ -251,8 +314,14 @@ public class LeftOptionsSideBarPanel extends Composite {
 					lendMeService.searchForItems(currentSessionId, searchKey.getText(), attribute,
 							"crescente", "reputacao", itemSearchResultCallback);
 				}
+				lastQuery.setLendMeService(lendMeService);
+				lastQuery.setSessionId(currentSessionId);
+				lastQuery.setItemSearch(true);
+				lastQuery.setQueryKey(searchKey.getText());
+				lastQuery.setQueryStrategy(searchStrategy.getItemText(searchStrategy.getSelectedIndex()));
+				lastQuery.setUserSearchCallback(userSearchResultCallback);
+				lastQuery.setItemSearchCallback(itemSearchResultCallback);
 			}
-
 		}
 
 		class EnterKeyHit implements KeyPressHandler{
@@ -274,6 +343,13 @@ public class LeftOptionsSideBarPanel extends Composite {
 						lendMeService.searchForItems(currentSessionId, searchKey.getText(), attribute,
 								"crescente", "reputacao", itemSearchResultCallback);
 					}
+					lastQuery.setLendMeService(lendMeService);
+					lastQuery.setSessionId(currentSessionId);
+					lastQuery.setItemSearch(true);
+					lastQuery.setQueryKey(searchKey.getText());
+					lastQuery.setQueryStrategy(searchStrategy.getItemText(searchStrategy.getSelectedIndex()));
+					lastQuery.setUserSearchCallback(userSearchResultCallback);
+					lastQuery.setItemSearchCallback(itemSearchResultCallback);
 				}
 			}
 
@@ -340,6 +416,23 @@ public class LeftOptionsSideBarPanel extends Composite {
 
 		});
 
+	}
+	
+	public static void redoQuery(){
+		if ( !lastQuery.isItemSearch() ) {
+			if (lastQuery.getQueryStrategy().equals("Endereco") ){
+				lastQuery.getLendMeService().searchUsersByAttributeKey(lastQuery.getSessionId(), lastQuery.getQueryKey(), "endereco",
+						lastQuery.getUserSearchCallback());
+			}
+			else if ( lastQuery.getQueryStrategy().equals("Nome") ){
+				lastQuery.getLendMeService().listUsersByDistance(lastQuery.getSessionId(), lastQuery.getUserSearchCallback());
+			}
+		}
+		else if ( lastQuery.isItemSearch() ){
+			String attribute = lastQuery.getQueryStrategy();
+			lastQuery.getLendMeService().searchForItems(lastQuery.getSessionId(), lastQuery.getQueryKey(), attribute,
+					"crescente", "reputacao", lastQuery.getItemSearchCallback());
+		}
 	}
 	
 }

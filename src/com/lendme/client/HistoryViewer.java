@@ -60,7 +60,7 @@ public class HistoryViewer extends Composite {
 		rootPanel.add(scrollPanel, 0, 32);
 		
 		if ( scope.equals("all") ){
-			lendMeService.getActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, ArrayList<String[]>>>() {
+			lendMeService.getJointActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, ArrayList<String[]>>>() {
 
 				@Override
 				public void onSuccess(Map<String, ArrayList<String[]>> result) {
@@ -83,7 +83,7 @@ public class HistoryViewer extends Composite {
 			});
 		}
 		else{
-			lendMeService.getJointActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, ArrayList<String[]>>>() {
+			lendMeService.getActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, ArrayList<String[]>>>() {
 
 				@Override
 				public void onSuccess(Map<String, ArrayList<String[]>> result) {

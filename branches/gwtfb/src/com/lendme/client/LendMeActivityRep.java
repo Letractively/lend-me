@@ -8,7 +8,7 @@ public class LendMeActivityRep extends AbsolutePanel {
 
 	final String ICON_ADD_USER = "http://support.microsoft.com/library/images/support/kbgraphics/Public/en-us/office/New%20icon%20image.jpg";
 	final String ICON_NEW_ITEM = "http://www.ablemuse.com/v4/images/new-icon.gif";
-	final String ICON_LEND = "http://lcvinvestments.com/images/handshake.gif";
+	final String ICON_LEND = "http://icons.iconarchive.com/icons/antialiasfactory/jewelry/48/Partnership-icon.png";
 	final String ICON_ITEM_INTEREST = "http://2.bp.blogspot.com/_heKfcJbaI4c/TAd-V76tdxI/AAAAAAAABfM/_4duzSOlLe0/s200/smEyeballs.jpg";
 	final String ICON_FINISH_LENDING = "http://cdn5.iconfinder.com/data/icons/fatcow/32x32/flag_finish.png";
 	final String ICON_NEED_ITEM = "http://www.gratisjogos.info/image.jogos/puzzle.jpg";

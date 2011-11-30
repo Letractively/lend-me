@@ -4,6 +4,10 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -13,6 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class LendMeItemPopup extends PopupPanel {
 
@@ -23,7 +28,7 @@ public class LendMeItemPopup extends PopupPanel {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 
-		AbsolutePanel absolutePanel = new AbsolutePanel();
+		final AbsolutePanel absolutePanel = new AbsolutePanel();
 		setWidget(absolutePanel);
 		absolutePanel.setSize("350px", "223px");
 
@@ -85,26 +90,175 @@ public class LendMeItemPopup extends PopupPanel {
 		absolutePanel.add(image, 10, 29);
 		image.setSize("100px", "92px");
 
-		Image flagE = new Image("");
-		absolutePanel.add(flagE, 317, 5);
-		flagE.setSize("23px", "22px");
+		final TextBox displayInfo = new TextBox();
+		displayInfo.setVisible(false);
+		
+		Image returnedState = new Image("http://www.veryicon.com/icon/preview/System/iCandy%20Junior%20Toolbar/Back%202%20Icon.jpg");
+		absolutePanel.add(returnedState, 317, 5);
+		returnedState.setSize("23px", "22px");
+		returnedState.addMouseOverHandler(new MouseOverHandler(){
 
-		Image flagD = new Image("");
-		absolutePanel.add(flagD, 288, 5);
-		flagD.setSize("23px", "22px");
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				displayInfo.setText("Pedido de devolucao do item");
+				absolutePanel.add(displayInfo, 317, 0);
+				displayInfo.setVisible(true);
+			}
+			
+		});
+		returnedState.addMouseOutHandler(new MouseOutHandler(){
 
-		Image flagC = new Image("");
-		absolutePanel.add(flagC, 259, 5);
-		flagC.setSize("23px", "22px");
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				absolutePanel.remove(displayInfo);
+				displayInfo.setVisible(false);
+			}
+			
+		});
 
-		Image flagB = new Image("");
-		absolutePanel.add(flagB, 230, 5);
-		flagB.setSize("23px", "22px");
+		Image lentState = new Image("http://icons.iconarchive.com/icons/visualpharm/must-have/48/Information-icon.png");
+		absolutePanel.add(lentState, 288, 5);
+		lentState.setSize("23px", "22px");
+		lentState.addMouseOverHandler(new MouseOverHandler(){
 
-		Image flagA = new Image("");
-		absolutePanel.add(flagA, 201, 5);
-		flagA.setSize("23px", "22px");
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				displayInfo.setText("Pedido de emprestimo do item");
+				absolutePanel.add(displayInfo, 288, 0);
+				displayInfo.setVisible(true);
+			}
+			
+		});
+		lentState.addMouseOutHandler(new MouseOutHandler(){
 
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				absolutePanel.remove(displayInfo);
+				displayInfo.setVisible(false);
+			}
+			
+		});
+
+		Image interestedState = new Image("http://icdn.pro/images/en/e/y/eyes-see-icone-9513-48.png");
+		absolutePanel.add(interestedState, 259, 5);
+		interestedState.setSize("23px", "22px");
+		interestedState.addMouseOverHandler(new MouseOverHandler(){
+
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				displayInfo.setText("Voce esta interessado no item");
+				absolutePanel.add(displayInfo, 259, 0);
+				displayInfo.setVisible(true);
+			}
+			
+		});
+		interestedState.addMouseOutHandler(new MouseOutHandler(){
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				absolutePanel.remove(displayInfo);
+				displayInfo.setVisible(false);
+			}
+			
+		});
+
+		Image unavailableState = new Image("http://icons.iconarchive.com/icons/designkindle/build/48/Delete-icon.png");
+		absolutePanel.add(unavailableState, 230, 5);
+		unavailableState.setSize("23px", "22px");
+		unavailableState.addMouseOverHandler(new MouseOverHandler(){
+
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				displayInfo.setText("O item ja foi emprestado");
+				absolutePanel.add(displayInfo, 230, 0);
+				displayInfo.setVisible(true);
+			}
+			
+		});
+		unavailableState.addMouseOutHandler(new MouseOutHandler(){
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				absolutePanel.remove(displayInfo);
+				displayInfo.setVisible(false);
+			}
+			
+		});
+
+		Image availableState = new Image("http://icons.iconarchive.com/icons/dryicons/simplistica/48/accept-icon.png");
+		absolutePanel.add(availableState, 201, 5);
+		availableState.setSize("23px", "22px");
+		availableState.addMouseOverHandler(new MouseOverHandler(){
+
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				displayInfo.setText("O item esta disponivel");
+				absolutePanel.add(displayInfo, 201, 0);
+				displayInfo.setVisible(true);
+			}
+			
+		});
+		availableState.addMouseOutHandler(new MouseOutHandler(){
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				absolutePanel.remove(displayInfo);
+				displayInfo.setVisible(false);
+			}
+			
+		});
+		
+		Image requestedState = new Image("http://icons.iconarchive.com/icons/everaldo/crystal-clear/48/Action-share-icon.png");
+		absolutePanel.add(requestedState, 172, 5);
+		requestedState.setSize("23px", "22px");
+		requestedState.addMouseOverHandler(new MouseOverHandler(){
+
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				if ( new Boolean(itemInfo[7]).booleanValue() ){
+					displayInfo.setText("Alguem esta interessado no seu item");
+				}
+				else{
+					displayInfo.setText("Voce pediu esse item emprestado");
+				}
+				absolutePanel.add(displayInfo, 172, 0);
+				displayInfo.setVisible(true);
+			}
+			
+		});
+		requestedState.addMouseOutHandler(new MouseOutHandler(){
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				absolutePanel.remove(displayInfo);
+				displayInfo.setVisible(false);
+			}
+			
+		});
+		
+		Image askedForReturnState = new Image("http://icons.iconarchive.com/icons/everaldo/crystal-clear/48/Action-share-icon.png");
+		absolutePanel.add(askedForReturnState, 143, 5);
+		askedForReturnState.setSize("23px", "22px");
+		askedForReturnState.addMouseOverHandler(new MouseOverHandler(){
+
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				displayInfo.setText("Voce ja pediu esse item de volta");
+				absolutePanel.add(displayInfo, 143, 0);
+				displayInfo.setVisible(true);
+			}
+			
+		});
+		askedForReturnState.addMouseOutHandler(new MouseOutHandler(){
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				absolutePanel.remove(displayInfo);
+				displayInfo.setVisible(false);
+			}
+			
+		});
+		
 		name.setText(itemInfo[0]);
 		descricao.setText(itemInfo[2]);
 		status.setText(itemInfo[8]);

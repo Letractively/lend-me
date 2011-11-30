@@ -254,11 +254,22 @@ public class LendMeAcceptanceTestInterface {
 	 */
 	public String localizarUsuario(String idSessao, String chave, String atributo) throws Exception{
 
-		String[] resultado = paraArray(system.searchUsersByAttributeKey(idSessao, chave, atributo).keySet());
-		if ( resultado.length == 0 ){
+		Map<String, String[]> resultado = system.searchUsersByAttributeKey(idSessao, chave, atributo);
+		String[] actualResult = new String[resultado.keySet().size()];
+		
+		if ( resultado.keySet().size() == 0 ){
 			return "Nenhum usuário encontrado";
 		}
-		return formatarASaida(resultado);
+		int cont = 0;
+		for (String login : resultado.keySet()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(resultado.get(login)[0]);
+			sb.append(" - ");
+			sb.append(resultado.get(login)[2]);
+			actualResult[cont++] = sb.toString();
+		}
+		
+		return formatarASaida(actualResult);
 	}
 	
 	

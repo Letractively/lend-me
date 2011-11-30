@@ -241,8 +241,6 @@ public class LendMeItemPopup extends PopupPanel {
 		agir.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 
-				Window.alert(actions.getItemText(actions.getSelectedIndex()));
-				
 				if ( actions.getItemText(actions.getSelectedIndex()).equals("deletar") ) {
 
 					boolean confirm = Window.confirm("Tem certeza que deseja apagar o item ?");

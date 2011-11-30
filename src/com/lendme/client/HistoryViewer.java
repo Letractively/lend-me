@@ -41,8 +41,8 @@ public class HistoryViewer extends Composite {
 		container.setWidth("570px");
 
 		ScrollPanel scrollPanel = new ScrollPanel();
-		rootPanel.add(scrollPanel, 10, 80);
-		scrollPanel.setSize("600px", "515px");
+		rootPanel.add(scrollPanel, 0, 80);
+		scrollPanel.setSize("600px", "470px");
 		rootPanel.setSize("600px", "550px");
 		
 		scrollPanel.add(container);
@@ -102,7 +102,7 @@ public class HistoryViewer extends Composite {
 		activityPanel.setWidth("599px");
 		errorLabel.setVisible(false);
 		
-		rootPanel.add(scrollPanel, 10, 80);
+		rootPanel.add(scrollPanel, 0, 80);
 		
 		refresh();
 		

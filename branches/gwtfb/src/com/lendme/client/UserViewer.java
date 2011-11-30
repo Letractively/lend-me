@@ -59,14 +59,13 @@ public class UserViewer extends Composite{
 		internalPanel = new AbsolutePanel();
 		internalPanel.setSize("600px", "72px");
 		
-		Label lblNewLabel = new Label("USERS");
+		Label lblNewLabel = new Label("Usuarios");
 		lblNewLabel.setStyleName("gwt-OptionsFont");
 		internalPanel.add(lblNewLabel, 25, 10);
 		
 		containerPanel.add(internalPanel, 0, 0);
-		internalPanel.add(usersPanel, 0, 72);
+		containerPanel.add(usersPanel, 0, 72);
 		usersPanel.setSize("600px", "528px");
-		usersPanel.clear();
 		
 		PushButton refresh = new PushButton("");
 		containerPanel.add(refresh, 350, 10);
@@ -80,6 +79,8 @@ public class UserViewer extends Composite{
 			}
 			
 		});
+		
+		usersPanel.clear();
 		usersSet.clear();
 		
 		lendMeService.getFriends(solicitorSession, new AsyncCallback<Map<String,String[]>>() {

@@ -41,6 +41,18 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	private static String currentSessionId = "";
 	private static String currentUserId = "";
 	private String accessToken = "";
+	
+	class CommentsPanel extends Composite{
+		private VerticalPanel verticalBar = new VerticalPanel();
+
+		public CommentsPanel(){
+			verticalBar.add(new Label("Ajude a gente!"));
+			verticalBar.add(new HTML ("<hr/><fb:like href='"+ApplicationConstants.APP_URL+"' button_count='button_count' action='like'/>"));
+			verticalBar.add (new HTML("<div style='margin-top: 7px;'> Diga o que vc pensa dessa nova ideia: </div>"));
+			verticalBar.add(new HTML("<hr/><fb:comments numposts='1' xid='gwtfb' width='435px' />"));
+			initWidget(verticalBar);
+		}
+	}
 
 	class SessionInfo {
 		private boolean sessionFound = false;
@@ -182,8 +194,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	 */
 	private void renderApp ( String rawtoken ) {
 
-		//		Window.alert("Rendering app: rawtoken = "+rawtoken);
-
 		rawtoken = rawtoken.replace("#", "");
 
 		if ( rawtoken == null || "".equals ( rawtoken ) || "#".equals ( rawtoken ) ){
@@ -192,16 +202,12 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 		final String token = rawtoken;
 
-		//		Window.alert("final token="+token);
-
 		if ( token.contains("registration") && fbCore.getSession() == null ){
-			//			Window.alert("will render registration view");
 			renderRegistrationView();
 		}
 		else{
 			JavaScriptObject session = fbCore.getSession();
 			if ( session != null ){
-				//				Window.alert("A session exists");
 				fbCore.api("/me", new AsyncCallback<JavaScriptObject>() {
 
 					@Override
@@ -213,22 +219,18 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 					public void onSuccess(JavaScriptObject result) {
 						JSOModel model = result.cast();
 						if ( model.get("id").contains("undefined") ){
-							//							Window.alert("undefined user is logged");
 							Window.Location.replace(ApplicationConstants.APP_URL);
 							Window.Location.reload();
 							return;
 						}
 						else{
 							currentUserId = model.get("id");
-							//							Window.alert("Do action based on token:"+token);
 							if ( token.contains("home") ) {
-								//								Window.alert("Will render home view, currentUserId is "+currentUserId);
 								renderHomeView(currentUserId);
 							}
 							else if ( token.contains("options" ) ) {
 
 								final String option = token.substring(token.indexOf("options")).split("/")[1];
-								//								Window.alert("Will render options view, currentUserId is "+currentUserId+" , option is "+option);
 
 								final String viewedUser = token.substring(0, token.indexOf("options")).split("/")[0];
 								if ( !viewedUser.trim().isEmpty() && fbCore.userExists(viewedUser) ){
@@ -289,7 +291,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 				});
 			}
 			else{
-				//				Window.alert("Session is null, render home view, currentUser is "+currentUserId);
 				renderHomeView(currentUserId);
 			}
 		}
@@ -310,7 +311,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 		else if ( option.equals("history") ){
 			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
-//			mainView.setSize(width, height);
 			mainView.setWidget(new HistoryViewer(lendMeService, currentSessionId, "personal"));
 		}
 		else {
@@ -332,18 +332,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	 */
 	private void renderWhenNotLoggedIn () {
 
-		class CommentsPanel extends Composite{
-			private VerticalPanel verticalBar = new VerticalPanel();
-
-			public CommentsPanel(){
-				verticalBar.add(new Label("Ajude a gente!"));
-				verticalBar.add(new HTML ("<hr/><fb:like href='"+ApplicationConstants.APP_URL+"' button_count='button_count' action='like'/>"));
-				verticalBar.add (new HTML("<div style='margin-top: 7px;'> Diga o que vc pensa dessa nova ideia: </div>"));
-				verticalBar.add(new HTML("<hr/><fb:comments numposts='1' xid='gwtfb' width='435px' />"));
-				initWidget(verticalBar);
-			}
-		}
-
 		mainView.setWidget ( new FrontpageViewController (ApplicationConstants.APP_ID) );
 		leftSideBarView.setWidget(new CommentsPanel());
 		topLinksPanel.setLogoutButtonVisible(false);
@@ -358,10 +346,8 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		leftSideBarView.clear();
 
 		if ( fbCore.getSession() == null ) {
-			//			Window.alert("Rendering home view unlogged");
 			renderWhenNotLoggedIn ();
 		} else {
-			//			Window.alert("Rendering home view logged");
 			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, token, fbCore, userSearchResult, itemSearchResult));
 			renderWhenLoggedIn();
 		}
@@ -371,12 +357,12 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		leftSideBarView.clear();
 
 		mainView.setWidget ( new RegistrationViewController() );
+		leftSideBarView.setWidget(new CommentsPanel());
 		topLinksPanel.setLogoutButtonVisible(false);
 		FBXfbml.parse();
 	}
 
 	public void onValueChange(ValueChangeEvent<String> event) {
-		//		Window.alert("on value change: "+event.getValue());
 		renderApp ( event.getValue() );
 	}
 
@@ -388,7 +374,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		if ( fbCore.getSession() == null ){
 			if ( !currentSessionId.trim().isEmpty() ){
 
-				final String sessionToBeClosed = currentSessionId;
 				lendMeService.closeSession(currentSessionId, new AsyncCallback<Void>(){
 
 					@Override
@@ -398,14 +383,10 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 					@Override
 					public void onSuccess(Void result) {
-						Window.alert("Session ["+sessionToBeClosed+"] closed successfully");
 						currentSessionId = "";
 					}
 
 				});
-			}
-			else{
-				Window.alert("Session is null and Current session id is empty");
 			}
 		}
 		else {
@@ -434,8 +415,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 							public void onSuccess(String result) {
 								currentSessionId = result;
 
-								Window.alert("Session ["+result+"] opened sucessfully");
-
 								lendMeService.getSessionInfo(currentSessionId, new AsyncCallback<String>(){
 
 									@Override
@@ -456,7 +435,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 												@Override
 												public void onSuccess(Boolean result) {
-													Window.alert("User exists in facebook; user exists in system: "+result.booleanValue());
 													if ( result.booleanValue() ){
 														renderHomeView(toBeViewed);
 													}
@@ -468,7 +446,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 											});
 										}
 										else{
-											Window.alert("User doesnt exist in facebook");
 											renderHomeView(currentUserId);
 										}
 									}
@@ -482,10 +459,6 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 				});
 
 			}
-			else{
-				Window.alert("Session exists and Current session id is: "+currentSessionId);
-			}
-
 
 		}
 

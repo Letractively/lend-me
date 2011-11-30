@@ -37,9 +37,6 @@ public class User implements InterestedOn<Item>{
 		if( address == null || address.length == 0 ){
 			throw new Exception("Endereço inválido");//"Invalid address");
 		}
-		if ( email == null || email.length() == 0 ){
-			throw new Exception("Email invalido");
-		}
 		
 		for ( String addressElement : address ){
 			if ( addressElement == null ){

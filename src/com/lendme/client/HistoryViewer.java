@@ -15,12 +15,14 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.widget.client.TextButton;
+import com.google.gwt.user.client.ui.ListBox;
+
 
 public class HistoryViewer extends Composite {
 	
 	private AbsolutePanel rootPanel = new AbsolutePanel();
 	private VerticalPanel container = new VerticalPanel();
+	private final Label errorLabel; 
 	private final String errorMessage = "Erro: LendMe nao conseguiu obter informacao do servidor.";
 	private Label systemMsg;
 	private Label titulo;
@@ -38,7 +40,6 @@ public class HistoryViewer extends Composite {
 	final String GROUP_ICON_PATH = "http://www.iconeasy.com/icon/thumbnails/Internet%20%26%20Web/Users/User%20group%20Icon.jpg";
 final String PERSONAL_ICON_PATH = "http://icons.iconarchive.com/icons/custom-icon-design/pretty-office/48/personal-information-icon.png";
 	private String scope;
-	private Label errorLabel;
 	private Image group;
 	private Image personalIcon;
 	private ArrayList<LendMeActivityRep> historyList;
@@ -54,6 +55,12 @@ final String PERSONAL_ICON_PATH = "http://icons.iconarchive.com/icons/custom-ico
 		container.setStyleName("topicsLines");
 		container.setSize("600px", "500px");
 		
+		container.setWidth("570px");
+
+		ScrollPanel scrollPanel = new ScrollPanel();
+		rootPanel.add(scrollPanel, 0, 32);
+		scrollPanel.setSize("600px", "515px");
+		rootPanel.setSize("600px", "550px");
 		scrollPanel = new ScrollPanel();
 		rootPanel.addStyleName("headerBackground");
 		scrollPanel.setSize("700px", "580px");
@@ -164,7 +171,7 @@ final String PERSONAL_ICON_PATH = "http://icons.iconarchive.com/icons/custom-ico
 	
 	private void refreshPage(String scope){
 		if ( scope.equals("all") ){
-			lendMeService.getActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, String>>() {
+			lendMeService.getJointActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, String>>() {
 
 				@Override
 				public void onSuccess(Map<String, String> result) {
@@ -199,7 +206,7 @@ final String PERSONAL_ICON_PATH = "http://icons.iconarchive.com/icons/custom-ico
 			});
 		}
 		else{
-			lendMeService.getJointActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, String>>() {
+			lendMeService.getActivityHistory(solicitorSessionId, new AsyncCallback<Map<String, String>>() {
 
 				@Override
 				public void onSuccess(Map<String, String> result) {
@@ -231,5 +238,7 @@ final String PERSONAL_ICON_PATH = "http://icons.iconarchive.com/icons/custom-ico
 			});
 		}
 
+		
+		
 	}
 }

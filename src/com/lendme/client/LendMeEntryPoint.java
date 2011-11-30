@@ -55,7 +55,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 	}
 
-	class UserSearchResultFound implements AsyncCallback<Map<String, String[]>>{
+	static class UserSearchResultFound implements AsyncCallback<Map<String, String[]>>{
 
 		private Map<String, String[]> result = new HashMap<String, String[]>();
 		@Override
@@ -114,7 +114,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	}
 
 	public final SessionInfo sessionInfo = new SessionInfo(false);
-	public final UserSearchResultFound userSearchResult = new UserSearchResultFound();
+	public final static UserSearchResultFound userSearchResult = new UserSearchResultFound();
 	public final static ItemSearchResultFound itemSearchResult = new ItemSearchResultFound();
 
 	/**
@@ -311,7 +311,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		else if ( option.equals("history") ){
 			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
 //			mainView.setSize(width, height);
-			mainView.setWidget(new HistoryViewer(lendMeService, currentSessionId, "all"));
+			mainView.setWidget(new HistoryViewer(lendMeService, currentSessionId, "personal"));
 		}
 		else {
 //			renderHomeView(viewedUser);
@@ -491,8 +491,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 
 	}
 
-	public void displayUserSearchResults(Map<String, String[]> results){
-		displayResultMap(results);
+	public static void displayUserSearchResults(Map<String, String[]> results){
 		mainView.setWidget(new UserViewer(lendMeService, currentSessionId, currentUserId, userSearchResult.getResult()));
 	}
 
@@ -501,28 +500,13 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	}
 	
 	public void displayCurrentUserFriends(String viewedLogin){
+		LeftOptionsSideBarPanel.setLastQueryData(lendMeService, false, currentSessionId, viewedLogin, itemSearchResult, userSearchResult);
 		lendMeService.getFriends(currentSessionId, viewedLogin, userSearchResult);
 	}
 
-	public void displayCurrentUserReceivedFriendshipRequests(){
-		lendMeService.getFriendshipRequests(currentSessionId, userSearchResult);
-	}
-
-	public static void displayCurrentUserItems(String viewedLogin){
-		LeftOptionsSideBarPanel.setLastQueryData(lendMeService, false, currentSessionId, viewedLogin, itemSearchResult);
+	public void displayCurrentUserItems(String viewedLogin){
+		LeftOptionsSideBarPanel.setLastQueryData(lendMeService, false, currentSessionId, viewedLogin, itemSearchResult, userSearchResult);
 		lendMeService.getItems(currentSessionId, viewedLogin, itemSearchResult);
-	}
-
-	public static void displayResultMap(Map<String, String[]> results){
-		StringBuilder formatted = new StringBuilder();
-		for ( String key : results.keySet() ){
-			formatted.append(key+": {");
-			for ( String value : results.get(key) ){
-				formatted.append(value+", ");
-			}
-			formatted.append("}\n");
-		}
-		Window.alert(new String(formatted));
 	}
 
 }

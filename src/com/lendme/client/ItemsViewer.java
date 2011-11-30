@@ -32,7 +32,6 @@ public class ItemsViewer extends Composite{
 
 	private final LendMeAsync lendmeLocal;
 	private final String idSessionLocal;
-	private Label label;
 
 	public ItemsViewer(LendMeAsync lendme, String idSession, final String viewedLogin, Map<String, String[]> result) {
 
@@ -44,7 +43,7 @@ public class ItemsViewer extends Composite{
 
 		rootPanel = new VerticalPanel();
 		scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName("backGround2");
+		scrollPanel.setStyleName("gwt-DialogBox");
 		scrollPanel.setSize("636px", "408px");
 
 		conteinerPanel = new AbsolutePanel();
@@ -54,8 +53,7 @@ public class ItemsViewer extends Composite{
 		scrollPanel.setWidget(conteinerPanel);
 
 		topBar = new AbsolutePanel();
-		topBar.setStyleName("backGround1");
-		topBar.setSize("100%", "70px");
+		topBar.setSize("100%", "31px");
 
 		PushButton pshbtnNewButton = new PushButton(" +1 ");
 		pshbtnNewButton.addClickHandler(new ClickHandler() {
@@ -63,12 +61,11 @@ public class ItemsViewer extends Composite{
 				creator.center();
 			}
 		});
-		topBar.add(pshbtnNewButton, 348, 22);
+		topBar.add(pshbtnNewButton, 570, 5);
 		pshbtnNewButton.setSize("18px", "13px");
 
-		Label lblMyItems = new Label("Meus Itens");
-		lblMyItems.setStyleName("defaultTitle");
-		topBar.add(lblMyItems, 70, 22);
+		Label lblMyItems = new Label("My Items");
+		topBar.add(lblMyItems, 10, 2);
 
 		for(String actualKey : result.keySet()){
 			myItems.add(new LendMeItensRepresentation(lendmeLocal, idSessionLocal, viewedLogin, defaultImageURL, result.get(actualKey)));
@@ -93,11 +90,6 @@ public class ItemsViewer extends Composite{
 		}
 
 		rootPanel.add(topBar);
-		
-		label = new Label("");
-		label.setStyleName("barra");
-		topBar.add(label, 0, 60);
-		label.setSize("700px", "10px");
 		rootPanel.add(scrollPanel);
 		initWidget(rootPanel);
 

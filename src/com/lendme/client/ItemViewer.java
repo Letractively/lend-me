@@ -213,7 +213,7 @@ public class ItemViewer extends PopupPanel {
 							public void onSuccess(Void result) {
 								Window.alert("Item "+itemInfo[0]+" removido com sucesso!");
 								hide();
-								LeftOptionsSideBarPanel.redoQuery();
+								LeftOptionsSideBarPanel.redoItemQuery();
 							}
 
 							@Override
@@ -236,7 +236,7 @@ public class ItemViewer extends PopupPanel {
 						public void onSuccess(String result) {
 							Window.alert("Seu pedido de retorno do item "+itemInfo[0]+" foi encaminhado.");
 							hide();
-							LeftOptionsSideBarPanel.redoQuery();
+							LeftOptionsSideBarPanel.redoItemQuery();
 						}
 					});
 				}
@@ -253,7 +253,7 @@ public class ItemViewer extends PopupPanel {
 						public void onSuccess(String result) {
 							Window.alert("Voce emprestou o item "+itemInfo[0]+"!");
 							hide();
-							LeftOptionsSideBarPanel.redoQuery();
+							LeftOptionsSideBarPanel.redoItemQuery();
 						}
 					});
 				}
@@ -270,7 +270,7 @@ public class ItemViewer extends PopupPanel {
 						public void onSuccess(String result) {
 							Window.alert("Voce negou emprestimo do item "+itemInfo[0]+"!");
 							hide();
-							LeftOptionsSideBarPanel.redoQuery();
+							LeftOptionsSideBarPanel.redoItemQuery();
 						}
 					});
 				}
@@ -287,7 +287,7 @@ public class ItemViewer extends PopupPanel {
 						public void onSuccess(String result) {
 							Window.alert("Voce confirmou que houve devolucao do item "+itemInfo[0]+"!");
 							hide();
-							LeftOptionsSideBarPanel.redoQuery();
+							LeftOptionsSideBarPanel.redoItemQuery();
 						}
 					});
 				}
@@ -304,7 +304,7 @@ public class ItemViewer extends PopupPanel {
 						public void onSuccess(String result) {
 							Window.alert("Voce negou que houve devolucao do item "+itemInfo[0]+"!");
 							hide();
-							LeftOptionsSideBarPanel.redoQuery();
+							LeftOptionsSideBarPanel.redoItemQuery();
 						}
 					});
 				}
@@ -321,7 +321,7 @@ public class ItemViewer extends PopupPanel {
 						public void onSuccess(String result) {
 							Window.alert("Voce devolveu o item "+itemInfo[0]+"! Aguarde confirmacao do dono.");
 							hide();
-							LeftOptionsSideBarPanel.redoQuery();
+							LeftOptionsSideBarPanel.redoItemQuery();
 						}
 					});
 				}
@@ -338,7 +338,7 @@ public class ItemViewer extends PopupPanel {
 						public void onSuccess(Void result) {
 							Window.alert("Voce vai ser alertado da disponibilidade do item "+itemInfo[0]+"!");
 							hide();
-							LeftOptionsSideBarPanel.redoQuery();
+							LeftOptionsSideBarPanel.redoItemQuery();
 						}
 					});
 				}
@@ -355,7 +355,7 @@ public class ItemViewer extends PopupPanel {
 						public void onSuccess(String result) {
 							Window.alert("Voce pediu o item "+itemInfo[0]+" emprestado!");
 							hide();
-							LeftOptionsSideBarPanel.redoQuery();
+							LeftOptionsSideBarPanel.redoItemQuery();
 						}
 					});
 				}

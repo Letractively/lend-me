@@ -516,6 +516,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		return parseMap(solicitorSession, results);
 	}
 
+	@SuppressWarnings("deprecation")
 	public Map<String, String[]> parseMap(String solicitorSession, List<Item> results ) throws Exception{
 		Map<String, String[]> returnedMap = new HashMap<String, String[]>();
 

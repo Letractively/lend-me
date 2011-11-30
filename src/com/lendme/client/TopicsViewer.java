@@ -166,25 +166,6 @@ public class TopicsViewer extends Composite {
 	}
  	
 	private void getTopics() {
-//		for (int i = 0; i < 5; i++) {
-//			if (currentTopicType.equals("todos")) {
-//				topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"todos"+i, "id"+i,
-//						""+i, "date"+i));
-//			} 
-//			else if (currentTopicType.equals("offtopic")) {
-//				topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"offtopic"+i, "id"+i,
-//						""+i, "date"+i));
-//			}
-//			
-//			else {
-//				topics.add(new LendMeTopicsRep(this.lendMeService, this.solicitorSessionId ,"negociacao"+i, "id"+i,
-//						""+i, "date"+i));
-//			}
-//			
-//		}
-//		// Tirar a linha abaixo quando acabar de testar
-//		addTopicstoPanel();
-		
 		
 		topics.clear();
 		currentTopicType = topicTypeListBox.getItemText(topicTypeListBox.getSelectedIndex());

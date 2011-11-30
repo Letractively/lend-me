@@ -1,7 +1,5 @@
 package com.lendme.client;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -12,8 +10,9 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 
-public class LendMeUsersRepresentation extends PopupPanel {
+public class LendMeUsersRep extends PopupPanel {
 
 	private final int IMG_PATH = 0;
 	private final int LOGIN = 1;
@@ -25,14 +24,14 @@ public class LendMeUsersRepresentation extends PopupPanel {
 	private final String urlDefaultImg = "";
 	
 	private String[] userInfo = {"", "", "", "", "", ""};
-	private Image image;
+	private PushButton image;
 	private final Label loginLabel;
 	private final Label nameLabel;
 	private final Label addressLabel;
 	private final Label reputationLabel;
 	private final AbsolutePanel absolutePanel;
 	
-	public LendMeUsersRepresentation() {
+	public LendMeUsersRep() {
 		super(true);
 		absolutePanel = new AbsolutePanel();
 		
@@ -59,7 +58,6 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		internalPanel.add(reputationLabel, 105, 84);
 		reputationLabel.setSize("127px", "17px");
 		
-		/*Isso se chama popularmente como a boa e velha gambiarra*/
 		final Label topBar = new Label("");
 		topBar.setStyleName("gwt-bar");
 		internalPanel.add(topBar, 0, -6);
@@ -93,7 +91,7 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		
 	}
 
-	public LendMeUsersRepresentation(String imgPath, final String login, String name,
+	public LendMeUsersRep(String imgPath, final String login, String name,
 			String address, String reputation) {
 		this();
 
@@ -123,12 +121,10 @@ public class LendMeUsersRepresentation extends PopupPanel {
 		if (imgPath == null || imgPath.equals(""))
 			imgPath = this.urlDefaultImg;
 
-		image = new Image(imgPath);
+		image = new PushButton();
+		image.getUpFace().setImage(new Image(imgPath));
+		
 		image.setStyleName("gwt-Image");
-		image.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-			}
-		});
 		image.addMouseOverHandler(new MouseOverHandler() {
 			public void onMouseOver(MouseOverEvent event) {
 				setStyleName("gwt-PopupPanel");

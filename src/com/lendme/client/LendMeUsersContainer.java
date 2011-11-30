@@ -11,7 +11,7 @@ import com.lendme.client.UserViewer.FriendshipStatus;
 
 public class LendMeUsersContainer extends AbsolutePanel {
 
-	private LendMeUsersRepresentation user;
+	private LendMeUsersRep user;
 	private LendMeAsync lendMeService;
 	private String solicitorSessionId;
 	private String userViewerLogin;
@@ -21,7 +21,7 @@ public class LendMeUsersContainer extends AbsolutePanel {
 	private Button declineFriendshipButton;
 	
 	public LendMeUsersContainer(final LendMeAsync lendMeService, final String solicitorSessionId, final String userViewerLogin,
-			LendMeUsersRepresentation user, FriendshipStatus status) {
+			LendMeUsersRep user, FriendshipStatus status) {
 		
 		this.user = user;
 		this.solicitorSessionId = solicitorSessionId;

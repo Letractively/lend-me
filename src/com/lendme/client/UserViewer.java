@@ -120,7 +120,7 @@ public class UserViewer extends Composite{
 												FriendshipStatus.REQUESTED_MY_FRIENDSHIP : FriendshipStatus.NOT_FRIEND);
 										
 										LendMeUsersContainer container = new LendMeUsersContainer(lendMeService, solicitorSession, userViewerLogin,
-												new LendMeUsersRepresentation("http://graph.facebook.com/"+actualResult+"/picture", actualResult,
+												new LendMeUsersRep("http://graph.facebook.com/"+actualResult+"/picture", actualResult,
 												searchResults.get(actualResult)[0], searchResults.get(actualResult)[2],
 												searchResults.get(actualResult)[1]), curUserFriendshipStatus);
 										usersSet.add(container);

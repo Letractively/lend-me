@@ -607,6 +607,8 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 					for ( Lending lendingRecord : lendMe.getUserProfile(solicitorSession).getOwner().getUserOperationManager().getItemManager().getMyBorrowedItems() ){
 						if ( lendingRecord.getItem().getID().equals(itemID) ){
 							state = ItemState.LENT;
+							String requestedDate = lendingRecord.getRequestionDate().getDate().toGMTString();
+							interested.add(lendingRecord.getLender().getLogin()+":"+lendingRecord.getLender().getName()+":"+lendingRecord.getRequiredDays()+":"+requestedDate);
 							lendingID = lendingRecord.getID();
 							if ( lendingRecord.isReturned() ){
 								state = ItemState.RETURNED;
@@ -774,7 +776,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		List<Lending> results = new ArrayList<Lending>(lendMe.searchForLendingRecords(solicitorSession, kind));
 		Map<String, String[]> lendingRecords = new TreeMap<String, String[]>();
 		for (Lending lending : results) {
-			String[] lendingProps = new String[11];
+			String[] lendingProps = new String[12];
 			lendingProps[0] = lending.getBorrower().getName();
 			lendingProps[1] = lending.getLender().getName();
 			lendingProps[2] = lending.getItem().getName();
@@ -997,6 +999,45 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	@Override
 	public boolean userExists(String viewedUser) throws Exception {
 		return lendMe.userExists(viewedUser);
+	}
+
+	@Override
+	public Map<String, String[]> getFriendsAndFriendshipRequests(
+			String currentSessionId, String viewedLogin) throws Exception {
+		List<User> friends = new ArrayList<User>(lendMe.getFriends(currentSessionId, viewedLogin));
+		if ( viewedLogin.equals(lendMe.getUserProfile(currentSessionId).getOwnerLogin()) ){
+			friends.addAll(lendMe.getFriendshipRequests(currentSessionId));
+		}
+		Map<String, String[]> actualResult = new TreeMap<String, String[]>();
+		Collections.sort(friends,  new UserDateComparatorStrategy());
+
+		Iterator<User> iterator = friends.iterator();
+		String[] atributtes;
+
+		while(iterator.hasNext()){
+
+			User next = iterator.next();
+
+			atributtes = new String[3];
+			atributtes[0] = next.getName();
+			atributtes[1] = Integer.toString(next.getScore());
+			atributtes[2] = next.getAddress().getFullAddress();
+
+			actualResult.put(next.getLogin(), atributtes);
+		}
+
+		return actualResult;
+	}
+
+	@Override
+	public Map<String, String[]> getOwnedItemsAndBorrowedItems(
+			String currentSessionId, String viewedLogin) throws Exception {
+		
+		List<Item> results = new ArrayList<Item>(lendMe.getItems(currentSessionId, viewedLogin));
+		Collections.sort(results);
+		results.addAll(lendMe.getUserProfile(currentSessionId).getOwner().getBorrowedItems());
+		
+		return parseMap(currentSessionId, results);
 	}
 
 }

@@ -150,6 +150,7 @@ public class HistoryViewer extends Composite {
 	
 	private void addActivitiesToPanel(
 			Map<String, ArrayList<String[]>> result) {
+		activityPanel.clear();
 		for (String date : result.keySet() ){
 			DockPanel datePanel = new DockPanel();
 			datePanel.setWidth("660px");

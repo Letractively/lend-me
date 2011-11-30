@@ -127,6 +127,12 @@ public class ItemViewer extends PopupPanel {
 		moreInfo.setSize("231px", "23px");
 		moreInfo.setVisible(false);
 		
+		PushButton agir = new PushButton("");
+
+		agir.setHTML("<center><b>Agir</b></center>");
+		absolutePanel.add(agir, 274, 188);
+		agir.setSize("56px", "15px");
+		
 		if ( new Boolean(itemInfo[7]).booleanValue() ){
 			if ( itemInfo[8].equals("LENT") ){
 				moreInfo.setVisible(true);
@@ -138,6 +144,7 @@ public class ItemViewer extends PopupPanel {
 			else if ( itemInfo[8].equals("ASKED_FOR_RETURN") ){
 				actions.addItem("pedir de volta");
 				actions.setEnabled(false);
+				agir.setEnabled(false);
 			}
 			else if ( itemInfo[8].equals("AVAILABLE") ){
 				actions.addItem("deletar");
@@ -147,9 +154,10 @@ public class ItemViewer extends PopupPanel {
 				actions.addItem("nao emprestar");
 				daysAmount.setVisible(true);
 				daysAmount.setEnabled(false);
+				daysAmount.setText(itemInfo[6].split(":")[2].replace(";", ""));
 				daysAmountLabel.setVisible(true);
 				interestedUserLendingIDsListBox.setVisible(true);
-				interestedUserLendingIDsListBox.setEnabled(false);
+				interestedUserLendingIDsListBox.setEnabled(true);
 				interestedUsersLabel.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("RETURNED") ){
@@ -166,21 +174,27 @@ public class ItemViewer extends PopupPanel {
 				actions.setEnabled(false);
 			}
 			else if ( itemInfo[8].equals("LENT") ){
+				moreInfo.setVisible(true);
+				moreInfo.setText(
+						interestedUserLendingIDsListBox
+						.getItemText(0)+" te emprestou esse item por "+interestedUserDesiredDaysAmount[0]+" dias no dia "+itemInfo[6].split(":")[3]+".");
 				actions.addItem("devolver");
 			}
 			else if ( itemInfo[8].equals("RETURNED") ){
 				actions.addItem("devolver");
 				actions.setEnabled(false);
+				agir.setEnabled(false);
 			}
 			else if ( itemInfo[8].equals("AVAILABLE") ){
 				actions.addItem("pedir emprestado");
+				daysAmount.setVisible(true);
+				daysAmount.setEnabled(true);
+				daysAmountLabel.setVisible(true);
 			}
 			else if ( itemInfo[8].equals("REQUESTED") ){
 				actions.addItem("pedir emprestado");
 				actions.setEnabled(false);
-				daysAmount.setVisible(true);
-				daysAmount.setEnabled(false);
-				daysAmountLabel.setVisible(true);
+				agir.setEnabled(false);
 			}
 		}
 
@@ -193,15 +207,12 @@ public class ItemViewer extends PopupPanel {
 			
 		});
 		
-		PushButton agir = new PushButton("");
-
-		agir.setHTML("<center><b>Agir</b></center>");
-		absolutePanel.add(agir, 274, 188);
-		agir.setSize("56px", "15px");
 		
 		agir.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 
+				Window.alert(actions.getItemText(actions.getSelectedIndex()));
+				
 				if ( actions.getItemText(actions.getSelectedIndex()).equals("deletar") ) {
 
 					boolean confirm = Window.confirm("Tem certeza que deseja apagar o item ?");
@@ -225,7 +236,7 @@ public class ItemViewer extends PopupPanel {
 				}
 				else if ( actions.getItemText(actions.getSelectedIndex()).equals("pedir de volta") ) {
 
-					lendMeService.returnItem(sessionId, itemInfo[5], new AsyncCallback<String>() {
+					lendMeService.askForReturnOfItem(sessionId, itemInfo[5], new AsyncCallback<String>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -344,6 +355,10 @@ public class ItemViewer extends PopupPanel {
 				}
 				else if ( actions.getItemText(actions.getSelectedIndex()).equals("pedir emprestado") ) {
 
+					if ( daysAmount.getValue() == null || daysAmount.getValue() < 1 ){
+						Window.alert("A quantidade de dias nao pode ser menor que 1 (um)!");
+						return;
+					}
 					lendMeService.requestItem(sessionId, itemInfo[4], daysAmount.getValue(), new AsyncCallback<String>() {
 
 						@Override

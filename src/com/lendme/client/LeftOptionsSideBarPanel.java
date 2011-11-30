@@ -282,7 +282,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 
 		}
 
-		final RadioButton searchForFriends = new RadioButton("SearchOptions", "Amigos");
+		final RadioButton searchForFriends = new RadioButton("SearchOptions", "Usuarios");
 		searchForFriends.addValueChangeHandler(new FriendsSearchChosen());
 		searchForFriends.setValue(true);
 		searchTopHorizontalPanel.add(searchForFriends);

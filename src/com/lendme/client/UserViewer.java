@@ -4,11 +4,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class UserViewer extends Composite{
@@ -53,23 +57,30 @@ public class UserViewer extends Composite{
 		containerPanel.setSize("600px", "600px");
 		
 		internalPanel = new AbsolutePanel();
-		//this.add(absolutePanel, 10, 9);
-		internalPanel.setSize("600px", "17px");
+		internalPanel.setSize("600px", "72px");
 		
 		Label lblNewLabel = new Label("USERS");
-		internalPanel.add(lblNewLabel, 270, 0);
+		lblNewLabel.setStyleName("gwt-OptionsFont");
+		internalPanel.add(lblNewLabel, 25, 10);
 		
-		final Label errorLabel = new Label("Houve um erro com a comunicação com o servidor.");
-		errorLabel.setStyleName("alert");
-		internalPanel.add(errorLabel, 3, 15);
-		errorLabel.setVisible(false);
-		
-		containerPanel.add(internalPanel);
-		
-		usersPanel.setSize("600px", "600px");
-		containerPanel.add(usersPanel, 	0, 0);
-		usersSet.clear();
+		containerPanel.add(internalPanel, 0, 0);
+		internalPanel.add(usersPanel, 0, 72);
+		usersPanel.setSize("600px", "528px");
 		usersPanel.clear();
+		
+		PushButton refresh = new PushButton("");
+		containerPanel.add(refresh, 350, 10);
+		refresh.setSize("48px", "48px");
+		refresh.getUpFace().setImage(new Image("http://icons.iconarchive.com/icons/deleket/button/48/Button-Refresh-icon.png"));
+		refresh.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				LeftOptionsSideBarPanel.redoUserQuery();
+			}
+			
+		});
+		usersSet.clear();
 		
 		lendMeService.getFriends(solicitorSession, new AsyncCallback<Map<String,String[]>>() {
 

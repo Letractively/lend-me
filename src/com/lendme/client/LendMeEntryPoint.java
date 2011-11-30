@@ -501,12 +501,12 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	
 	public void displayCurrentUserFriends(String viewedLogin){
 		LeftOptionsSideBarPanel.setLastQueryData(lendMeService, false, currentSessionId, viewedLogin, itemSearchResult, userSearchResult);
-		lendMeService.getFriends(currentSessionId, viewedLogin, userSearchResult);
+		lendMeService.getFriendsAndFriendshipRequests(currentSessionId, viewedLogin, userSearchResult);
 	}
 
 	public void displayCurrentUserItems(String viewedLogin){
 		LeftOptionsSideBarPanel.setLastQueryData(lendMeService, false, currentSessionId, viewedLogin, itemSearchResult, userSearchResult);
-		lendMeService.getItems(currentSessionId, viewedLogin, itemSearchResult);
+		lendMeService.getOwnedItemsAndBorrowedItems(currentSessionId, viewedLogin, itemSearchResult);
 	}
 
 }

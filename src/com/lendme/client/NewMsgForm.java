@@ -155,12 +155,12 @@ public class NewMsgForm extends PopupPanel {
 	}
 	
 	private void showOngoingLendings() {
-		lendMeService.getLendingRecords(solicitorSessionId, "all", 
+		lendMeService.getLendingRecords(solicitorSessionId, "todos", 
 			new AsyncCallback<Map<String,String[]>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("Erro: Nao foi possivel ter acesso aos emprestimos do usuario.");
+					Window.alert("Erro: Nao foi possivel ter acesso aos emprestimos do usuario: "+caught.getMessage());
 				}
 
 				@Override
@@ -168,10 +168,6 @@ public class NewMsgForm extends PopupPanel {
 					putLendingsInListBox(result);
 				}
 		});
-//		for (int i = 0; i < 3; i++) {
-//			lendingListBox.addItem("Id: 00" + i + "; Dono: Fulano" + i + 
-//					"; Benef: Sicrano" + i + "; Item: %item" + i + "; Status: status");
-//		}
 		lendingListBox.setVisibleItemCount(1);
 		lendingListBox.setVisible(true);
 	}

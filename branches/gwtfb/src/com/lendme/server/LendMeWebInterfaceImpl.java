@@ -10,10 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.lendme.client.ItemInfo;
-import com.lendme.client.ItemState;
 import com.lendme.client.LendMe;
 import com.lendme.server.entities.ActivityRegistry;
 import com.lendme.server.entities.EventDate;
@@ -439,7 +436,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @param criteria Criterios suportados: "REPUTACAO" e "DATACRIACAO".
 	 * @return Retorna um array com o nome de todos os itens encontrados na pesquisa.
 	 */
-	public Map<String, ItemInfo> searchForItems(String solicitorSession, String key, String attribute,
+	public Map<String, String[]> searchForItems(String solicitorSession, String key, String attribute,
 			String disposition, String criteria) throws Exception{
 
 		List<Item> results = lendMe.searchForItem(solicitorSession, key, attribute, disposition, criteria);
@@ -477,7 +474,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * do usuário solicitante.
 	 * @throws Exception
 	 */
-	public Map<String, ItemInfo> getItems(String solicitorSession) throws Exception{
+	public Map<String, String[]> getItems(String solicitorSession) throws Exception{
 
 		List<Item> results = new ArrayList<Item>(lendMe.getItems(solicitorSession));
 		Collections.sort(results);
@@ -511,7 +508,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * @param solicitedLogin Login do usuário solicitado.
 	 * @return Retorna um array com o nome de todos os itens do usuário solicitado.
 	 */
-	public Map<String, ItemInfo> getItems(String solicitorSession, String solicitedLogin) throws Exception{
+	public Map<String, String[]> getItems(String solicitorSession, String solicitedLogin) throws Exception{
 
 		List<Item> results = new ArrayList<Item>(lendMe.getItems(solicitorSession, solicitedLogin));
 		Collections.sort(results);
@@ -519,8 +516,8 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		return parseMap(solicitorSession, results);
 	}
 
-	public Map<String, ItemInfo> parseMap(String solicitorSession, List<Item> results ) throws Exception{
-		Map<String, ItemInfo> returnedMap = new HashMap<String, ItemInfo>();
+	public Map<String, String[]> parseMap(String solicitorSession, List<Item> results ) throws Exception{
+		Map<String, String[]> returnedMap = new HashMap<String, String[]>();
 
 		for ( Item item : results ){
 			
@@ -542,6 +539,8 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 						if ( !lendingRecord.isReturned() ){
 							state = ItemState.LENT;
 							lendingID = lendingRecord.getID();
+							String requestedDate = lendingRecord.getRequestionDate().getDate().toGMTString();
+							interested.add(lendingRecord.getBorrower().getLogin()+":"+lendingRecord.getBorrower().getName()+":"+lendingRecord.getRequiredDays()+":"+requestedDate);
 							for ( Lending devolutionReqRecord : 
 								lendMe.getItemOwner(itemID).getUserOperationManager().getItemManager().getSentItemDevolutionRequests() ){
 								if ( devolutionReqRecord.getItem().getID().equals(itemID) ){
@@ -566,7 +565,7 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 						if ( lendingRecord.getItem().getID().equals(itemID) ){
 							state = ItemState.REQUESTED;
 							lendingID = lendingRecord.getID();
-							interested.add(lendingRecord.getID()+":"+lendingRecord.getBorrower().getName());
+							interested.add(lendingRecord.getID()+":"+lendingRecord.getBorrower().getName()+":"+lendingRecord.getRequiredDays());
 						}
 					}
 				}
@@ -617,7 +616,12 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 				}
 				
 			}
-			returnedMap.put(itemID, new ItemInfo(itemName, itemCategory, itemDescription, creationDate, itemID, lendingID, (String[]) interested.toArray(), belongsToMe, state));
+			StringBuilder interestedArray = new StringBuilder();
+			for ( int i = 0; i<interested.size(); i++ ){
+				interestedArray.append(interested.get(i)+";");
+			}
+			String[] values = {itemName, itemCategory, itemDescription, creationDate, itemID, lendingID, new String(interestedArray), new Boolean(belongsToMe).toString(), state.toString()};
+			returnedMap.put(itemID, values);
 		}
 		return returnedMap;
 	}
@@ -832,51 +836,29 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		return lendMe.viewProfile(solicitorSessionId, solicitedUserLogin);
 	}
 
-//	/**
-//	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
-//	 */
-//	@SuppressWarnings("deprecation")
-//	public Map<String, ArrayList<String[]>> getActivityHistory(String solicitorSessionId) throws Exception {
-//
-//		List<ActivityRegistry> results = lendMe.getActivityHistory(solicitorSessionId);
-//		Map<String, ArrayList<String[]>> handled = new HashMap<String, ArrayList<String[]>>();
-//
-//		for (ActivityRegistry actualActivityRegistry : results){
-//			String[] content = new String[3];
-//			EventDate time = actualActivityRegistry.getTime();
-//			String date = formatToDayMonthYear(time);
-//			content[0] = actualActivityRegistry.getKind().toString();
-//			content[1] = actualActivityRegistry.getDescription();
-//			content[2] = actualActivityRegistry.getTime().getDate().toGMTString().split(" ")[3];
-//			if ( handled.get(date) == null ){
-//				handled.put(date, new ArrayList<String[]>());
-//			}
-//			handled.get(date).add(content);
-//		}
-//		return handled;
-//	}
-	
 	/**
 	 * @return Retorna o histórico de atividades do usuário dono do ID da sessaõ dado.
 	 */
 	@SuppressWarnings("deprecation")
-	public Map<String,String> getActivityHistory(String solicitorSessionId) throws Exception {
+	public Map<String, ArrayList<String[]>> getActivityHistory(String solicitorSessionId) throws Exception {
 
 		List<ActivityRegistry> results = lendMe.getActivityHistory(solicitorSessionId);
-		Map<String, String> handled = new TreeMap<String, String>();
+		Map<String, ArrayList<String[]>> handled = new HashMap<String, ArrayList<String[]>>();
 
 		for (ActivityRegistry actualActivityRegistry : results){
-			String description = actualActivityRegistry.getDescription();
+			String[] content = new String[3];
 			EventDate time = actualActivityRegistry.getTime();
-			String formatedDate =  formatDate(time);
-			
-			handled.put(formatedDate, description);
+			String date = formatToDayMonthYear(time);
+			content[0] = actualActivityRegistry.getKind().toString();
+			content[1] = actualActivityRegistry.getDescription();
+			content[2] = actualActivityRegistry.getTime().getDate().toGMTString().split(" ")[3];
+			if ( handled.get(date) == null ){
+				handled.put(date, new ArrayList<String[]>());
+			}
+			handled.get(date).add(content);
 		}
-		
-			
 		return handled;
 	}
-
 
 	private String formatToDayMonthYear(EventDate time){
 
@@ -912,19 +894,22 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 	 * amigos do usuário cujo ID da sessão foi passado como parâmetro. 
 	 */
 	@SuppressWarnings("deprecation")
-	public Map<String, String> getJointActivityHistory(String solicitorSessionId) throws Exception {
+	public Map<String, ArrayList<String[]>> getJointActivityHistory(String solicitorSessionId) throws Exception {
 		List<ActivityRegistry> results = lendMe.getJointActivityHistory(solicitorSessionId);
-		Map<String, String> handled = new TreeMap<String, String>();
+		Map<String, ArrayList<String[]>> handled = new HashMap<String, ArrayList<String[]>>();
 
 		for (ActivityRegistry actualActivityRegistry : results){
-			String description = actualActivityRegistry.getDescription();
+			String[] content = new String[3];
 			EventDate time = actualActivityRegistry.getTime();
-			String formatedDate =  formatDate(time);
-			
-			handled.put(formatedDate, description);
+			String date = formatToDayMonthYear(time);
+			content[0] = actualActivityRegistry.getKind().toString();
+			content[1] = actualActivityRegistry.getDescription();
+			content[2] = actualActivityRegistry.getTime().getDate().toGMTString().split(" ")[3];
+			if ( handled.get(date) == null ){
+				handled.put(date, new ArrayList<String[]>());
+			}
+			handled.get(date).add(content);
 		}
-		
-			
 		return handled;
 	}
 

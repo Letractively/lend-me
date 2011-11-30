@@ -1,5 +1,7 @@
 package com.lendme.client;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -15,7 +17,7 @@ import com.google.gwt.user.client.ui.PushButton;
 public class ItemViewer extends PopupPanel {
 
 	public ItemViewer(final LendMeAsync lendMeService, final String sessionId,
-			final String viewedLogin, String imgURL, final ItemInfo itemInfo) {
+			final String viewedLogin, String imgURL, final String[] itemInfo) {
 
 		super(true);
 		setAnimationEnabled(true);
@@ -52,8 +54,8 @@ public class ItemViewer extends PopupPanel {
 		absolutePanel.add(info, 149, 83);
 		info.setSize("191px", "17px");
 
-		Label lblNewLabel_6 = new Label("Usuarios Interessados:");
-		absolutePanel.add(lblNewLabel_6, 8, 134);
+		Label interestedUsersLabel = new Label("Usuarios Interessados:");
+		absolutePanel.add(interestedUsersLabel, 8, 134);
 
 		final ListBox interestedUserLendingIDsListBox = new ListBox();
 		absolutePanel.add(interestedUserLendingIDsListBox, 169, 132);
@@ -66,13 +68,17 @@ public class ItemViewer extends PopupPanel {
 		absolutePanel.add(actions, 64, 189);
 		actions.setSize("200px", "22px");
 
-		final String[] interestedUserLendingIDs = new String[itemInfo.getInterested().length];
+		final String[] interestedUserLendingIDs = new String[itemInfo[6].split(";").length];
+		final String[] interestedUserDesiredDaysAmount = new String[interestedUserLendingIDs.length];
 		int i = 0;
 
-		for ( String actualUserName : itemInfo.getInterested() ) {
-			interestedUserLendingIDsListBox.addItem(actualUserName.split(":")[1]);
-			interestedUserLendingIDs[i] = actualUserName.split(":")[0];
-			i++;
+		for ( String actualUserName : itemInfo[6].split(";") ) {
+			if ( !actualUserName.trim().isEmpty() ){
+				interestedUserLendingIDsListBox.addItem(actualUserName.split(":")[1]);
+				interestedUserLendingIDs[i] = actualUserName.split(":")[0];
+				interestedUserDesiredDaysAmount[i] = actualUserName.split(":")[2];
+				i++;
+			}
 		}
 
 		Image image = new Image(imgURL);
@@ -99,69 +105,100 @@ public class ItemViewer extends PopupPanel {
 		absolutePanel.add(flagA, 201, 5);
 		flagA.setSize("23px", "22px");
 
-		name.setText(itemInfo.getItemName());
-		descricao.setText(itemInfo.getDescription());
-		status.setText(itemInfo.getState().toString());
-		info.setText(itemInfo.getCategory());
+		name.setText(itemInfo[0]);
+		descricao.setText(itemInfo[2]);
+		status.setText(itemInfo[8]);
+		info.setText(itemInfo[1]);
 
 		final IntegerBox daysAmount = new IntegerBox();
-		daysAmount.setEnabled(false);
 		absolutePanel.add(daysAmount, 96, 160);
 		daysAmount.setSize("42px", "17px");
 
-		Label lblNewLabel_1 = new Label("Qtde. dias:");
-		absolutePanel.add(lblNewLabel_1, 8, 160);
+		Label daysAmountLabel = new Label("Qtde. dias:");
+		absolutePanel.add(daysAmountLabel, 8, 160);
+		
+		interestedUserLendingIDsListBox.setVisible(false);
+		interestedUsersLabel.setVisible(false);
+		daysAmount.setVisible(false);
+		daysAmountLabel.setVisible(false);
 
-		if ( itemInfo.belongsToMe() ){
-			if ( itemInfo.getState() == ItemState.LENT ){
+		Label moreInfo = new Label("");
+		absolutePanel.add(moreInfo, 109, 105);
+		moreInfo.setSize("231px", "23px");
+		moreInfo.setVisible(false);
+		
+		if ( new Boolean(itemInfo[7]).booleanValue() ){
+			if ( itemInfo[8].equals("LENT") ){
+				moreInfo.setVisible(true);
+				moreInfo.setText(
+						interestedUserLendingIDsListBox
+						.getItemText(0)+" pediu seu item por "+interestedUserDesiredDaysAmount[0]+" dias no dia "+itemInfo[6].split(":")[3]+".");
 				actions.addItem("pedir de volta");
 			}
-			else if ( itemInfo.getState() == ItemState.ASKED_FOR_RETURN ){
+			else if ( itemInfo[8].equals("ASKED_FOR_RETURN") ){
 				actions.addItem("pedir de volta");
 				actions.setEnabled(false);
 			}
-			else if ( itemInfo.getState() == ItemState.AVAILABLE ){
+			else if ( itemInfo[8].equals("AVAILABLE") ){
 				actions.addItem("deletar");
 			}
-			else if ( itemInfo.getState() == ItemState.REQUESTED ){
+			else if ( itemInfo[8].equals("REQUESTED") ){
 				actions.addItem("emprestar");
 				actions.addItem("nao emprestar");
+				daysAmount.setVisible(true);
+				daysAmount.setEnabled(false);
+				daysAmountLabel.setVisible(true);
+				interestedUserLendingIDsListBox.setVisible(true);
+				interestedUserLendingIDsListBox.setEnabled(false);
+				interestedUsersLabel.setVisible(true);
 			}
-			else if ( itemInfo.getState() == ItemState.RETURNED ){
+			else if ( itemInfo[8].equals("RETURNED") ){
 				actions.addItem("confirmar devolucao");
 				actions.addItem("negar que houve devolucao");
 			}
 		}
 		else{
-			if ( itemInfo.getState() == ItemState.UNAVAILABLE ){
+			if ( itemInfo[8].equals("UNAVAILABLE") ){
 				actions.addItem("tenho interesse nesse item");
 			}
-			else if ( itemInfo.getState() == ItemState.INTERESTED ){
+			else if ( itemInfo[8].equals("INTERESTED") ){
 				actions.addItem("tenho interesse nesse item");
 				actions.setEnabled(false);
 			}
-			else if ( itemInfo.getState() == ItemState.LENT ){
+			else if ( itemInfo[8].equals("LENT") ){
 				actions.addItem("devolver");
 			}
-			else if ( itemInfo.getState() == ItemState.RETURNED ){
+			else if ( itemInfo[8].equals("RETURNED") ){
 				actions.addItem("devolver");
 				actions.setEnabled(false);
 			}
-			else if ( itemInfo.getState() == ItemState.AVAILABLE ){
+			else if ( itemInfo[8].equals("AVAILABLE") ){
 				actions.addItem("pedir emprestado");
 			}
-			else if ( itemInfo.getState() == ItemState.REQUESTED ){
+			else if ( itemInfo[8].equals("REQUESTED") ){
 				actions.addItem("pedir emprestado");
 				actions.setEnabled(false);
+				daysAmount.setVisible(true);
+				daysAmount.setEnabled(false);
+				daysAmountLabel.setVisible(true);
 			}
 		}
 
+		interestedUserLendingIDsListBox.addChangeHandler(new ChangeHandler(){
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				daysAmount.setText(interestedUserLendingIDs[interestedUserLendingIDsListBox.getSelectedIndex()]);
+			}
+			
+		});
+		
 		PushButton agir = new PushButton("");
 
 		agir.setHTML("<center><b>Agir</b></center>");
 		absolutePanel.add(agir, 274, 188);
 		agir.setSize("56px", "15px");
-
+		
 		agir.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 
@@ -170,11 +207,11 @@ public class ItemViewer extends PopupPanel {
 					boolean confirm = Window.confirm("Tem certeza que deseja apagar o item ?");
 
 					if(confirm){
-						lendMeService.deleteItem(sessionId, itemInfo.getItemId(), new AsyncCallback<Void>() {
+						lendMeService.deleteItem(sessionId, itemInfo[4], new AsyncCallback<Void>() {
 
 							@Override
 							public void onSuccess(Void result) {
-								Window.alert("Item "+itemInfo.getItemName()+" removido com sucesso!");
+								Window.alert("Item "+itemInfo[0]+" removido com sucesso!");
 								hide();
 								LeftOptionsSideBarPanel.redoQuery();
 							}
@@ -188,7 +225,7 @@ public class ItemViewer extends PopupPanel {
 				}
 				else if ( actions.getItemText(actions.getSelectedIndex()).equals("pedir de volta") ) {
 
-					lendMeService.returnItem(sessionId, itemInfo.getLendingId(), new AsyncCallback<String>() {
+					lendMeService.returnItem(sessionId, itemInfo[5], new AsyncCallback<String>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -197,7 +234,7 @@ public class ItemViewer extends PopupPanel {
 
 						@Override
 						public void onSuccess(String result) {
-							Window.alert("Seu pedido de retorno do item "+itemInfo.getItemName()+" foi encaminhado.");
+							Window.alert("Seu pedido de retorno do item "+itemInfo[0]+" foi encaminhado.");
 							hide();
 							LeftOptionsSideBarPanel.redoQuery();
 						}
@@ -214,7 +251,7 @@ public class ItemViewer extends PopupPanel {
 
 						@Override
 						public void onSuccess(String result) {
-							Window.alert("Voce emprestou o item "+itemInfo.getItemName()+"!");
+							Window.alert("Voce emprestou o item "+itemInfo[0]+"!");
 							hide();
 							LeftOptionsSideBarPanel.redoQuery();
 						}
@@ -231,7 +268,7 @@ public class ItemViewer extends PopupPanel {
 
 						@Override
 						public void onSuccess(String result) {
-							Window.alert("Voce negou emprestimo do item "+itemInfo.getItemName()+"!");
+							Window.alert("Voce negou emprestimo do item "+itemInfo[0]+"!");
 							hide();
 							LeftOptionsSideBarPanel.redoQuery();
 						}
@@ -239,7 +276,7 @@ public class ItemViewer extends PopupPanel {
 				}
 				else if ( actions.getItemText(actions.getSelectedIndex()).equals("confirmar devolucao") ) {
 
-					lendMeService.confirmLendingTermination(sessionId, itemInfo.getLendingId(), new AsyncCallback<String>() {
+					lendMeService.confirmLendingTermination(sessionId, itemInfo[5], new AsyncCallback<String>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -248,7 +285,7 @@ public class ItemViewer extends PopupPanel {
 
 						@Override
 						public void onSuccess(String result) {
-							Window.alert("Voce confirmou que houve devolucao do item "+itemInfo.getItemName()+"!");
+							Window.alert("Voce confirmou que houve devolucao do item "+itemInfo[0]+"!");
 							hide();
 							LeftOptionsSideBarPanel.redoQuery();
 						}
@@ -256,7 +293,7 @@ public class ItemViewer extends PopupPanel {
 				}
 				else if ( actions.getItemText(actions.getSelectedIndex()).equals("negar que houve devolucao") ) {
 
-					lendMeService.denyLendingTermination(sessionId, itemInfo.getLendingId(), new AsyncCallback<String>() {
+					lendMeService.denyLendingTermination(sessionId, itemInfo[5], new AsyncCallback<String>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -265,7 +302,7 @@ public class ItemViewer extends PopupPanel {
 
 						@Override
 						public void onSuccess(String result) {
-							Window.alert("Voce negou que houve devolucao do item "+itemInfo.getItemName()+"!");
+							Window.alert("Voce negou que houve devolucao do item "+itemInfo[0]+"!");
 							hide();
 							LeftOptionsSideBarPanel.redoQuery();
 						}
@@ -273,7 +310,7 @@ public class ItemViewer extends PopupPanel {
 				}
 				else if ( actions.getItemText(actions.getSelectedIndex()).equals("devolver") ) {
 
-					lendMeService.returnItem(sessionId, itemInfo.getLendingId(), new AsyncCallback<String>() {
+					lendMeService.returnItem(sessionId, itemInfo[5], new AsyncCallback<String>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -282,7 +319,7 @@ public class ItemViewer extends PopupPanel {
 
 						@Override
 						public void onSuccess(String result) {
-							Window.alert("Voce devolveu o item "+itemInfo.getItemName()+"! Aguarde confirmacao do dono.");
+							Window.alert("Voce devolveu o item "+itemInfo[0]+"! Aguarde confirmacao do dono.");
 							hide();
 							LeftOptionsSideBarPanel.redoQuery();
 						}
@@ -290,7 +327,7 @@ public class ItemViewer extends PopupPanel {
 				}
 				else if ( actions.getItemText(actions.getSelectedIndex()).equals("tenho interesse nesse item") ) {
 
-					lendMeService.registerInterestForItem(sessionId, itemInfo.getItemId(), new AsyncCallback<Void>() {
+					lendMeService.registerInterestForItem(sessionId, itemInfo[4], new AsyncCallback<Void>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -299,7 +336,7 @@ public class ItemViewer extends PopupPanel {
 
 						@Override
 						public void onSuccess(Void result) {
-							Window.alert("Voce vai ser alertado da disponibilidade do item "+itemInfo.getItemName()+"!");
+							Window.alert("Voce vai ser alertado da disponibilidade do item "+itemInfo[0]+"!");
 							hide();
 							LeftOptionsSideBarPanel.redoQuery();
 						}
@@ -307,7 +344,7 @@ public class ItemViewer extends PopupPanel {
 				}
 				else if ( actions.getItemText(actions.getSelectedIndex()).equals("pedir emprestado") ) {
 
-					lendMeService.requestItem(sessionId, itemInfo.getItemId(), daysAmount.getValue(), new AsyncCallback<String>() {
+					lendMeService.requestItem(sessionId, itemInfo[4], daysAmount.getValue(), new AsyncCallback<String>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -316,7 +353,7 @@ public class ItemViewer extends PopupPanel {
 
 						@Override
 						public void onSuccess(String result) {
-							Window.alert("Voce pediu o item "+itemInfo.getItemName()+" emprestado!");
+							Window.alert("Voce pediu o item "+itemInfo[0]+" emprestado!");
 							hide();
 							LeftOptionsSideBarPanel.redoQuery();
 						}

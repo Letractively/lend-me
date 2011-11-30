@@ -74,9 +74,9 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 	}
 
-	static class ItemSearchResultFound implements AsyncCallback<Map<String, ItemInfo>>{
+	static class ItemSearchResultFound implements AsyncCallback<Map<String, String[]>>{
 
-		private Map<String, ItemInfo> result = new HashMap<String, ItemInfo>();
+		private Map<String, String[]> result = new HashMap<String, String[]>();
 		@Override
 		public void onFailure(Throwable caught) {
 			if ( caught.getMessage().equals("O usu�rio n�o tem permiss�o para visualizar estes itens") ){
@@ -103,12 +103,12 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 
 		@Override
-		public void onSuccess(Map<String, ItemInfo> result) {
+		public void onSuccess(Map<String, String[]> result) {
 			this.result = result;
 			displayItemSearchResults(currentUserId, result);
 		}
 
-		public Map<String, ItemInfo> getResult(){
+		public Map<String, String[]> getResult(){
 			return result;
 		}
 	}
@@ -310,6 +310,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		}
 		else if ( option.equals("history") ){
 			leftSideBarView.setWidget(new LeftOptionsSideBarPanel(lendMeService, currentSessionId, currentUserId, viewedUser, fbCore, userSearchResult, itemSearchResult));
+//			mainView.setSize(width, height);
 			mainView.setWidget(new HistoryViewer(lendMeService, currentSessionId, "all"));
 		}
 		else {
@@ -495,12 +496,8 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 		mainView.setWidget(new UserViewer(lendMeService, currentSessionId, currentUserId, userSearchResult.getResult()));
 	}
 
-	public static void displayItemSearchResults(String viewedLogin, Map<String, ItemInfo> results){
+	public static void displayItemSearchResults(String viewedLogin, Map<String, String[]> results){
 		mainView.setWidget(new ItemsViewer(lendMeService, currentSessionId, viewedLogin, itemSearchResult.getResult()));
-	}
-	
-	public static void redoSearch(){
-		
 	}
 	
 	public void displayCurrentUserFriends(String viewedLogin){
@@ -512,6 +509,7 @@ public class LendMeEntryPoint implements EntryPoint, ValueChangeHandler<String> 
 	}
 
 	public static void displayCurrentUserItems(String viewedLogin){
+		LeftOptionsSideBarPanel.setLastQueryData(false, currentSessionId, viewedLogin, itemSearchResult);
 		lendMeService.getItems(currentSessionId, viewedLogin, itemSearchResult);
 	}
 

@@ -92,9 +92,9 @@ public interface LendMe extends RemoteService{
 	
 	public String viewProfile(String solicitorSessionId, String solicitedUserLogin) throws Exception;
 	
-	public Map<String, ArrayList<String[]>> getActivityHistory(String solicitorSessionId) throws Exception;
+	public Map<String, String> getActivityHistory(String solicitorSessionId) throws Exception;
 	
-	public Map<String, ArrayList<String[]>> getJointActivityHistory(String solicitorSessionId) throws Exception;
+	public Map<String, String> getJointActivityHistory(String solicitorSessionId) throws Exception;
 	
 	public String[] getFriendsPublishedItemRequests(String solicitorSessionId) throws Exception;
 	

@@ -370,7 +370,7 @@ public class LeftOptionsSideBarPanel extends Composite {
 		Hyperlink hyperlink_2 = new Hyperlink( "Mensagens", viewedLogin+"/options/messages");
 		hyperlink_2.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink_2, 11, 336);
-		Hyperlink hyperlink_3 = new Hyperlink( "Historico", viewedLogin+"options/history");
+		Hyperlink hyperlink_3 = new Hyperlink( "Historico", viewedLogin+"/options/history");
 		hyperlink_3.setStyleName("gwt-SearchFont");
 		rootPanel.add(hyperlink_3, 11, 384);
 

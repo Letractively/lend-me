@@ -183,22 +183,4 @@ public class LendMeUsersContainer extends AbsolutePanel {
 		return this.userViewerLogin;
 	}
 	
-	@Override
-	public boolean equals(Object other){
-		if ( !(other instanceof LendMeUsersContainer) ){
-			return false;
-		}
-		LendMeUsersContainer otherL = (LendMeUsersContainer) other;
-		return otherL.getViewed().equals(this.getViewed());
-	}
-	
-	@Override
-	public int hashCode(){
-		return this.toString().hashCode();
-	}
-	
-	@Override
-	public String toString(){
-		return getViewed();
-	}
 }

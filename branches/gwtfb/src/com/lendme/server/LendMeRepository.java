@@ -3,14 +3,9 @@ package com.lendme.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Query;
 import com.lendme.server.entities.Session;
 import com.lendme.server.entities.User;
 import com.lendme.server.utils.AddressComparatorStrategy;
@@ -63,7 +58,7 @@ public final class LendMeRepository {
 	 * @return the session id
 	 * @throws Exception for invalid parameters and if user doesn't exists
 	 */
-	public String openSession(String login) throws Exception {
+	public synchronized String openSession(String login) throws Exception {
 		if (userExists(login)) {
 			Session session = new Session(getUserByLogin(login));
 			sessions.add(session);
@@ -78,24 +73,19 @@ public final class LendMeRepository {
 //		    		String name = ((String) user.getProperty("name"));
 //		    		String address = ((String) user.getProperty("address"));
 //		    		String email = ((String) user.getProperty("email"));
-//					registerUser(login, name, email, address);
-//					Session session = new Session(getUserByLogin(login));
-//					sessions.add(session);
-//					return session.getId();
-//		    	}
+			String name = "Guilherme";
+			String email = "guilherme";
+			String address = "endereco1";
+					registerUser(login, name, email, address);
+					registerUser("carla", "Carla", "carla", "endereco2");
+					registerUser("jaoo", "Joao", "joao", "endereco3");
+					Session session = new Session(getUserByLogin(login));
+					sessions.add(session);
+					return session.getId();
+		    	}
 //		    }
-//	    	throw new Exception("Usuário inexistente");
-//	    	
-		
-		registerUser("100002013944522", "Tarciso Braz de Oliveira Filho", "Trav. Olegário Maciel");
-		registerUser("thiago", "Thiago Braz Alves de Oliveira", "Trav. Olegário Maciel");
-		registerUser("claudia", "Claudia Alves de Oliveira", "Trav. Olegário Maciel");
-		
-		Session currentSession = new Session(getUserByLogin("100002013944522"));
-		sessions.add(currentSession);
-		return currentSession.getId();
-		
-		}
+//	    	throw new Exception("Usu�rio inexistente");
+//		}
 	}
 	
 	/**
@@ -262,13 +252,13 @@ public final class LendMeRepository {
 	public Set<User> searchUsersByAttributeKey(String sessionId, String key,
 			String attribute) throws Exception{
 		if ( attribute == null || attribute.trim().length() == 0 ){
-			throw new Exception("Atributo inválido");//"Invalid attribute");
+			throw new Exception("Atributo inv�lido");//"Invalid attribute");
 		}
 		if (!(attribute.equals("nome") || attribute.trim().equals("login") || attribute.trim().equals("endereco"))){
 			throw new Exception("Atributo inexistente");//"Inexistent attribute");
 		}
 		if ( key == null || key.trim().length() == 0 ){
-			throw new Exception("Palavra-chave inválida");//"Invalid search key");
+			throw new Exception("Palavra-chave inv�lida");//"Invalid search key");
 		}
 		
 		Set<User> results = new HashSet<User>();
@@ -277,17 +267,17 @@ public final class LendMeRepository {
 				continue;
 			}
 			if ( attribute.equals("nome") ){
-				if ( getUserAttribute(user, "nome").contains(key) ){
+				if ( getUserAttribute(user, "nome").toLowerCase().contains(key.toLowerCase()) ){
 					results.add(user);
 				}
 			}
 			else if ( attribute.equals("login") ){
-				if ( ( getUserAttribute(user, "login").contains(key) ) ){
+				if ( ( getUserAttribute(user, "login").toLowerCase().contains(key.toLowerCase()) ) ){
 					results.add(user);
 				}
 			}
 			else if ( attribute.equals("endereco") ){
-				if ( ( getUserAttribute(user, "endereco").contains(key) ) ){
+				if ( ( getUserAttribute(user, "endereco").toLowerCase().contains(key.toLowerCase()) ) ){
 					results.add(user);
 				}
 			}

@@ -139,13 +139,12 @@ public class LendMeWebInterfaceImpl extends RemoteServiceServlet implements Lend
 		Collections.sort(results,  new UserDateComparatorStrategy());
 
 		Iterator<User> iterator = results.iterator();
-		String[] atributtes;
 
 		while(iterator.hasNext()){
 
 			User next = iterator.next();
 
-			atributtes = new String[3];
+			String[] atributtes = new String[3];
 			atributtes[0] = next.getName();
 			atributtes[1] = Integer.toString(next.getScore());
 			atributtes[2] = next.getAddress().getFullAddress();
